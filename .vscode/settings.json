@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "line_chart.h": "c",
+        "color_parser.h": "c",
+        "*.inc": "c",
+        "lcd.h": "c",
+        "awtk_ext_widgets.h": "c",
+        "vpage.h": "c",
+        "float_queue.h": "c",
+        "canvas_offline.h": "c",
+        "widget_animator_prop.h": "c"
+    }
+}

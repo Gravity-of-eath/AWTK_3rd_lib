@@ -1,0 +1,15 @@
+set(CMAKE_HOST_SYSTEM "Linux-5.15.0-139-generic")
+set(CMAKE_HOST_SYSTEM_NAME "Linux")
+set(CMAKE_HOST_SYSTEM_VERSION "5.15.0-139-generic")
+set(CMAKE_HOST_SYSTEM_PROCESSOR "x86_64")
+
+include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/cv181.cmake")
+
+set(CMAKE_SYSTEM "Linux")
+set(CMAKE_SYSTEM_NAME "Linux")
+set(CMAKE_SYSTEM_VERSION "")
+set(CMAKE_SYSTEM_PROCESSOR "arm")
+
+set(CMAKE_CROSSCOMPILING "TRUE")
+
+set(CMAKE_SYSTEM_LOADED 1)

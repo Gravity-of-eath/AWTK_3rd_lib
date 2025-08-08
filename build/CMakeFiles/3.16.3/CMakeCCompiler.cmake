@@ -1,7 +1,7 @@
-set(CMAKE_C_COMPILER "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc")
+set(CMAKE_C_COMPILER "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc")
 set(CMAKE_C_COMPILER_ARG1 "")
 set(CMAKE_C_COMPILER_ID "GNU")
-set(CMAKE_C_COMPILER_VERSION "6.3.1")
+set(CMAKE_C_COMPILER_VERSION "6.4.1")
 set(CMAKE_C_COMPILER_VERSION_INTERNAL "")
 set(CMAKE_C_COMPILER_WRAPPER "")
 set(CMAKE_C_STANDARD_COMPUTED_DEFAULT "11")
@@ -17,11 +17,11 @@ set(CMAKE_C_SIMULATE_VERSION "")
 
 
 
-set(CMAKE_AR "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ar")
-set(CMAKE_C_COMPILER_AR "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc-ar")
-set(CMAKE_RANLIB "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ranlib")
-set(CMAKE_C_COMPILER_RANLIB "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc-ranlib")
-set(CMAKE_LINKER "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-ld")
+set(CMAKE_AR "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-ar")
+set(CMAKE_C_COMPILER_AR "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc-ar")
+set(CMAKE_RANLIB "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-ranlib")
+set(CMAKE_C_COMPILER_RANLIB "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc-ranlib")
+set(CMAKE_LINKER "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-ld")
 set(CMAKE_MT "")
 set(CMAKE_COMPILER_IS_GNUCC 1)
 set(CMAKE_C_COMPILER_LOADED 1)
@@ -70,7 +70,7 @@ endif()
 
 
 
-set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include")
-set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "gcc;gcc_s;c;gcc;gcc_s")
-set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/lib;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib")
+set(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES "/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include;/usr/include")
+set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "ssp_nonshared;gcc_s;c;gcc_s")
+set(CMAKE_C_IMPLICIT_LINK_DIRECTORIES "/usr/lib;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1;/develop/toolchain_t113_musl/lib/gcc;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib")
 set(CMAKE_C_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")

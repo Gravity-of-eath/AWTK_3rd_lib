@@ -96,7 +96,7 @@ static void def_on_layout_vertical(yps_banner_menu_t *parent, rect_t *reference_
   }
 }
 
-static void def_on_scroll_vertical(yps_banner_menu_t *parent, rect_t *reference_position, const widget_t **childrens, int32_t count, widget_t *focus_lossing, widget_t *focus_next, float_t progress)
+static void def_on_scroll_vertical(yps_banner_menu_t *parent, rect_t *reference_position, widget_t **childrens, int32_t count, widget_t *focus_lossing, widget_t *focus_next, float_t progress)
 {
   ////focus_lossing
   float_t all_move_hight = parent->next_or_prev ? reference_position->h  : -(reference_position->h*(parent->scale_ratio));
@@ -172,7 +172,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
       return RET_REMOVE;
     }
   }
-  widget_invalidate(yps_banner_menu, NULL);
+  widget_invalidate((widget_t*)yps_banner_menu, NULL);
   return RET_REPEAT;
 }
 

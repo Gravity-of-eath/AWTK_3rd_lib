@@ -8,6 +8,10 @@
         "vpage.h": "c",
         "float_queue.h": "c",
         "canvas_offline.h": "c",
-        "widget_animator_prop.h": "c"
-    }
+        "widget_animator_prop.h": "c",
+        "canvas.h": "c",
+        "stdio.h": "c",
+        "view_ext.h": "c"
+    },
+    "cmake.sourceDirectory": "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src"
 }

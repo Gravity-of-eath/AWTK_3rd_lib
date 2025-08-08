@@ -18,3 +18,10 @@
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu/CMakeFiles/edit_cache.dir
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu/CMakeFiles/install/local.dir
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu/CMakeFiles/banner_menu.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/install/strip.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/install/local.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/install.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/list_install_components.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/rebuild_cache.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/edit_cache.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/blur_view.dir

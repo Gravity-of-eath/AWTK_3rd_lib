@@ -5,4 +5,5 @@ set(AWTK_SO "${CMAKE_CURRENT_SOURCE_DIR}/../lib/${PLATFORM}/libawtk.so")
 message("AWTK_INCLUDE== ${AWTK_INCLUDE}")
 add_subdirectory(line_chart)
 add_subdirectory(banner_menu)
+add_subdirectory(blur_view)
 

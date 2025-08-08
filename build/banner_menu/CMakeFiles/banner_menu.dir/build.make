@@ -60,28 +60,28 @@ include banner_menu/CMakeFiles/banner_menu.dir/flags.make
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o: banner_menu/CMakeFiles/banner_menu.dir/flags.make
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c
 
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.i"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c > CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c > CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.i
 
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.s"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c -o CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c -o CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.s
 
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o: banner_menu/CMakeFiles/banner_menu.dir/flags.make
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c
 
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.i"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c > CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c > CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.i
 
 banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.s"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c -o CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu_register.c -o CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.s
 
 # Object files for target banner_menu
 banner_menu_OBJECTS = \
@@ -94,7 +94,7 @@ banner_menu_EXTERNAL_OBJECTS =
 banner_menu/libbanner_menu.so: banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o
 banner_menu/libbanner_menu.so: banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o
 banner_menu/libbanner_menu.so: banner_menu/CMakeFiles/banner_menu.dir/build.make
-banner_menu/libbanner_menu.so: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/../lib/cv181/libawtk.so
+banner_menu/libbanner_menu.so: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/../lib/t113/libawtk.so
 banner_menu/libbanner_menu.so: banner_menu/CMakeFiles/banner_menu.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C shared library libbanner_menu.so"
 	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/banner_menu.dir/link.txt --verbose=$(VERBOSE)

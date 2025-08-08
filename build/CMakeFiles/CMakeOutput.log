@@ -1,12 +1,15 @@
 The target system is: Linux -  - arm
 The host system is: Linux - 5.15.0-139-generic - x86_64
 Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
-Compiler: /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc 
+Compiler: /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc 
 Build flags: 
 Id flags:  
 
 The output was:
 0
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
 
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
@@ -14,12 +17,15 @@ Compilation of the C compiler identification source "CMakeCCompilerId.c" produce
 The C compiler identification is GNU, found in "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/3.16.3/CompilerIdC/a.out"
 
 Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
-Compiler: /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ 
+Compiler: /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++ 
 Build flags: 
 Id flags:  
 
 The output was:
 0
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
 
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
@@ -29,13 +35,16 @@ The CXX compiler identification is GNU, found in "/mnt/a57a7843-7ae2-415a-9125-4
 Determining if the C compiler works passed with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_47b06/fast && /usr/bin/make -f CMakeFiles/cmTC_47b06.dir/build.make CMakeFiles/cmTC_47b06.dir/build
+Run Build Command(s):/usr/bin/make cmTC_976b5/fast && /usr/bin/make -f CMakeFiles/cmTC_976b5.dir/build.make CMakeFiles/cmTC_976b5.dir/build
 make[1]: 进入目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
-Building C object CMakeFiles/cmTC_47b06.dir/testCCompiler.c.o
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/    -o CMakeFiles/cmTC_47b06.dir/testCCompiler.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_47b06
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_47b06.dir/link.txt --verbose=1
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/      CMakeFiles/cmTC_47b06.dir/testCCompiler.c.o  -o cmTC_47b06 
+Building C object CMakeFiles/cmTC_976b5.dir/testCCompiler.c.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc    -o CMakeFiles/cmTC_976b5.dir/testCCompiler.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCCompiler.c
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+Linking C executable cmTC_976b5
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_976b5.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc      CMakeFiles/cmTC_976b5.dir/testCCompiler.c.o  -o cmTC_976b5 
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
 make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
 
 
@@ -43,59 +52,59 @@ make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awt
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_0bad4/fast && /usr/bin/make -f CMakeFiles/cmTC_0bad4.dir/build.make CMakeFiles/cmTC_0bad4.dir/build
+Run Build Command(s):/usr/bin/make cmTC_475ca/fast && /usr/bin/make -f CMakeFiles/cmTC_475ca.dir/build.make CMakeFiles/cmTC_475ca.dir/build
 make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/   -v -o CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c
-Using built-in specs.
-COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc
-Target: arm-linux-gnueabihf
-Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu
+Building C object CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc   -v -o CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o' '-c' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/cc1 -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -iprefix /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/ -isysroot /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -march=armv7-a -mtune=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 -mthumb -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o -version -o /tmp/cclDJJHO.s
-GNU C11 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)
-	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version none
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1 -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccJ38pDN.s
+GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include"
-ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include/arm-linux-gnueabihf"
-ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include"
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed"
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include"
-ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include/arm-linux-gnueabihf"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"
 #include "..." search starts here:
 #include <...> search starts here:
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include
- /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include
+ /usr/include
 End of search list.
-GNU C11 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)
-	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version none
+GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-Compiler executable checksum: 92d1366231bd48a2dd9c36b316e0f825
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o' '-c' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/as -v -march=armv7-a -mfloat-abi=hard -mfpu=vfpv3-d16 -meabi=5 -o CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o /tmp/cclDJJHO.s
-GNU assembler version 2.27.0 (arm-linux-gnueabihf) using BFD version (Linaro_Binutils-2017.05) 2.27.0.20161019
-COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/
-LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o' '-c' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
-Linking C executable cmTC_0bad4
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0bad4.dir/link.txt --verbose=1
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/     -v CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o  -o cmTC_0bad4 
-Using built-in specs.
-COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc
-COLLECT_LTO_WRAPPER=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper
-Target: arm-linux-gnueabihf
-Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu
+Compiler executable checksum: ad58ac5faab723d2a5cd747ed592ecc2
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o /tmp/ccJ38pDN.s
+GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+Linking C executable cmTC_475ca
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_475ca.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc     -v CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o  -o cmTC_475ca 
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin
+COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) 
-COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/
-LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0bad4' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/collect2 -plugin /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/liblto_plugin.so -plugin-opt=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc4ksvwj.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ --build-id --eh-frame-hdr -dynamic-linker /lib/ld-linux-armhf.so.3 -X -m armelf_linux_eabi -o cmTC_0bad4 /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crt1.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crti.o /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtbegin.o -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1 -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtend.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0bad4' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_475ca' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvNuVTs.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_475ca /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_475ca' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
 make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
 
 
@@ -103,136 +112,128 @@ make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary
 Parsed C implicit include dir info from above output: rv=done
   found start of include info
   found start of implicit include info
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include]
-    add: [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
+    add: [/usr/include]
   end of search list found
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include]
-  collapse include dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include] ==> [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
-  implicit include dirs: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include;/usr/include]
 
 
 Parsed C implicit link information from above output:
-  link line regex: [^( *|.*[/\])(arm-linux-gnueabihf-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  link line regex: [^( *|.*[/\])(arm-openwrt-linux-muslgnueabi-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_0bad4/fast && /usr/bin/make -f CMakeFiles/cmTC_0bad4.dir/build.make CMakeFiles/cmTC_0bad4.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_475ca/fast && /usr/bin/make -f CMakeFiles/cmTC_475ca.dir/build.make CMakeFiles/cmTC_475ca.dir/build]
   ignore line: [make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/   -v -o CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc]
-  ignore line: [Target: arm-linux-gnueabihf]
-  ignore line: [Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu]
+  ignore line: [Building C object CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc   -v -o CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o' '-c' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/cc1 -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -iprefix /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/ -isysroot /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -march=armv7-a -mtune=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 -mthumb -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o -version -o /tmp/cclDJJHO.s]
-  ignore line: [GNU C11 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)]
-  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.4  MPC version 1.0.3  isl version none]
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1 -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o -version -o /tmp/ccJ38pDN.s]
+  ignore line: [GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include"]
-  ignore line: [ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include/arm-linux-gnueabihf"]
-  ignore line: [ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include"]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed"]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include"]
-  ignore line: [ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include/arm-linux-gnueabihf"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"]
   ignore line: [#include "..." search starts here:]
   ignore line: [#include <...> search starts here:]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include]
-  ignore line: [ /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
+  ignore line: [ /usr/include]
   ignore line: [End of search list.]
-  ignore line: [GNU C11 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)]
-  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.4  MPC version 1.0.3  isl version none]
+  ignore line: [GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [Compiler executable checksum: 92d1366231bd48a2dd9c36b316e0f825]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o' '-c' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/as -v -march=armv7-a -mfloat-abi=hard -mfpu=vfpv3-d16 -meabi=5 -o CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o /tmp/cclDJJHO.s]
-  ignore line: [GNU assembler version 2.27.0 (arm-linux-gnueabihf) using BFD version (Linaro_Binutils-2017.05) 2.27.0.20161019]
-  ignore line: [COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/]
-  ignore line: [LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o' '-c' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  ignore line: [Linking C executable cmTC_0bad4]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0bad4.dir/link.txt --verbose=1]
-  ignore line: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/     -v CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o  -o cmTC_0bad4 ]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-gcc]
-  ignore line: [COLLECT_LTO_WRAPPER=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper]
-  ignore line: [Target: arm-linux-gnueabihf]
-  ignore line: [Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu]
+  ignore line: [Compiler executable checksum: ad58ac5faab723d2a5cd747ed592ecc2]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o /tmp/ccJ38pDN.s]
+  ignore line: [GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [Linking C executable cmTC_475ca]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_475ca.dir/link.txt --verbose=1]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc     -v CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o  -o cmTC_475ca ]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin]
+  ignore line: [COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) ]
-  ignore line: [COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/]
-  ignore line: [LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_0bad4' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  link line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/collect2 -plugin /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/liblto_plugin.so -plugin-opt=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc4ksvwj.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ --build-id --eh-frame-hdr -dynamic-linker /lib/ld-linux-armhf.so.3 -X -m armelf_linux_eabi -o cmTC_0bad4 /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crt1.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crti.o /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtbegin.o -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1 -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtend.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crtn.o]
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/collect2] ==> ignore
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_475ca' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  link line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccvNuVTs.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_475ca /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o]
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2] ==> ignore
     arg [-plugin] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/liblto_plugin.so] ==> ignore
-    arg [-plugin-opt=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc4ksvwj.res] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccvNuVTs.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
-    arg [--sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/] ==> ignore
-    arg [--build-id] ==> ignore
     arg [--eh-frame-hdr] ==> ignore
     arg [-dynamic-linker] ==> ignore
-    arg [/lib/ld-linux-armhf.so.3] ==> ignore
+    arg [/lib/ld-musl-armhf.so.1] ==> ignore
     arg [-X] ==> ignore
     arg [-m] ==> ignore
     arg [armelf_linux_eabi] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_0bad4] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crt1.o] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crti.o] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtbegin.o] ==> ignore
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1]
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf]
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc]
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib]
-    arg [-L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib] ==> dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib]
-    arg [-L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib] ==> dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib]
-    arg [CMakeFiles/cmTC_0bad4.dir/CMakeCCompilerABI.c.o] ==> ignore
-    arg [-lgcc] ==> lib [gcc]
-    arg [--as-needed] ==> ignore
+    arg [cmTC_475ca] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib] ==> dir [/usr/lib]
+    arg [-rpath-link] ==> ignore
+    arg [/usr/lib] ==> ignore
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib]
+    arg [CMakeFiles/cmTC_475ca.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lssp_nonshared] ==> lib [ssp_nonshared]
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [--no-as-needed] ==> ignore
     arg [-lc] ==> lib [c]
-    arg [-lgcc] ==> lib [gcc]
-    arg [--as-needed] ==> ignore
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [--no-as-needed] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtend.o] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crtn.o] ==> ignore
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1]
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf]
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc]
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/lib]
-  collapse library dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib] ==> [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib]
-  collapse library dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib] ==> [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib]
-  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
-  implicit dirs: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/lib;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib]
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o] ==> ignore
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc] ==> [/develop/toolchain_t113_musl/lib/gcc]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
+  implicit libs: [ssp_nonshared;gcc_s;c;gcc_s]
+  implicit dirs: [/usr/lib;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1;/develop/toolchain_t113_musl/lib/gcc;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
   implicit fwks: []
 
 
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_c4ec6/fast && /usr/bin/make -f CMakeFiles/cmTC_c4ec6.dir/build.make CMakeFiles/cmTC_c4ec6.dir/build
+Run Build Command(s):/usr/bin/make cmTC_1254a/fast && /usr/bin/make -f CMakeFiles/cmTC_1254a.dir/build.make CMakeFiles/cmTC_1254a.dir/build
 make[1]: 进入目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
-Building CXX object CMakeFiles/cmTC_c4ec6.dir/testCXXCompiler.cxx.o
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/     -o CMakeFiles/cmTC_c4ec6.dir/testCXXCompiler.cxx.o -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_c4ec6
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c4ec6.dir/link.txt --verbose=1
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/       CMakeFiles/cmTC_c4ec6.dir/testCXXCompiler.cxx.o  -o cmTC_c4ec6 
+Building CXX object CMakeFiles/cmTC_1254a.dir/testCXXCompiler.cxx.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++     -o CMakeFiles/cmTC_1254a.dir/testCXXCompiler.cxx.o -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+Linking CXX executable cmTC_1254a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1254a.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++       CMakeFiles/cmTC_1254a.dir/testCXXCompiler.cxx.o  -o cmTC_1254a 
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
 make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
 
 
@@ -240,65 +241,65 @@ make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awt
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_e148c/fast && /usr/bin/make -f CMakeFiles/cmTC_e148c.dir/build.make CMakeFiles/cmTC_e148c.dir/build
+Run Build Command(s):/usr/bin/make cmTC_95c65/fast && /usr/bin/make -f CMakeFiles/cmTC_95c65.dir/build.make CMakeFiles/cmTC_95c65.dir/build
 make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/    -v -o CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp
-Using built-in specs.
-COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
-Target: arm-linux-gnueabihf
-Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu
+Building CXX object CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++    -v -o CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/cc1plus -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -iprefix /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/ -isysroot /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ -D_GNU_SOURCE /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -march=armv7-a -mtune=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 -mthumb -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccJh5LbM.s
-GNU C++14 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)
-	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version none
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1plus -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -D_GNU_SOURCE -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccAFaguI.s
+GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1"
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf/."
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/backward"
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include"
-ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include/arm-linux-gnueabihf"
-ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include"
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed"
-ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include"
-ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include/arm-linux-gnueabihf"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"
 #include "..." search starts here:
 #include <...> search starts here:
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf/.
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/backward
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include
- /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include
+ /usr/include
 End of search list.
-GNU C++14 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)
-	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.4, MPC version 1.0.3, isl version none
+GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-Compiler executable checksum: e0cbb9a4025b7f5b3e35190fea1db76f
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/as -v -march=armv7-a -mfloat-abi=hard -mfpu=vfpv3-d16 -meabi=5 -o CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccJh5LbM.s
-GNU assembler version 2.27.0 (arm-linux-gnueabihf) using BFD version (Linaro_Binutils-2017.05) 2.27.0.20161019
-COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/
-LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
-Linking CXX executable cmTC_e148c
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e148c.dir/link.txt --verbose=1
-/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/      -v CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_e148c 
-Using built-in specs.
-COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++
-COLLECT_LTO_WRAPPER=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper
-Target: arm-linux-gnueabihf
-Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu
+Compiler executable checksum: b8c1b2a25e9418fe973b249bbd3aff1b
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccAFaguI.s
+GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+Linking CXX executable cmTC_95c65
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_95c65.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++      -v CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_95c65 
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin
+COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) 
-COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/
-LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e148c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
- /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/collect2 -plugin /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/liblto_plugin.so -plugin-opt=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc1MiPld.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ --build-id --eh-frame-hdr -dynamic-linker /lib/ld-linux-armhf.so.3 -X -m armelf_linux_eabi -o cmTC_e148c /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crt1.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crti.o /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtbegin.o -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1 -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtend.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e148c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu'
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_95c65' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccRdhXwm.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_95c65 /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_95c65' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
 make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
 
 
@@ -306,133 +307,126 @@ make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary
 Parsed CXX implicit include dir info from above output: rv=done
   found start of include info
   found start of implicit include info
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf/.]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/backward]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed]
-    add: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include]
-    add: [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
+    add: [/usr/include]
   end of search list found
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/6.3.1]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf/.] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/backward] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/6.3.1/backward]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed]
-  collapse include dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include]
-  collapse include dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include] ==> [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
-  implicit include dirs: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/6.3.1;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include/c++/6.3.1/backward;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/include;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
+  collapse include dir [/usr/include] ==> [/usr/include]
+  implicit include dirs: [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include;/usr/include]
 
 
 Parsed CXX implicit link information from above output:
-  link line regex: [^( *|.*[/\])(arm-linux-gnueabihf-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  link line regex: [^( *|.*[/\])(arm-openwrt-linux-muslgnueabi-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_e148c/fast && /usr/bin/make -f CMakeFiles/cmTC_e148c.dir/build.make CMakeFiles/cmTC_e148c.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_95c65/fast && /usr/bin/make -f CMakeFiles/cmTC_95c65.dir/build.make CMakeFiles/cmTC_95c65.dir/build]
   ignore line: [make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/    -v -o CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++]
-  ignore line: [Target: arm-linux-gnueabihf]
-  ignore line: [Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu]
+  ignore line: [Building CXX object CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++    -v -o CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/cc1plus -quiet -v -imultilib . -imultiarch arm-linux-gnueabihf -iprefix /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/ -isysroot /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ -D_GNU_SOURCE /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -march=armv7-a -mtune=cortex-a9 -mfloat-abi=hard -mfpu=vfpv3-d16 -mthumb -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccJh5LbM.s]
-  ignore line: [GNU C++14 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)]
-  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.4  MPC version 1.0.3  isl version none]
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1plus -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -D_GNU_SOURCE -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/ccAFaguI.s]
+  ignore line: [GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1"]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf/."]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/backward"]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include"]
-  ignore line: [ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include/arm-linux-gnueabihf"]
-  ignore line: [ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/local/include"]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed"]
-  ignore line: [ignoring duplicate directory "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/../../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include"]
-  ignore line: [ignoring nonexistent directory "/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include/arm-linux-gnueabihf"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"]
   ignore line: [#include "..." search starts here:]
   ignore line: [#include <...> search starts here:]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/arm-linux-gnueabihf/.]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include/c++/6.3.1/backward]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/include-fixed]
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/include]
-  ignore line: [ /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
+  ignore line: [ /usr/include]
   ignore line: [End of search list.]
-  ignore line: [GNU C++14 (Linaro GCC 6.3-2017.05) version 6.3.1 20170404 (arm-linux-gnueabihf)]
-  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.4  MPC version 1.0.3  isl version none]
+  ignore line: [GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [Compiler executable checksum: e0cbb9a4025b7f5b3e35190fea1db76f]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  ignore line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/as -v -march=armv7-a -mfloat-abi=hard -mfpu=vfpv3-d16 -meabi=5 -o CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccJh5LbM.s]
-  ignore line: [GNU assembler version 2.27.0 (arm-linux-gnueabihf) using BFD version (Linaro_Binutils-2017.05) 2.27.0.20161019]
-  ignore line: [COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/]
-  ignore line: [LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  ignore line: [Linking CXX executable cmTC_e148c]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e148c.dir/link.txt --verbose=1]
-  ignore line: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++ --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/      -v CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_e148c ]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++]
-  ignore line: [COLLECT_LTO_WRAPPER=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper]
-  ignore line: [Target: arm-linux-gnueabihf]
-  ignore line: [Configured with: '/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/snapshots/gcc.git~linaro-6.3-2017.05/configure' SHELL=/bin/bash --with-mpc=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-mpfr=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gmp=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu --with-gnu-as --with-gnu-ld --disable-libmudflap --enable-lto --enable-shared --without-included-gettext --enable-nls --disable-sjlj-exceptions --enable-gnu-unique-object --enable-linker-build-id --disable-libstdcxx-pch --enable-c99 --enable-clocale=gnu --enable-libstdcxx-debug --enable-long-long --with-cloog=no --with-ppl=no --with-isl=no --disable-multilib --with-float=hard --with-fpu=vfpv3-d16 --with-mode=thumb --with-tune=cortex-a9 --with-arch=armv7-a --enable-threads=posix --enable-multiarch --enable-libstdcxx-time=yes --enable-gnu-indirect-function --with-build-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/sysroots/arm-linux-gnueabihf --with-sysroot=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu/arm-linux-gnueabihf/libc --enable-checking=release --disable-bootstrap --enable-languages=c,c++,fortran,lto --build=x86_64-unknown-linux-gnu --host=x86_64-unknown-linux-gnu --target=arm-linux-gnueabihf --prefix=/home/tcwg-buildslave/workspace/tcwg-make-release/builder_arch/amd64/label/tcwg-x86_64-build/target/arm-linux-gnueabihf/_build/builds/destdir/x86_64-unknown-linux-gnu]
+  ignore line: [Compiler executable checksum: b8c1b2a25e9418fe973b249bbd3aff1b]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccAFaguI.s]
+  ignore line: [GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [Linking CXX executable cmTC_95c65]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_95c65.dir/link.txt --verbose=1]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++      -v CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_95c65 ]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin]
+  ignore line: [COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 6.3.1 20170404 (Linaro GCC 6.3-2017.05) ]
-  ignore line: [COMPILER_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/bin/]
-  ignore line: [LIBRARY_PATH=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/:/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib/:/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_e148c' '-shared-libgcc' '-march=armv7-a' '-mtune=cortex-a9' '-mfloat-abi=hard' '-mfpu=vfpv3-d16' '-mthumb' '-mtls-dialect=gnu']
-  link line: [ /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/collect2 -plugin /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/liblto_plugin.so -plugin-opt=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc1MiPld.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/ --build-id --eh-frame-hdr -dynamic-linker /lib/ld-linux-armhf.so.3 -X -m armelf_linux_eabi -o cmTC_e148c /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crt1.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crti.o /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtbegin.o -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1 -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc -L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib -L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtend.o /develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crtn.o]
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/collect2] ==> ignore
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_95c65' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  link line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccRdhXwm.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_95c65 /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o]
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2] ==> ignore
     arg [-plugin] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/liblto_plugin.so] ==> ignore
-    arg [-plugin-opt=/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../libexec/gcc/arm-linux-gnueabihf/6.3.1/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc1MiPld.res] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccRdhXwm.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
-    arg [--sysroot=/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/] ==> ignore
-    arg [--build-id] ==> ignore
     arg [--eh-frame-hdr] ==> ignore
     arg [-dynamic-linker] ==> ignore
-    arg [/lib/ld-linux-armhf.so.3] ==> ignore
+    arg [/lib/ld-musl-armhf.so.1] ==> ignore
     arg [-X] ==> ignore
     arg [-m] ==> ignore
     arg [armelf_linux_eabi] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_e148c] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crt1.o] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crti.o] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtbegin.o] ==> ignore
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1]
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf]
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc]
-    arg [-L/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib] ==> dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib]
-    arg [-L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib] ==> dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib]
-    arg [-L/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib] ==> dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib]
-    arg [CMakeFiles/cmTC_e148c.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [cmTC_95c65] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib] ==> dir [/usr/lib]
+    arg [-rpath-link] ==> ignore
+    arg [/usr/lib] ==> ignore
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib]
+    arg [CMakeFiles/cmTC_95c65.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
+    arg [-lssp_nonshared] ==> lib [ssp_nonshared]
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [-lgcc] ==> lib [gcc]
     arg [-lc] ==> lib [c]
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [-lgcc] ==> lib [gcc]
-    arg [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/crtend.o] ==> ignore
-    arg [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib/crtn.o] ==> ignore
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1]
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf]
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc]
-  collapse library dir [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/../lib/gcc/arm-linux-gnueabihf/6.3.1/../../../../arm-linux-gnueabihf/lib] ==> [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/lib]
-  collapse library dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib] ==> [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib]
-  collapse library dir [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib] ==> [/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib]
-  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
-  implicit dirs: [/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf/6.3.1;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc/arm-linux-gnueabihf;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/lib/gcc;/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/arm-linux-gnueabihf/lib;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/lib;/develop/toolchain_CV181H/gcc/sysroot/sysroot-glibc-linaro-2.23-2017.05-arm-linux-gnueabihf/usr/lib]
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o] ==> ignore
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc] ==> [/develop/toolchain_t113_musl/lib/gcc]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
+  implicit libs: [stdc++;m;ssp_nonshared;gcc_s;c;gcc_s]
+  implicit dirs: [/usr/lib;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1;/develop/toolchain_t113_musl/lib/gcc;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
   implicit fwks: []
 
 

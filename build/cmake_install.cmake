@@ -41,6 +41,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/line_chart/cmake_install.cmake")
   include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu/cmake_install.cmake")
+  include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/cmake_install.cmake")
 
 endif()
 

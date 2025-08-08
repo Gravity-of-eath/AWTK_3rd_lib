@@ -182,6 +182,19 @@ banner_menu/fast:
 	$(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/build
 .PHONY : banner_menu/fast
 
+#=============================================================================
+# Target rules for targets named blur_view
+
+# Build rule for target.
+blur_view: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 blur_view
+.PHONY : blur_view
+
+# fast build rule for target.
+blur_view/fast:
+	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
+.PHONY : blur_view/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -196,6 +209,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... line_chart"
 	@echo "... banner_menu"
+	@echo "... blur_view"
 .PHONY : help
 
 

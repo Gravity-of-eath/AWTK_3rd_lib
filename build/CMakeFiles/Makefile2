@@ -55,18 +55,21 @@ CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd
 # The main recursive "all" target.
 all: line_chart/all
 all: banner_menu/all
+all: blur_view/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: line_chart/preinstall
 preinstall: banner_menu/preinstall
+preinstall: blur_view/preinstall
 
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: line_chart/clean
 clean: banner_menu/clean
+clean: blur_view/clean
 
 .PHONY : clean
 
@@ -87,6 +90,24 @@ banner_menu/preinstall:
 banner_menu/clean: banner_menu/CMakeFiles/banner_menu.dir/clean
 
 .PHONY : banner_menu/clean
+
+#=============================================================================
+# Directory level rules for directory blur_view
+
+# Recursive "all" directory target.
+blur_view/all: blur_view/CMakeFiles/blur_view.dir/all
+
+.PHONY : blur_view/all
+
+# Recursive "preinstall" directory target.
+blur_view/preinstall:
+
+.PHONY : blur_view/preinstall
+
+# Recursive "clean" directory target.
+blur_view/clean: blur_view/CMakeFiles/blur_view.dir/clean
+
+.PHONY : blur_view/clean
 
 #=============================================================================
 # Directory level rules for directory line_chart
@@ -113,7 +134,7 @@ line_chart/clean: line_chart/CMakeFiles/line_chart.dir/clean
 line_chart/CMakeFiles/line_chart.dir/all:
 	$(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/depend
 	$(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=4,5,6,7 "Built target line_chart"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=9,10,11,12 "Built target line_chart"
 .PHONY : line_chart/CMakeFiles/line_chart.dir/all
 
 # Build rule for subdir invocation for target.
@@ -159,6 +180,33 @@ banner_menu: banner_menu/CMakeFiles/banner_menu.dir/rule
 banner_menu/CMakeFiles/banner_menu.dir/clean:
 	$(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/clean
 .PHONY : banner_menu/CMakeFiles/banner_menu.dir/clean
+
+#=============================================================================
+# Target rules for target blur_view/CMakeFiles/blur_view.dir
+
+# All Build rule for target.
+blur_view/CMakeFiles/blur_view.dir/all:
+	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/depend
+	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=4,5,6,7,8 "Built target blur_view"
+.PHONY : blur_view/CMakeFiles/blur_view.dir/all
+
+# Build rule for subdir invocation for target.
+blur_view/CMakeFiles/blur_view.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 5
+	$(MAKE) -f CMakeFiles/Makefile2 blur_view/CMakeFiles/blur_view.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+.PHONY : blur_view/CMakeFiles/blur_view.dir/rule
+
+# Convenience name for target.
+blur_view: blur_view/CMakeFiles/blur_view.dir/rule
+
+.PHONY : blur_view
+
+# clean rule for target.
+blur_view/CMakeFiles/blur_view.dir/clean:
+	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/clean
+.PHONY : blur_view/CMakeFiles/blur_view.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

@@ -49,10 +49,10 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/line_chart/libline_chart.so")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/line_chart/libline_chart.so"
-         OLD_RPATH "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/../lib/cv181:"
+         OLD_RPATH "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src/../lib/t113:"
          NEW_RPATH "")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/develop/toolchain_CV181H/gcc/gcc-linaro-6.3.1-2017.05-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/line_chart/libline_chart.so")
+      execute_process(COMMAND "/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/line_chart/libline_chart.so")
     endif()
   endif()
 endif()

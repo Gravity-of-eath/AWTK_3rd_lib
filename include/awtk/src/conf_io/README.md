@@ -20,7 +20,7 @@ conf-io 是可选组件，需要自己包含头文件，否则 64 位数据类�
 
 ## 直接使用 INI/JSON/UBJSON 的方法
 
-开发者也可以直接使用 INI/JSON/UBJSON 提供的 API 去操作自己的配置文件，可以从文件加载，从内存加载或其它地方加载（实现对于的 data\_reader/data\_writer 即可）。
+开发者也可以直接使用 INI/JSON/UBJSON 提供的 API 去操作自己的配置文件，可以从文件加载，从内存加载或其它地方加载（实现对应的 data\_reader/data\_writer 即可）。
 
 > key 的规则请参考 [如何存取应用程序的配置信息](https://github.com/zlgopen/awtk/blob/master/docs/how_to_use_app_conf.md) 的第7节。
 
@@ -49,7 +49,7 @@ test.json 文件内容
         "age" : 100,
         "weight" : 60.5000
     }
-}c
+}
 ```
 
 示例代码
@@ -88,3 +88,8 @@ test.json 文件内容
 ```
 
 > 更多用法请参考：tests/conf_json_test.cc
+
+## 注意：
+
+ * 英文的点(.) 作为 key 的分隔符，所以 key 不能包含英文的点(.)。
+

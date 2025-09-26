@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mutable_image
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -77,6 +77,8 @@ typedef struct _mutable_image_t {
   image_base_t image_base;
 
   /*private*/
+  bool_t is_need_redraw;
+  bool_t has_bitmap;
   uint32_t timer_id;
   void* prepare_image_ctx;
   mutable_image_prepare_image_t prepare_image;
@@ -108,9 +110,21 @@ typedef struct _mutable_image_t {
 widget_t* mutable_image_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h);
 
 /**
+ * @method mutable_image_invalidate_force
+ * mutable_image 强制刷新。
+ * 备注：
+ * 1. 该函数不负责更新界面数据，只是刷新更新控件脏矩形和触发刷新事件，会强制刷新并且无视 need_redraw 回调函数。
+ * 2. 可以配合 need_redraw 回调函数来使用，当 need_redraw 回调函数固定返回 false 时，同时按照用户自己的周期节拍调用该函数强制刷新，就可以实现外部控制 mutable_image 刷新时机。
+ * @param {widget_t*} widget mutable_image对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t mutable_image_invalidate_force(widget_t* widget);
+
+/**
  * @method mutable_image_set_need_redraw
  * 设置need_redraw回调函数。
- *
+ * 备注：该函数不负责更新界面数据，只是询问刷新时机同时更新控件脏矩形。（需要配合 mutable_image_set_prepare_image 来设置图片数据）
  * 缺省每16ms刷新一次。但有时只是在变化时刷新，所以提供一个回调函数由用户决定是否需要重绘。
  *
  * @param {widget_t*} widget mutable_image对象。
@@ -200,7 +214,7 @@ widget_t* mutable_image_init(widget_t* widget);
  * @annotation ["cast"]
  * @param {widget_t*} widget mutable_image对象。
  *
- * @return {widget_t*} 返回RET_OK表示成功，否则表示失败。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t mutable_image_on_destroy(widget_t* widget);
 
@@ -212,7 +226,7 @@ ret_t mutable_image_on_destroy(widget_t* widget);
  * @param {widget_t*} widget mutable_image对象。
  * @param {canvas_t*} canvas 画布对象。
  *
- * @return {widget_t*} 返回RET_OK表示成功，否则表示失败。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t mutable_image_on_paint_self(widget_t* widget, canvas_t* canvas);
 

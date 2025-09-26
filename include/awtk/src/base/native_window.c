@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  native window
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -202,6 +202,16 @@ ret_t native_window_show_border(native_window_t* win, bool_t show) {
 
   if (win->vt->show_border != NULL) {
     return win->vt->show_border(win, show);
+  }
+
+  return RET_NOT_IMPL;
+}
+
+ret_t native_window_set_window_hit_test(native_window_t* win, xy_t x, xy_t y, wh_t w, wh_t h) {
+  return_value_if_fail(win != NULL && win->vt != NULL, RET_BAD_PARAMS);
+
+  if (win->vt->set_window_hit_test != NULL) {
+    return win->vt->set_window_hit_test(win, x, y, w, h);
   }
 
   return RET_NOT_IMPL;

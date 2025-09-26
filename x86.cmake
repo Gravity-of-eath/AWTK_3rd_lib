@@ -1,0 +1,9 @@
+# 基础定义
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR x86)
+
+
+# 编译器设置
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
+set(BUILD_SHARED_LIBS ON)

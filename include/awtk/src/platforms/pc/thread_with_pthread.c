@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  pthread implemented thread related functions.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -155,7 +155,7 @@ ret_t tk_cond_wait_timeout(tk_cond_t* cond, tk_mutex_t* mutex, uint32_t ms) {
   abstime.tv_sec = delta.tv_sec + (ms / 1000);
   abstime.tv_nsec = (delta.tv_usec + (ms % 1000) * 1000) * 1000;
 #endif
-  if (abstime.tv_nsec > 1000000000) {
+  if (abstime.tv_nsec >= 1000000000) {
     abstime.tv_sec += 1;
     abstime.tv_nsec -= 1000000000;
   }
@@ -172,7 +172,7 @@ tryagain:
     case 0:
       break;
     default: {
-      log_error("pthread_cond_timedwait() failed");
+      log_error("pthread_cond_timedwait() failed, code=%d, ms=%d\r\n", code, ms);
       ret = RET_FAIL;
     }
   }
@@ -282,7 +282,7 @@ tryagain:
     }
     return RET_FAIL;
   }
-#else  // HAVE_SEM_TIMEDWAIT
+#else   // HAVE_SEM_TIMEDWAIT
 
   uint32_t start = time_now_ms();
   return_value_if_fail(semaphore != NULL, RET_BAD_PARAMS);
@@ -328,7 +328,7 @@ ret_t tk_semaphore_destroy(tk_semaphore_t* semaphore) {
 }
 
 /********************************************************/
-
+#include <sched.h>
 struct _tk_thread_t {
   void* args;
   bool_t running;
@@ -337,6 +337,9 @@ struct _tk_thread_t {
   char name[TK_NAME_LEN + 1];
   uint32_t stack_size;
   int32_t priority;
+
+  pthread_attr_t attr;
+  struct sched_param param;
 };
 
 ret_t tk_thread_set_name(tk_thread_t* thread, const char* name) {
@@ -356,7 +359,22 @@ ret_t tk_thread_set_stack_size(tk_thread_t* thread, uint32_t stack_size) {
 }
 
 int32_t tk_thread_get_priority_from_platform(tk_thread_priority_t priority) {
-  return 0;
+  switch (priority) {
+    case TK_THREAD_PRIORITY_TIME_CRITICAL:
+      return 99;
+    case TK_THREAD_PRIORITY_HIGHEST:
+      return 79;
+    case TK_THREAD_PRIORITY_ABOVE_NORMAL:
+      return 59;
+    case TK_THREAD_PRIORITY_NORMAL:
+      return 39;
+    case TK_THREAD_PRIORITY_BELOW_NORMAL:
+      return 19;
+    case TK_THREAD_PRIORITY_LOWEST:
+      return 1;
+    default:
+      return -1;
+  }
 }
 
 ret_t tk_thread_set_priority(tk_thread_t* thread, tk_thread_priority_t priority) {
@@ -382,6 +400,7 @@ tk_thread_t* tk_thread_create(tk_thread_entry_t entry, void* args) {
 
   thread->args = args;
   thread->entry = entry;
+  thread->priority = -1;
 
   return thread;
 }
@@ -395,9 +414,26 @@ static void* entry(void* arg) {
 }
 
 ret_t tk_thread_start(tk_thread_t* thread) {
+  int err = 0;
   return_value_if_fail(thread != NULL, RET_BAD_PARAMS);
 
-  int ret = pthread_create(&(thread->thread), NULL, entry, thread);
+  err = pthread_attr_init(&thread->attr);
+  return_value_if_fail(err == 0, RET_FAIL);
+
+  if (thread->priority >= 0) {
+    pthread_attr_setschedpolicy(&thread->attr, SCHED_FIFO);
+
+    thread->param.sched_priority = thread->priority;
+    pthread_attr_setschedparam(&thread->attr, &thread->param);
+#ifndef ANDROID
+    pthread_attr_setinheritsched(&thread->attr, PTHREAD_EXPLICIT_SCHED);
+#endif /*ANDROID*/
+  }
+  if (thread->stack_size > 0) {
+    pthread_attr_setstacksize(&thread->attr, thread->stack_size);
+  }
+
+  int ret = pthread_create(&(thread->thread), &thread->attr, entry, thread);
   thread->running = ret == 0;
 
   return thread->running ? RET_OK : RET_FAIL;

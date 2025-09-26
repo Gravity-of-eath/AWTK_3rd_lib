@@ -107,6 +107,7 @@ ret_t line_chart_set_line_width(widget_t *widget, int32_t line_width)
 
 ret_t line_chart_add_point(widget_t *widget, float_t point)
 {
+  // printf("line_chart_add_point value=%.1f\n", point);
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(line_chart != NULL, RET_BAD_PARAMS);
   float_queue_push_n(line_chart->queue, &point, 1);
@@ -324,7 +325,7 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
     int32_t x = step * i;
     ratio = (value - min) * 1.0f / scale_guild * 1.0f;
     useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
-    y = (ratio * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
+    y = ((1.0f - ratio) * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
 
     if (x > secd_percent_widget && x - step < secd_percent_widget)
     {
@@ -336,7 +337,7 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
       vgcanvas_move_to(vgc, secd_percent_widget, y);
       // vgcanvas_line_to(vgc, x, y);
       // continue;
-      printf("secd_percent_widget = %d x=%d\n", secd_percent_widget, x);
+      // printf("secd_percent_widget = %d x=%d\n", secd_percent_widget, x);
     }
     vgcanvas_line_to(vgc, x, y);
 
@@ -406,6 +407,7 @@ static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
   draw_guide_line(line_chart, vgc);
   draw_chart_line(line_chart, vgc);
   vgcanvas_restore(vgc);
+  widget_invalidate(widget, NULL);
   return RET_OK;
 }
 
@@ -414,7 +416,52 @@ static ret_t line_chart_on_event(widget_t *widget, event_t *e)
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(widget != NULL && line_chart != NULL, RET_BAD_PARAMS);
 
-  (void)line_chart;
+  if (e->type == EVT_TOUCH_DOWN && widget_get_prop_bool(widget, "touch_down", FALSE))
+  {
+    printf("line_chart_on_event EVT_TOUCH_DOWN\n");
+    return RET_STOP;
+  }
+  else if (e->type == EVT_TOUCH_MOVE && widget_get_prop_bool(widget, "touch_move", FALSE))
+  {
+    printf("line_chart_on_event EVT_TOUCH_MOVE\n");
+    return RET_STOP;
+  }
+  else if (e->type == EVT_TOUCH_UP && widget_get_prop_bool(widget, "touch_up", FALSE))
+  {
+    printf("line_chart_on_event EVT_TOUCH_UP\n");
+    return RET_STOP;
+  }
+  else
+  {
+  }
+
+  return RET_OK;
+}
+
+
+static ret_t on_event_before_children(widget_t *widget, event_t *e)
+{
+  line_chart_t *line_chart = LINE_CHART(widget);
+  return_value_if_fail(widget != NULL && line_chart != NULL, RET_BAD_PARAMS);
+
+  if (e->type == EVT_TOUCH_DOWN && widget_get_prop_bool(widget, "touch_down_b", FALSE))
+  {
+    printf("on_event_before_children EVT_TOUCH_DOWN\n");
+    return RET_STOP;
+  }
+  else if (e->type == EVT_TOUCH_MOVE && widget_get_prop_bool(widget, "touch_move_b", FALSE))
+  {
+    printf("on_event_before_children EVT_TOUCH_MOVE\n");
+    return RET_STOP;
+  }
+  else if (e->type == EVT_TOUCH_UP && widget_get_prop_bool(widget, "touch_up_b", FALSE))
+  {
+    printf("on_event_before_children EVT_TOUCH_UP\n");
+    return RET_STOP;
+  }
+  else
+  {
+  }
 
   return RET_OK;
 }
@@ -442,6 +489,7 @@ TK_DECL_VTABLE(line_chart) = {.size = sizeof(line_chart_t),
                               .set_prop = line_chart_set_prop,
                               .get_prop = line_chart_get_prop,
                               .on_event = line_chart_on_event,
+                              .on_event_before_children=on_event_before_children,
                               .on_destroy = line_chart_on_destroy};
 
 widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)

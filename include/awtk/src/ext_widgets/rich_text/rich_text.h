@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rich_text
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -103,7 +103,7 @@ typedef struct _rich_text_t {
   /**
    * @property {bool_t} yslidable
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 标识控件是否允许上下拖动。
+   * 标识控件是否允许上下拖动。(需满足文字的高度大于控件的高度)
    */
   bool_t yslidable;
 
@@ -152,7 +152,7 @@ widget_t* rich_text_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h);
  * 设置文本。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget 控件对象。
- * @param {char*}  text 文本。
+ * @param {const char*}  text 文本。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

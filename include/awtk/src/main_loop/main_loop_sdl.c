@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  sdl2 implemented main_loop interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * this program is distributed in the hope that it will be useful,
  * but without any warranty; without even the implied warranty of
@@ -43,11 +43,20 @@ static ret_t main_loop_sdl2_dispatch_text_input(main_loop_simple_t* loop, SDL_Ev
   memset(&event, 0x00, sizeof(event));
   event.e = event_init(EVT_IM_COMMIT, NULL);
   event.text = text_input_event->text;
+  if (loop->key_pressed && *(event.text) == '\b') {
+    return RET_OK;
+  }
 
   return input_method_dispatch_to_widget(input_method(), &(event.e));
 }
 
 static ret_t main_loop_sdl2_dispatch_text_editing(main_loop_simple_t* loop, SDL_Event* sdl_event) {
+  return RET_OK;
+}
+
+static ret_t main_loop_sdl2_set_key_event_mod(key_event_t* event, uint16_t mod) {
+  event->capslock = (mod & KMOD_CAPS) != 0;
+  event->numlock = (mod & KMOD_NUM) != 0;
   return RET_OK;
 }
 
@@ -59,14 +68,18 @@ static ret_t main_loop_sdl2_dispatch_key_event(main_loop_simple_t* loop, SDL_Eve
   switch (type) {
     case SDL_KEYDOWN: {
       key_event_init(&event, EVT_KEY_DOWN, widget, sdl_event->key.keysym.sym);
+      main_loop_sdl2_set_key_event_mod(&event, sdl_event->key.keysym.mod);
       event.e.native_window_handle = SDL_GetWindowFromID(sdl_event->key.windowID);
       window_manager_dispatch_input_event(widget, (event_t*)&event);
+      loop->key_pressed = TRUE;
       break;
     }
     case SDL_KEYUP: {
       key_event_init(&event, EVT_KEY_UP, widget, sdl_event->key.keysym.sym);
+      main_loop_sdl2_set_key_event_mod(&event, sdl_event->key.keysym.mod);
       event.e.native_window_handle = SDL_GetWindowFromID(sdl_event->key.windowID);
       window_manager_dispatch_input_event(widget, (event_t*)&event);
+      loop->key_pressed = FALSE;
       break;
     }
     default:
@@ -106,6 +119,45 @@ static ret_t main_loop_sdl2_dispatch_multi_gesture_event(main_loop_simple_t* loo
 
   event.e.native_window_handle = NULL;
   window_manager_dispatch_input_event(widget, e);
+
+  return RET_OK;
+}
+
+static ret_t main_loop_sdl2_dispatch_touch_event(main_loop_simple_t* loop, SDL_Event* sdl_event) {
+  event_t* e = NULL;
+  touch_event_t event;
+  int type = EVT_TOUCH_DOWN;
+  widget_t* widget = loop->base.wm;
+  SDL_TouchFingerEvent* finger_event = (SDL_TouchFingerEvent*)sdl_event;
+
+  memset(&event, 0x00, sizeof(event));
+  switch (sdl_event->type) {
+    case SDL_FINGERDOWN: {
+      type = EVT_TOUCH_DOWN;
+      break;
+    }
+    case SDL_FINGERUP: {
+      type = EVT_TOUCH_UP;
+      break;
+    }
+    case SDL_FINGERMOTION: {
+      type = EVT_TOUCH_MOVE;
+      break;
+    }
+    default:
+      break;
+  }
+
+  e = touch_event_init(&event, type, widget, finger_event->touchId, finger_event->fingerId,
+                       finger_event->x, finger_event->y, finger_event->pressure);
+
+  if (e != NULL) {
+    widget_t* win = window_manager_get_top_window(widget);
+    widget_dispatch(win, e);
+  }
+
+  log_debug("touch event: type=%d touch_id=% " PRId64 " finger_id=%" PRId64 "  x=%f y=%f\n", type,
+            event.touch_id, event.finger_id, event.x, event.y);
 
   return RET_OK;
 }
@@ -179,6 +231,7 @@ static ret_t on_resized_timer(const timer_info_t* info) {
   widget_t* wm = WIDGET(info->ctx);
   widget_set_need_relayout_children(wm);
   widget_invalidate_force(wm, NULL);
+  window_manager_set_ignore_input_events(wm, FALSE);
 
   log_debug("on_resized_timer\n");
   return RET_REMOVE;
@@ -204,6 +257,7 @@ static ret_t main_loop_sdl2_dispatch_window_event(main_loop_simple_t* loop, SDL_
                 event->window.data2);
       break;
     case SDL_WINDOWEVENT_RESIZED:
+      window_manager_set_ignore_input_events(l->wm, TRUE);
       log_debug("Window %d resized to %dx%d\n", event->window.windowID, event->window.data1,
                 event->window.data2);
       timer_add(on_resized_timer, l->wm, 100);
@@ -212,7 +266,9 @@ static ret_t main_loop_sdl2_dispatch_window_event(main_loop_simple_t* loop, SDL_
       native_window_info_t info;
       event_t e = event_init(EVT_NATIVE_WINDOW_RESIZED, NULL);
       SDL_Window* win = SDL_GetWindowFromID(event->window.windowID);
-      native_window_t* native_window = (native_window_t*)widget_get_prop_pointer(window_manager(), WIDGET_PROP_NATIVE_WINDOW);
+      native_window_t* native_window =
+          (native_window_t*)widget_get_prop_pointer(window_manager(), WIDGET_PROP_NATIVE_WINDOW);
+      window_manager_set_ignore_input_events(l->wm, TRUE);
       native_window_get_info(native_window, &info);
       system_info_set_lcd_w(system_info(), info.w);
       system_info_set_lcd_h(system_info(), info.h);
@@ -231,19 +287,43 @@ static ret_t main_loop_sdl2_dispatch_window_event(main_loop_simple_t* loop, SDL_
       log_debug("Window %d restored\n", event->window.windowID);
       widget_invalidate_force(l->wm, NULL);
       break;
-    case SDL_WINDOWEVENT_ENTER:
+    case SDL_WINDOWEVENT_ENTER: {
+      int x = 0;
+      int y = 0;
+      pointer_event_t e;
+      SDL_Window* win = SDL_GetWindowFromID(event->window.windowID);
+
       log_debug("Mouse entered window %d\n", event->window.windowID);
+      SDL_GetMouseState(&x, &y);
+      pointer_event_init(&e, EVT_NATIVE_WINDOW_ENTER, l->wm, x, y);
+      window_manager_dispatch_native_window_event(l->wm, (event_t*)&e, win);
       break;
-    case SDL_WINDOWEVENT_LEAVE:
+    }
+    case SDL_WINDOWEVENT_LEAVE: {
+      event_t e = event_init(EVT_NATIVE_WINDOW_LEAVE, NULL);
+      SDL_Window* win = SDL_GetWindowFromID(event->window.windowID);
+
       log_debug("Mouse left window %d\n", event->window.windowID);
+      window_manager_dispatch_native_window_event(l->wm, &e, win);
       break;
-    case SDL_WINDOWEVENT_FOCUS_GAINED:
+    }
+    case SDL_WINDOWEVENT_FOCUS_GAINED: {
+      event_t e = event_init(EVT_NATIVE_WINDOW_FOCUS_GAINED, NULL);
+      SDL_Window* win = SDL_GetWindowFromID(event->window.windowID);
+
       log_debug("Window %d gained keyboard focus\n", event->window.windowID);
+      window_manager_dispatch_native_window_event(l->wm, &e, win);
       break;
-    case SDL_WINDOWEVENT_FOCUS_LOST:
+    }
+    case SDL_WINDOWEVENT_FOCUS_LOST: {
+      event_t e = event_init(EVT_NATIVE_WINDOW_FOCUS_LOST, NULL);
+      SDL_Window* win = SDL_GetWindowFromID(event->window.windowID);
+
       SDL_CaptureMouse(FALSE);
       log_debug("Window %d lost keyboard focus\n", event->window.windowID);
+      window_manager_dispatch_native_window_event(l->wm, &e, win);
       break;
+    }
 #if SDL_VERSION_ATLEAST(2, 0, 5)
     case SDL_WINDOWEVENT_TAKE_FOCUS:
       log_debug("Window %d is offered a focus\n", event->window.windowID);
@@ -260,12 +340,24 @@ static ret_t main_loop_sdl2_dispatch_window_event(main_loop_simple_t* loop, SDL_
   return RET_OK;
 }
 
-static ret_t main_loop_sdl2_dispatch(main_loop_simple_t* loop) {
+ret_t main_loop_sdl2_dispatch(main_loop_simple_t* loop) {
   SDL_Event event;
   ret_t ret = RET_OK;
-
+  widget_t* wm = loop->base.wm;
   while (SDL_PollEvent(&event) && loop->base.running) {
     switch (event.type) {
+      case SDL_DROPFILE: {
+        drop_file_event_t drop;
+        widget_t* top = window_manager_get_top_window(wm);
+        event_t* e = drop_file_event_init(&drop, NULL, event.drop.file);
+
+        widget_dispatch(wm, e);
+        if (top != NULL) {
+          widget_dispatch(top, e);
+        }
+
+        break;
+      }
       case SDL_KEYDOWN:
       case SDL_KEYUP: {
         ret = main_loop_sdl2_dispatch_key_event(loop, &event);
@@ -275,6 +367,12 @@ static ret_t main_loop_sdl2_dispatch(main_loop_simple_t* loop) {
       case SDL_MOUSEBUTTONDOWN:
       case SDL_MOUSEBUTTONUP: {
         ret = main_loop_sdl2_dispatch_mouse_event(loop, &event);
+        break;
+      }
+      case SDL_FINGERDOWN:
+      case SDL_FINGERUP:
+      case SDL_FINGERMOTION: {
+        ret = main_loop_sdl2_dispatch_touch_event(loop, &event);
         break;
       }
       case SDL_TEXTINPUT: {
@@ -299,12 +397,12 @@ static ret_t main_loop_sdl2_dispatch(main_loop_simple_t* loop) {
       }
       case SDL_SYSWMEVENT: {
         system_event_t e;
-        widget_dispatch(window_manager(), system_event_init(&e, NULL, &event));
+        widget_dispatch(wm, system_event_init(&e, NULL, &event));
         break;
       }
       case SDL_QUIT: {
         event_t e = event_init(EVT_REQUEST_QUIT_APP, NULL);
-        if (widget_dispatch(window_manager(), &e) == RET_OK) {
+        if (widget_dispatch(wm, &e) == RET_OK) {
           main_loop_quit((main_loop_t*)loop);
         }
         break;
@@ -334,6 +432,8 @@ main_loop_t* main_loop_init(int w, int h) {
   loop = main_loop_simple_init(w, h, NULL, NULL);
   loop->base.destroy = main_loop_sdl2_destroy;
   loop->dispatch_input = main_loop_sdl2_dispatch;
+  SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+  SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
 
   return (main_loop_t*)loop;
 }

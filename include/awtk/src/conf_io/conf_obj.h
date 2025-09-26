@@ -4,7 +4,7 @@
  * Author: AWTK Develop Team
  * Brief:  conf obj
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -55,6 +55,22 @@ typedef conf_doc_t* (*conf_doc_load_t)(data_reader_t* reader);
  */
 tk_object_t* conf_obj_create(conf_doc_save_t save, conf_doc_load_t load, const char* url,
                              bool_t create_if_not_exist);
+
+/**
+ * @method conf_obj_create_ex 
+ * 
+ * @annotation ["constructor"]
+ * 
+ * @param {conf_doc_save_t} save 保存函数。
+ * @param {conf_doc_load_t} load 加载函数。
+ * @param {const char*} url 路径。
+ * @param {bool_t} create_if_not_exist 如果不存在是否创建。 
+ * @param {bool_t} use_extend_type 是否使用拓展类型。
+ * 
+ * @return {tk_object_t*} 返回配置对象。
+ */
+tk_object_t* conf_obj_create_ex(conf_doc_save_t save, conf_doc_load_t load, const char* url,
+                                bool_t create_if_not_exist, bool_t use_extend_type);
 
 /**
  * @method conf_obj_create_sub_object 

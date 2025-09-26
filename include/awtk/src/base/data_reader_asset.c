@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  data_reader asset
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -82,7 +82,13 @@ data_reader_t* data_reader_asset_create(const char* assetname) {
   asset = TKMEM_ZALLOC(data_reader_asset_t);
   return_value_if_fail(asset != NULL && am != NULL, NULL);
 
+  p = strstr(assetname, "://");
+  if (p != NULL) {
+    p += 3;
+    assetname = p;
+  }
   p = strchr(assetname, '/');
+
   if (p != NULL) {
     tk_strncpy_s(type, sizeof(type), assetname, p - assetname);
     assetname = p + 1;

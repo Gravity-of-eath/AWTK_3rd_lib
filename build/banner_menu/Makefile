@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src
+CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build
+CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,14 +126,14 @@ install/local/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/banner_menu/CMakeFiles/progress.marks
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/banner_menu/CMakeFiles/progress.marks
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/clean
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,22 +143,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 banner_menu/CMakeFiles/banner_menu.dir/rule:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/CMakeFiles/banner_menu.dir/rule
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 banner_menu/CMakeFiles/banner_menu.dir/rule
 .PHONY : banner_menu/CMakeFiles/banner_menu.dir/rule
 
 # Convenience name for target.
@@ -168,7 +168,7 @@ banner_menu: banner_menu/CMakeFiles/banner_menu.dir/rule
 
 # fast build rule for target.
 banner_menu/fast:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/build
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/build
 .PHONY : banner_menu/fast
 
 src/yps_banner_menu.o: src/yps_banner_menu.c.o
@@ -177,7 +177,7 @@ src/yps_banner_menu.o: src/yps_banner_menu.c.o
 
 # target to build an object file
 src/yps_banner_menu.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o
 .PHONY : src/yps_banner_menu.c.o
 
 src/yps_banner_menu.i: src/yps_banner_menu.c.i
@@ -186,7 +186,7 @@ src/yps_banner_menu.i: src/yps_banner_menu.c.i
 
 # target to preprocess a source file
 src/yps_banner_menu.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.i
 .PHONY : src/yps_banner_menu.c.i
 
 src/yps_banner_menu.s: src/yps_banner_menu.c.s
@@ -195,7 +195,7 @@ src/yps_banner_menu.s: src/yps_banner_menu.c.s
 
 # target to generate assembly for a file
 src/yps_banner_menu.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.s
 .PHONY : src/yps_banner_menu.c.s
 
 src/yps_banner_menu_register.o: src/yps_banner_menu_register.c.o
@@ -204,7 +204,7 @@ src/yps_banner_menu_register.o: src/yps_banner_menu_register.c.o
 
 # target to build an object file
 src/yps_banner_menu_register.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o
 .PHONY : src/yps_banner_menu_register.c.o
 
 src/yps_banner_menu_register.i: src/yps_banner_menu_register.c.i
@@ -213,7 +213,7 @@ src/yps_banner_menu_register.i: src/yps_banner_menu_register.c.i
 
 # target to preprocess a source file
 src/yps_banner_menu_register.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.i
 .PHONY : src/yps_banner_menu_register.c.i
 
 src/yps_banner_menu_register.s: src/yps_banner_menu_register.c.s
@@ -222,7 +222,7 @@ src/yps_banner_menu_register.s: src/yps_banner_menu_register.c.s
 
 # target to generate assembly for a file
 src/yps_banner_menu_register.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.s
 .PHONY : src/yps_banner_menu_register.c.s
 
 # Help Target
@@ -255,6 +255,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

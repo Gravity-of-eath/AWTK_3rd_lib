@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  waitable_action_darray
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,7 +47,7 @@ typedef struct _waitable_action_darray_t {
  * @annotation ["constructor"]
  * 创建waitable_action_darray对象。
  *
- * @param {uint32_t} capacity action的容量。
+ * @param {uint16_t} capacity action的容量。
  *
  * @return {waitable_action_darray_t*} waitable_action_darray对象。
  */
@@ -59,7 +59,7 @@ waitable_action_darray_t* waitable_action_darray_create(uint16_t capacity);
  *
  * @param {waitable_action_darray_t*} q waitable_action_darray对象。
  * @param {qaction_t**} action 用于返回action对象。
- * @param {uint32_t} timeout_ms 超时时间(ms)
+ * @param {uint32_t} timeout_ms 超时时间(毫秒)
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -72,7 +72,7 @@ ret_t waitable_action_darray_recv(waitable_action_darray_t* q, qaction_t** actio
  *
  * @param {waitable_action_darray_t*} q waitable_action_darray对象。
  * @param {qaction_t*} action action对象。
- * @param {uint32_t} timeout_ms 超时时间(ms)
+ * @param {uint32_t} timeout_ms 超时时间(毫秒)
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

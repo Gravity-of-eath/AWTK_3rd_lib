@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  用于串口通信的控件
  *
- * Copyright (c) 2022 - 2022 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,8 +26,14 @@
 #include "base/main_loop.h"
 
 #include "serial_widget.h"
-#include "streams/serial/serial_helper.h"
+#include "tkc/serial_helper.h"
 #include "streams/serial/iostream_serial.h"
+
+#ifdef AWTK_WEB
+#define tk_iostream_serial_wait_for_data(a, b) RET_NOT_IMPL
+#define tk_iostream_serial_create(a) NULL
+#define tk_iostream_serial_config(a, b, c, d, e, f)
+#endif /*AWTK_WEB*/
 
 static ret_t serial_widget_apply_props(widget_t* widget);
 
@@ -142,6 +148,7 @@ static ret_t serial_widget_get_prop(widget_t* widget, const char* name, value_t*
 
 static ret_t serial_widget_on_data(widget_t* widget) {
   serial_widget_t* serial_widget = SERIAL_WIDGET(widget);
+  ENSURE(serial_widget);
 
   widget_dispatch_simple_event(widget, EVT_DATA);
   if (!tk_object_get_prop_bool(TK_OBJECT(serial_widget->iostream), TK_STREAM_PROP_IS_OK, FALSE)) {
@@ -154,6 +161,7 @@ static ret_t serial_widget_on_data(widget_t* widget) {
 
 static ret_t serial_widget_close_device(widget_t* widget) {
   serial_widget_t* serial_widget = SERIAL_WIDGET(widget);
+  ENSURE(serial_widget);
 
   TK_OBJECT_UNREF(serial_widget->iostream);
   serial_widget->istream = NULL;
@@ -193,6 +201,7 @@ static ret_t serial_widget_on_event_source_event(event_source_t* source) {
 static ret_t serial_widget_check_if_data_available(const timer_info_t* info) {
   widget_t* widget = WIDGET(info->ctx);
   serial_widget_t* serial_widget = SERIAL_WIDGET(info->ctx);
+  ENSURE(serial_widget);
 
   if (serial_widget->iostream != NULL) {
     ret_t ret = tk_iostream_serial_wait_for_data(serial_widget->iostream, 10);
@@ -215,6 +224,7 @@ static ret_t serial_widget_apply_props_async(const idle_info_t* info) {
   int fd = -1;
   widget_t* widget = WIDGET(info->ctx);
   serial_widget_t* serial_widget = SERIAL_WIDGET(info->ctx);
+  ENSURE(serial_widget);
 
   serial_widget_close_device(widget);
   return_value_if_fail(serial_widget->device != NULL, RET_REMOVE);
@@ -316,6 +326,18 @@ static ret_t serial_widget_on_event(widget_t* widget, event_t* e) {
   return RET_OK;
 }
 
+static ret_t serial_widget_init(widget_t* widget) {
+  serial_widget_t* serial_widget = SERIAL_WIDGET(widget);
+  return_value_if_fail(serial_widget != NULL, RET_BAD_PARAMS);
+
+  serial_widget->baudrate = 115200;
+  serial_widget->bytesize = eightbits;
+  serial_widget->stopbits = stopbits_one;
+  serial_widget->flowcontrol = flowcontrol_none;
+  serial_widget->check_interval = 100;
+  return RET_OK;
+}
+
 const char* s_serial_widget_properties[] = {SERIAL_WIDGET_PROP_BAUDRATE,
                                             SERIAL_WIDGET_PROP_BYTESIZE,
                                             SERIAL_WIDGET_PROP_PARITY,
@@ -334,19 +356,12 @@ TK_DECL_VTABLE(serial_widget) = {.size = sizeof(serial_widget_t),
                                  .set_prop = serial_widget_set_prop,
                                  .get_prop = serial_widget_get_prop,
                                  .on_event = serial_widget_on_event,
+                                 .init = serial_widget_init,
                                  .on_destroy = serial_widget_on_destroy};
 
 widget_t* serial_widget_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(serial_widget), x, y, w, h);
-  serial_widget_t* serial_widget = SERIAL_WIDGET(widget);
-  return_value_if_fail(serial_widget != NULL, NULL);
-
-  serial_widget->baudrate = 115200;
-  serial_widget->bytesize = eightbits;
-  serial_widget->stopbits = stopbits_one;
-  serial_widget->flowcontrol = flowcontrol_none;
-  serial_widget->check_interval = 100;
-
+  return_value_if_fail(serial_widget_init(widget) == RET_OK, NULL);
   return widget;
 }
 

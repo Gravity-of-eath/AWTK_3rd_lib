@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger server
  *
- * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,6 +21,8 @@
 
 #include "tkc/thread.h"
 #include "tkc/buffer.h"
+#include "conf_io/conf_obj.h"
+#include "conf_io/conf_ubjson.h"
 #include "tkc/object_default.h"
 #include "ubjson/ubjson_writer.h"
 #include "debugger/debugger_factory.h"
@@ -140,6 +142,34 @@ static ret_t debugger_server_send_data(debugger_server_t* server, debugger_resp_
     ret = debugger_server_send_data_impl(server->out, resp, data);
     tk_mutex_nest_unlock(server->mutex);
   }
+
+  return ret;
+}
+
+static ret_t debugger_server_send_ubjson(debugger_server_t* server, debugger_resp_t* resp,
+                                         tk_object_t* obj) {
+  wbuffer_t wb;
+  ret_t ret = RET_FAIL;
+  ubjson_writer_t writer;
+  binary_data_t data = {0, NULL};
+  return_value_if_fail(wbuffer_init_extendable(&wb) != NULL, RET_OOM);
+
+  if (obj != NULL) {
+    conf_doc_t* doc = conf_obj_get_doc(obj);
+    ubjson_writer_init(&writer, (ubjson_write_callback_t)wbuffer_write_binary, &wb);
+    ret = conf_doc_save_ubjson(doc, &writer);
+    assert(ret == RET_OK);
+    goto_error_if_fail(ret == RET_OK);
+  } else {
+    wbuffer_write_string(&wb, "{}");
+  }
+
+  data.data = wb.data;
+  data.size = wb.cursor;
+  ret = debugger_server_send_data(server, resp, &data);
+
+error:
+  wbuffer_deinit(&wb);
 
   return ret;
 }
@@ -296,6 +326,7 @@ static ret_t debugger_server_on_events(void* ctx, event_t* e) {
     case DEBUGGER_RESP_MSG_BREAKED: {
       debugger_breaked_event_t* event = debugger_breaked_event_cast(e);
       tk_object_set_prop_int(obj, STR_DEBUGGER_EVENT_PROP_LINE, event->line);
+      tk_object_set_prop_str(obj, STR_DEBUGGER_EVENT_PROP_FILE_PATH, event->file_path);
       ret = debugger_server_send_object(server, &msg, obj);
       break;
     }
@@ -321,7 +352,7 @@ static debugger_t* debugger_server_init_debugger(debugger_server_t* server, debu
 
   ret = darray_push(&(server->debuggers), debugger);
   if (ret != RET_OK) {
-    OBJECT_UNREF(debugger);
+    TK_OBJECT_UNREF(debugger);
   } else {
     emitter_on(EMITTER(debugger), DEBUGGER_RESP_MSG_LOG, debugger_server_on_events, server);
     emitter_on(EMITTER(debugger), DEBUGGER_RESP_MSG_ERROR, debugger_server_on_events, server);
@@ -358,7 +389,7 @@ static ret_t debugger_server_attach_debugger(debugger_server_t* server, const ch
   code_id = strchr(arg, ':');
   return_value_if_fail(code_id != NULL, RET_BAD_PARAMS);
 
-  tk_strncpy_s(lang, TK_NAME_LEN, arg, code_id - arg);
+  tk_strncpy_s(lang, sizeof(lang), arg, code_id - arg);
   code_id++;
 
   if (server->single_mode) {
@@ -376,7 +407,7 @@ static ret_t debugger_server_launch_debugger(debugger_server_t* server, binary_d
   code = strchr((char*)(arg->data), ':');
   return_value_if_fail(code != NULL, RET_BAD_PARAMS);
 
-  tk_strncpy_s(lang, TK_NAME_LEN, (char*)(arg->data), code - (char*)(arg->data));
+  tk_strncpy_s(lang, sizeof(lang), (char*)(arg->data), code - (char*)(arg->data));
   code++;
   if (tk_mutex_nest_lock(server->mutex) == RET_OK) {
     binary_data_t data;
@@ -470,10 +501,6 @@ static ret_t debugger_server_dispatch(debugger_server_t* server) {
         resp.error = debugger_is_paused(debugger) ? RET_OK : RET_FAIL;
         break;
       }
-      case DEBUGGER_REQ_NEXT: {
-        resp.error = debugger_next(debugger);
-        break;
-      }
       case DEBUGGER_REQ_STEP_IN: {
         resp.error = debugger_step_in(debugger);
         break;
@@ -484,6 +511,10 @@ static ret_t debugger_server_dispatch(debugger_server_t* server) {
       }
       case DEBUGGER_REQ_STEP_OVER: {
         resp.error = debugger_step_over(debugger);
+        break;
+      }
+      case DEBUGGER_REQ_STEP_LOOP_OVER: {
+        resp.error = debugger_step_loop_over(debugger);
         break;
       }
       case DEBUGGER_REQ_CONTINUE: {
@@ -572,10 +603,10 @@ static ret_t debugger_server_dispatch(debugger_server_t* server) {
         continue;
       }
       case DEBUGGER_REQ_GET_CALLSTACK: {
-        binary_data_t data = {0, NULL};
         if (debugger_lock(debugger) == RET_OK) {
-          resp.error = debugger_get_callstack(debugger, &data);
-          ret = debugger_server_send_data(server, &resp, &data);
+          tk_object_t* obj = debugger_get_callstack(debugger);
+          ret = debugger_server_send_ubjson(server, &resp, obj);
+          TK_OBJECT_UNREF(obj);
           debugger_unlock(debugger);
           goto_error_if_fail(ret == RET_OK);
         }

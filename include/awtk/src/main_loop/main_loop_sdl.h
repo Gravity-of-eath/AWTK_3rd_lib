@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  sdl2 implemented main_loop interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * this program is distributed in the hope that it will be useful,
  * but without any warranty; without even the implied warranty of
@@ -27,6 +27,16 @@
 BEGIN_C_DECLS
 
 main_loop_t* main_loop_init(int w, int h);
+
+/**
+ * @method main_loop_sdl2_dispatch
+ * dispatch events.
+ * @annotation ["global"]
+ * @param {main_loop_simple_t*} loop the main loop.
+ *
+ * @return {ret_t} return RET_OK if successful, otherwise return RET_FAIL.
+ */
+ret_t main_loop_sdl2_dispatch(main_loop_simple_t* loop);
 
 END_C_DECLS
 

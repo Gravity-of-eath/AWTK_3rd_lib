@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window_animator
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,6 +35,7 @@ typedef ret_t (*window_animator_init_t)(window_animator_t* wa);
 typedef ret_t (*window_animator_update_percent_t)(window_animator_t* wa);
 typedef ret_t (*window_animator_draw_prev_window_t)(window_animator_t* wa);
 typedef ret_t (*window_animator_draw_curr_window_t)(window_animator_t* wa);
+typedef ret_t (*window_animator_draw_prev_window_on_highlighter_t)(window_animator_t* wa);
 
 typedef struct _window_animator_vtable_t {
   const char* type;
@@ -45,6 +46,7 @@ typedef struct _window_animator_vtable_t {
   window_animator_update_percent_t update_percent;
   window_animator_draw_prev_window_t draw_prev_window;
   window_animator_draw_curr_window_t draw_curr_window;
+  window_animator_draw_prev_window_on_highlighter_t draw_prev_window_on_highlighter;
 } window_animator_vtable_t;
 
 typedef window_animator_t* (*window_animator_create_t)(bool_t open, tk_object_t* args);
@@ -63,7 +65,7 @@ typedef window_animator_t* (*window_animator_create_t)(bool_t open, tk_object_t*
 #define WINDOW_ANIMATOR_CENTER_SCALE "center_scale"
 
 /**
- * @const WINDOW_ANIMATOR_FADE,
+ * @const WINDOW_ANIMATOR_FADE
  * 淡入淡出。适用于toast之类的提示。
  */
 #define WINDOW_ANIMATOR_FADE "fade"
@@ -138,6 +140,9 @@ struct _window_animator_t {
   bitmap_t curr_img;
 #endif /*WITHOUT_WINDOW_ANIMATOR_CACHE*/
   bool_t open;
+  bool_t is_paint_system_bar_top;
+  bool_t is_paint_system_bar_bottom;
+
   float_t ratio;
   float_t percent;
   canvas_t* canvas;
@@ -152,7 +157,6 @@ struct _window_animator_t {
  * @method window_animator_update
  * 更新动画。
  * @param {window_animator_t*} wa 窗口动画对象。
- * @param {canvas_t*} canvas 画布对象。
  * @param {uint64_t} time_ms 当前时间(毫秒)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。

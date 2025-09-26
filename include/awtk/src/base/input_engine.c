@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input method engine
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -165,7 +165,7 @@ ret_t input_engine_input(input_engine_t* engine, int key) {
     }
   } else {
     if (engine->keys.size >= TK_IM_MAX_INPUT_CHARS) {
-      return RET_BAD_PARAMS;
+      return RET_SKIP;
     }
 
     if (engine->input != NULL) {

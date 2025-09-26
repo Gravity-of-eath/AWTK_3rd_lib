@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src
+CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build
+CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,9 +126,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -195,6 +195,19 @@ blur_view/fast:
 	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
 .PHONY : blur_view/fast
 
+#=============================================================================
+# Target rules for targets named conner_gradient
+
+# Build rule for target.
+conner_gradient: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 conner_gradient
+.PHONY : conner_gradient
+
+# fast build rule for target.
+conner_gradient/fast:
+	$(MAKE) -f conner_gradient/CMakeFiles/conner_gradient.dir/build.make conner_gradient/CMakeFiles/conner_gradient.dir/build
+.PHONY : conner_gradient/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -210,6 +223,7 @@ help:
 	@echo "... line_chart"
 	@echo "... banner_menu"
 	@echo "... blur_view"
+	@echo "... conner_gradient"
 .PHONY : help
 
 

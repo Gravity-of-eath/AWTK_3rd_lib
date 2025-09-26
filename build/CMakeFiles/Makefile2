@@ -44,10 +44,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src
+CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build
+CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -56,6 +56,7 @@ CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd
 all: line_chart/all
 all: banner_menu/all
 all: blur_view/all
+all: conner_gradient/all
 
 .PHONY : all
 
@@ -63,6 +64,7 @@ all: blur_view/all
 preinstall: line_chart/preinstall
 preinstall: banner_menu/preinstall
 preinstall: blur_view/preinstall
+preinstall: conner_gradient/preinstall
 
 .PHONY : preinstall
 
@@ -70,6 +72,7 @@ preinstall: blur_view/preinstall
 clean: line_chart/clean
 clean: banner_menu/clean
 clean: blur_view/clean
+clean: conner_gradient/clean
 
 .PHONY : clean
 
@@ -110,6 +113,24 @@ blur_view/clean: blur_view/CMakeFiles/blur_view.dir/clean
 .PHONY : blur_view/clean
 
 #=============================================================================
+# Directory level rules for directory conner_gradient
+
+# Recursive "all" directory target.
+conner_gradient/all: conner_gradient/CMakeFiles/conner_gradient.dir/all
+
+.PHONY : conner_gradient/all
+
+# Recursive "preinstall" directory target.
+conner_gradient/preinstall:
+
+.PHONY : conner_gradient/preinstall
+
+# Recursive "clean" directory target.
+conner_gradient/clean: conner_gradient/CMakeFiles/conner_gradient.dir/clean
+
+.PHONY : conner_gradient/clean
+
+#=============================================================================
 # Directory level rules for directory line_chart
 
 # Recursive "all" directory target.
@@ -134,14 +155,14 @@ line_chart/clean: line_chart/CMakeFiles/line_chart.dir/clean
 line_chart/CMakeFiles/line_chart.dir/all:
 	$(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/depend
 	$(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=9,10,11,12 "Built target line_chart"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=12,13,14,15 "Built target line_chart"
 .PHONY : line_chart/CMakeFiles/line_chart.dir/all
 
 # Build rule for subdir invocation for target.
 line_chart/CMakeFiles/line_chart.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 4
 	$(MAKE) -f CMakeFiles/Makefile2 line_chart/CMakeFiles/line_chart.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : line_chart/CMakeFiles/line_chart.dir/rule
 
 # Convenience name for target.
@@ -161,14 +182,14 @@ line_chart/CMakeFiles/line_chart.dir/clean:
 banner_menu/CMakeFiles/banner_menu.dir/all:
 	$(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/depend
 	$(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=1,2,3 "Built target banner_menu"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=1,2,3 "Built target banner_menu"
 .PHONY : banner_menu/CMakeFiles/banner_menu.dir/all
 
 # Build rule for subdir invocation for target.
 banner_menu/CMakeFiles/banner_menu.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 3
 	$(MAKE) -f CMakeFiles/Makefile2 banner_menu/CMakeFiles/banner_menu.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : banner_menu/CMakeFiles/banner_menu.dir/rule
 
 # Convenience name for target.
@@ -188,14 +209,14 @@ banner_menu/CMakeFiles/banner_menu.dir/clean:
 blur_view/CMakeFiles/blur_view.dir/all:
 	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/depend
 	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles --progress-num=4,5,6,7,8 "Built target blur_view"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=4,5,6,7,8 "Built target blur_view"
 .PHONY : blur_view/CMakeFiles/blur_view.dir/all
 
 # Build rule for subdir invocation for target.
 blur_view/CMakeFiles/blur_view.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 5
 	$(MAKE) -f CMakeFiles/Makefile2 blur_view/CMakeFiles/blur_view.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : blur_view/CMakeFiles/blur_view.dir/rule
 
 # Convenience name for target.
@@ -207,6 +228,33 @@ blur_view: blur_view/CMakeFiles/blur_view.dir/rule
 blur_view/CMakeFiles/blur_view.dir/clean:
 	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/clean
 .PHONY : blur_view/CMakeFiles/blur_view.dir/clean
+
+#=============================================================================
+# Target rules for target conner_gradient/CMakeFiles/conner_gradient.dir
+
+# All Build rule for target.
+conner_gradient/CMakeFiles/conner_gradient.dir/all:
+	$(MAKE) -f conner_gradient/CMakeFiles/conner_gradient.dir/build.make conner_gradient/CMakeFiles/conner_gradient.dir/depend
+	$(MAKE) -f conner_gradient/CMakeFiles/conner_gradient.dir/build.make conner_gradient/CMakeFiles/conner_gradient.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=9,10,11 "Built target conner_gradient"
+.PHONY : conner_gradient/CMakeFiles/conner_gradient.dir/all
+
+# Build rule for subdir invocation for target.
+conner_gradient/CMakeFiles/conner_gradient.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 3
+	$(MAKE) -f CMakeFiles/Makefile2 conner_gradient/CMakeFiles/conner_gradient.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
+.PHONY : conner_gradient/CMakeFiles/conner_gradient.dir/rule
+
+# Convenience name for target.
+conner_gradient: conner_gradient/CMakeFiles/conner_gradient.dir/rule
+
+.PHONY : conner_gradient
+
+# clean rule for target.
+conner_gradient/CMakeFiles/conner_gradient.dir/clean:
+	$(MAKE) -f conner_gradient/CMakeFiles/conner_gradient.dir/build.make conner_gradient/CMakeFiles/conner_gradient.dir/clean
+.PHONY : conner_gradient/CMakeFiles/conner_gradient.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

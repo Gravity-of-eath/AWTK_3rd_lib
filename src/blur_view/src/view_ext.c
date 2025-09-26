@@ -26,11 +26,12 @@ static ret_t view_ext_widget_on_paint_children_t(widget_t *widget, canvas_t *c)
 {
   view_ext_t *view_ext = VIEW_EXT(widget);
   return_value_if_fail(view_ext != NULL, RET_BAD_PARAMS);
+
   WIDGET_FOR_EACH_CHILD_BEGIN(widget, iter, i)
   if (view_ext->abort_widget && view_ext->abort_widget == iter)
   {
     // printf("view_ext_create*************abort_widget break= %s***************** \n", widget_get_prop_str(iter, WIDGET_PROP_NAME, "--"));
-    break;
+    continue;
   }
 
   if (!iter->visible)
@@ -59,9 +60,19 @@ static ret_t view_ext_widget_on_paint_children_t(widget_t *widget, canvas_t *c)
   return RET_OK;
 }
 
+static ret_t view_ext_on_paint_self(widget_t *widget, canvas_t *c)
+{
+
+  view_ext_t *view_ext = VIEW_EXT(widget);
+  return_value_if_fail(view_ext != NULL, RET_BAD_PARAMS);
+  // view_ext->cache = widget_take_snapshot(widget); //TODO widget_take_snapshot已经绘制过子控件，如何截获绘制流程，让此VIEW 不要绘制子控件？直接绘制此缓存
+
+}
+
 TK_DECL_VTABLE(view_ext) = {.size = sizeof(view_ext_t),
                             .type = WIDGET_TYPE_VIEW_EXT,
                             .parent = TK_PARENT_VTABLE(widget),
+                            .on_paint_self = view_ext_on_paint_self,
                             .on_paint_children = view_ext_widget_on_paint_children_t};
 
 void view_ext_set_abort_widget(widget_t *widget, widget_t *abort_widget)
@@ -76,6 +87,7 @@ widget_t *view_ext_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)
 {
   widget_t *widget = widget_create(parent, TK_REF_VTABLE(view_ext), x, y, w, h);
   printf("view_ext_create****************************** \n");
+  view_ext_t *view_ext = VIEW_EXT(widget);
   return widget;
 }
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  awtk toolkit c libs
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -55,6 +55,7 @@
 #include "base/lcd_profile.h"
 #include "base/line_break.h"
 #include "base/locale_info.h"
+#include "base/locale_info_xml.h"
 #include "base/main_loop.h"
 #include "base/pixel.h"
 #include "base/pixel_pack_unpack.h"
@@ -85,4 +86,5 @@
 #include "base/window_base.h"
 #include "base/window_manager.h"
 #include "base/style_mutable.h"
+#include "base/opengl.h"
 #endif /*TK_BASE_H*/

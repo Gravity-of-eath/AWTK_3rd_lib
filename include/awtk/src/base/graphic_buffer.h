@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  graphic_buffer
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,6 +34,9 @@ typedef uint8_t* (*graphic_buffer_lock_for_write_t)(graphic_buffer_t* buffer);
 typedef uint32_t (*graphic_buffer_get_physical_width_t)(graphic_buffer_t* buffer);
 typedef uint32_t (*graphic_buffer_get_physical_height_t)(graphic_buffer_t* buffer);
 typedef uint32_t (*graphic_buffer_get_physical_line_length_t)(graphic_buffer_t* buffer);
+typedef ret_t (*graphic_buffer_set_physical_width_t)(graphic_buffer_t* buffer, uint32_t width);
+typedef ret_t (*graphic_buffer_set_physical_height_t)(graphic_buffer_t* buffer, uint32_t height);
+typedef ret_t (*graphic_buffer_set_physical_line_length_t)(graphic_buffer_t* buffer, uint32_t line_length);
 typedef ret_t (*graphic_buffer_unlock_t)(graphic_buffer_t* buffer);
 typedef ret_t (*graphic_buffer_attach_t)(graphic_buffer_t* buffer, void* data, uint32_t w,
                                          uint32_t h);
@@ -69,6 +72,9 @@ typedef struct _graphic_buffer_vtable_t {
   graphic_buffer_get_physical_width_t get_width;
   graphic_buffer_get_physical_height_t get_height;
   graphic_buffer_get_physical_line_length_t get_line_length;
+  graphic_buffer_set_physical_width_t set_width;
+  graphic_buffer_set_physical_height_t set_height;
+  graphic_buffer_set_physical_line_length_t set_line_length;
 } graphic_buffer_vtable_t;
 
 /**
@@ -103,6 +109,24 @@ ret_t graphic_buffer_create_for_bitmap(bitmap_t* bitmap);
 graphic_buffer_t* graphic_buffer_create_with_data(const uint8_t* data, uint32_t w, uint32_t h,
                                                   bitmap_format_t format);
 
+/**
+ * @method graphic_buffer_create_with_data_ex
+ * 创建缓冲区。
+ *
+ * > 为了兼容raw图像。
+ * @param {const uint8_t*} virtual_data 数据虚拟地址。
+ * @param {const uint8_t*} physical_data 数据物理地址。
+ * @param {uint32_t} w 宽度。
+ * @param {uint32_t} h 宽度。
+ * @param {uint32_t} line_length 每行宽度(字节数)
+ * @param {bitmap_format_t} format 格式。
+ *
+ * @return {graphic_buffer_t*} 返回缓存区。
+ */
+graphic_buffer_t* graphic_buffer_create_with_data_ex(const uint8_t* virtual_data,
+                                                     const uint8_t* physical_data, uint32_t w,
+                                                     uint32_t h, uint32_t line_length,
+                                                     bitmap_format_t format);
 /**
  * @method graphic_buffer_lock_for_read
  * 为读取数据而锁定缓冲区。
@@ -154,6 +178,39 @@ ret_t graphic_buffer_attach(graphic_buffer_t* buffer, void* data, uint32_t w, ui
 bool_t graphic_buffer_is_valid_for(graphic_buffer_t* buffer, bitmap_t* bitmap);
 
 /**
+ * @method graphic_buffer_set_physical_width
+ * 设置 graphic_buffer 真实物理的的宽度
+ * 
+ * @param {graphic_buffer_t*} buffer 图像缓冲区对象。
+ * @param {uint32_t} width 真实物理的的宽度。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t graphic_buffer_set_physical_width(graphic_buffer_t* buffer, uint32_t width);
+
+/**
+ * @method graphic_buffer_set_physical_height
+ * 设置 graphic_buffer 真实物理的的高度
+ * 
+ * @param {graphic_buffer_t*} buffer 图像缓冲区对象。
+ * @param {uint32_t} height 真实物理的的高度。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t graphic_buffer_set_physical_height(graphic_buffer_t* buffer, uint32_t height);
+
+/**
+ * @method graphic_buffer_set_physical_line_length
+ * 设置 graphic_buffer 真实物理的的行长度
+ * 
+ * @param {graphic_buffer_t*} buffer 图像缓冲区对象。
+ * @param {uint32_t} line_length 真实物理的的行长度。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t graphic_buffer_set_physical_line_length(graphic_buffer_t* buffer, uint32_t line_length);
+
+/**
  * @method graphic_buffer_get_physical_width
  * 获取 graphic_buffer 真实物理的的宽度
  * 
@@ -198,6 +255,8 @@ ret_t graphic_buffer_destroy(graphic_buffer_t* buffer);
 #define GRAPHIC_BUFFER_CREATE_WITH_DATA(data, w, h, format) \
   graphic_buffer_create_with_data(data, w, h, format)
 
+#define GRAPHIC_BUFFER_CREATE_WITH_DATA_EX(data, physical_data_addr, w, h, line_length, format) \
+  graphic_buffer_create_with_data_ex(data, physical_data_addr, w, h, line_length, format)
 END_C_DECLS
 
 #endif /*TK_GRAPHIC_BUFFER_H*/

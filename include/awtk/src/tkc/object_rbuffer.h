@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap rbuffer to an object.
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,7 +56,7 @@ typedef struct _object_rbuffer_t {
  *
  * @annotation ["constructor"]
  * @param {const uint8_t*} data 缓冲区。
- * @param {uint16_t} capacity 缓冲区的容量。
+ * @param {uint32_t} capacity 缓冲区的容量。
  *
  * @return {tk_object_t*} 返回object对象。
  *
@@ -72,7 +72,10 @@ tk_object_t* object_rbuffer_create(const uint8_t* data, uint32_t capacity);
  * @return {object_rbuffer_t*} object_rbuffer对象。
  */
 object_rbuffer_t* object_rbuffer_cast(tk_object_t* obj);
+
 #define OBJECT_RBUFFER(obj) object_rbuffer_cast(obj)
+
+#define OBJECT_RBUFFER_TYPE "object_rbuffer"
 
 END_C_DECLS
 

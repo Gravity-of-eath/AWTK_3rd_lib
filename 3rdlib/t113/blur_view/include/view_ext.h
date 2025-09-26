@@ -23,6 +23,7 @@
 #define TK_VIEW_EXT_H
 
 #include "base/widget.h"
+#include "base/canvas_offline.h"
 
 BEGIN_C_DECLS
 /**
@@ -52,6 +53,8 @@ typedef struct _view_ext_t
 {
   widget_t widget;
   widget_t *abort_widget;
+  bitmap_t *cache;
+  
 
 } view_ext_t;
 

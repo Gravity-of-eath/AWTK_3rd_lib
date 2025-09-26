@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  default dialog_highlighter
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied highlighterrranty of
@@ -63,6 +63,24 @@ struct _dialog_highlighter_default_t {
    * 是否刷新底层窗口的截图。
    */
   bool_t update_background;
+
+  /**
+   * @property {darray_t} system_bar_top_clip_rects
+   * 截图的顶部 system_bar 显示裁减区列表
+   */
+  darray_t system_bar_top_clip_rects;
+
+  /**
+   * @property {darray_t} system_bar_bottom_clip_rects
+   * 截图的底部 system_bar 显示裁减区列表
+   */
+  darray_t system_bar_bottom_clip_rects;
+
+  /**
+   * @property {slist_t} win_mask_rect_list
+   * 窗口 mask 区域
+   */
+  slist_t win_mask_rect_list;
 };
 
 /**

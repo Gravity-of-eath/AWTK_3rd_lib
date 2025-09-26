@@ -4,7 +4,7 @@
  * Brief:  retry ostream: if write fail retry write later.
  *
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -96,7 +96,7 @@ struct _tk_ostream_retry_t {
   /**
    * @property {uint32_t} timeout
    * @annotation ["readable"]
-   * 写超时时间(ms)。
+   * 写超时时间(毫秒)。
    */
   uint32_t timeout;
   /**

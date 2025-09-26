@@ -20,7 +20,7 @@
  */
 
 /*
- *  该文件的功能是服务于 dialog_toast 函数，dialog_toast 函数为仿照 android 的 showToast 函数的功能开发的。
+ *  该文件的功能是服务于 dialog_toast 函数，dialog_toast 函数为仿照 android 的 showToast 函数的功能开发的，但此处的 dialog_toast 为非模态对话框。
  *  dialog_toast 函数的功能分别是：
  *  1，按照时间长度显示用户输入文字信息。
  *  2，当同时有多出调用地方调用 dialog_toast 函数的显示原则为：
@@ -61,7 +61,7 @@ static ret_t dialog_toast_set_label_self_layout(widget_t* toast, widget_t* label
 
 static ret_t dialog_get_size_limits(rect_t* r);
 static ret_t dialog_toast_on_destroy(void* ctx, event_t* e);
-static ret_t dialog_toast_on_click_to_quit(void* ctx, event_t* e);
+static ret_t dialog_toast_on_ui_event_to_quit(void* ctx, event_t* e);
 static ret_t dialog_toast_set_curr_message(dialog_toast_t* dialog_toast, dialog_toast_message_t* message, uint32_t duration, bool_t add_timer);
 
 static ret_t dialog_toast_on_dialog_will_open(void* ctx, event_t* e) {
@@ -108,12 +108,14 @@ static ret_t dialog_toast_init(dialog_toast_t* dialog_toast, bool_t init_list) {
   }
 
   if (dialog_toast->toast != NULL) {
+    widget_set_name(dialog_toast->toast, "toast");
     widget_set_prop_str(dialog_toast->toast, WIDGET_PROP_THEME, "dialog_toast");
     widget_set_prop_str(dialog_toast->toast, WIDGET_PROP_ANIM_HINT, "fade(duration=500)");
 
     widget_on(dialog_toast->toast, EVT_DESTROY, dialog_toast_on_destroy, dialog_toast);
     widget_on(dialog_toast->toast, EVT_WINDOW_OPEN, dialog_toast_on_dialog_open, dialog_toast);
-    widget_on(dialog_toast->toast, EVT_POINTER_UP, dialog_toast_on_click_to_quit, dialog_toast);
+    widget_on(dialog_toast->toast, EVT_KEY_UP, dialog_toast_on_ui_event_to_quit, dialog_toast);
+    widget_on(dialog_toast->toast, EVT_POINTER_UP, dialog_toast_on_ui_event_to_quit, dialog_toast);
     widget_on(dialog_toast->toast, EVT_WINDOW_WILL_OPEN, dialog_toast_on_dialog_will_open, dialog_toast);
 
     return RET_OK;
@@ -160,6 +162,9 @@ static ret_t dialog_toast_quit(dialog_toast_t* dialog_toast, bool_t time_up) {
   uint64_t now = timer_manager()->get_time();
   darray_t* message_list = &(dialog_toast->message_list);
   return_value_if_fail(message_list->size > 0, RET_FAIL);
+  /*dialog_toast有可能异步销毁，加个容错处理*/ 
+  return_value_if_fail(message_list->destroy == default_destroy, RET_BAD_PARAMS);
+
   do {
     if (message_list->size > 0) {
       dialog_toast_message_t* message = (dialog_toast_message_t*)darray_tail(message_list);
@@ -183,21 +188,16 @@ static ret_t dialog_toast_quit(dialog_toast_t* dialog_toast, bool_t time_up) {
           timer_remove(dialog_toast->curr_timer_id);
           dialog_toast->curr_timer_id = TK_INVALID_ID;
         }
-#ifndef AWTK_WEB
-        main_loop_quit(main_loop());
-#endif
       }
       first = FALSE;
     }
     dialog_toast->is_empty = dialog_toast->message_list.size == 0;
   }while (message_list->size > 0);
 
-#ifdef AWTK_WEB
-  /* 因为 web 状态下，不支持模态，所以当队列中没有信息了，就马上退出 dialog */
   if (dialog_toast->is_empty) {
     dialog_toast_close(dialog_toast);
   }
-#endif
+
   return RET_OK;
 }
 
@@ -206,8 +206,9 @@ static ret_t dialog_toast_on_timer_to_quit(const timer_info_t* info) {
   return RET_REMOVE;
 }
 
-static ret_t dialog_toast_on_click_to_quit(void* ctx, event_t* e) {
+static ret_t dialog_toast_on_ui_event_to_quit(void* ctx, event_t* e) {
   dialog_toast_quit(DIALOG_TOAST(ctx), FALSE);
+  log_debug("dialog_toast_on_ui_event_to_quit\n");
   return RET_REMOVE;
 }
 
@@ -231,11 +232,16 @@ static dialog_toast_t* dialog_toast_manager() {
 
 static ret_t dialog_toast_on_idle_close(const idle_info_t* info) {
   dialog_toast_t* dialog_toast = DIALOG_TOAST(info->ctx);
-  ENSURE(dialog_toast != NULL);
+  ENSURE(dialog_toast);
   if (!dialog_toast->is_opened) {
     return RET_REPEAT;
   }
-  return window_manager_close_window(dialog_toast->toast->parent, dialog_toast->toast);
+  
+  if (window_manager_get_top_window(window_manager()) == dialog_toast->toast) {
+    return window_manager_close_window(dialog_toast->toast->parent, dialog_toast->toast);
+  } else {
+    return window_manager_close_window_force(dialog_toast->toast->parent, dialog_toast->toast);
+  }
 }
 
 static ret_t dialog_toast_close(dialog_toast_t* dialog_toast) {
@@ -354,7 +360,7 @@ static dialog_toast_message_t* dialog_toast_push_message(dialog_toast_t* dialog_
 
     /* 在关闭 dialog 动画期间不显示消息，等完成关闭动画后重新创建 dialog 再显示消息 */
     if (!dialog_toast->is_closing && !dialog_toast->is_opening) {
-      ret = dialog_toast_set_curr_message(dialog_toast, message, duration, FALSE);
+      ret = dialog_toast_set_curr_message(dialog_toast, message, duration, TRUE);
       goto_error_if_fail(ret == RET_OK);
     }
 
@@ -370,18 +376,4 @@ error:
     TKMEM_FREE(message);
   }
   return NULL;
-}
-
-static ret_t dialog_toast_model(dialog_toast_t* dialog_toast) {
-  return_value_if_fail(dialog_toast != NULL && dialog_toast->toast != NULL, RET_BAD_PARAMS);
-#ifdef AWTK_WEB
-  log_debug("awtk web not support dialog_modal\n");
-  return RET_FAIL;
-#else
-  log_debug("%s run\n", __FUNCTION__);
-  main_loop_run(main_loop());
-  log_debug("%s quit\n", __FUNCTION__);
-  dialog_toast_close(dialog_toast);
-  return RET_OK;
-#endif /*AWTK_WEB*/
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  conf node
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,6 +30,7 @@ BEGIN_C_DECLS
 
 struct _conf_node_t;
 typedef struct _conf_node_t conf_node_t;
+typedef ret_t (*conf_doc_on_visit_t)(void* ctx, const char* path, value_t* v);
 
 /**
  * @class conf_doc_t
@@ -42,12 +43,19 @@ typedef struct _conf_doc_t {
    */
   conf_node_t* root;
 
+  /**
+   * @property {bool_t} use_extend_type
+   * 使用拓展类型。
+   */
+  bool_t use_extend_type;
+
   /*private*/
+  tokenizer_t tokenizer;
+  tk_object_t* obj_array;
   conf_node_t* prealloc_nodes;
   uint32_t prealloc_nodes_index;
   uint32_t prealloc_nodes_used;
   uint32_t prealloc_nodes_nr;
-  tokenizer_t tokenizer;
   uint32_t max_deep_level;
 } conf_doc_t;
 
@@ -108,19 +116,19 @@ ret_t conf_doc_append_sibling(conf_doc_t* doc, conf_node_t* node, conf_node_t* s
  * @param {conf_node_t*} node 节点对象。
  * @param {const char*} new_name 节点名称。
  *
- * @return {ret_t} 返回新节点。
+ * @return {conf_node_t*} 返回新节点。
  */
 conf_node_t* conf_doc_dup_node(conf_doc_t* doc, conf_node_t* node, const char* new_name);
 
 /**
  * @method conf_doc_set_node_prop
  *
- * 设置节点的属性。 
+ * 设置节点的属性。
  *
  * @param {conf_doc_t*} doc 文档对象。
  * @param {conf_node_t*} node 节点对象。
  * @param {const char*} name 名称。
- * @param {const value_t* v} 值。
+ * @param {const value_t*} v 值。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -137,7 +145,7 @@ ret_t conf_doc_set_node_prop(conf_doc_t* doc, conf_node_t* node, const char* nam
  * @param {const char*} path 路径。
  * @param {bool_t} create_if_not_exist 不存在是否创建。
  *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ * @return {conf_node_t*} 返回RET_OK表示成功，否则表示失败。
  */
 conf_node_t* conf_doc_find_node(conf_doc_t* doc, conf_node_t* node, const char* path,
                                 bool_t create_if_not_exist);
@@ -447,6 +455,18 @@ bool_t conf_doc_is_last(conf_doc_t* doc, const char* path);
 ret_t conf_doc_add_child(conf_doc_t* doc, const char* path);
 
 /**
+ * @method conf_doc_use_extend_type
+ *
+ * 使用拓展类型。
+ *
+ * @param {conf_doc_t*} doc 文档对象。
+ * @param {bool_t} use 是否使用拓展类型。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t conf_doc_use_extend_type(conf_doc_t* doc, bool_t use);
+
+/**
  * @method conf_doc_destroy
  *
  * 析构函数。
@@ -458,66 +478,71 @@ ret_t conf_doc_add_child(conf_doc_t* doc, const char* path);
 ret_t conf_doc_destroy(conf_doc_t* doc);
 
 /**
- * @enum conf_node_type_t 
+ * @enum conf_node_type_t
  * @prefix CONF_NODE_
  * 节点类型。
  */
 typedef enum _conf_node_type_t {
   /**
-   * @const CONF_NODE_NONE 
+   * @const CONF_NODE_NONE
    * 无效节点。
    */
   CONF_NODE_NONE = 0,
   /**
-   * @const CONF_NODE_OBJECT 
+   * @const CONF_NODE_OBJECT
    * 对象节点。
    */
   CONF_NODE_OBJECT,
   /**
-   * @const CONF_NODE_ARRAY 
+   * @const CONF_NODE_ARRAY
    * 数组节点。
    */
   CONF_NODE_ARRAY,
   /**
-   * @const CONF_NODE_SIMPLE 
+   * @const CONF_NODE_ARRAY_UINT8
+   * uint8_t 类型的数组节点。
+   */
+  CONF_NODE_ARRAY_UINT8,
+  /**
+   * @const CONF_NODE_SIMPLE
    * 简单节点。
    */
   CONF_NODE_SIMPLE
 } conf_node_type_t;
 
 /**
- * @enum conf_node_value_t 
+ * @enum conf_node_value_t
  * @prefix CONF_NODE_VALUE_
- * 节点值得类型。
+ * 节点值的类型。
  */
 typedef enum _conf_node_value_t {
   /**
-   * @const CONF_NODE_VALUE_NONE 
+   * @const CONF_NODE_VALUE_NONE
    * 无效类型。
    */
   CONF_NODE_VALUE_NONE = 0,
   /**
-   * @const CONF_NODE_VALUE_BOOL 
+   * @const CONF_NODE_VALUE_BOOL
    * bool_t类型。
    */
   CONF_NODE_VALUE_BOOL,
   /**
-   * @const CONF_NODE_VALUE_INT8 
+   * @const CONF_NODE_VALUE_INT8
    * int8_t类型。
    */
   CONF_NODE_VALUE_INT8,
   /**
-   * @const CONF_NODE_VALUE_UINT8 
+   * @const CONF_NODE_VALUE_UINT8
    * uint8_t类型。
    */
   CONF_NODE_VALUE_UINT8,
   /**
-   * @const CONF_NODE_VALUE_INT16 
+   * @const CONF_NODE_VALUE_INT16
    * int16_t类型。
    */
   CONF_NODE_VALUE_INT16,
   /**
-   * @const CONF_NODE_VALUE_UINT16 
+   * @const CONF_NODE_VALUE_UINT16
    * uint16_t类型。
    */
   CONF_NODE_VALUE_UINT16,
@@ -542,6 +567,11 @@ typedef enum _conf_node_value_t {
    */
   CONF_NODE_VALUE_UINT64,
   /**
+   * @const CONF_NODE_VALUE_POINTER
+   * 指针类型。
+   */
+  CONF_NODE_VALUE_POINTER,
+  /**
    * @const CONF_NODE_VALUE_FLOAT32
    * float类型。
    */
@@ -557,10 +587,20 @@ typedef enum _conf_node_value_t {
    */
   CONF_NODE_VALUE_STRING,
   /**
+   * @const CONF_NODE_VALUE_WSTRING
+   * 宽字符串类型。
+   */
+  CONF_NODE_VALUE_WSTRING,
+  /**
    * @const CONF_NODE_VALUE_SMALL_STR
    * 短字符(len<=7)串类型。
    */
   CONF_NODE_VALUE_SMALL_STR,
+  /**
+   * @const CONF_NODE_VALUE_BINARY
+   * 二进制数据类型。
+   */
+  CONF_NODE_VALUE_BINARY,
   /**
    * @const CONF_NODE_VALUE_NODE
    * 节点类型。
@@ -575,7 +615,7 @@ typedef enum _conf_node_value_t {
  */
 struct _conf_node_t {
   /**
-   * @property {conf_node_t*} next 
+   * @property {conf_node_t*} next
    * 下一个兄弟节点。
    */
   conf_node_t* next;
@@ -586,18 +626,18 @@ struct _conf_node_t {
   conf_node_t* parent;
 
   /**
-   * @property {uint8_t} value_type
+   * @property {conf_node_value_t} value_type
    * 值的类型。
    */
-  uint8_t value_type : 4;
+  conf_node_value_t value_type : 6;
   /**
-   * @property {uint8_t} node_type
+   * @property {conf_node_type_t} node_type
    * 节点类型。
    */
-  uint8_t node_type : 3;
+  conf_node_type_t node_type : 4;
 
   /*private*/
-  uint8_t is_small_name : 1;
+  bool_t is_small_name : 1;
 
   union {
     char* str;
@@ -617,9 +657,14 @@ struct _conf_node_t {
     float f32;
     double f64;
     char* str;
+    wchar_t* wstr;
     char small_str[8];
     conf_node_t* first_child;
+    binary_data_t binary_data;
   } value;
+
+  /*for yaml only*/
+  uint8_t leading_spaces;
 };
 
 /**
@@ -644,6 +689,18 @@ const char* conf_node_get_name(conf_node_t* node);
  * @return {conf_node_t*} 返回节点对象。
  */
 conf_node_t* conf_node_find_child(conf_node_t* node, const char* name);
+
+/**
+ * @method conf_node_find_child_by_index
+ *
+ * 查找指定索引的子节点。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {int32_t} index 索引。
+ *
+ * @return {conf_node_t*} 返回节点对象。
+ */
+conf_node_t* conf_node_find_child_by_index(conf_node_t* node, int32_t index);
 
 /**
  * @method conf_node_find_sibling
@@ -672,7 +729,7 @@ ret_t conf_node_set_value(conf_node_t* node, const value_t* v);
 /**
  * @method conf_node_get_value
  *
- * 设置节点的值。
+ * 获取节点的值。
  *
  * @param {conf_node_t*} node 节点对象。
  * @param {value_t*} v 值(返回)。
@@ -680,6 +737,182 @@ ret_t conf_node_set_value(conf_node_t* node, const value_t* v);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t conf_node_get_value(conf_node_t* node, value_t* v);
+
+/**
+ * @method conf_node_get_value_int32
+ *
+ * 获取节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {int32_t} defval 默认值。
+ *
+ * @return {int32_t} 返回值。
+ */
+int32_t conf_node_get_value_int32(conf_node_t* node, int32_t defval);
+
+/**
+ * @method conf_node_get_value_uint32
+ *
+ * 获取节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {uint32_t} defval 默认值。
+ *
+ * @return {uint32_t} 返回值。
+ */
+uint32_t conf_node_get_value_uint32(conf_node_t* node, uint32_t defval);
+
+/**
+ * @method conf_node_get_value_float
+ *
+ * 获取节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {float} defval 默认值。
+ *
+ * @return {float} 返回值。
+ */
+float conf_node_get_value_float(conf_node_t* node, float defval);
+
+/**
+ * @method conf_node_get_value_double
+ *
+ * 获取节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {double} defval 默认值。
+ *
+ * @return {double} 返回值。
+ */
+double conf_node_get_value_double(conf_node_t* node, double defval);
+
+/**
+ * @method conf_node_get_value_bool
+ *
+ * 获取节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {bool_t} defval 默认值。
+ *
+ * @return {bool_t} 返回值。
+ */
+bool_t conf_node_get_value_bool(conf_node_t* node, bool_t defval);
+
+/**
+ * @method conf_node_get_value_str
+ *
+ * 获取节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} defval 默认值。
+ *
+ * @return {const char*} 返回值。
+ */
+const char* conf_node_get_value_str(conf_node_t* node, const char* defval);
+
+/**
+ * @method conf_node_get_child_value
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {value_t*} v 值(返回)。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t conf_node_get_child_value(conf_node_t* node, const char* name, value_t* v);
+
+/**
+ * @method conf_node_get_child_value_int32
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {int32_t} defval 默认值。
+ *
+ * @return {int32_t} 返回值。
+ */
+int32_t conf_node_get_child_value_int32(conf_node_t* node, const char* name, int32_t defval);
+
+/**
+ * @method conf_node_get_child_value_uint32
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {uint32_t} defval 默认值。
+ *
+ * @return {uint32_t} 返回值。
+ */
+uint32_t conf_node_get_child_value_uint32(conf_node_t* node, const char* name, uint32_t defval);
+
+/**
+ * @method conf_node_get_child_value_float
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {float} defval 默认值。
+ *
+ * @return {float} 返回值。
+ */
+float conf_node_get_child_value_float(conf_node_t* node, const char* name, float defval);
+
+/**
+ * @method conf_node_get_child_value_double
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {double} defval 默认值。
+ *
+ * @return {double} 返回值。
+ */
+double conf_node_get_child_value_double(conf_node_t* node, const char* name, double defval);
+
+/**
+ * @method conf_node_get_child_value_bool
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {bool_t} defval 默认值。
+ *
+ * @return {bool_t} 返回值。
+ */
+bool_t conf_node_get_child_value_bool(conf_node_t* node, const char* name, bool_t defval);
+
+/**
+ * @method conf_node_get_child_value_str
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {const char*} name 子节点名称。
+ * @param {const char*} defval 默认值。
+ *
+ * @return {const char*} 返回值。
+ */
+const char* conf_node_get_child_value_str(conf_node_t* node, const char* name, const char* defval);
+
+/**
+ * @method conf_node_get_child_value_by_index
+ *
+ * 获取子节点的值。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ * @param {uint32_t} index 子节点的序数。
+ * @param {value_t*} v 值(返回)。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t conf_node_get_child_value_by_index(conf_node_t* node, uint32_t index, value_t* v);
 
 /**
  * @method conf_node_get_first_child
@@ -704,11 +937,41 @@ conf_node_t* conf_node_get_first_child(conf_node_t* node);
  */
 ret_t conf_node_set_first_child(conf_node_t* node, conf_node_t* child);
 
+/**
+ * @method conf_node_count_children
+ *
+ * 获取节点的子集个数。
+ *
+ * @param {conf_node_t*} node 节点对象。
+ *
+ * @return {uint32_t} 成功返回节点个数。
+ */
+uint32_t conf_node_count_children(conf_node_t* node);
+
+/**
+ * @method conf_doc_foreach
+ * 遍历节点类型为 CONF_NODE_SIMPLE 的节点。
+ *
+ * @param {conf_doc_t*}         doc 文档对象。
+ * @param {conf_doc_on_visit_t} on_visit 回调。
+ * @param {void*}               ctx 回调参数。
+ *
+ * @return {ret_t} 返回 ret_t 值
+ */
+ret_t conf_doc_foreach(conf_doc_t* doc, conf_doc_on_visit_t on_visit, void* ctx);
+
 #define CONF_NODE_ROOT_NAME "root"
 
 #define CONF_SPECIAL_ATTR_SIZE "#size"
 #define CONF_SPECIAL_ATTR_NAME "#name"
 #define CONF_SPECIAL_ATTR_INDEX "#index"
+
+/* private */
+ret_t conf_doc_set_ex(conf_doc_t* doc, conf_node_t* node, const char* path, const value_t* v);
+ret_t conf_doc_get_value_extend_type(conf_doc_t* doc, conf_node_t* node, value_t* v);
+
+/*ini/yaml使用*/
+ret_t conf_node_save_value(str_t* str, const value_t* v, char comment_char);
 
 END_C_DECLS
 

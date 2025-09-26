@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on serial port
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,7 +24,7 @@
 
 #include "tkc/fs.h"
 #include "tkc/istream.h"
-#include "streams/serial/serial_helper.h"
+#include "tkc/serial_helper.h"
 
 BEGIN_C_DECLS
 
@@ -51,7 +51,7 @@ struct _tk_istream_serial_t {
  *
  * 创建istream对象。
  *
- * @param {int} fd fd。
+ * @param {serial_handle_t} fd fd。
  *
  * @return {tk_istream_t*} 返回istream对象。
  *

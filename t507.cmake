@@ -14,7 +14,6 @@ set(CMAKE_CXX_COMPILER "${TOOLCHAIN_DIR}/bin/aarch64-linux-gnu-g++")
 #set(CMAKE_C_FLAGS "-mcpu=cortex-a53 -mfloat-abi=hard")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
 set(BUILD_SHARED_LIBS ON)
-set(OGRE_STATIC OFF) 
 
 # 库搜索路径
 set(CMAKE_FIND_ROOT_PATH "${TOOLCHAIN_DIR}/sysroot")

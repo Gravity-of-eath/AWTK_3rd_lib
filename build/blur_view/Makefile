@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src
+CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build
+CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,14 +126,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/blur_view/CMakeFiles/progress.marks
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/blur_view/CMakeFiles/progress.marks
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/clean
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,22 +143,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 blur_view/CMakeFiles/blur_view.dir/rule:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/CMakeFiles/blur_view.dir/rule
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 blur_view/CMakeFiles/blur_view.dir/rule
 .PHONY : blur_view/CMakeFiles/blur_view.dir/rule
 
 # Convenience name for target.
@@ -168,7 +168,7 @@ blur_view: blur_view/CMakeFiles/blur_view.dir/rule
 
 # fast build rule for target.
 blur_view/fast:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
 .PHONY : blur_view/fast
 
 src/blur_view.o: src/blur_view.c.o
@@ -177,7 +177,7 @@ src/blur_view.o: src/blur_view.c.o
 
 # target to build an object file
 src/blur_view.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view.c.o
 .PHONY : src/blur_view.c.o
 
 src/blur_view.i: src/blur_view.c.i
@@ -186,7 +186,7 @@ src/blur_view.i: src/blur_view.c.i
 
 # target to preprocess a source file
 src/blur_view.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view.c.i
 .PHONY : src/blur_view.c.i
 
 src/blur_view.s: src/blur_view.c.s
@@ -195,7 +195,7 @@ src/blur_view.s: src/blur_view.c.s
 
 # target to generate assembly for a file
 src/blur_view.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view.c.s
 .PHONY : src/blur_view.c.s
 
 src/blur_view_register.o: src/blur_view_register.c.o
@@ -204,7 +204,7 @@ src/blur_view_register.o: src/blur_view_register.c.o
 
 # target to build an object file
 src/blur_view_register.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view_register.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view_register.c.o
 .PHONY : src/blur_view_register.c.o
 
 src/blur_view_register.i: src/blur_view_register.c.i
@@ -213,7 +213,7 @@ src/blur_view_register.i: src/blur_view_register.c.i
 
 # target to preprocess a source file
 src/blur_view_register.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view_register.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view_register.c.i
 .PHONY : src/blur_view_register.c.i
 
 src/blur_view_register.s: src/blur_view_register.c.s
@@ -222,7 +222,7 @@ src/blur_view_register.s: src/blur_view_register.c.s
 
 # target to generate assembly for a file
 src/blur_view_register.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view_register.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/blur_view_register.c.s
 .PHONY : src/blur_view_register.c.s
 
 src/stackblur.o: src/stackblur.c.o
@@ -231,7 +231,7 @@ src/stackblur.o: src/stackblur.c.o
 
 # target to build an object file
 src/stackblur.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/stackblur.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/stackblur.c.o
 .PHONY : src/stackblur.c.o
 
 src/stackblur.i: src/stackblur.c.i
@@ -240,7 +240,7 @@ src/stackblur.i: src/stackblur.c.i
 
 # target to preprocess a source file
 src/stackblur.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/stackblur.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/stackblur.c.i
 .PHONY : src/stackblur.c.i
 
 src/stackblur.s: src/stackblur.c.s
@@ -249,7 +249,7 @@ src/stackblur.s: src/stackblur.c.s
 
 # target to generate assembly for a file
 src/stackblur.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/stackblur.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/stackblur.c.s
 .PHONY : src/stackblur.c.s
 
 src/view_ext.o: src/view_ext.c.o
@@ -258,7 +258,7 @@ src/view_ext.o: src/view_ext.c.o
 
 # target to build an object file
 src/view_ext.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/view_ext.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/view_ext.c.o
 .PHONY : src/view_ext.c.o
 
 src/view_ext.i: src/view_ext.c.i
@@ -267,7 +267,7 @@ src/view_ext.i: src/view_ext.c.i
 
 # target to preprocess a source file
 src/view_ext.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/view_ext.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/view_ext.c.i
 .PHONY : src/view_ext.c.i
 
 src/view_ext.s: src/view_ext.c.s
@@ -276,7 +276,7 @@ src/view_ext.s: src/view_ext.c.s
 
 # target to generate assembly for a file
 src/view_ext.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/view_ext.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/src/view_ext.c.s
 .PHONY : src/view_ext.c.s
 
 # Help Target
@@ -315,6 +315,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

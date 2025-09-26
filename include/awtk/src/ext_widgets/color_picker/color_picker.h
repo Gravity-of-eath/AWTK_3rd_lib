@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  color_picker
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -66,7 +66,7 @@ typedef struct _color_picker_t {
   widget_t widget;
 
   /**
-   * @property {const char*} value
+   * @property {char*} value
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 颜色。
    */

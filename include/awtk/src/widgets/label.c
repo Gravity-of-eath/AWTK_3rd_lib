@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  label
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,10 +32,11 @@ static ret_t label_paint_text_mlines(widget_t* widget, canvas_t* c, line_parser_
   int32_t bottom = y + h;
   style_t* style = widget->astyle;
   int32_t font_size = c->font_size;
-  int32_t line_height = font_size + style_get_int(style, STYLE_ID_SPACER, 2);
+  int32_t spacer = style_get_int(style, STYLE_ID_SPACER, 2);
   align_v_t align_v = (align_v_t)style_get_int(style, STYLE_ID_TEXT_ALIGN_V, ALIGN_V_MIDDLE);
   align_h_t align_h = (align_h_t)style_get_int(style, STYLE_ID_TEXT_ALIGN_H, ALIGN_H_CENTER);
-  int32_t h_text = p->total_lines * line_height;
+  int32_t line_height = font_size + spacer;
+  int32_t h_text = p->total_lines * line_height - spacer;
 
   switch (align_v) {
     case ALIGN_V_MIDDLE: {
@@ -80,7 +81,8 @@ static ret_t label_paint_text(widget_t* widget, canvas_t* c, const wchar_t* str,
   line_parser_t p;
   ret_t ret = RET_OK;
   label_t* label = LABEL(widget);
-  rect_t r = widget_get_content_area(widget);
+  ENSURE(label);
+  rect_t r = widget_get_content_area_ex(widget, 0);
 
   return_value_if_fail((r.w > 0 && widget->h >= c->font_size), RET_FAIL);
   return_value_if_fail(line_parser_init(&p, c, widget->text.str, widget->text.size, c->font_size,
@@ -102,12 +104,15 @@ static ret_t label_paint_text(widget_t* widget, canvas_t* c, const wchar_t* str,
 static ret_t label_on_paint_self(widget_t* widget, canvas_t* c) {
   if (widget->text.size > 0 && style_is_valid(widget->astyle)) {
     label_t* label = LABEL(widget);
+    ENSURE(label);
     uint32_t size =
         label->length >= 0 ? tk_min(label->length, widget->text.size) : widget->text.size;
 
     widget_prepare_text_style(widget, c);
 
     label_paint_text(widget, c, widget->text.str, size);
+  } else {
+    widget_paint_helper(widget, c, NULL, NULL);
   }
 
   return RET_OK;
@@ -166,15 +171,26 @@ ret_t label_set_word_wrap(widget_t* widget, bool_t word_wrap) {
   return widget_invalidate_force(widget, NULL);
 }
 
+ret_t label_set_ellipses(widget_t* widget, bool_t ellipses) {
+  label_t* label = LABEL(widget);
+  return_value_if_fail(label != NULL, RET_BAD_PARAMS);
+  // if (!label->ellipses && ellipses && label->tmp_text == NULL) {
+  //   label->tmp_text = TKMEM_ZALLOC(wstr_t);
+  //   return_value_if_fail(label->tmp_text != NULL, RET_OOM);
+  //   wstr_init(label->tmp_text, 16);
+  // }
+  label->ellipses = ellipses;
+
+  return widget_invalidate_force(widget, NULL);
+}
+
 static ret_t label_get_prop(widget_t* widget, const char* name, value_t* v) {
   label_t* label = LABEL(widget);
   return_value_if_fail(label != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_VALUE)) {
-    double d = 0;
-    ret_t ret = wstr_to_float(&(widget->text), &d);
-    value_set_double(v, d);
-    return ret;
+    value_set_wstr(v, widget->text.str);
+    return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_LENGTH)) {
     value_set_int(v, label->length);
     return RET_OK;
@@ -186,6 +202,9 @@ static ret_t label_get_prop(widget_t* widget, const char* name, value_t* v) {
     return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_WORD_WRAP)) {
     value_set_bool(v, label->word_wrap);
+    return RET_OK;
+  } else if (tk_str_eq(name, WIDGET_PROP_ELLIPSES)) {
+    value_set_bool(v, label->ellipses);
     return RET_OK;
   }
 
@@ -209,6 +228,8 @@ static ret_t label_set_prop(widget_t* widget, const char* name, const value_t* v
     return label_set_line_wrap(widget, value_bool(v));
   } else if (tk_str_eq(name, WIDGET_PROP_WORD_WRAP)) {
     return label_set_word_wrap(widget, value_bool(v));
+  } else if (tk_str_eq(name, WIDGET_PROP_ELLIPSES)) {
+    return label_set_ellipses(widget, value_bool(v));
   }
 
   return RET_NOT_FOUND;
@@ -218,9 +239,12 @@ static ret_t label_auto_adjust_size_impl(widget_t* widget, canvas_t* c, uint32_t
                                          uint32_t max_w, uint32_t min_h, uint32_t max_h) {
   wh_t w = 0;
   line_parser_t p;
+  wh_t widget_w = 0;
+  wh_t widget_h = 0;
   wh_t max_line_w = 0;
   int32_t line_height = 0;
   label_t* label = LABEL(widget);
+  ENSURE(label);
   style_t* style = widget->astyle;
   int32_t margin = style_get_int(style, STYLE_ID_MARGIN, 2);
   int32_t margin_top = style_get_int(style, STYLE_ID_MARGIN_TOP, margin);
@@ -232,8 +256,7 @@ static ret_t label_auto_adjust_size_impl(widget_t* widget, canvas_t* c, uint32_t
   widget_prepare_text_style(widget, c);
   line_height = c->font_size + spacer;
   if (widget->text.size == 0) {
-    widget->h = line_height;
-    return RET_OK;
+    return widget_resize(widget, widget->w, line_height);
   }
 
   max_line_w = label_get_text_line_max_w(widget, c);
@@ -257,20 +280,20 @@ static ret_t label_auto_adjust_size_impl(widget_t* widget, canvas_t* c, uint32_t
                                         label->line_wrap, label->word_wrap) == RET_OK,
                        RET_BAD_PARAMS);
 
-  widget->w = w + margin_left + margin_right;
-  widget->h = line_height * p.total_lines + margin_top + margin_bottom;
+  widget_w = w + margin_left + margin_right;
+  widget_h = line_height * p.total_lines + margin_top + margin_bottom;
 
-  widget->w = tk_max(widget->w, min_w);
-  widget->h = tk_max(widget->h, min_h);
+  widget_w = tk_max(widget_w, min_w);
+  widget_h = tk_max(widget_h, min_h);
   if (max_w > 0) {
-    widget->w = tk_min(widget->w, max_w);
+    widget_w = tk_min(widget_w, max_w);
   }
 
   if (max_h > 0) {
-    widget->h = tk_min(widget->h, max_h);
+    widget_h = tk_min(widget_h, max_h);
   }
   line_parser_deinit(&p);
-  return RET_OK;
+  return widget_resize(widget, widget_w, widget_h);
 }
 
 static ret_t label_auto_adjust_size(widget_t* widget) {
@@ -319,8 +342,20 @@ static ret_t label_on_event(widget_t* widget, event_t* e) {
   return RET_OK;
 }
 
-static const char* const s_label_properties[] = {WIDGET_PROP_LENGTH, WIDGET_PROP_LINE_WRAP,
-                                                 WIDGET_PROP_MAX_W, WIDGET_PROP_WORD_WRAP, NULL};
+static ret_t label_init(widget_t* widget) {
+  label_t* label = LABEL(widget);
+  return_value_if_fail(label != NULL, RET_BAD_PARAMS);
+
+  label->max_w = 0;
+  label->length = -1;
+  label->line_wrap = FALSE;
+  label->word_wrap = FALSE;
+  return RET_OK;
+}
+
+static const char* const s_label_properties[] = {WIDGET_PROP_LENGTH,   WIDGET_PROP_LINE_WRAP,
+                                                 WIDGET_PROP_MAX_W,    WIDGET_PROP_WORD_WRAP,
+                                                 WIDGET_PROP_ELLIPSES, NULL};
 
 TK_DECL_VTABLE(label) = {.size = sizeof(label_t),
                          .type = WIDGET_TYPE_LABEL,
@@ -328,6 +363,7 @@ TK_DECL_VTABLE(label) = {.size = sizeof(label_t),
                          .clone_properties = s_label_properties,
                          .persistent_properties = s_label_properties,
                          .create = label_create,
+                         .init = label_init,
                          .set_prop = label_set_prop,
                          .get_prop = label_get_prop,
                          .on_event = label_on_event,
@@ -336,13 +372,7 @@ TK_DECL_VTABLE(label) = {.size = sizeof(label_t),
 
 widget_t* label_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(label), x, y, w, h);
-  label_t* label = LABEL(widget);
-  return_value_if_fail(label != NULL, NULL);
-
-  label->max_w = 0;
-  label->length = -1;
-  label->line_wrap = FALSE;
-  label->word_wrap = FALSE;
+  return_value_if_fail(label_init(widget) == RET_OK, NULL);
 
   return widget;
 }

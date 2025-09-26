@@ -6,4 +6,5 @@ message("AWTK_INCLUDE== ${AWTK_INCLUDE}")
 add_subdirectory(line_chart)
 add_subdirectory(banner_menu)
 add_subdirectory(blur_view)
+add_subdirectory(conner_gradient)
 

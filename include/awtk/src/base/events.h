@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  events structs
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -181,21 +181,6 @@ typedef enum _event_type_t {
    * 调整Widget大小/位置的事件名(event_t)。
    */
   EVT_MOVE_RESIZE,
-  /**
-   * @const EVT_VALUE_WILL_CHANGE
-   * 控件的值即将改变的事件名(value_change_event_t)。
-   */
-  EVT_VALUE_WILL_CHANGE,
-  /**
-   * @const EVT_VALUE_CHANGED
-   * 控件的值改变的事件名(value_change_event_t)。
-   */
-  EVT_VALUE_CHANGED,
-  /**
-   * @const EVT_VALUE_CHANGING
-   * 控件的值持续改变(如编辑器正在编辑)的事件名(value_change_event_t)。
-   */
-  EVT_VALUE_CHANGING,
   /**
    * @const EVT_PAINT
    * 绘制的事件名(paint_event_t)。
@@ -431,6 +416,16 @@ typedef enum _event_type_t {
    */
   EVT_THEME_CHANGED,
   /**
+   * @const EVT_WIDGET_WILL_UPDATE_STYLE
+   * 控件根据自己当前状态即将更新style(event_t)。
+   */
+  EVT_WIDGET_WILL_UPDATE_STYLE,
+  /**
+   * @const EVT_WIDGET_UPDATE_STYLE
+   * 控件根据自己当前状态更新style(event_t)。
+   */
+  EVT_WIDGET_UPDATE_STYLE,
+  /**
    * @const EVT_WIDGET_ADD_CHILD
    * 控件加载新的子控件(event_t)。
    */
@@ -462,12 +457,12 @@ typedef enum _event_type_t {
   EVT_MULTI_GESTURE,
   /**
    * @const EVT_PAGE_CHANGED
-   * 页面改变了(event_t)。
+   * 当前看到的页面改变了(event_t)。
    */
   EVT_PAGE_CHANGED,
   /**
    * @const EVT_PAGE_CHANGING
-   * 页面正在改变(offset_change_event_t)。
+   * 当前看到的页面正在改变(offset_change_event_t)。
    */
   EVT_PAGE_CHANGING,
   /**
@@ -511,6 +506,51 @@ typedef enum _event_type_t {
    */
   EVT_SYSTEM,
   /**
+   * @const EVT_DROP_FILE
+   * SDL文件拖入事件(drop_file_event_t)。
+   */
+  EVT_DROP_FILE,
+  /**
+   * @const EVT_LOCALE_INFOS_LOAD_INFO
+   * locale_infos加载某个本地化信息(event_t)。
+   */
+  EVT_LOCALE_INFOS_LOAD_INFO,
+  /**
+   * @const EVT_LOCALE_INFOS_UNLOAD_INFO
+   * locale_infos卸载某个本地化信息(event_t)。
+   */
+  EVT_LOCALE_INFOS_UNLOAD_INFO,
+  /**
+   * @const EVT_ACTIVATED
+   * 控件进入激活状态(event_t)。
+   */
+  EVT_ACTIVATED,
+  /**
+   * @const EVT_UNACTIVATED
+   * 控件退出激活状态(event_t)。
+   */
+  EVT_UNACTIVATED,
+  /**
+   * @const EVT_UI_LOAD
+   * UI加载完成事件(event_t)。
+   */
+  EVT_UI_LOAD,
+  /**
+   * @const EVT_TOUCH_DOWN
+   * 触摸按下事件名(touch_event_t)。
+   */
+  EVT_TOUCH_DOWN,
+  /**
+   * @const EVT_TOUCH_MOVE
+   * 触摸移动事件名(touch_event_t)。
+   */
+  EVT_TOUCH_MOVE,
+  /**
+   * @const EVT_TOUCH_UP
+   * 触摸抬起事件名(touch_event_t)。
+   */
+  EVT_TOUCH_UP,
+  /**
    * @const EVT_REQ_START
    * event queue其它请求编号起始值。
    */
@@ -521,6 +561,53 @@ typedef enum _event_type_t {
    */
   EVT_USER_START = 0x2000
 } event_type_t;
+
+/**
+ * @class widget_animator_event_t
+ * @annotation ["scriptable"]
+ * @parent event_t
+ * 控件动画事件。
+ */
+typedef struct _widget_animator_event_t {
+  event_t e;
+
+  /**
+   * @property {widget_t*} widget
+   * @annotation ["readable", "scriptable"]
+   * 控件对象。
+   */
+  widget_t* widget;
+
+  /**
+   * @property {void*} animator
+   * @annotation ["readable", "scriptable"]
+   * 控件动画句柄。
+   */
+  void* animator;
+} widget_animator_event_t;
+
+/**
+ * @method widget_animator_event_cast
+ * @annotation ["cast", "scriptable"]
+ * 把event对象转widget_animator_event_t对象。
+ * @param {event_t*} event event对象。
+ *
+ * @return {widget_animator_event_t*} event对象。
+ */
+widget_animator_event_t* widget_animator_event_cast(event_t* event);
+
+/**
+ * @method widget_animator_event_init
+ * 初始化事件。
+ * @param {widget_animator_event_t*} event event对象。
+ * @param {uint32_t} type 类型。
+ * @param {widget_t*} widget 控件对象。
+ * @param {void*} animator 控件动画句柄。
+ *
+ * @return {event_t*} event对象。
+ */
+event_t* widget_animator_event_init(widget_animator_event_t* event, uint32_t type, widget_t* widget,
+                                    void* animator);
 
 /**
  * @class model_event_t
@@ -556,7 +643,7 @@ typedef struct _model_event_t {
 /**
  * @method model_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转model_event_t对象，主要给脚本语言使用。
+ * 把event对象转model_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {model_event_t*} event对象。
@@ -583,6 +670,18 @@ event_t* model_event_init(model_event_t* event, const char* name, const char* ch
  */
 typedef struct _wheel_event_t {
   event_t e;
+  /**
+   * @property {xy_t} x
+   * @annotation ["readable", "scriptable"]
+   * x坐标。
+   */
+  xy_t x;
+  /**
+   * @property {xy_t} y
+   * @annotation ["readable", "scriptable"]
+   * y坐标。
+   */
+  xy_t y;
   /**
    * @property {int32_t} dy
    * @annotation ["readable", "scriptable"]
@@ -612,7 +711,7 @@ typedef struct _wheel_event_t {
 /**
  * @method wheel_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转wheel_event_t对象，主要给脚本语言使用。
+ * 把event对象转wheel_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {wheel_event_t*} event对象。
@@ -623,8 +722,8 @@ wheel_event_t* wheel_event_cast(event_t* event);
  * @method wheel_event_init
  * 初始化事件。
  * @param {wheel_event_t*} event event对象。
- * @param {void*} target 事件目标。
  * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
  * @param {int32_t} dy 滚轮的y值。
  *
  * @return {event_t*} event对象。
@@ -640,13 +739,13 @@ event_t* wheel_event_init(wheel_event_t* event, uint32_t type, void* target, int
 typedef struct _orientation_event_t {
   event_t e;
   /**
-   * @property {int32_t} orientation
+   * @property {lcd_orientation_t} orientation
    * @annotation ["readable", "scriptable"]
    * 屏幕方向。
    */
   lcd_orientation_t orientation;
   /**
-   * @property {int32_t} old_orientation
+   * @property {lcd_orientation_t} old_orientation
    * @annotation ["readable", "scriptable"]
    * 旧的屏幕方向。
    */
@@ -656,7 +755,7 @@ typedef struct _orientation_event_t {
 /**
  * @method orientation_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转orientation_event_t对象，主要给脚本语言使用。
+ * 把event对象转orientation_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {orientation_event_t*} event对象。
@@ -679,54 +778,10 @@ event_t* orientation_event_init(orientation_event_t* event, uint32_t type, void*
                                 lcd_orientation_t new_orientation);
 
 /**
- * @class value_change_event_t
- * @annotation ["scriptable"]
- * @parent event_t
- * 值变化事件。
- */
-typedef struct _value_change_event_t {
-  event_t e;
-  /**
-   * @property {value_t} old_value
-   * @annotation ["readable"]
-   * 旧值。
-   */
-  value_t old_value;
-
-  /**
-   * @property {value_t} new_value
-   * @annotation ["readable"]
-   * 新值。
-   */
-  value_t new_value;
-} value_change_event_t;
-
-/**
- * @method value_change_event_cast
- * @annotation ["cast", "scriptable"]
- * 把event对象转value_change_event_t对象，主要给脚本语言使用。
- * @param {event_t*} event event对象。
- *
- * @return {value_change_event_t*} event对象。
- */
-value_change_event_t* value_change_event_cast(event_t* event);
-
-/**
- * @method value_change_event_init
- * 初始化事件。
- * @param {value_change_event_t*} event event对象。
- * @param {void*} target 事件目标。
- * @param {uint32_t} type 事件类型。
- *
- * @return {event_t*} event对象。
- */
-event_t* value_change_event_init(value_change_event_t* event, uint32_t type, void* target);
-
-/**
  * @class offset_change_event_t
  * @annotation ["scriptable"]
  * @parent event_t
- * 值变化事件。
+ * offset变化事件。
  */
 typedef struct _offset_change_event_t {
   event_t e;
@@ -748,7 +803,7 @@ typedef struct _offset_change_event_t {
 /**
  * @method offset_change_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转offset_change_event_t对象，主要给脚本语言使用。
+ * 把event对象转offset_change_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {offset_change_event_t*} event对象。
@@ -759,8 +814,8 @@ offset_change_event_t* offset_change_event_cast(event_t* event);
  * @method offset_change_event_init
  * 初始化事件。
  * @param {offset_change_event_t*} event event对象。
- * @param {void*} target 事件目标。
  * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
  * @param {float_t} old_offset 旧的偏移数据。
  * @param {float_t} new_offset 新的偏移数据。
  *
@@ -790,7 +845,7 @@ typedef struct _pointer_event_t {
    */
   xy_t y;
   /**
-   * @property {uint8_t} button
+   * @property {xy_t} button
    * @annotation ["readable", "scriptable"]
    * button。
    * 在不同的平台，该属性会发生变化，
@@ -835,12 +890,19 @@ typedef struct _pointer_event_t {
    * shift键是否按下。
    */
   bool_t shift;
+
+  /**
+   * @property {int32_t} finger_id
+   * @annotation ["readable", "scriptable"]
+   * 触摸ID。
+   */
+  int32_t finger_id;
 } pointer_event_t;
 
 /**
  * @method pointer_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转pointer_event_t对象，主要给脚本语言使用。
+ * 把event对象转pointer_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {pointer_event_t*} event对象。
@@ -851,8 +913,8 @@ pointer_event_t* pointer_event_cast(event_t* event);
  * @method pointer_event_init
  * 初始化事件。
  * @param {pointer_event_t*} event event对象。
- * @param {void*} target 事件目标。
  * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
  * @param {int32_t} x x的值。
  * @param {int32_t} y y的值。
  *
@@ -896,7 +958,6 @@ typedef struct _key_event_t {
   /**
    * @property {bool_t} ctrl
    * @annotation ["readable", "scriptable"]
-   * right alt键是否按下。
    * ctrl键是否按下。
    */
   bool_t ctrl;
@@ -933,7 +994,6 @@ typedef struct _key_event_t {
   /**
    * @property {bool_t} cmd
    * @annotation ["readable", "scriptable"]
-   * left shift键是否按下。
    * cmd/win键是否按下。
    */
   bool_t cmd;
@@ -949,12 +1009,18 @@ typedef struct _key_event_t {
    * capslock键是否按下。
    */
   bool_t capslock;
+  /**
+   * @property {bool_t} numlock
+   * @annotation ["readable", "scriptable"]
+   * numlock键是否按下。
+   */
+  bool_t numlock;
 } key_event_t;
 
 /**
  * @method key_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转key_event_t对象，主要给脚本语言使用。
+ * 把event对象转key_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {key_event_t*} event对象。
@@ -965,8 +1031,8 @@ key_event_t* key_event_cast(event_t* event);
  * @method key_event_init
  * 初始化事件。
  * @param {key_event_t*} event event对象。
- * @param {void*} target 事件目标。
  * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
  * @param {int32_t} key key的值。
  *
  * @return {event_t*} event对象。
@@ -992,7 +1058,7 @@ typedef struct _paint_event_t {
 /**
  * @method paint_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转paint_event_t对象。主要给脚本语言使用。
+ * 把event对象转paint_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {paint_event_t*} event 对象。
@@ -1003,8 +1069,8 @@ paint_event_t* paint_event_cast(event_t* event);
  * @method paint_event_init
  * 初始化事件。
  * @param {paint_event_t*} event event对象。
- * @param {void*} target 事件目标。
  * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
  * @param {canvas_t*} c canvas对象。
  *
  * @return {event_t*} event对象。
@@ -1030,7 +1096,7 @@ typedef struct _window_event_t {
 /**
  * @method window_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转window_event_t对象。主要给脚本语言使用。
+ * 把event对象转window_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {window_event_t*} 对象。
@@ -1041,8 +1107,8 @@ window_event_t* window_event_cast(event_t* event);
  * @method window_event_init
  * 初始化事件。
  * @param {window_event_t*} event event对象。
- * @param {void*} target 事件目标。
  * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
  * @param {widget_t*} widget window对象。
  *
  * @return {event_t*} event对象。
@@ -1080,13 +1146,13 @@ typedef struct _multi_gesture_event_t {
    */
   xy_t y;
   /**
-   * @property {float} rotation
+   * @property {float_t} rotation
    * @annotation ["readable", "scriptable"]
    * 旋转角度(幅度)增量。（单位弧度）
    */
   float_t rotation;
   /**
-   * @property {float} distance
+   * @property {float_t} distance
    * @annotation ["readable", "scriptable"]
    * 两点间的距离增量。(-1,0)表示缩小，(0-1)表示增加。
    */
@@ -1096,7 +1162,7 @@ typedef struct _multi_gesture_event_t {
 /**
  * @method multi_gesture_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转multi_gesture_event_t对象，主要给脚本语言使用。
+ * 把event对象转multi_gesture_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {multi_gesture_event_t*} event对象。
@@ -1142,7 +1208,7 @@ typedef struct _assets_event_t {
 /**
  * @method assets_event_init
  * 初始化事件。
- * @param {window_event_t*} event event对象。
+ * @param {assets_event_t*} event event对象。
  * @param {assets_manager_t*} am 事件目标资源管理器。
  * @param {uint32_t} type 事件类型。
  * @param {asset_type_t} asset_type 资源类型。
@@ -1172,7 +1238,7 @@ typedef struct _theme_change_event_t {
 /**
  * @method theme_change_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转theme_change_event_t对象，主要给脚本语言使用。
+ * 把event对象转theme_change_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {theme_change_event_t*}  返回event对象。
@@ -1190,6 +1256,43 @@ theme_change_event_t* theme_change_event_cast(event_t* event);
  * @return {event_t*} 返回event对象。
  */
 event_t* theme_change_event_init(theme_change_event_t* event, uint32_t type, const char* name);
+
+/**
+ * @class drop_file_event_t
+ * @annotation ["scriptable"]
+ * @parent event_t
+ * 文件拖入事件。
+ */
+typedef struct _drop_file_event_t {
+  event_t e;
+  /**
+   * @property {const char*} filename
+   * @annotation ["readable", "scriptable"]
+   * 文件名。
+   */
+  const char* filename;
+} drop_file_event_t;
+
+/**
+ * @method drop_file_event_cast
+ * @annotation ["cast", "scriptable"]
+ * 把event对象转drop_file_event_t对象。
+ * @param {event_t*} event event对象。
+ *
+ * @return {drop_file_event_t*} event 对象。
+ */
+drop_file_event_t* drop_file_event_cast(event_t* event);
+
+/**
+ * @method drop_file_event_init
+ * 初始化事件。
+ * @param {drop_file_event_t*} event event对象。
+ * @param {void*} target 事件目标。
+ * @param {const char*} filename 文件名。
+ *
+ * @return {event_t*} event对象。
+ */
+event_t* drop_file_event_init(drop_file_event_t* event, void* target, const char* filename);
 
 /**
  * @class system_event_t
@@ -1210,7 +1313,7 @@ typedef struct _system_event_t {
 /**
  * @method system_event_cast
  * @annotation ["cast", "scriptable"]
- * 把event对象转system_event_t对象。主要给脚本语言使用。
+ * 把event对象转system_event_t对象。
  * @param {event_t*} event event对象。
  *
  * @return {system_event_t*} event 对象。
@@ -1229,24 +1332,168 @@ system_event_t* system_event_cast(event_t* event);
 event_t* system_event_init(system_event_t* event, void* target, void* sdl_event);
 
 /**
+ * @class touch_event_t
+ * @annotation ["scriptable"]
+ * @parent event_t
+ * 多点触摸事件(目前主要对接 SDL_TouchFingerEvent(SDL_FINGERMOTION/SDL_FINGERDOWN/SDL_FINGERUP))。
+ */
+typedef struct _touch_event_t {
+  event_t e;
+
+  /**
+   * @property {int64_t} touch_id
+   * @annotation ["readable", "scriptable"]
+   * 触摸ID。
+   */
+  int64_t touch_id;
+  /**
+   * @property {int64_t} finger_id
+   * @annotation ["readable", "scriptable"]
+   * 手指ID。
+   */
+  int64_t finger_id;
+  /**
+   * @property {float} x
+   * @annotation ["readable", "scriptable"]
+   * x坐标(在 0-1 之间，表示与屏幕宽度的比例）。
+   */
+  float x;
+  /**
+   * @property {float} y
+   * @annotation ["readable", "scriptable"]
+   * y坐标(在 0-1 之间，表示与屏幕高度的比例）。
+   */
+  float y;
+  /**
+   * @property {float} pressure
+   * @annotation ["readable", "scriptable"]
+   * 压力。
+   */
+  float pressure;
+
+} touch_event_t;
+
+/**
+ * @method touch_event_cast
+ * @annotation ["cast", "scriptable"]
+ * 把event对象转touch_event_t对象。
+ * @param {event_t*} event event对象。
+ *
+ * @return {touch_event_t*} event 对象。
+ */
+touch_event_t* touch_event_cast(event_t* event);
+
+/**
+ * @method touch_event_init
+ * 初始化事件。
+ * @param {touch_event_t*} event event对象。
+ * @param {uint32_t} type 事件类型。
+ * @param {void*} target 事件目标。
+ * @param {int64_t} touch_id 触摸ID。
+ * @param {int64_t} finger_id 手指ID。
+ * @param {float} x x坐标。
+ * @param {float} y y坐标。
+ * @param {float} pressure 压力。
+ *
+ * @return {event_t*} event对象。
+ */
+event_t* touch_event_init(touch_event_t* event, uint32_t type, void* target, int64_t touch_id,
+                          int64_t finger_id, float x, float y, float pressure);
+
+/**
+ * @class ui_load_event_t
+ * @annotation ["scriptable"]
+ * @parent event_t
+ * UI加载完成事件。
+ */
+typedef struct _ui_load_event_t {
+  event_t e;
+
+  /**
+   * @property {widget_t*} root
+   * @annotation ["readable", "scriptable"]
+   * UI的根控件对象。
+   */
+  widget_t* root;
+
+  /**
+   * @property {const char*} name
+   * @annotation ["readable", "scriptable"]
+   * UI的名称。
+   */
+  const char* name;
+
+} ui_load_event_t;
+
+/**
+ * @method ui_load_event_cast
+ * @annotation ["cast", "scriptable"]
+ * 把event对象转ui_load_event_t对象。
+ * @param {event_t*} event event对象。
+ *
+ * @return {ui_load_event_t*} event 对象。
+ */
+ui_load_event_t* ui_load_event_cast(event_t* event);
+
+/**
+ * @method ui_load_event_init
+ * 初始化事件。
+ * @param {ui_load_event_t*} event event对象。
+ * @param {void*} target 事件目标。
+ * @param {widget_t*} root UI的根控件对象。
+ * @param {const char*} name UI的名称。
+ *
+ * @return {event_t*} event对象。
+ */
+event_t* ui_load_event_init(ui_load_event_t* event, void* target, widget_t* root, const char* name);
+
+/**
  * @class event_t
  * @annotation ["scriptable"]
  * 事件基类。
  */
+
 /**
  * @method event_from_name
- * 将事件名转换成事件的值。
+ * 将事件名转换成事件的类型。
  * @annotation ["scriptable", "static"]
  * @param {const char*} name 事件名。
  *
- * @return {int32_t} 返回事件的值。
+ * @return {int32_t} 返回事件的类型。
  */
 int32_t event_from_name(const char* name);
+
+/**
+ * @method event_register_custom_name
+ * 给事件注册名称。
+ * @annotation ["scriptable", "static"]
+ * @param {int32_t} event_type 事件类型。
+ * @param {const char*} name 事件名。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t event_register_custom_name(int32_t event_type, const char* name);
+
+/**
+ * @method event_unregister_custom_name
+ * 注销事件名称。
+ * @annotation ["scriptable", "static"]
+ * @param {const char*} name 事件名。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t event_unregister_custom_name(const char* name);
+
+/* private */
+ret_t event_clear_custom_name(void);
 
 #define STR_ON_EVENT_PREFIX "on:"
 #define STR_GLOBAL_EVENT_PREFIX "global"
 #define STR_GLOBAL_VARS_CHANGED "global_vars_changed"
 #define STR_VALUE_CHANGED_BY_UI "value_changed_by_ui"
+
+#define STR_COMPONENT_OPEN "component_open"
+#define STR_COMPONENT_CLOSE "component_close"
 
 END_C_DECLS
 

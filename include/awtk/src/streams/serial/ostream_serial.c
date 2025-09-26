@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on serial
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +20,6 @@
  */
 
 #include "tkc/mem.h"
-#include "streams/serial/serial_helper.h"
 #include "streams/serial/ostream_serial.h"
 
 static int32_t tk_ostream_serial_write(tk_ostream_t* stream, const uint8_t* buff,

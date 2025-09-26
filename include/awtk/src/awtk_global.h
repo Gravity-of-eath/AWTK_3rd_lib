@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  awtk
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -81,6 +81,18 @@ ret_t tk_run(void);
 ret_t tk_quit(void);
 
 /**
+ * @method tk_quit_ex
+ * 退出TK事件主循环。
+ * @alias global_quit_ex
+ * @annotation ["static", "scriptable"]
+ *
+ * @param {uint32_t} delay 延迟退出的时间(毫秒)。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t tk_quit_ex(uint32_t delay);
+
+/**
  * @method tk_get_pointer_x
  * 获取全局指针的X坐标。
  * @alias global_get_pointer_x
@@ -113,7 +125,7 @@ bool_t tk_is_pointer_pressed(void);
 /**
  * @method tk_set_lcd_orientation
  * 设置屏幕的旋转方向(XXX:目前仅支持0度,90度,180度和270度，旋转方向为逆时针方向)。
- * @param {int} orientation 旋转方向。
+ * @param {lcd_orientation_t} orientation 旋转方向。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -174,6 +186,10 @@ ret_t tk_exit(void);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t tk_run_in_ui_thread(tk_callback_t func, void* ctx, bool_t wait_until_done);
+
+#ifdef USE_GUI_MAIN
+int gui_app_start(int lcd_w, int lcd_h);
+#endif/*USE_GUI_MAIN*/
 
 END_C_DECLS
 

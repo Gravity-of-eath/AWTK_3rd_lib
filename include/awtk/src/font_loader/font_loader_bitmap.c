@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  font interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -92,6 +92,10 @@ static font_vmetrics_t font_bitmap_get_vmetrics(font_t* f, font_size_t font_size
   vmetrics.ascent = header->ascent;
   vmetrics.descent = header->descent;
   vmetrics.line_gap = header->line_gap;
+
+  vmetrics.units_per_em = 0;
+  vmetrics.font_ascender = header->ascent;
+  vmetrics.font_descender = header->descent;
 
   return vmetrics;
 }

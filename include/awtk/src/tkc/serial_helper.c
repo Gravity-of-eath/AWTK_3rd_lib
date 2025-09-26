@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  serial helper functions
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,9 +35,12 @@
 #include "tkc/wstr.h"
 #include "tkc/thread.h"
 #include "tkc/time_now.h"
+#include "tkc/serial_helper.h"
+
+#if defined(TK_IS_PC) || defined(LINUX) || defined(IOS) || defined(ANDROID)
 #include "tkc/socket_pair.h"
 #include "tkc/socket_helper.h"
-#include "streams/serial/serial_helper.h"
+#endif /*TK_IS_PC*/
 
 #ifdef WIN32
 #define prefix L"\\\\.\\"
@@ -86,6 +89,9 @@ static void* serial_thread_entry(void* args) {
     if (serial_wait_for_data_impl(handle, 100) == RET_OK) {
       while (send(fd, buff, sizeof(buff), 0) <= 0) {
         log_warn("send fb buff fail \r\n");
+        if (handle->closed) {
+          break;
+        }
       }
       serial_cond_var_wait(handle, 0xFFFFFFFF);
     }
@@ -394,7 +400,7 @@ ret_t serial_oflush(serial_handle_t handle) {
   return RET_OK;
 }
 
-int serial_close(serial_handle_t handle) {
+ret_t serial_close(serial_handle_t handle) {
   if (handle != NULL) {
     serial_dev_t dev = serial_handle_get_dev(handle);
 
@@ -432,7 +438,8 @@ int serial_close(serial_handle_t handle) {
     memset(handle, 0x0, sizeof(*handle));
     TKMEM_FREE(handle);
   }
-  return 0;
+
+  return RET_OK;
 }
 
 int32_t serial_read(serial_handle_t handle, uint8_t* buff, uint32_t max_size) {
@@ -521,20 +528,25 @@ ret_t serial_wait_for_data(serial_handle_t handle, uint32_t timeout_ms) {
   return tk_socket_wait_for_data(fd, timeout_ms);
 }
 
-#else
+#elif defined(LINUX) || defined(MACOS) || defined(IOS) || defined(ANDROID)
 
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <sys/signal.h>
 #include <errno.h>
 #include <paths.h>
-#include <sysexits.h>
 #include <termios.h>
 #include <sys/param.h>
 #include <pthread.h>
+
+#ifndef QNX
+#include <sysexits.h>
+#include <sys/signal.h>
+#else
+#include <signal.h>
+#endif/*QNX*/
 
 #if defined(__linux__)
 #include <linux/serial.h>
@@ -567,15 +579,21 @@ ret_t serial_wait_for_data(serial_handle_t handle, uint32_t timeout_ms) {
 #endif
 
 serial_handle_t serial_open(const char* port) {
+  int flags = 0;
   serial_handle_t handle = TKMEM_ZALLOC(serial_info_t);
   return_value_if_fail(handle != NULL && port != NULL && *port != '\0', NULL);
-  handle->dev = open(port, O_RDWR | O_NOCTTY | O_NONBLOCK);
+
+  flags = O_RDWR | O_NOCTTY | O_NDELAY | O_EXCL;
+#ifdef O_CLOEXEC
+  flags |= O_CLOEXEC;
+#endif
+  handle->dev = open(port, flags);
 
   if (handle->dev <= 0) {
     TKMEM_FREE(handle);
     return NULL;
   }
-
+  handle->old_options = TKMEM_ALLOC(sizeof(struct termios));
   return handle;
 }
 
@@ -588,8 +606,10 @@ ret_t serial_config(serial_handle_t handle, uint32_t baudrate, bytesize_t bytesi
   serial_dev_t dev = serial_handle_get_dev(handle);
   return_value_if_fail(dev >= 0, RET_BAD_PARAMS);
 
-  return_value_if_fail(tcgetattr(dev, &options) >= 0, RET_BAD_PARAMS);
+  (void)byte_time_ns;
+  return_value_if_fail(tcgetattr(dev, (struct termios*)handle->old_options) >= 0, RET_BAD_PARAMS);
 
+  memset(&options, 0x0, sizeof(struct termios));
   options.c_cflag |= (tcflag_t)(CLOCAL | CREAD);
   options.c_lflag &=
       (tcflag_t) ~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ISIG | IEXTEN);  //|ECHOPRT
@@ -919,6 +939,7 @@ ret_t serial_config(serial_handle_t handle, uint32_t baudrate, bytesize_t bytesi
     options.c_cflag |= (CNEW_RTSCTS);
   else
     options.c_cflag &= (unsigned long)~(CNEW_RTSCTS);
+#elif defined(QNX)
 #else
 #error "OS Support seems wrong."
 #endif
@@ -943,6 +964,8 @@ ret_t serial_config(serial_handle_t handle, uint32_t baudrate, bytesize_t bytesi
     byte_time_ns += ((1.5 - stopbits_one_point_five) * bit_time_ns);
   }
 
+  (void)bit_time_ns;
+
   return RET_OK;
 }
 
@@ -956,17 +979,18 @@ ret_t serial_oflush(serial_handle_t handle) {
   return tcflush(dev, TCOFLUSH) == 0 ? RET_OK : RET_FAIL;
 }
 
-int serial_close(serial_handle_t handle) {
+ret_t serial_close(serial_handle_t handle) {
   serial_dev_t dev = serial_handle_get_dev(handle);
 
   serial_iflush(handle);
   serial_oflush(handle);
-
+  tcsetattr(dev, TCSANOW, (struct termios*)handle->old_options);
+  TKMEM_FREE(handle->old_options);
   close(dev);
   memset(handle, 0x0, sizeof(*handle));
   TKMEM_FREE(handle);
 
-  return 0;
+  return RET_OK;
 }
 
 int serial_handle_get_fd(serial_handle_t handle) {
@@ -995,14 +1019,6 @@ ret_t serial_wait_for_data(serial_handle_t handle, uint32_t timeout_ms) {
   return tk_socket_wait_for_data(fd, timeout_ms);
 }
 
-ret_t serial_timeout_set(serial_handle_t handle, serial_timeout_t* timeout) {
-  return RET_NOT_IMPL;
-}
-
-ret_t serial_timeout_get(serial_handle_t handle, serial_timeout_t* timeout) {
-  return RET_NOT_IMPL;
-}
-
 #endif /*WIN32*/
 
 stopbits_t serial_stopbits_from_str(const char* str) {
@@ -1019,6 +1035,17 @@ stopbits_t serial_stopbits_from_str(const char* str) {
   }
 }
 
+const char* serial_stopbits_to_str(stopbits_t stopbits) {
+  switch (stopbits) {
+    case stopbits_two:
+      return "2";
+    case stopbits_one_point_five:
+      return "1.5";
+    default:
+      return "1";
+  }
+}
+
 flowcontrol_t serial_flowcontrol_from_str(const char* str) {
   if (str == NULL) {
     return flowcontrol_none;
@@ -1030,6 +1057,17 @@ flowcontrol_t serial_flowcontrol_from_str(const char* str) {
     return flowcontrol_hardware;
   } else {
     return flowcontrol_none;
+  }
+}
+
+const char* serial_flowcontrol_to_str(flowcontrol_t flowcontrol) {
+  switch (flowcontrol) {
+    case flowcontrol_software:
+      return "soft";
+    case flowcontrol_hardware:
+      return "hard";
+    default:
+      return "none";
   }
 }
 
@@ -1051,6 +1089,21 @@ parity_t serial_parity_from_str(const char* str) {
   }
 }
 
+const char* serial_parity_to_str(parity_t parity) {
+  switch (parity) {
+    case parity_odd:
+      return "odd";
+    case parity_even:
+      return "even";
+    case parity_mark:
+      return "mark";
+    case parity_space:
+      return "space";
+    default:
+      return "none";
+  }
+}
+
 bytesize_t serial_bytesize_from_str(const char* str) {
   if (str == NULL) {
     return eightbits;
@@ -1067,4 +1120,17 @@ bytesize_t serial_bytesize_from_str(const char* str) {
   }
 
   return eightbits;
+}
+
+const char* serial_bytesize_to_str(bytesize_t bytesize) {
+  switch (bytesize) {
+    case sevenbits:
+      return "7";
+    case sixbits:
+      return "6";
+    case fivebits:
+      return "5";
+    default:
+      return "8";
+  }
 }

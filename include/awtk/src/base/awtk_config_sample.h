@@ -4,7 +4,7 @@
  * Author: AWTK Develop Team
  * Brief:  config
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -220,7 +220,7 @@
 /**
  * 开启自定义的离线 canvas，如果板子使用特殊的画布的话，需要定义该宏来定义特殊离线 canvas 函数
  * 
- * #define WITH_CANVAS_OFFLINE_CUSTION 1
+ * #define WITH_CANVAS_OFFLINE_CUSTOM 1
  */
 
 /**
@@ -279,4 +279,42 @@
  * #define WITH_FAST_LCD_PORTRAIT 1
  */
 
+/**
+ * 是否启用 data_reader/data_writer。如果要使用ini/json/xml/ubjson等配置文件时，必须启用
+ *
+ * #define WITH_DATA_READER_WRITER 1
+ */
+
+
+/**
+ * OS 对应平台有自己的内存管理函数，但是不是标准的malloc/free，请定义本宏，并自己实现tk_alloc/tk_free系列函数。
+ *
+ * #define WITH_OS_MEM 1
+ */
+
+/**
+ * 是否启用默认输入法。
+ * #define WITH_DEFAULT_IM 1
+ */
+
+/**
+ * 是否禁用输入法引擎。
+ * #define WITH_IME_NULL 1
+ */
+
+/**
+ * 是否启用T9输入法。
+ * #define WITH_IME_T9 1
+ */
+
+/**
+ * 是否启用T9EXT输入法。
+ * #define WITH_IME_T9EXT 1
+ */
+
+/**
+ * 启用输入法，但不想启用联想功能，请定义本宏。
+ *
+ * #define WITHOUT_SUGGEST_WORDS 1
+ */
 #endif /*AWTK_CONFIG_H*/

@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src
+CMAKE_SOURCE_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build
+CMAKE_BINARY_DIR = /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,14 +126,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/line_chart/CMakeFiles/progress.marks
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build/CMakeFiles 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/line_chart/CMakeFiles/progress.marks
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/clean
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,22 +143,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 line_chart/CMakeFiles/line_chart.dir/rule:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/CMakeFiles/line_chart.dir/rule
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 line_chart/CMakeFiles/line_chart.dir/rule
 .PHONY : line_chart/CMakeFiles/line_chart.dir/rule
 
 # Convenience name for target.
@@ -168,7 +168,7 @@ line_chart: line_chart/CMakeFiles/line_chart.dir/rule
 
 # fast build rule for target.
 line_chart/fast:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/build
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/build
 .PHONY : line_chart/fast
 
 src/float_queue.o: src/float_queue.c.o
@@ -177,7 +177,7 @@ src/float_queue.o: src/float_queue.c.o
 
 # target to build an object file
 src/float_queue.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/float_queue.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/float_queue.c.o
 .PHONY : src/float_queue.c.o
 
 src/float_queue.i: src/float_queue.c.i
@@ -186,7 +186,7 @@ src/float_queue.i: src/float_queue.c.i
 
 # target to preprocess a source file
 src/float_queue.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/float_queue.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/float_queue.c.i
 .PHONY : src/float_queue.c.i
 
 src/float_queue.s: src/float_queue.c.s
@@ -195,7 +195,7 @@ src/float_queue.s: src/float_queue.c.s
 
 # target to generate assembly for a file
 src/float_queue.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/float_queue.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/float_queue.c.s
 .PHONY : src/float_queue.c.s
 
 src/line_chart.o: src/line_chart.c.o
@@ -204,7 +204,7 @@ src/line_chart.o: src/line_chart.c.o
 
 # target to build an object file
 src/line_chart.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart.c.o
 .PHONY : src/line_chart.c.o
 
 src/line_chart.i: src/line_chart.c.i
@@ -213,7 +213,7 @@ src/line_chart.i: src/line_chart.c.i
 
 # target to preprocess a source file
 src/line_chart.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart.c.i
 .PHONY : src/line_chart.c.i
 
 src/line_chart.s: src/line_chart.c.s
@@ -222,7 +222,7 @@ src/line_chart.s: src/line_chart.c.s
 
 # target to generate assembly for a file
 src/line_chart.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart.c.s
 .PHONY : src/line_chart.c.s
 
 src/line_chart_register.o: src/line_chart_register.c.o
@@ -231,7 +231,7 @@ src/line_chart_register.o: src/line_chart_register.c.o
 
 # target to build an object file
 src/line_chart_register.c.o:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart_register.c.o
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart_register.c.o
 .PHONY : src/line_chart_register.c.o
 
 src/line_chart_register.i: src/line_chart_register.c.i
@@ -240,7 +240,7 @@ src/line_chart_register.i: src/line_chart_register.c.i
 
 # target to preprocess a source file
 src/line_chart_register.c.i:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart_register.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart_register.c.i
 .PHONY : src/line_chart_register.c.i
 
 src/line_chart_register.s: src/line_chart_register.c.s
@@ -249,7 +249,7 @@ src/line_chart_register.s: src/line_chart_register.c.s
 
 # target to generate assembly for a file
 src/line_chart_register.c.s:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart_register.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/src/line_chart_register.c.s
 .PHONY : src/line_chart_register.c.s
 
 # Help Target
@@ -285,6 +285,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

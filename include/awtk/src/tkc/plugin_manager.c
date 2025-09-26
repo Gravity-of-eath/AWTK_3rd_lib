@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  plugin manager
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -220,6 +220,7 @@ ret_t plugin_manager_dump(plugin_manager_t* plugin_manager) {
   for (i = 0; i < plugin_manager->plugins.size; i++) {
     plugin_t* iter = (plugin_t*)(plugin_manager->plugins.elms[i]);
     log_debug("%u: %s %p\n", i, iter->lib_name, iter->handle);
+    (void)iter;
   }
 
   return RET_OK;

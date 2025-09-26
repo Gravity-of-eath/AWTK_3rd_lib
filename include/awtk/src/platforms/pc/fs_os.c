@@ -36,7 +36,7 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 
-#if defined(WIN32) && !defined(MINGW)
+#if defined(WIN32)
 static ret_t fs_stat_info_from_stat(fs_stat_info_t* fst, struct _stat64i32* st) {
 #else
 static ret_t fs_stat_info_from_stat(fs_stat_info_t* fst, struct stat* st) {
@@ -109,7 +109,7 @@ static int64_t fs_os_file_size(fs_file_t* file) {
 static ret_t fs_os_file_stat(fs_file_t* file, fs_stat_info_t* fst) {
   int rc = 0;
   FILE* fp = (FILE*)(file->data);
-#if defined(WIN32) && !defined(MINGW)
+#if defined(WIN32)
   struct _stat64i32 st;
   rc = _fstat64i32(fileno(fp), &st);
 #else
@@ -169,10 +169,25 @@ static ret_t fs_os_dir_read(fs_dir_t* dir, fs_item_t* item) {
 
   memset(item, 0x00, sizeof(fs_item_t));
   if (ent != NULL) {
+#ifdef QNX
+    struct stat st;
+    char filename[MAX_PATH + 1] = {0};
+    tk_snprintf(filename, sizeof(filename) - 1, "%s/%s", dir->dirname,  ent->d_name);
+
+    if (stat(filename, &st) == 0) {
+      item->is_dir = (st.st_mode & S_IFDIR) != 0;
+      item->is_link = (st.st_mode & S_IFLNK) != 0;
+      item->is_reg_file = (st.st_mode & S_IFREG) != 0;
+    } else {
+      item->is_reg_file = 1;
+    }
+#else
     uint8_t type = ent->d_type;
     item->is_dir = (type & DT_DIR) != 0;
     item->is_link = (type & DT_LNK) != 0;
     item->is_reg_file = (type & DT_REG) != 0;
+#endif
+
 #ifdef WIN32
     str_t str;
     str_init(&str, wcslen(ent->d_name) * 4 + 1);
@@ -416,8 +431,11 @@ static ret_t fs_os_get_exe(fs_t* fs, char path[MAX_PATH + 1]) {
     return RET_FAIL;
   }
 #elif defined(WIN32)
+  wchar_t wpath[MAX_PATH + 1];
+  memset(wpath, 0x00, sizeof(wpath));
+  GetModuleFileNameW(GetModuleHandle(NULL), wpath, MAX_PATH);
+  tk_utf8_from_utf16_ex(wpath, MAX_PATH, path, MAX_PATH);
   (void)size;
-  GetModuleFileNameA(GetModuleHandle(NULL), path, MAX_PATH);
 #elif defined(__APPLE__)
   _NSGetExecutablePath(path, &size);
   assert(size <= MAX_PATH);
@@ -449,9 +467,9 @@ static ret_t fs_os_get_temp_path(fs_t* fs, char path[MAX_PATH + 1]) {
 
   return RET_OK;
 #elif defined(WIN32)
-  WCHAR tempdir[MAX_PATH + 1];
-  DWORD ret = GetTempPathW(MAX_PATH, tempdir);
   str_t str;
+  WCHAR tempdir[MAX_PATH + 1];
+  GetTempPathW(MAX_PATH, tempdir);
   str_init(&str, MAX_PATH);
   str_from_wstr(&str, tempdir);
   tk_strncpy(path, str.str, MAX_PATH);
@@ -523,7 +541,7 @@ static ret_t fs_os_stat(fs_t* fs, const char* name, fs_stat_info_t* fst) {
 
   int stat_ret = 0;
 
-#if defined(WIN32) && !defined(MINGW)
+#if defined(WIN32)
   struct _stat64i32 st;
   if (strlen(name) == 2 && name[1] == ':') {
     /*append slash*/
@@ -532,10 +550,10 @@ static ret_t fs_os_stat(fs_t* fs, const char* name, fs_stat_info_t* fst) {
     wname[1] = name[1];
     wname[2] = '\\';
     wname[3] = 0;
-    stat_ret = _wstat(wname, &st);
+    stat_ret = _wstat64i32(wname, &st);
   } else {
     wchar_t* w_name = tk_wstr_dup_utf8(name);
-    stat_ret = _wstat(w_name, &st);
+    stat_ret = _wstat64i32(w_name, &st);
     TKMEM_FREE(w_name);
   }
 #else

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  a simple main loop
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * this program is distributed in the hope that it will be useful,
  * but without any warranty; without even the implied warranty of
@@ -66,6 +66,26 @@ ret_t main_loop_post_multi_gesture_event(main_loop_t* l, multi_gesture_event_t* 
   return main_loop_queue_event(l, &r);
 }
 
+ret_t main_loop_post_touch_event(main_loop_t* l, event_type_t event_type, xy_t x, xy_t y) {
+  event_queue_req_t r;
+  touch_event_t event;
+  main_loop_simple_t* loop = (main_loop_simple_t*)l;
+
+  memset(&r, 0x00, sizeof(r));
+  memset(&event, 0x00, sizeof(event));
+  return_value_if_fail(loop != NULL, RET_BAD_PARAMS);
+
+  event.x = x;
+  event.y = y;
+  event.e.type = event_type;
+  event.e.time = time_now_ms();
+  event.e.size = sizeof(touch_event_t);
+
+  r.touch_event = event;
+
+  return main_loop_queue_event(l, &r);
+}
+
 ret_t main_loop_post_pointer_event(main_loop_t* l, bool_t pressed, xy_t x, xy_t y) {
   event_queue_req_t r;
   pointer_event_t event;
@@ -116,8 +136,6 @@ ret_t main_loop_post_pointer_event(main_loop_t* l, bool_t pressed, xy_t x, xy_t 
       return main_loop_queue_event(l, &r);
     }
   }
-
-  return RET_OK;
 }
 
 ret_t main_loop_post_key_event(main_loop_t* l, bool_t pressed, uint8_t key) {
@@ -161,6 +179,14 @@ static ret_t main_loop_dispatch_events(main_loop_simple_t* loop) {
   while ((time_out - time_in < 20) && (main_loop_recv_event((main_loop_t*)loop, &r) == RET_OK)) {
     widget_t* widget = loop->base.wm;
     switch (r.event.type) {
+      case EVT_TOUCH_DOWN:
+      case EVT_TOUCH_MOVE:
+      case EVT_TOUCH_UP: {
+        widget_t* win = window_manager_get_top_window(widget);
+        event_t* e = (event_t*)(&r.touch_event);
+        widget_dispatch(win, e);
+        break;
+      }
       case EVT_CONTEXT_MENU:
       case EVT_POINTER_DOWN:
       case EVT_POINTER_MOVE:
@@ -172,6 +198,9 @@ static ret_t main_loop_dispatch_events(main_loop_simple_t* loop) {
         break;
       case EVT_WHEEL:
         window_manager_dispatch_input_event(widget, (event_t*)&(r.wheel_event));
+        break;
+      case EVT_KEY_LONG_PRESS:
+        widget_on_keydown(widget, &(r.key_event));
         break;
       case EVT_KEY_DOWN:
       case EVT_KEY_UP:
@@ -259,6 +288,21 @@ static event_source_manager_t* main_loop_simple_get_event_source_manager(main_lo
   return loop->event_source_manager;
 }
 
+ret_t main_loop_simple_reset(main_loop_simple_t* loop) {
+  return_value_if_fail(loop != NULL, RET_BAD_PARAMS);
+
+  event_source_manager_destroy(loop->event_source_manager);
+  event_queue_destroy(loop->queue);
+
+  if (loop->mutex != NULL) {
+    tk_mutex_destroy(loop->mutex);
+  }
+
+  memset(loop, 0x00, sizeof(main_loop_simple_t));
+
+  return RET_OK;
+}
+
 main_loop_simple_t* main_loop_simple_init(int w, int h, main_loop_queue_event_t queue_event,
                                           main_loop_recv_event_t recv_event) {
   event_source_t* idle_source = NULL;
@@ -278,6 +322,7 @@ main_loop_simple_t* main_loop_simple_init(int w, int h, main_loop_queue_event_t 
 
   loop->base.run = main_loop_simple_run;
   loop->base.step = main_loop_simple_step;
+  loop->base.destroy = (main_loop_destroy_t)main_loop_simple_reset;
 
   if (recv_event != NULL && queue_event != NULL) {
     loop->base.recv_event = recv_event;
@@ -304,19 +349,4 @@ main_loop_simple_t* main_loop_simple_init(int w, int h, main_loop_queue_event_t 
   TK_OBJECT_UNREF(timer_source);
 
   return loop;
-}
-
-ret_t main_loop_simple_reset(main_loop_simple_t* loop) {
-  return_value_if_fail(loop != NULL, RET_BAD_PARAMS);
-
-  event_source_manager_destroy(loop->event_source_manager);
-  event_queue_destroy(loop->queue);
-
-  if (loop->mutex != NULL) {
-    tk_mutex_destroy(loop->mutex);
-  }
-
-  memset(loop, 0x00, sizeof(main_loop_simple_t));
-
-  return RET_OK;
 }

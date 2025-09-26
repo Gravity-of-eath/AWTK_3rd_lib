@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  date_time_format
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,6 @@
 #ifndef TK_DATE_TIME_FORMAT_H
 #define TK_DATE_TIME_FORMAT_H
 
-#include "tkc/str.h"
 #include "tkc/wstr.h"
 #include "tkc/types_def.h"
 #include "tkc/date_time.h"
@@ -39,7 +38,7 @@ BEGIN_C_DECLS
  * * M 代表月(1-12)
  * * D 代表日(1-31)
  * * h 代表时(0-23)
- * * H 代表时(0-11)
+ * * H 代表时(1-12)
  * * m 代表分(0-59)
  * * s 代表秒(0-59)
  * * w 代表星期(0-6)
@@ -49,7 +48,7 @@ BEGIN_C_DECLS
  * * MM 代表月(01-12)
  * * DD 代表日(01-31)
  * * hh 代表时(00-23)
- * * HH 代表时(00-11)
+ * * HH 代表时(01-12)
  * * mm 代表分(00-59)
  * * ss 代表秒(00-59)
  * * MMM 代表月的英文缩写(支持翻译)
@@ -77,7 +76,7 @@ ret_t wstr_format_time(wstr_t* str, const char* format, uint64_t time);
  * 格式化date_time。
  * @param {wstr_t*} str 输出字符串。
  * @param {const char*} format 格式。
- * @param {date_time_t*} dt 时间。
+ * @param {const date_time_t*} dt 时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

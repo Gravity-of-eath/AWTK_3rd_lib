@@ -24,6 +24,14 @@ static enum NVGtexture bitmap_format_to_nanovg(bitmap_format_t format) {
       f = NVG_TEXTURE_BGRA;
       break;
     }
+    case BITMAP_FMT_ARGB8888: {
+      f = NVG_TEXTURE_ARGB;
+      break;
+    }
+    case BITMAP_FMT_ABGR8888: {
+      f = NVG_TEXTURE_ABGR;
+      break;
+    }
     case BITMAP_FMT_BGR888: {
       f = NVG_TEXTURE_BGR;
       break;
@@ -158,13 +166,12 @@ static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img
   int32_t f = 0;
   uint8_t* img_data = NULL;
   vgcanvas_nanovg_soft_texture_t* texture = NULL;
-  enum NVGorientation image_orientation = NVG_ORIENTATION_0;
 
   if (img->flags & BITMAP_FLAG_TEXTURE) {
     if (img->specific != 0) {
-      ret_t reuslt = RET_FAIL;
-      const void* specific = vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager(), (vgcanvas_t*)canvas, img, &reuslt);
-      if (reuslt == RET_OK && specific != NULL) {
+      ret_t result = RET_FAIL;
+      const void* specific = vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager(), (vgcanvas_t*)canvas, img, &result);
+      if (result == RET_OK && specific != NULL) {
         const vgcanvas_nanovg_soft_texture_t* tmp = (const vgcanvas_nanovg_soft_texture_t*)specific;
         i = nvgFindTextureRaw(canvas->vg, tmp->data);
         if (i > 0) {
@@ -181,7 +188,6 @@ static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img
 #endif
 
   flag = (int)vgcanvas_nanovg_bitmap_flag_to_NVGimageFlags((bitmap_flag_t)(img->flags));
-  image_orientation = vgcanvas_nanovg_bitmap_orientation_to_NVGorientation(img->orientation);
 
   switch (img->format) {
     case BITMAP_FMT_RGBA8888: {
@@ -196,17 +202,24 @@ static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img
       f = NVG_TEXTURE_BGR565;
       break;
     }
+    case BITMAP_FMT_RGB565: {
+      f = NVG_TEXTURE_RGB565;
+      break;
+    }
     case BITMAP_FMT_RGB888: {
       f = NVG_TEXTURE_RGB;
       break;
     }
-    default: { assert(!"not supported format"); }
+    default: {
+      log_error("not supported format:%d \n", img->format);
+      assert(!"not supported format"); 
+    }
   }
 
   img_data = bitmap_lock_buffer_for_read(img);
 
-  i = nvgCreateImageRaw(canvas->vg, img->w, img->h, f, bitmap_get_physical_line_length(img), flag, image_orientation,
-                        img_data);
+  i = nvgCreateImageRaw(canvas->vg, bitmap_get_physical_width(img), bitmap_get_physical_height(img), f, bitmap_get_physical_line_length(img), 
+                        flag, NVG_ORIENTATION_0, img_data);
 
   if (i >= 0) {
     texture = TKMEM_ZALLOC(vgcanvas_nanovg_soft_texture_t);

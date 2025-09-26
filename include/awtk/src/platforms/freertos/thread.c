@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  thread on freertos
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,8 +23,8 @@
 #include "tkc/utils.h"
 #include "tkc/thread.h"
 #include "tkc/mutex.h"
-#include "FreeRTOS.h"
-#include "task.h"
+
+#include "freertos_headers.h"
 
 struct _tk_thread_t {
   void* args;
@@ -84,6 +84,8 @@ static void tk_thread_entry(void* arg) {
   thread->entry(thread->args);
   thread->running = FALSE;
   tk_mutex_unlock(thread->mutex);
+
+  vTaskDelete(NULL);
 }
 
 tk_thread_t* tk_thread_create(tk_thread_entry_t entry, void* args) {
@@ -129,7 +131,6 @@ ret_t tk_thread_destroy(tk_thread_t* thread) {
     tk_mutex_destroy(thread->mutex);
   }
 
-  vTaskDelete(thread->task);
   memset(thread, 0x00, sizeof(tk_thread_t));
   TKMEM_FREE(thread);
 

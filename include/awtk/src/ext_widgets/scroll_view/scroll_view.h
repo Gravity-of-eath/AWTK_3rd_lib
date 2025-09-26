@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  scroll_view
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -137,7 +137,7 @@ typedef struct _scroll_view_t {
   /**
    * @property {bool_t} recursive
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 是否递归查找全部子控件。
+   * 是否递归查找全部子控件。(当scroll_view的父控件是list_view_h或list_view时无效)
    */
   bool_t recursive;
   /**
@@ -241,6 +241,16 @@ ret_t scroll_view_set_virtual_w(widget_t* widget, wh_t w);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t scroll_view_set_virtual_h(widget_t* widget, wh_t h);
+
+/**
+ * @method scroll_view_fix_offset
+ * 修复偏移量。
+ * @annotation ["scriptable"]
+ * @param {widget_t*} widget 控件对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t scroll_view_fix_offset(widget_t* widget);
 
 /**
  * @method scroll_view_set_xslidable
@@ -351,7 +361,7 @@ ret_t scroll_view_set_slide_limit_ratio(widget_t* widget, float_t slide_limit_ra
  * @param {widget_t*} widget 控件对象。
  * @param {int32_t} xoffset_end x偏移量。
  * @param {int32_t} yoffset_end y偏移量。
- * @param {int32_t} duration 时间。
+ * @param {int32_t} duration 时间(毫秒)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -365,7 +375,7 @@ ret_t scroll_view_scroll_to(widget_t* widget, int32_t xoffset_end, int32_t yoffs
  * @param {widget_t*} widget 控件对象。
  * @param {int32_t} xoffset_delta x偏移量。
  * @param {int32_t} yoffset_delta y偏移量。
- * @param {int32_t} duration 时间。
+ * @param {int32_t} duration 时间(毫秒)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

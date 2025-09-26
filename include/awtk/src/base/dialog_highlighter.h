@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dialog_highlighter
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied highlighterrranty of
@@ -29,6 +29,9 @@ BEGIN_C_DECLS
 struct _dialog_highlighter_t;
 typedef struct _dialog_highlighter_t dialog_highlighter_t;
 
+typedef ret_t (*dialog_highlighter_set_clip_rect_t)(dialog_highlighter_t* h, rect_t* rect);
+typedef ret_t (*dialog_highlighter_system_bar_append_clip_rect_t)(dialog_highlighter_t* h,
+                                                                  rect_t* rect);
 typedef ret_t (*dialog_highlighter_set_system_bar_alpha_t)(dialog_highlighter_t* h, uint8_t alpha);
 typedef uint8_t (*dialog_highlighter_get_alpha_t)(dialog_highlighter_t* h, float_t percent);
 typedef ret_t (*dialog_highlighter_draw_mask_t)(dialog_highlighter_t* h, canvas_t* c,
@@ -50,7 +53,10 @@ typedef struct _dialog_highlighter_vtable_t {
   dialog_highlighter_get_alpha_t get_alpha;
   dialog_highlighter_is_dynamic_t is_dynamic;
   dialog_highlighter_on_destroy_t on_destroy;
+  dialog_highlighter_set_clip_rect_t set_bg_clip_rect;
   dialog_highlighter_set_system_bar_alpha_t set_system_bar_alpha;
+  dialog_highlighter_system_bar_append_clip_rect_t system_bar_top_append_clip_rect;
+  dialog_highlighter_system_bar_append_clip_rect_t system_bar_bottom_append_clip_rect;
 } dialog_highlighter_vtable_t;
 
 /**
@@ -94,7 +100,7 @@ struct _dialog_highlighter_t {
   widget_t* dialog;
 
   /**
-   * @property {rect_t*} clip_rect
+   * @property {rect_t} clip_rect
    * 截图的显示裁减区
    */
   rect_t clip_rect;
@@ -104,6 +110,12 @@ struct _dialog_highlighter_t {
    * 底层窗口。
    */
   widget_t* win;
+
+  /**
+   * @property {bool_t} used_by_others
+   * 是否给了别的窗口使用。
+   */
+  bool_t used_by_others;
 
   /*private*/
   const dialog_highlighter_vtable_t* vt;
@@ -180,6 +192,26 @@ ret_t dialog_highlighter_prepare_ex(dialog_highlighter_t* h, canvas_t* c, canvas
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t dialog_highlighter_set_system_bar_alpha(dialog_highlighter_t* h, uint8_t alpha);
+
+/**
+ * @method dialog_highlighter_system_bar_top_append_clip_rect
+ * 增加顶部 system_bar 的显示裁剪区
+ * @param {dialog_highlighter_t*} h 对话框高亮策略对象。
+ * @param {rect_t*} rect 裁剪区域
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t dialog_highlighter_system_bar_top_append_clip_rect(dialog_highlighter_t* h, rect_t* rect);
+
+/**
+ * @method dialog_highlighter_system_bar_bottom_append_clip_rect
+ * 增加底部 system_bar 的显示裁剪区
+ * @param {dialog_highlighter_t*} h 对话框高亮策略对象。
+ * @param {rect_t*} rect 裁剪区域
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t dialog_highlighter_system_bar_bottom_append_clip_rect(dialog_highlighter_t* h, rect_t* rect);
 
 /**
  * @method dialog_highlighter_get_alpha

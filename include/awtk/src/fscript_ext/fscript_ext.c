@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ext functions for fscript
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  */
 
@@ -18,6 +18,7 @@
 #include "tkc/utils.h"
 #include "tkc/wstr.h"
 #include "tkc/fscript.h"
+#include "tkc/sha256.h"
 
 #include "fscript_ext/fscript_ext.h"
 #include "fscript_ext/fscript_object.h"
@@ -110,6 +111,19 @@ static ret_t func_value_get_binary_size(fscript_t* fscript, fscript_args_t* args
   }
 
   return RET_FAIL;
+}
+
+static ret_t func_levelize(fscript_t* fscript, fscript_args_t* args, value_t* result) {
+  int32_t value = 0;
+  const char* levels = NULL;
+  FSCRIPT_FUNC_CHECK(args->size == 2, RET_BAD_PARAMS);
+  levels = value_str(args->args);
+  value = value_int32(args->args + 1);
+  return_value_if_fail(levels != NULL, RET_BAD_PARAMS);
+
+  value_set_int32(result, tk_levelize(levels, value));
+
+  return RET_OK;
 }
 
 static ret_t func_index_of_ex(fscript_t* fscript, fscript_args_t* args, value_t* result,
@@ -305,16 +319,37 @@ static ret_t func_trim_right(fscript_t* fscript, fscript_args_t* args, value_t* 
   return RET_OK;
 }
 
+static ret_t func_str_start_with(fscript_t* fscript, fscript_args_t* args, value_t* result) {
+  bool_t ret = FALSE;
+  FSCRIPT_FUNC_CHECK(args->size == 2, RET_BAD_PARAMS);
+  ret = tk_str_start_with(value_str(&args->args[0]), value_str(&args->args[1]));
+  value_set_bool(result, ret);
+  return RET_OK;
+}
+
+static ret_t func_str_end_with(fscript_t* fscript, fscript_args_t* args, value_t* result) {
+  bool_t ret = FALSE;
+  FSCRIPT_FUNC_CHECK(args->size == 2, RET_BAD_PARAMS);
+  ret = tk_str_end_with(value_str(&args->args[0]), value_str(&args->args[1]));
+  value_set_bool(result, ret);
+  return RET_OK;
+}
+
 static ret_t func_ulen(fscript_t* fscript, fscript_args_t* args, value_t* result) {
   wstr_t wstr;
   const char* str = NULL;
   FSCRIPT_FUNC_CHECK(args->size == 1, RET_BAD_PARAMS);
-  str = value_str(args->args);
 
-  wstr_init(&wstr, 0);
-  return_value_if_fail(wstr_set_utf8(&wstr, str) == RET_OK, RET_OOM);
-  value_set_int32(result, wstr.size);
-  wstr_reset(&wstr);
+  if (args->args->type == VALUE_TYPE_WSTRING) {
+    value_set_int32(result, wcslen(value_wstr(args->args)));
+  } else {
+    char buff[64] = {0};
+    str = value_str_ex(args->args, buff, sizeof(buff));
+    wstr_init(&wstr, 0);
+    return_value_if_fail(wstr_set_utf8(&wstr, str) == RET_OK, RET_OOM);
+    value_set_int32(result, wstr.size);
+    wstr_reset(&wstr);
+  }
 
   return RET_OK;
 }
@@ -408,17 +443,69 @@ static ret_t func_define_param(fscript_t* fscript, fscript_args_t* args, value_t
   return RET_OK;
 }
 
+static ret_t func_mem_dump(fscript_t* fscript, fscript_args_t* args, value_t* result) {
+  tk_mem_dump();
+  return RET_OK;
+}
+
+static ret_t func_sha256(fscript_t* fscript, fscript_args_t* args, value_t* result) {
+  str_t str;
+  value_t* v = NULL;
+  uint32_t size = 0;
+  const void* data = NULL;
+  char buff[128] = {0};
+  str_attach(&str, buff, sizeof(buff));
+  FSCRIPT_FUNC_CHECK(args->size == 1, RET_BAD_PARAMS);
+  v = args->args;
+  switch (v->type) {
+    case VALUE_TYPE_STRING: {
+      data = value_str(v);
+      size = tk_strlen(data);
+      break;
+    }
+    case VALUE_TYPE_BINARY: {
+      binary_data_t* bin = value_binary_data(v);
+      data = bin->data;
+      size = bin->size;
+      break;
+    }
+    case VALUE_TYPE_WSTRING: {
+      str_t* s = &(fscript->str);
+      str_from_wstr(s, value_wstr(v));
+      data = s->str;
+      size = s->size;
+      break;
+    }
+    default:
+      break;
+  }
+
+  if (data != NULL && size > 0) {
+    tk_sha256(data, size, &str);
+    value_dup_str(result, str.str);
+    return RET_OK;
+  } else {
+    value_set_str(result, "");
+    return RET_FAIL;
+  }
+}
+
 FACTORY_TABLE_BEGIN(s_ext_basic)
+FACTORY_TABLE_ENTRY("levelize", func_levelize)
 FACTORY_TABLE_ENTRY("index_of", func_index_of)
 FACTORY_TABLE_ENTRY("last_index_of", func_last_index_of)
 FACTORY_TABLE_ENTRY("ulen", func_ulen)
 FACTORY_TABLE_ENTRY("trim_left", func_trim_left)
 FACTORY_TABLE_ENTRY("trim_right", func_trim_right)
+FACTORY_TABLE_ENTRY("str_start_with", func_str_start_with)
+FACTORY_TABLE_ENTRY("str_end_with", func_str_end_with)
 FACTORY_TABLE_ENTRY("totitle", func_totitle)
 FACTORY_TABLE_ENTRY("char_at", func_char_at)
 FACTORY_TABLE_ENTRY("text_count", func_text_count)
 FACTORY_TABLE_ENTRY("text_reverse", func_text_reverse)
 FACTORY_TABLE_ENTRY("usubstr", func_usubstr)
+FACTORY_TABLE_ENTRY("sha256", func_sha256)
+
 /*用于反向解析保留信息*/
 FACTORY_TABLE_ENTRY("member_var", func_member_var)
 FACTORY_TABLE_ENTRY("global_var", func_global_var)
@@ -440,6 +527,7 @@ FACTORY_TABLE_ENTRY("char_at_random", func_char_at_random)
 FACTORY_TABLE_ENTRY("flow_get", func_flow_get)
 FACTORY_TABLE_ENTRY("flow_set", func_flow_set)
 FACTORY_TABLE_ENTRY("define_param", func_define_param)
+FACTORY_TABLE_ENTRY("mem_dump", func_mem_dump)
 
 FACTORY_TABLE_END()
 

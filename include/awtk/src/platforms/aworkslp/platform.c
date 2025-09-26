@@ -1,9 +1,9 @@
-/**
+﻿/**
  * File:   platform.c
  * Author: AWTK Develop Team
  * Brief:  platform dependent function of aworks
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * this program is distributed in the hope that it will be useful,
  * but without any warranty; without even the implied warranty of
@@ -237,12 +237,12 @@ static void platform_test(void) {
 
     tk_log_info_htlf("[TEST]", "tk_thread: start %u ms ", (unsigned int)time_now_ms());
     ENSURE(tk_thread_set_priority(p1, tk_thread_get_priority_from_platform(
-                                          TK_THREAD_PRIORITY_BELOW_NORAML)) == RET_OK);
+                                          TK_THREAD_PRIORITY_BELOW_NORMAL)) == RET_OK);
     ENSURE(tk_thread_start(p) == RET_OK);
 
     tk_log_info_htlf("[TEST]", "tk_thread: start %u ms ", (unsigned int)time_now_ms());
     ENSURE(tk_thread_set_priority(p1, tk_thread_get_priority_from_platform(
-                                          TK_THREAD_PRIORITY_ABOVE_NORAML)) == RET_OK);
+                                          TK_THREAD_PRIORITY_ABOVE_NORMAL)) == RET_OK);
     ENSURE(tk_thread_start(p1) == RET_OK);
 
     tk_log_info_htlf("[TEST]", "task startup:");

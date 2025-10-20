@@ -230,6 +230,9 @@ conner_gradient_LIB_DEPENDS:STATIC=general;/mnt/a57a7843-7ae2-415a-9125-4c61fa41
 //Dependencies for the target
 line_chart_LIB_DEPENDS:STATIC=general;/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/../lib/x86/libawtk.so;
 
+//Dependencies for the target
+shadow_label_LIB_DEPENDS:STATIC=general;/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/../lib/x86/libawtk.so;
+
 
 ########################
 # INTERNAL cache entries
@@ -333,7 +336,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=5
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

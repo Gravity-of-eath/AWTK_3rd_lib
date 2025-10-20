@@ -32,3 +32,10 @@
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient/CMakeFiles/list_install_components.dir
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient/CMakeFiles/rebuild_cache.dir
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient/CMakeFiles/conner_gradient.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/install/strip.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/install/local.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/install.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/list_install_components.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/rebuild_cache.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/edit_cache.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/shadow_label.dir

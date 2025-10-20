@@ -126,14 +126,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/progress.marks
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 shadow_label/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 shadow_label/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,83 +143,87 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 shadow_label/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 shadow_label/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named line_chart
+# Convenience name for target.
+shadow_label/CMakeFiles/shadow_label.dir/rule:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f CMakeFiles/Makefile2 shadow_label/CMakeFiles/shadow_label.dir/rule
+.PHONY : shadow_label/CMakeFiles/shadow_label.dir/rule
 
-# Build rule for target.
-line_chart: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 line_chart
-.PHONY : line_chart
+# Convenience name for target.
+shadow_label: shadow_label/CMakeFiles/shadow_label.dir/rule
 
-# fast build rule for target.
-line_chart/fast:
-	$(MAKE) -f line_chart/CMakeFiles/line_chart.dir/build.make line_chart/CMakeFiles/line_chart.dir/build
-.PHONY : line_chart/fast
-
-#=============================================================================
-# Target rules for targets named banner_menu
-
-# Build rule for target.
-banner_menu: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 banner_menu
-.PHONY : banner_menu
-
-# fast build rule for target.
-banner_menu/fast:
-	$(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/build
-.PHONY : banner_menu/fast
-
-#=============================================================================
-# Target rules for targets named blur_view
-
-# Build rule for target.
-blur_view: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 blur_view
-.PHONY : blur_view
-
-# fast build rule for target.
-blur_view/fast:
-	$(MAKE) -f blur_view/CMakeFiles/blur_view.dir/build.make blur_view/CMakeFiles/blur_view.dir/build
-.PHONY : blur_view/fast
-
-#=============================================================================
-# Target rules for targets named conner_gradient
-
-# Build rule for target.
-conner_gradient: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 conner_gradient
-.PHONY : conner_gradient
-
-# fast build rule for target.
-conner_gradient/fast:
-	$(MAKE) -f conner_gradient/CMakeFiles/conner_gradient.dir/build.make conner_gradient/CMakeFiles/conner_gradient.dir/build
-.PHONY : conner_gradient/fast
-
-#=============================================================================
-# Target rules for targets named shadow_label
-
-# Build rule for target.
-shadow_label: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 shadow_label
 .PHONY : shadow_label
 
 # fast build rule for target.
 shadow_label/fast:
-	$(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/build
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/build
 .PHONY : shadow_label/fast
+
+src/shadow_label.o: src/shadow_label.c.o
+
+.PHONY : src/shadow_label.o
+
+# target to build an object file
+src/shadow_label.c.o:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o
+.PHONY : src/shadow_label.c.o
+
+src/shadow_label.i: src/shadow_label.c.i
+
+.PHONY : src/shadow_label.i
+
+# target to preprocess a source file
+src/shadow_label.c.i:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.i
+.PHONY : src/shadow_label.c.i
+
+src/shadow_label.s: src/shadow_label.c.s
+
+.PHONY : src/shadow_label.s
+
+# target to generate assembly for a file
+src/shadow_label.c.s:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.s
+.PHONY : src/shadow_label.c.s
+
+src/shadow_label_register.o: src/shadow_label_register.c.o
+
+.PHONY : src/shadow_label_register.o
+
+# target to build an object file
+src/shadow_label_register.c.o:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o
+.PHONY : src/shadow_label_register.c.o
+
+src/shadow_label_register.i: src/shadow_label_register.c.i
+
+.PHONY : src/shadow_label_register.i
+
+# target to preprocess a source file
+src/shadow_label_register.c.i:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.i
+.PHONY : src/shadow_label_register.c.i
+
+src/shadow_label_register.s: src/shadow_label_register.c.s
+
+.PHONY : src/shadow_label_register.s
+
+# target to generate assembly for a file
+src/shadow_label_register.c.s:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.s
+.PHONY : src/shadow_label_register.c.s
 
 # Help Target
 help:
@@ -233,11 +237,13 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... line_chart"
-	@echo "... banner_menu"
-	@echo "... blur_view"
-	@echo "... conner_gradient"
 	@echo "... shadow_label"
+	@echo "... src/shadow_label.o"
+	@echo "... src/shadow_label.i"
+	@echo "... src/shadow_label.s"
+	@echo "... src/shadow_label_register.o"
+	@echo "... src/shadow_label_register.i"
+	@echo "... src/shadow_label_register.s"
 .PHONY : help
 
 
@@ -249,6 +255,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

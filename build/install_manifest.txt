@@ -13,3 +13,6 @@
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/conner_gradient/libconner_gradient.so
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/conner_gradient/include/conner_gradient_view_register.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/conner_gradient/include/conner_gradient_view.h
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/shadow_label/libshadow_label.so
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/shadow_label/include/shadow_label_register.h
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/shadow_label/include/shadow_label.h

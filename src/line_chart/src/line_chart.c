@@ -249,6 +249,9 @@ static ret_t line_chart_on_destroy(widget_t *widget)
 
   TKMEM_FREE(line_chart->fg_color);
   TKMEM_FREE(line_chart->secd_color);
+  TKMEM_FREE(line_chart->guide_line_color);
+  float_queue_free(line_chart->queue);
+  TKMEM_FREE(line_chart->queue);
 
   return RET_OK;
 }
@@ -438,7 +441,6 @@ static ret_t line_chart_on_event(widget_t *widget, event_t *e)
   return RET_OK;
 }
 
-
 static ret_t on_event_before_children(widget_t *widget, event_t *e)
 {
   line_chart_t *line_chart = LINE_CHART(widget);
@@ -489,7 +491,7 @@ TK_DECL_VTABLE(line_chart) = {.size = sizeof(line_chart_t),
                               .set_prop = line_chart_set_prop,
                               .get_prop = line_chart_get_prop,
                               .on_event = line_chart_on_event,
-                              .on_event_before_children=on_event_before_children,
+                              .on_event_before_children = on_event_before_children,
                               .on_destroy = line_chart_on_destroy};
 
 widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)

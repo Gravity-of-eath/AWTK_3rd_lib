@@ -57,6 +57,7 @@ all: line_chart/all
 all: banner_menu/all
 all: blur_view/all
 all: conner_gradient/all
+all: shadow_label/all
 
 .PHONY : all
 
@@ -65,6 +66,7 @@ preinstall: line_chart/preinstall
 preinstall: banner_menu/preinstall
 preinstall: blur_view/preinstall
 preinstall: conner_gradient/preinstall
+preinstall: shadow_label/preinstall
 
 .PHONY : preinstall
 
@@ -73,6 +75,7 @@ clean: line_chart/clean
 clean: banner_menu/clean
 clean: blur_view/clean
 clean: conner_gradient/clean
+clean: shadow_label/clean
 
 .PHONY : clean
 
@@ -147,6 +150,24 @@ line_chart/preinstall:
 line_chart/clean: line_chart/CMakeFiles/line_chart.dir/clean
 
 .PHONY : line_chart/clean
+
+#=============================================================================
+# Directory level rules for directory shadow_label
+
+# Recursive "all" directory target.
+shadow_label/all: shadow_label/CMakeFiles/shadow_label.dir/all
+
+.PHONY : shadow_label/all
+
+# Recursive "preinstall" directory target.
+shadow_label/preinstall:
+
+.PHONY : shadow_label/preinstall
+
+# Recursive "clean" directory target.
+shadow_label/clean: shadow_label/CMakeFiles/shadow_label.dir/clean
+
+.PHONY : shadow_label/clean
 
 #=============================================================================
 # Target rules for target line_chart/CMakeFiles/line_chart.dir
@@ -255,6 +276,33 @@ conner_gradient: conner_gradient/CMakeFiles/conner_gradient.dir/rule
 conner_gradient/CMakeFiles/conner_gradient.dir/clean:
 	$(MAKE) -f conner_gradient/CMakeFiles/conner_gradient.dir/build.make conner_gradient/CMakeFiles/conner_gradient.dir/clean
 .PHONY : conner_gradient/CMakeFiles/conner_gradient.dir/clean
+
+#=============================================================================
+# Target rules for target shadow_label/CMakeFiles/shadow_label.dir
+
+# All Build rule for target.
+shadow_label/CMakeFiles/shadow_label.dir/all:
+	$(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/depend
+	$(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=16,17,18 "Built target shadow_label"
+.PHONY : shadow_label/CMakeFiles/shadow_label.dir/all
+
+# Build rule for subdir invocation for target.
+shadow_label/CMakeFiles/shadow_label.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 3
+	$(MAKE) -f CMakeFiles/Makefile2 shadow_label/CMakeFiles/shadow_label.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
+.PHONY : shadow_label/CMakeFiles/shadow_label.dir/rule
+
+# Convenience name for target.
+shadow_label: shadow_label/CMakeFiles/shadow_label.dir/rule
+
+.PHONY : shadow_label
+
+# clean rule for target.
+shadow_label/CMakeFiles/shadow_label.dir/clean:
+	$(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/clean
+.PHONY : shadow_label/CMakeFiles/shadow_label.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

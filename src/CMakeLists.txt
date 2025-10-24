@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(Awtk_3rdLibrary)
 set(AWTK_SO "${CMAKE_CURRENT_SOURCE_DIR}/../lib/${PLATFORM}/libawtk.so")
+# 保留调试符号
+set(CMAKE_BUILD_TYPE Debug)
+
+# 或者对于 Release 模式也保留调试符号
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g")
 
 message("AWTK_INCLUDE== ${AWTK_INCLUDE}")
 add_subdirectory(line_chart)

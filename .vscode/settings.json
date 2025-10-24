@@ -12,7 +12,8 @@
         "canvas.h": "c",
         "stdio.h": "c",
         "view_ext.h": "c",
-        "random": "c"
+        "random": "c",
+        "typeinfo": "c"
     },
     "cmake.sourceDirectory": "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/Awtk_3rd_library/src"
 }

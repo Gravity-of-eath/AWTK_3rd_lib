@@ -171,6 +171,33 @@ banner_menu/fast:
 	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/build
 .PHONY : banner_menu/fast
 
+src/ui_tree_node.o: src/ui_tree_node.c.o
+
+.PHONY : src/ui_tree_node.o
+
+# target to build an object file
+src/ui_tree_node.c.o:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/ui_tree_node.c.o
+.PHONY : src/ui_tree_node.c.o
+
+src/ui_tree_node.i: src/ui_tree_node.c.i
+
+.PHONY : src/ui_tree_node.i
+
+# target to preprocess a source file
+src/ui_tree_node.c.i:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/ui_tree_node.c.i
+.PHONY : src/ui_tree_node.c.i
+
+src/ui_tree_node.s: src/ui_tree_node.c.s
+
+.PHONY : src/ui_tree_node.s
+
+# target to generate assembly for a file
+src/ui_tree_node.c.s:
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build && $(MAKE) -f banner_menu/CMakeFiles/banner_menu.dir/build.make banner_menu/CMakeFiles/banner_menu.dir/src/ui_tree_node.c.s
+.PHONY : src/ui_tree_node.c.s
+
 src/yps_banner_menu.o: src/yps_banner_menu.c.o
 
 .PHONY : src/yps_banner_menu.o
@@ -238,6 +265,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... install/local"
 	@echo "... banner_menu"
+	@echo "... src/ui_tree_node.o"
+	@echo "... src/ui_tree_node.i"
+	@echo "... src/ui_tree_node.s"
 	@echo "... src/yps_banner_menu.o"
 	@echo "... src/yps_banner_menu.i"
 	@echo "... src/yps_banner_menu.s"

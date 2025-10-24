@@ -532,13 +532,33 @@ tkc/types_def.h
 base/widget_animator.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/widget_animators/base/widget_animator.h
 
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/ui_tree_node.h
+stdlib.h
+-
+string.h
+-
+base/widget.h
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/base/widget.h
+
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/yps_banner_menu.h
 base/widget.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/base/widget.h
+ui_tree_node.h
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/ui_tree_node.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/yps_banner_menu_register.h
 base/widget.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/include/base/widget.h
+
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/src/ui_tree_node.c
+ui_tree_node.h
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/src/ui_tree_node.h
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/banner_menu/src/yps_banner_menu.c
 tkc/mem.h

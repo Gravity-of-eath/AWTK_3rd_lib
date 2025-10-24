@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/banner_menu.dir/src/ui_tree_node.c.o"
   "CMakeFiles/banner_menu.dir/src/yps_banner_menu.c.o"
   "CMakeFiles/banner_menu.dir/src/yps_banner_menu_register.c.o"
   "libbanner_menu.pdb"

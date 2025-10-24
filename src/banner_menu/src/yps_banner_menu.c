@@ -36,47 +36,103 @@ rect_t *rect_scale_center(rect_t *r, float_t scale)
                      tk_roundi(r->w * scale), tk_roundi(r->h * scale));
 }
 
-void scale_widget_group(widget_t *group, rect_t *scale)
+// 辅助函数：打印单个节点的详细信息
+static void print_node_info(rect_t *node, const char *prefix)
 {
-  if (group == NULL || scale == NULL)
+  if (node == NULL)
+    return;
+
+  printf("print_node_info %s: xywh=(%d, %d, %d, %d)\n",
+         prefix,
+         node->x,
+         node->y,
+         node->w,
+         node->h);
+}
+
+static void init_children_data(yps_banner_menu_t *parent)
+{
+
+  if (parent == NULL) //|| node_ptr == NULL
   {
+    printf("init_children_data %d\n", __LINE__);
+    return;
+  }
+  int32_t direct_children = widget_count_children(&(parent->widget));
+  if (direct_children <= 0)
+  {
+    printf("init_children_data %d\n", __LINE__);
     return;
   }
 
-  /* 计算缩放比例 */
-  float scale_x = (float)scale->w / (float)group->w;
-  float scale_y = (float)scale->h / (float)group->h;
+  yps_banner_menu_t *yps_banner_menu = (parent);
 
-  /* 缩放组控件本身 */
-  widget_move_resize(group, scale->x, scale->y, scale->w, scale->h);
-
-  /* 递归缩放所有子控件 */
-  for (int32_t i = 0; i < widget_count_children(group); i++)
+  yps_banner_menu->childrens = (widget_t **)TKMEM_ALLOC(sizeof(widget_t *) * direct_children);
+  for (int32_t i = 0; i < direct_children; i++)
   {
-    widget_t *child = widget_get_child(group, i);
-    /* 保存原始位置和大小 */
-    rect_t child_rect = rect_init(child->x, child->y, child->w, child->h);
+    widget_t *child = widget_get_child(&(parent->widget), i);
+    yps_banner_menu->childrens[i] = child;
+  }
+  rect_t root_rect = rect_init(yps_banner_menu->widget.x, yps_banner_menu->widget.y, yps_banner_menu->widget.w, yps_banner_menu->widget.h);
 
-    /* 计算新的位置和大小 */
-    int new_x = scale->x + (int)((child_rect.x - group->x) * scale_x);
-    int new_y = scale->y + (int)((child_rect.y - group->y) * scale_y);
-    int new_w = (int)(child_rect.w * scale_x);
-    int new_h = (int)(child_rect.h * scale_y);
+  ui_tree_node *root_node = ui_tree_node_create(
+      yps_banner_menu->widget.name ? yps_banner_menu->widget.name : "Root",
+      root_rect,
+      0 /* 根节点ID */
+  );
 
-    /* 如果是容器控件，递归缩放其子控件 */
+  if (!root_node)
+  {
+    printf("创建根节点失败！\n");
+    return;
+  }
+  yps_banner_menu->child_info = root_node;
+  /* 设置用户数据指向原始widget */
+  root_node->user_data = yps_banner_menu;
+
+  printf("根节点: %s [%d,%d,%d,%d]\n",
+         root_node->name ? root_node->name : "Root",
+         root_rect.x, root_rect.y, root_rect.w, root_rect.h);
+
+  /* 递归构建整个树 */
+  init_child_recursive(&(parent->widget), root_node, 1);
+}
+
+static void scale_widget_group(widget_t *parent, ui_tree_node *child_info, float_t scale)
+{
+  if (parent == NULL || child_info == NULL)
+  {
+    return;
+    printf("scale_widget_group line: %d\n", __LINE__);
+  }
+
+  int32_t direct_children = widget_count_children(parent);
+  // printf("scale_widget_group line: %d  direct_children=%d\n", __LINE__, direct_children);
+  for (int32_t i = 0; i < direct_children; i++)
+  {
+    widget_t *child = widget_get_child(parent, i);
+    int32_t new_x = child_info->children[i]->rect.x * scale;
+    int32_t new_y = child_info->children[i]->rect.y * scale;
+    int32_t new_w = child_info->children[i]->rect.w * scale;
+    int32_t new_h = child_info->children[i]->rect.h * scale;
+    widget_move_resize(child, new_x, new_y, new_w, new_h);
+    if (tk_str_eq(widget_get_type(child), WIDGET_TYPE_LABEL) ||
+        tk_str_eq(widget_get_type(child), "shadow_label"))
+    {
+      widget_set_prop_int(child, "style:normal:font_size",
+                          child_info->children[i]->text_size * scale);
+      widget_set_prop_int(child, "style:selected:font_size",
+                          child_info->children[i]->text_size * scale);
+    }
     if (widget_count_children(child) > 0)
     {
-      rect_t new_rect = rect_init(new_x, new_y, new_w, new_h);
-      scale_widget_group(child, &new_rect);
-    }
-    else
-    {
-      widget_move_resize(child, new_x, new_y, new_w, new_h);
+      scale_widget_group(child, child_info->children[i], scale);
     }
   }
 }
 
-static void def_on_layout_vertical(yps_banner_menu_t *parent, rect_t *reference_position, widget_t **childrens, int32_t count, int32_t focused, int32_t focus_lossed)
+// 修改布局函数调用
+static void def_on_layout_vertical(yps_banner_menu_t *parent, widget_t **childrens, int32_t count, int32_t focused, int32_t focus_lossed)
 {
   for (int32_t i = 0; i < count; i++)
   {
@@ -84,44 +140,121 @@ static void def_on_layout_vertical(yps_banner_menu_t *parent, rect_t *reference_
     {
       childrens[i]->visible = TRUE;
       widget_set_opacity(childrens[i], 255);
-      scale_widget_group(childrens[i], reference_position);
+      scale_widget_group(childrens[i], parent->child_info->children[i], 1.0f);
+      int32_t y = (parent->child_info->rect.h - parent->child_info->children[i]->rect.h) / 2.0f;
+      widget_move_resize(childrens[i], parent->child_info->children[i]->rect.x, y, parent->child_info->children[i]->rect.w, parent->child_info->children[i]->rect.h);
     }
     else
     {
-      rect_t *r = rect_scale_center(reference_position, parent->scale_ratio);
-      scale_widget_group(childrens[i], r);
-      TKMEM_FREE(r);
+      rect_t *r = rect_scale_center(&(parent->child_info->children[i]->rect), parent->scale_ratio);
+      scale_widget_group(childrens[i], parent->child_info->children[i], parent->scale_ratio);
       childrens[i]->visible = FALSE;
     }
   }
 }
 
-static void def_on_scroll_vertical(yps_banner_menu_t *parent, rect_t *reference_position, widget_t **childrens, int32_t count, widget_t *focus_lossing, widget_t *focus_next, float_t progress)
+static void def_on_scroll_vertical(yps_banner_menu_t *parent, widget_t **childrens, int32_t count, int32_t lossing, int32_t next, float_t progress)
 {
-  ////focus_lossing
-  float_t all_move_hight = parent->next_or_prev ? reference_position->h  : -(reference_position->h*(parent->scale_ratio));
-  float_t base_y = reference_position->y;
-  float_t scale_change = 1 - parent->scale_ratio;
+  widget_t *focus_next = childrens[next];
+  widget_t *focus_lossing = childrens[lossing];
+
+  printf("def_on_scroll_vertical line:%d\n", __LINE__);
+
+  // 获取两个item的原始高度
+  int32_t losing_h = parent->child_info->children[lossing]->rect.h;
+  int32_t next_h = parent->child_info->children[next]->rect.h;
+  int32_t container_h = parent->child_info->rect.h;
+
+  // 计算中心位置
+  float_t center_y = container_h / 2.0f;
+
+  // 设置有效的缩放比例
+  float_t scale_ratio = parent->scale_ratio;
+  if (scale_ratio <= 0.1f || scale_ratio > 1.0f)
+  {
+    scale_ratio = 0.8f;
+  }
+
+  // 计算缩放变化
+  float_t scale_change = 1 - scale_ratio;
   float_t scale_l = 1.0f - (progress * scale_change);
-  rect_t *r_l = rect_scale_center(reference_position, scale_l);
-  r_l->y = base_y + (all_move_hight * progress);
-  scale_widget_group(focus_lossing, r_l);
-  widget_set_opacity(focus_lossing, scale_l * 255);
-  // printf("def_on_scroll_vertical scale_l=%f scale_change=%f parent->next_or_prev =%d reference_position->y=%d r_lr=%d,%d,%d,%d,\n", scale_l, scale_change, parent->next_or_prev, reference_position->y, r_l->x, r_l->y, r_l->w, r_l->h);
+  float_t scale_n = scale_ratio + (progress * scale_change);
 
-  // //focus_next
+  // 确保缩放值有效
+  if (scale_l < scale_ratio)
+    scale_l = scale_ratio;
+  if (scale_n > 1.0f)
+    scale_n = 1.0f;
 
-  float_t scale = parent->scale_ratio + (progress * scale_change);
-  rect_t *r_n = rect_scale_center(reference_position, scale);
-  r_n->y = parent->next_or_prev ? r_l->y - r_n->h : r_l->y + r_l->h;
-  scale_widget_group(focus_next, r_n);
-  widget_set_opacity(focus_next, scale_l * 255);
-  // printf("focus_next scale=%f  r_n->y=%d\n", scale, r_n->y);
-  TKMEM_FREE(r_n);
-  TKMEM_FREE(r_l);
+  printf("Scales - losing: %.3f, next: %.3f\n", scale_l, scale_n);
+
+  // 处理lossing item（正在消失的）
+  rect_t *r_l = rect_scale_center(&(parent->child_info->children[lossing]->rect), scale_l);
+  if (r_l == NULL)
+  {
+    printf("ERROR: rect_scale_center returned NULL for losing item\n");
+    return;
+  }
+
+  // 处理next item（正在进入的）
+  rect_t *r_n = rect_scale_center(&(parent->child_info->children[next]->rect), scale_n);
+  if (r_n == NULL)
+  {
+    printf("ERROR: rect_scale_center returned NULL for next item\n");
+    free(r_l);
+    return;
+  }
+
+  // 简化位置计算逻辑
+  if (parent->next_or_prev)
+  {
+    // 向上滚动：lossing向下移出，next从上方进入
+
+    // lossing从中心位置向下移动
+    r_l->y = center_y - r_l->h / 2.0f + progress * (losing_h + next_h * parent->scale_ratio) / 2.0f;
+
+    // next从上方进入，向下移动到中心位置
+    r_n->y = center_y - losing_h / 2.0f - r_n->h + progress * (losing_h + next_h) / 2.0f;
+  }
+  else
+  {
+    // 向下滚动：lossing向上移出，next从下方进入
+
+    // lossing从中心位置向上移动
+    r_l->y = center_y - r_l->h / 2.0f - progress * (losing_h + next_h * parent->scale_ratio) / 2.0f;
+
+    // next从下方进入，向上移动到中心位置
+    r_n->y = center_y + losing_h / 2.0f - progress * (losing_h + next_h) / 2.0f;
+  }
+
+  // 应用变换到lossing item
+  scale_widget_group(focus_lossing, parent->child_info->children[lossing], scale_l);
+  widget_move_resize(focus_lossing, r_l->x, (int32_t)r_l->y, r_l->w, r_l->h);
+  widget_set_opacity(focus_lossing, (uint8_t)(scale_l * 255));
+
+  // 应用变换到next item
+  scale_widget_group(focus_next, parent->child_info->children[next], scale_n);
+  widget_move_resize(focus_next, r_n->x, (int32_t)r_n->y, r_n->w, r_n->h);
+  widget_set_opacity(focus_next, (uint8_t)(progress * 255));
 
   focus_next->visible = TRUE;
   focus_lossing->visible = progress < 1;
+
+  // 调试信息
+  float_t losing_bottom = r_l->y + r_l->h;
+  float_t next_top = r_n->y;
+  float_t gap = fabs(next_top - losing_bottom);
+
+  printf("progress:%.2f, direction:%d\n", progress, parent->next_or_prev);
+  printf("losing: %d->%d at y=%.0f, next: %d->%d at y=%.0f\n",
+         losing_h, r_l->h, r_l->y, next_h, r_n->h, r_n->y);
+  printf("gap: %.1f (losing_bottom=%.1f, next_top=%.1f)\n",
+         gap, losing_bottom, next_top);
+  printf("center_y: %.0f\n", center_y);
+
+  // 清理内存
+  free(r_l);
+  free(r_n);
 }
 
 static layout_manager def_manager_vertical = {
@@ -131,7 +264,7 @@ static layout_manager def_manager_vertical = {
 static ret_t on_anim_function(const timer_info_t *timer)
 {
 
-  // printf("yps_banner_menu_focus_next 32  \n");
+  printf("yps_banner_menu_focus_next 32  \n");
   yps_banner_menu_t *yps_banner_menu = timer->ctx;
   if (yps_banner_menu == NULL)
   {
@@ -141,7 +274,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
 
   yps_banner_menu->current_progress += yps_banner_menu->step_progress;
   float_t p = 1.0f * yps_banner_menu->current_progress / 100.0f;
-  // printf("on_anim_function  p=%f current_progress=%d\n", p, yps_banner_menu->current_progress);
+  printf("on_anim_function  p=%f current_progress=%d\n", p, yps_banner_menu->current_progress);
   if (p != yps_banner_menu->progress)
   {
     yps_banner_menu->progress = p;
@@ -149,8 +282,13 @@ static ret_t on_anim_function(const timer_info_t *timer)
     {
       if (yps_banner_menu->layout_manager->on_scroll)
       {
-        yps_banner_menu->layout_manager->on_scroll(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
-                                                   yps_banner_menu->childrens[yps_banner_menu->focus_index], yps_banner_menu->childrens[yps_banner_menu->target_index], yps_banner_menu->progress);
+        yps_banner_menu->layout_manager->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
+                                                   yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
+        if (yps_banner_menu->listener->on_scroll)
+        {
+          yps_banner_menu->listener->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
+                                               yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
+        }
       }
     }
     else
@@ -159,20 +297,30 @@ static ret_t on_anim_function(const timer_info_t *timer)
       if (yps_banner_menu->layout_manager && yps_banner_menu->layout_manager->on_scroll)
       {
         yps_banner_menu->progress = 1.0f;
-        yps_banner_menu->layout_manager->on_scroll(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
-                                                   yps_banner_menu->childrens[yps_banner_menu->focus_index], yps_banner_menu->childrens[yps_banner_menu->target_index], yps_banner_menu->progress);
+        yps_banner_menu->layout_manager->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
+                                                   yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
+        if (yps_banner_menu->listener->on_scroll)
+        {
+          yps_banner_menu->listener->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
+                                               yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
+        }
       }
       if (yps_banner_menu->layout_manager && yps_banner_menu->layout_manager->on_layout)
       {
         int32_t temp_index = yps_banner_menu->focus_index;
         yps_banner_menu->focus_index = yps_banner_menu->target_index;
-        yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
+        yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                    yps_banner_menu->focus_index, temp_index);
+        if (yps_banner_menu->listener->on_layout)
+        {
+          yps_banner_menu->listener->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
+                                               yps_banner_menu->focus_index, temp_index);
+        }
       }
       return RET_REMOVE;
     }
   }
-  widget_invalidate((widget_t*)yps_banner_menu, NULL);
+  widget_invalidate((widget_t *)yps_banner_menu, NULL);
   return RET_REPEAT;
 }
 
@@ -206,7 +354,7 @@ static void focus_change(yps_banner_menu_t *yps_banner_menu, int32_t index, bool
     yps_banner_menu->target_index = index;
     if (yps_banner_menu->layout_manager && yps_banner_menu->layout_manager->on_layout)
     {
-      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
+      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                  yps_banner_menu->focus_index, temp_index);
     }
     else
@@ -219,12 +367,12 @@ static void focus_change(yps_banner_menu_t *yps_banner_menu, int32_t index, bool
 static void refresh(widget_t *widget)
 {
   yps_banner_menu_t *yps_banner_menu = YPS_BANNER_MENU(widget);
-  return_value_if_fail(widget != NULL && yps_banner_menu != NULL, RET_BAD_PARAMS);
+  return_if_fail(widget != NULL && yps_banner_menu != NULL);
   if (yps_banner_menu->layout_manager)
   {
     if (yps_banner_menu->layout_manager->on_layout)
     {
-      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
+      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                  yps_banner_menu->focus_index, yps_banner_menu->focus_index);
     }
   }
@@ -268,11 +416,18 @@ ret_t yps_banner_menu_set_layout_manager(widget_t *widget, layout_manager *layou
   {
     if (yps_banner_menu->layout_manager->on_layout)
     {
-      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
+      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                  yps_banner_menu->focus_index, temp_index);
     }
   }
   return RET_OK;
+}
+
+ret_t yps_banner_menu_set_on_scroll_listener(widget_t *widget, layout_manager *listener)
+{
+  yps_banner_menu_t *yps_banner_menu = YPS_BANNER_MENU(widget);
+  return_value_if_fail(yps_banner_menu != NULL, RET_BAD_PARAMS);
+  yps_banner_menu->listener = listener;
 }
 
 ret_t yps_banner_menu_focus_next(widget_t *widget)
@@ -356,12 +511,13 @@ static ret_t yps_banner_menu_set_prop(widget_t *widget, const char *name, const 
   return RET_NOT_FOUND;
 }
 
+// 在销毁函数中释放内存
 static ret_t yps_banner_menu_on_destroy(widget_t *widget)
 {
   yps_banner_menu_t *yps_banner_menu = YPS_BANNER_MENU(widget);
   return_value_if_fail(widget != NULL && yps_banner_menu != NULL, RET_BAD_PARAMS);
-  TKMEM_FREE(yps_banner_menu->reference_position);
   TKMEM_FREE(yps_banner_menu->childrens);
+
   return RET_OK;
 }
 
@@ -382,21 +538,10 @@ static ret_t yps_banner_menu_on_event(widget_t *widget, event_t *e)
   {
     yps_banner_menu->children_count = widget_count_children(widget);
     yps_banner_menu->childrens = TKMEM_CALLOC(sizeof(widget_t *), yps_banner_menu->children_count);
-    for (int32_t index = 0; index < yps_banner_menu->children_count; index++)
-    {
-      widget_t *item = widget_get_child(widget, index);
-      if (index == 0)
-      {
-        yps_banner_menu->reference_position->x = item->x;
-        yps_banner_menu->reference_position->y = item->y;
-        yps_banner_menu->reference_position->w = item->w;
-        yps_banner_menu->reference_position->h = item->h;
-      }
-      yps_banner_menu->childrens[index] = item;
-    }
+    init_children_data(yps_banner_menu);
     if (yps_banner_menu->layout_manager->on_layout)
     {
-      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->reference_position, yps_banner_menu->childrens, yps_banner_menu->children_count,
+      yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                  yps_banner_menu->focus_index, yps_banner_menu->focus_index);
     }
 #ifdef DEBUG
@@ -436,8 +581,8 @@ widget_t *yps_banner_menu_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t 
   yps_banner_menu->animtor_duration = 500;
   yps_banner_menu->on_animation = FALSE;
   yps_banner_menu->layout_manager = &def_manager_vertical;
-  yps_banner_menu->reference_position = TKMEM_ZALLOC(rect_t);
   yps_banner_menu->scale_ratio = 0.3f;
+  yps_banner_menu->font_scale_ratio = 1.0f;
   return widget;
 }
 

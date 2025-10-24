@@ -4,6 +4,7 @@
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/line_chart/include/line_chart.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/banner_menu/libbanner_menu.so
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/banner_menu/include/yps_banner_menu.h
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/banner_menu/include/ui_tree_node.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/banner_menu/include/yps_banner_menu_register.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/blur_view/libblur_view.so
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/3rdlib/x86/blur_view/include/view_ext.h

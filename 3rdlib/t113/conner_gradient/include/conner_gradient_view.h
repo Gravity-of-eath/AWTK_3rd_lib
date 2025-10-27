@@ -46,7 +46,6 @@ typedef struct  _conner_gradient_view_t
     int32_t current;
     color_t start_color;
     color_t stop_color;
-    float_t full_ratio;//占满率，1时绘制整个扇形区域，0.5则绘制弧环（在扇形基础上去掉半径*0.5的圆心部分）
 
 
 }conner_gradient_view_t;
@@ -75,8 +74,8 @@ widget_t* conner_gradient_view_cast(widget_t* widget);
  * @method conner_gradient_view_set_angles
  * 设置角度范围
  * @param {widget_t*} widget 控件对象
- * @param {float_t} start_angle 起始角度（度）
- * @param {float_t} stop_angle 结束角度（度）
+ * @param {float_t} start_angle 起始角度（弧度）
+ * @param {float_t} stop_angle 结束角度（弧度）
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t conner_gradient_view_set_angles(widget_t* widget, float_t start_angle, float_t stop_angle);

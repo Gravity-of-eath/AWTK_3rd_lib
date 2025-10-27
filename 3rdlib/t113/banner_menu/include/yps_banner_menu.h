@@ -23,6 +23,7 @@
 #define TK_YPS_BANNER_MENU_H
 
 #include "base/widget.h"
+#include "ui_tree_node.h"
 
 BEGIN_C_DECLS
 /**
@@ -54,9 +55,10 @@ typedef struct _yps_banner_menu_t yps_banner_menu_t;
 
 typedef struct _layout_manager
 {
-  void (*on_layout)(yps_banner_menu_t *parent, rect_t *reference_position, widget_t **childrens, int32_t count, int32_t focused, int32_t focus_lossed);
-  void (*on_scroll)(yps_banner_menu_t *parent, rect_t *reference_position, widget_t **childrens, int32_t count, widget_t *focus_lossing, widget_t *focus_next, float_t progress);
+  void (*on_layout)(yps_banner_menu_t *parent, widget_t **childrens, int32_t count, int32_t focused, int32_t focus_lossed);
+  void (*on_scroll)(yps_banner_menu_t *parent, widget_t **childrens, int32_t count, int32_t focus_lossing, int32_t focus_next, float_t progress);
 } layout_manager;
+
 
 typedef struct _yps_banner_menu_t
 {
@@ -67,8 +69,6 @@ typedef struct _yps_banner_menu_t
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 。私有变量，不要访问，会在layout_manager.on_layout和on_scroll中回调，代表参考位置和大小（即第一个控件在yps_banner_menu容器中的默认值<XML中的值>）
    */
-  rect_t *reference_position;
-
   /**
    * 动画时长（通过yps_banner_menu_focus_next/yps_banner_menu_focus_perv操作时有用），
    * 直接yps_banner_menu_set_focus_index无效
@@ -120,11 +120,15 @@ typedef struct _yps_banner_menu_t
 
   // 最小缩放比率(小于1)，即控件失去焦点时缩小动画最小缩小到<scale_ratio>倍于原大小（参考控件，第一个控件）时动画结束并隐藏控件
   float_t scale_ratio;
-
+  float_t font_scale_ratio;
   /**
    * 刷新控件
    */
   int32_t refresh;
+
+  ui_tree_node *child_info;
+
+  layout_manager *listener;
 
 } yps_banner_menu_t;
 
@@ -170,6 +174,7 @@ ret_t yps_banner_menu_set_focus_index(widget_t *widget, float_t focus_index);
 int32_t yps_banner_menu_get_focus_index(widget_t *widget);
 
 ret_t yps_banner_menu_set_layout_manager(widget_t *widget, layout_manager *layout_manager);
+ret_t yps_banner_menu_set_on_scroll_listener(widget_t *widget, layout_manager *listener);
 
 ret_t yps_banner_menu_focus_next(widget_t *widget);
 
@@ -180,14 +185,14 @@ ret_t yps_banner_menu_focus_prev(widget_t *widget);
 #define YPS_BANNER_MENU_PROP_FOCUS_INDEX "focus_index"
 #define YPS_BANNER_MENU_PROP_REFRESH "refresh"
 
-#define WIDGET_TYPE_YPS_BANNER_MENU "banner_menu"
+#define WIDGET_TYPE_YPS_BANNER_MENU "yps_banner_menu"
 
 #define YPS_BANNER_MENU(widget) ((yps_banner_menu_t *)(yps_banner_menu_cast(WIDGET(widget))))
 
 /*public for subclass and runtime type check*/
 TK_EXTERN_VTABLE(yps_banner_menu);
 
-void scale_widget_group(widget_t *group, rect_t *scale);
+// void scale_widget_group(yps_banner_menu_t *yps_banner_menu, widget_t *group, rect_t *scale);
 
 END_C_DECLS
 

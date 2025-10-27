@@ -11,6 +11,13 @@ file(GLOB SOURCES
 )
 
 add_library(${LIBRARY_NAME} ${SOURCES})
+
+# 为T113平台添加NEON支持
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm" OR CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+    target_compile_definitions(${LIBRARY_NAME} PRIVATE __ARM_NEON__)
+    target_compile_options(${LIBRARY_NAME} PRIVATE -mfpu=neon)
+endif()
+
 target_link_libraries(${LIBRARY_NAME} ${AWTK_SO})
 
 install(

@@ -23,3 +23,12 @@ cmake --build build
 
 echo cmake --install build --prefix ..
 cmake --install build --prefix ${INSTALL_PATH}
+
+# 编译测试程序
+echo "Compiling test program... ${INSTALL_PATH}/conner_gradient"
+# gcc -g -o test_conner_gradient test_conner_gradient.c \
+#     -L${INSTALL_PATH}/conner_gradient -lconner_gradient \
+#     -L./lib/${PLATFORM} -lawtk \
+#     -I${AWTK_INCLUDE} -I${AWTK_INCLUDE}/ext_widgets \
+#     -I. \
+#     -lm -ldl

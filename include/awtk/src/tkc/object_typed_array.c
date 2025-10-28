@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap typed array to an object.
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -38,7 +38,7 @@ static ret_t object_typed_array_set_prop(tk_object_t* obj, const char* name, con
   object_typed_array_t* o = OBJECT_TYPED_ARRAY(obj);
   return_value_if_fail(o != NULL && o->arr != NULL, RET_BAD_PARAMS);
 
-  if (tk_str_indexable(name)) {
+  if (*name == '[') {
     int32_t index = tk_atoi(name + 1);
     return typed_array_set(o->arr, index, v);
   }
@@ -66,7 +66,7 @@ static ret_t object_typed_array_get_prop(tk_object_t* obj, const char* name, val
   } else if (tk_str_eq(name, "data")) {
     value_set_pointer(v, o->arr->data);
     ret = RET_OK;
-  } else if (tk_str_indexable(name)) {
+  } else if (*name == '[') {
     int32_t index = tk_atoi(name + 1);
     ret = typed_array_get(o->arr, index, v);
   }
@@ -75,8 +75,8 @@ static ret_t object_typed_array_get_prop(tk_object_t* obj, const char* name, val
 }
 
 static const object_vtable_t s_object_typed_array_vtable = {
-    .type = OBJECT_TYPED_ARRAY_TYPE,
-    .desc = OBJECT_TYPED_ARRAY_TYPE,
+    .type = "object_typed_array",
+    .desc = "object_typed_array",
     .size = sizeof(object_typed_array_t),
     .is_collection = FALSE,
     .on_destroy = object_typed_array_on_destroy,

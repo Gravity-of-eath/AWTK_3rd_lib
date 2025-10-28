@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mem_pool
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -131,10 +131,10 @@ static inline ret_t mem_pool_put_index(mem_pool_t* pool, uint32_t index) {
 static inline int32_t mem_pool_get_index(mem_pool_t* pool, void* ptr) {
   uint8_t* addr = (uint8_t*)ptr;
   if (pool->start <= addr && addr < (pool->start + pool->block_size * pool->block_nr)) {
-    int64_t offset = addr - pool->start;
-    int64_t index = offset / (pool->block_size);
+    uint32_t offset = addr - pool->start;
+    uint32_t index = offset / (pool->block_size);
     assert(offset % pool->block_size == 0);
-    return (int32_t)index;
+    return index;
   }
 
   return -1;

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  semaphore
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,11 +47,11 @@ tk_semaphore_t* tk_semaphore_create(uint32_t value, const char* name);
  * @method tk_semaphore_wait
  * 获取资源。
  * @param {tk_semaphore_t*} semaphore 信号量对象。
- * @param {uint32_t} timeout 超时时间(毫秒)。
+ * @param {uint32_t} timeout_ms 超时时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t tk_semaphore_wait(tk_semaphore_t* semaphore, uint32_t timeout);
+ret_t tk_semaphore_wait(tk_semaphore_t* semaphore, uint32_t timeout_ms);
 
 /**
  * @method tk_semaphore_post

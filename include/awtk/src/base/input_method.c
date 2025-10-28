@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input method interface.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -141,9 +141,8 @@ static ret_t input_method_dispatch_key_only(input_method_t* im, uint32_t key) {
 ret_t input_method_dispatch_key(input_method_t* im, uint32_t key) {
   return_value_if_fail(im != NULL, RET_BAD_PARAMS);
 
-  if (im->engine != NULL && key <= 128) {
-    ret_t ret = input_engine_input(im->engine, (char)key);
-    if (ret == RET_OK || ret == RET_SKIP) {
+  if (im->engine != NULL) {
+    if (input_engine_input(im->engine, (char)key) == RET_OK) {
       return RET_OK;
     }
   }

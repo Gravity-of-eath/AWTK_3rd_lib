@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  simple xml parser
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -335,7 +335,8 @@ static void xml_parser_parse_start_tag(XmlParser* parser) {
     xml_builder_on_end(parser->builder, tag_name);
   }
 
-  for (; *parser->read_ptr != '>' && *parser->read_ptr != '\0'; parser->read_ptr++);
+  for (; *parser->read_ptr != '>' && *parser->read_ptr != '\0'; parser->read_ptr++)
+    ;
 
   return;
 }
@@ -417,10 +418,10 @@ static void xml_parser_parse_pi(XmlParser* parser) {
 
     switch (state) {
       case STAT_NAME: {
-        if (tk_isspace(c) || c == '?' || c == '>') {
+        if (tk_isspace(c) || c == '>') {
           tag_name =
               tk_pointer_from_int(xml_parser_strdup(parser, start, parser->read_ptr - start, TRUE));
-          state = tk_isspace(c) ? STAT_ATTR : STAT_END;
+          state = c != '>' ? STAT_ATTR : STAT_END;
         }
 
         break;
@@ -442,7 +443,8 @@ static void xml_parser_parse_pi(XmlParser* parser) {
   tag_name = parser->buffer + tk_pointer_to_int(tag_name);
   xml_builder_on_pi(parser->builder, tag_name, (const char**)parser->attrs);
 
-  for (; *parser->read_ptr != '>' && *parser->read_ptr != '\0'; parser->read_ptr++);
+  for (; *parser->read_ptr != '>' && *parser->read_ptr != '\0'; parser->read_ptr++)
+    ;
 
   return;
 }

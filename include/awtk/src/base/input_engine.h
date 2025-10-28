@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input method engine
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -160,7 +160,6 @@ ret_t input_engine_reset_candidates(input_engine_t* engine);
  * @method input_engine_add_candidate
  * 给输入法引擎对象加入一个候选字。
  * @param {input_engine_t*} engine 输入法引擎对象。
- * @param {const char*} str 候选字。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -204,7 +203,7 @@ ret_t input_engine_add_candidates_from_string(input_engine_t* engine, const tabl
 ret_t input_engine_dispatch_candidates(input_engine_t* engine, int32_t selected);
 
 /**
- * @method input_engine_set_lang
+ * @engine input_engine_set_lang
  * 设置语言。
  * > 有时在同一种语言环境下，也需要输入多种文字，典型的情况是同时输入中文和英文。
  * > 比如T9输入法，可以同时支持中文和英文输入，配合软键盘随时切换输入的语言。
@@ -220,7 +219,7 @@ ret_t input_engine_dispatch_candidates(input_engine_t* engine, int32_t selected)
 ret_t input_engine_set_lang(input_engine_t* engine, const char* lang);
 
 /**
- * @method input_engine_get_lang
+ * @engine input_engine_get_lang
  * 获取语言。
  * @annotation ["scriptable"]
  * @param {input_engine_t*} engine 输入法引擎对象。

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  decorate object with lock
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -65,10 +65,7 @@ tk_object_t* object_locker_create(tk_object_t* obj);
  * @return {object_locker_t*} object_locker对象。
  */
 object_locker_t* object_locker_cast(tk_object_t* obj);
-
 #define OBJECT_LOCKER(obj) object_locker_cast(obj)
-
-#define OBJECT_LOCKER_TYPE "object_locker"
 
 END_C_DECLS
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  image
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,10 +39,8 @@ static ret_t image_on_paint_self(widget_t* widget, canvas_t* c) {
   }
 
   do {
-    break_if_fail(image_base->image != NULL);
-    if (widget_load_image(widget, image_base->image, &bitmap) == RET_OK) {
-      const char* region = strrchr(image_base->image, '#');
-
+    if (image_base->image != NULL &&
+        widget_load_image(widget, image_base->image, &bitmap) == RET_OK) {
       if (vg != NULL) {
         if (image_need_transform(widget)) {
           if (image->draw_type == IMAGE_DRAW_ICON || image->draw_type == IMAGE_DRAW_CENTER) {
@@ -64,11 +62,7 @@ static ret_t image_on_paint_self(widget_t* widget, canvas_t* c) {
       }
 
       dst = rect_init(0, 0, widget->w, widget->h);
-      if (region == NULL) {
-        canvas_draw_image_ex(c, &bitmap, image->draw_type, &dst);
-      } else {
-        widget_draw_image_with_region(widget, c, &bitmap, region, &dst, image->draw_type);
-      }
+      canvas_draw_image_ex(c, &bitmap, image->draw_type, &dst);
     }
   } while (FALSE);
 
@@ -125,15 +119,6 @@ static ret_t image_on_copy(widget_t* widget, widget_t* other) {
   return RET_OK;
 }
 
-static ret_t image_init(widget_t* widget) {
-  image_t* image = IMAGE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
-
-  image_base_init(widget);
-  image->draw_type = IMAGE_DRAW_ICON;
-  return RET_OK;
-}
-
 TK_DECL_VTABLE(image) = {.size = sizeof(image_t),
                          .type = WIDGET_TYPE_IMAGE,
                          .space_key_to_activate = TRUE,
@@ -142,7 +127,6 @@ TK_DECL_VTABLE(image) = {.size = sizeof(image_t),
                          .persistent_properties = s_image_properties,
                          .get_parent_vt = TK_GET_PARENT_VTABLE(image_base),
                          .create = image_create,
-                         .init = image_init,
                          .on_copy = image_on_copy,
                          .on_destroy = image_base_on_destroy,
                          .on_event = image_base_on_event,
@@ -152,7 +136,11 @@ TK_DECL_VTABLE(image) = {.size = sizeof(image_t),
 
 widget_t* image_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(image), x, y, w, h);
-  return_value_if_fail(image_init(widget) == RET_OK, NULL);
+  image_t* image = IMAGE(widget);
+  return_value_if_fail(image != NULL, NULL);
+
+  image_base_init(widget);
+  image->draw_type = IMAGE_DRAW_ICON;
 
   return widget;
 }
@@ -165,7 +153,6 @@ TK_DECL_VTABLE(icon) = {.size = sizeof(image_t),
                         .persistent_properties = s_image_properties,
                         .get_parent_vt = TK_GET_PARENT_VTABLE(image_base),
                         .create = image_create,
-                        .init = image_init,
                         .on_copy = image_on_copy,
                         .on_destroy = image_base_on_destroy,
                         .on_event = image_base_on_event,
@@ -175,7 +162,11 @@ TK_DECL_VTABLE(icon) = {.size = sizeof(image_t),
 
 widget_t* icon_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(icon), x, y, w, h);
-  return_value_if_fail(image_init(widget) == RET_OK, NULL);
+  image_t* image = IMAGE(widget);
+  return_value_if_fail(image != NULL, NULL);
+
+  image_base_init(widget);
+  image->draw_type = IMAGE_DRAW_ICON;
 
   return widget;
 }

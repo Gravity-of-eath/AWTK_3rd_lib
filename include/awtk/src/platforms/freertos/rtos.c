@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rtos for freertos
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,8 +19,9 @@
  *
  */
 
+#include "FreeRTOS.h"
+#include "task.h"
 #include "platforms/common/rtos.h"
-#include "freertos_headers.h"
 
 static bool_t s_is_running = FALSE;
 

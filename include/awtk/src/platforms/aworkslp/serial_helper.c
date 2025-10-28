@@ -1,9 +1,9 @@
-﻿/**
+/**
  * File:   serial_helper.c
  * Author: AWTK Develop Team
  * Brief:  serial helper functions
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -173,7 +173,7 @@ int32_t serial_write(serial_handle_t handle, const uint8_t* buff, uint32_t max_s
   return cnt;
 }
 
-ret_t serial_close(serial_handle_t handle) {
+int serial_close(serial_handle_t handle) {
   int fd = serial_handle_get_fd(handle);
   serial_dev_prv_t* p_this = darray_find(s_darray, handle);
   return_value_if_fail(aw_close(fd) == 0, RET_FAIL);
@@ -370,7 +370,7 @@ int32_t serial_write(serial_handle_t handle, const uint8_t* buff, uint32_t max_s
   return cnt;
 }
 
-ret_t serial_close(serial_handle_t handle) {
+int serial_close(serial_handle_t handle) {
   int fd = serial_handle_get_fd(handle);
   return_value_if_fail(aw_close(fd) == 0, RET_FAIL);
   darray_remove(s_darray, handle);
@@ -505,7 +505,7 @@ int32_t serial_write(serial_handle_t handle, const uint8_t* buff, uint32_t max_s
   return aw_write(fd, buff, max_size);
 }
 
-ret_t serial_close(serial_handle_t handle) {
+int serial_close(serial_handle_t handle) {
   int fd = serial_handle_get_fd(handle);
   return aw_close(fd);
 }

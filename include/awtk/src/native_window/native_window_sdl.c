@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  native window sdl
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,7 +26,9 @@
 #ifdef WITH_GPU_GL
 #ifndef WITHOUT_GLAD
 #include "glad/glad.h"
+#define loadGL gladLoadGL
 #else
+#define loadGL()
 #ifdef IOS
 #include <OpenGLES/gltypes.h>
 #include <OpenGLES/ES2/gl.h>
@@ -55,7 +57,6 @@ typedef struct _native_window_sdl_t {
   canvas_t canvas;
   SDL_Cursor* cursor;
   SDL_Surface* cursor_surface;
-  SDL_Rect hit_test_rect;
 } native_window_sdl_t;
 
 static native_window_t* s_shared_win = NULL;
@@ -167,31 +168,6 @@ static ret_t native_window_sdl_show_border(native_window_t* win, bool_t show) {
   native_window_sdl_t* sdl = NATIVE_WINDOW_SDL(win);
 
   SDL_SetWindowBordered(sdl->window, show);
-
-  return RET_OK;
-}
-
-static SDL_HitTestResult hit_test_imp(SDL_Window* window, const SDL_Point* pt, void* data) {
-  (void)window;
-  native_window_sdl_t* sdl = NATIVE_WINDOW_SDL(data);
-
-  if (SDL_PointInRect(pt, &sdl->hit_test_rect)) {
-    return SDL_HITTEST_DRAGGABLE;
-  }
-
-  return SDL_HITTEST_NORMAL;
-}
-
-static ret_t native_window_sdl_set_window_hit_test(native_window_t* win, xy_t x, xy_t y, wh_t w,
-                                                   wh_t h) {
-  native_window_sdl_t* sdl = NATIVE_WINDOW_SDL(win);
-
-  sdl->hit_test_rect.x = x;
-  sdl->hit_test_rect.y = x;
-  sdl->hit_test_rect.w = w;
-  sdl->hit_test_rect.h = h;
-
-  SDL_SetWindowHitTest(sdl->window, hit_test_imp, sdl);
 
   return RET_OK;
 }
@@ -332,7 +308,6 @@ static ret_t native_window_sdl_get_info(native_window_t* win, native_window_info
   info->h = wh;
   info->ratio = (float_t)fw / (float_t)ww;
 #endif /**/
-  info->handle = win->handle;
 
   win->rect.x = info->x;
   win->rect.y = info->y;
@@ -449,11 +424,7 @@ static ret_t native_window_sdl_set_cursor(native_window_t* win, const char* name
     sdl->cursor = NULL;
   }
 
-  if (img != NULL) {
-    point_t hot_spot = {0, 0};
-    calc_cursor_hot_spot(name, img, &hot_spot);
-    return native_window_sdl_cursor_from_bitmap(win, img, &hot_spot);
-  } else if (system_info()->app_type == APP_DESKTOP) {
+  if (system_info()->app_type == APP_DESKTOP) {
     int system_cursor = map_to_sdl_cursor(name);
     if (system_cursor >= 0) {
       sdl->cursor = SDL_CreateSystemCursor((SDL_SystemCursor)system_cursor);
@@ -461,6 +432,10 @@ static ret_t native_window_sdl_set_cursor(native_window_t* win, const char* name
 
       return RET_OK;
     }
+  } else if (img != NULL) {
+    point_t hot_spot = {0, 0};
+    calc_cursor_hot_spot(name, img, &hot_spot);
+    return native_window_sdl_cursor_from_bitmap(win, img, &hot_spot);
   }
 
   return RET_FAIL;
@@ -476,7 +451,6 @@ static const native_window_vtable_t s_native_window_vtable = {
     .restore = native_window_sdl_restore,
     .center = native_window_sdl_center,
     .show_border = native_window_sdl_show_border,
-    .set_window_hit_test = native_window_sdl_set_window_hit_test,
     .set_fullscreen = native_window_sdl_set_fullscreen,
     .get_info = native_window_sdl_get_info,
     .preprocess_event = native_window_sdl_preprocess_event,
@@ -595,21 +569,18 @@ static native_window_t* native_window_create_internal(const char* title, uint32_
   }
 #endif /*WITH_NANOVG_SOFT*/
 
-  if (sdl->window == NULL) {
-    log_debug("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-    assert(!"Window could not be created");
-  }
-
   win->handle = sdl->window;
   win->vt = &s_native_window_vtable;
 
 #ifdef WITH_GPU_GL
   sdl->context = SDL_GL_CreateContext(sdl->window);
-  if (sdl->context == NULL) {
-    log_debug("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
-    assert(!"SDL_GL_CreateContext failed");
-  }
   SDL_GL_SetSwapInterval(1);
+
+  loadGL();
+  glDisable(GL_STENCIL_TEST);
+  glDisable(GL_ALPHA_TEST);
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_SCISSOR_TEST);
 #endif /*WITH_GPU_GL*/
 
   if (native_window_get_info(win, &info) == RET_OK) {
@@ -624,8 +595,6 @@ static native_window_t* native_window_create_internal(const char* title, uint32_
 #ifdef WITH_NANOVG_SOFT
   lcd = lcd_sdl2_init(sdl->render);
 #elif WITH_NANOVG_GPU
-  lcd = lcd_nanovg_init(win);
-#elif WITH_NANOVG_BGFX
   lcd = lcd_nanovg_init(win);
 #endif /*WITH_NANOVG_SOFT*/
 #endif /*WITH_LCD_MONO*/
@@ -689,12 +658,7 @@ ret_t native_window_sdl_init(bool_t shared, uint32_t w, uint32_t h) {
   const char* title = system_info()->app_name;
 
   SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
-  SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-#if defined(SDL_AUDIO_DISABLED)
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0) {
-#else
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_AUDIO) != 0) {
-#endif /*SDL_AUDIO_DISABLED*/
     log_debug("Failed to initialize SDL: %s", SDL_GetError());
     exit(0);
     return RET_FAIL;

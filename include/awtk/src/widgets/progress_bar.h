@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  progress_bar
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -86,7 +86,7 @@ typedef struct _progress_bar_t {
   /**
    * @property {char*} format
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 数值到字符串转换时的格式，缺省为"%d%%"。
+   * 数值到字符串转换时的格式，缺省为"%d"。
    */
   char* format;
 

@@ -1,9 +1,9 @@
-﻿/**
+/**
  * File:   digit_clock.c
  * Author: AWTK Develop Team
  * Brief:  digit_clock
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -71,7 +71,6 @@ static ret_t digit_clock_on_display_time(void* ctx, event_t* e) {
 
 ret_t digit_clock_set_format(widget_t* widget, const char* format) {
   digit_clock_t* digit_clock = DIGIT_CLOCK(widget);
-  ENSURE(digit_clock);
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   digit_clock->format = tk_str_copy(digit_clock->format, format);
@@ -82,7 +81,6 @@ ret_t digit_clock_set_format(widget_t* widget, const char* format) {
 
 static ret_t digit_clock_get_prop(widget_t* widget, const char* name, value_t* v) {
   digit_clock_t* digit_clock = DIGIT_CLOCK(widget);
-  ENSURE(digit_clock);
   return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_FORMAT)) {
@@ -127,19 +125,6 @@ static ret_t digit_clock_on_destroy(widget_t* widget) {
   return RET_OK;
 }
 
-static ret_t digit_clock_init(widget_t* widget) {
-  digit_clock_t* digit_clock = DIGIT_CLOCK(widget);
-
-  return_value_if_fail(digit_clock != NULL, RET_BAD_PARAMS);
-
-  digit_clock_update_time(widget);
-  widget_add_timer(widget, digit_clock_on_timer, 1000);
-  wstr_init(&(digit_clock->last_time), 32);
-  digit_clock->local_changed_event_id =
-      locale_info_on(locale_info(), EVT_LOCALE_CHANGED, digit_clock_on_display_time, widget);
-  return RET_OK;
-}
-
 static const char* const s_digit_clock_properties[] = {WIDGET_PROP_FORMAT, NULL};
 
 TK_DECL_VTABLE(digit_clock) = {.size = sizeof(digit_clock_t),
@@ -148,7 +133,6 @@ TK_DECL_VTABLE(digit_clock) = {.size = sizeof(digit_clock_t),
                                .persistent_properties = s_digit_clock_properties,
                                .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                .create = digit_clock_create,
-                               .init = digit_clock_init,
                                .on_paint_self = widget_on_paint_self_default,
                                .set_prop = digit_clock_set_prop,
                                .get_prop = digit_clock_get_prop,
@@ -156,7 +140,14 @@ TK_DECL_VTABLE(digit_clock) = {.size = sizeof(digit_clock_t),
 
 widget_t* digit_clock_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(digit_clock), x, y, w, h);
-  return_value_if_fail(digit_clock_init(widget) == RET_OK, NULL);
+  digit_clock_t* digit_clock = DIGIT_CLOCK(widget);
+
+  return_value_if_fail(digit_clock != NULL, NULL);
+
+  digit_clock_update_time(widget);
+  widget_add_timer(widget, digit_clock_on_timer, 1000);
+  wstr_init(&(digit_clock->last_time), 32);
+  digit_clock->local_changed_event_id = locale_info_on(locale_info(), EVT_LOCALE_CHANGED, digit_clock_on_display_time, widget);
 
   return widget;
 }

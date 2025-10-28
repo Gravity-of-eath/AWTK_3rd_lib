@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  style interface
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,30 +47,19 @@ static const void* widget_get_const_style_data_for_state_impl(widget_t* widget,
   }
 
   if (data == NULL) {
-    if (default_theme != NULL) {
-      data = theme_find_style(default_theme, type, style_name, state);
-    }
-  }
-
-  if (data == NULL) {
-    data = theme_find_style(theme(), type, style_name, state);
+    data = theme_find_style(default_theme, type, style_name, state);
   }
 
   return data;
-}
-
-const void* widget_get_const_style_data_for_state(widget_t* widget, const char* style_name,
-                                                  const char* state) {
-  return widget_get_const_style_data_for_state_impl(widget, style_name, state);
 }
 
 static const void* widget_get_const_style_data_for_style(widget_t* widget, style_t* s,
                                                          const char* style_name) {
   const void* data = NULL;
   style_const_t* style = (style_const_t*)s;
-  data = widget_get_const_style_data_for_state(widget, style_name, style->state);
+  data = widget_get_const_style_data_for_state_impl(widget, style_name, style->state);
   if (data == NULL && !tk_str_eq(style->state, WIDGET_STATE_NORMAL)) {
-    data = widget_get_const_style_data_for_state(widget, style_name, WIDGET_STATE_NORMAL);
+    data = widget_get_const_style_data_for_state_impl(widget, style_name, WIDGET_STATE_NORMAL);
   }
 
   return data;
@@ -172,13 +161,6 @@ static const char* style_const_get_str(style_t* s, const char* name, const char*
   return style_data_get_str(style->data, name, defval);
 }
 
-static ret_t style_const_get(style_t* s, const char* state, const char* name, value_t* v) {
-  style_const_t* style = (style_const_t*)s;
-  return_value_if_fail(tk_str_eq(state, style->state), RET_BAD_PARAMS);
-
-  return style_data_get_value(style->data, name, v);
-}
-
 static ret_t style_const_set_style_data(style_t* s, const uint8_t* data, const char* state) {
   style_const_t* style = (style_const_t*)s;
   return_value_if_fail(style != NULL, RET_BAD_PARAMS);
@@ -229,7 +211,6 @@ static const style_vtable_t style_const_vt = {
     .get_style_type = style_const_get_style_type,
     .get_style_state = style_const_get_style_state,
     .set_style_data = style_const_set_style_data,
-    .get = style_const_get,
     .destroy = style_const_destroy};
 
 style_t* style_const_create(void) {

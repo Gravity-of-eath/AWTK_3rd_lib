@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  self layouter
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -42,7 +42,6 @@ typedef ret_t (*self_layouter_destroy_t)(self_layouter_t* layouter);
 
 typedef self_layouter_t* (*self_layouter_create_t)(void);
 typedef self_layouter_t* (*self_layouter_clone_t)(self_layouter_t* layouter);
-typedef ret_t (*self_layouter_init_t)(self_layouter_t* layouter);
 
 typedef struct _self_layouter_vtable_t {
   const char* type;
@@ -52,7 +51,6 @@ typedef struct _self_layouter_vtable_t {
   self_layouter_set_param_t set_param;
   self_layouter_clone_t clone;
   self_layouter_destroy_t destroy;
-  self_layouter_init_t init;
 } self_layouter_vtable_t;
 
 /**
@@ -71,7 +69,7 @@ struct _self_layouter_t {
  * 获取全部参数。
  * @param {self_layouter_t*} layouter layouter对象。
  *
- * @return {const char*} 返回字符串格式的参数。
+ * @return {ret_t} 返回字符串格式的参数。
  */
 const char* self_layouter_to_string(self_layouter_t* layouter);
 
@@ -126,7 +124,7 @@ ret_t self_layouter_set_param_str(self_layouter_t* layouter, const char* name, c
  * @param {const char*} name 参数名。
  * @param {float_t} defval 缺省值。
  *
- * @return {float_t} 成功返回参数的值，失败返回缺省值。
+ * @return {ret_t} 成功返回参数的值，失败返回缺省值。
  */
 float_t self_layouter_get_param_float(self_layouter_t* layouter, const char* name, float_t defval);
 
@@ -137,7 +135,7 @@ float_t self_layouter_get_param_float(self_layouter_t* layouter, const char* nam
  * @param {const char*} name 参数名。
  * @param {int32_t} defval 缺省值。
  *
- * @return {int32_t} 成功返回参数的值，失败返回缺省值。
+ * @return {ret_t} 成功返回参数的值，失败返回缺省值。
  */
 int32_t self_layouter_get_param_int(self_layouter_t* layouter, const char* name, int32_t defval);
 
@@ -172,7 +170,7 @@ self_layouter_t* self_layouter_create(const char* params);
  * @method self_layouter_clone
  * 克隆layouter对象。
  *
- * @param {self_layouter_t*} layouter 被克隆的对象。
+ * @param {const char*} layouter 被克隆的对象。
  *
  * @return {self_layouter_t*} 返回layouter对象。
  */

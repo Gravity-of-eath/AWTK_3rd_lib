@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  named value
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -92,7 +92,12 @@ ret_t named_value_set_value(named_value_t* nv, const value_t* value) {
     return RET_OK;
   }
 
-  return value_replace(&(nv->value), value, TRUE);
+  if (!value_equal(value, &(nv->value))) {
+    value_reset(&(nv->value));
+    return value_deep_copy(&(nv->value), value);
+  }
+
+  return RET_OK;
 }
 
 ret_t named_value_deinit(named_value_t* nv) {
@@ -133,16 +138,4 @@ int32_t named_value_compare(named_value_t* nv, const named_value_t* other) {
   return_value_if_fail(nv != NULL && other != NULL, -1);
 
   return tk_str_cmp(nv->name, other->name);
-}
-
-int32_t named_value_icompare(named_value_t* nv, const named_value_t* other) {
-  return_value_if_fail(nv != NULL && other != NULL, -1);
-
-  return tk_stricmp(nv->name, other->name);
-}
-
-int32_t named_value_icompare_by_name(named_value_t* nv, const char* name) {
-  return_value_if_fail(nv != NULL && name != NULL, -1);
-
-  return tk_stricmp(nv->name, name);
 }

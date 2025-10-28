@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  pinyin input method engine
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2020  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,6 @@
 #include "tkc/mem.h"
 #include "tkc/utf8.h"
 #include "tkc/buffer.h"
-#include "base/system_info.h"
 #include "base/input_engine.h"
 #include "base/input_method.h"
 
@@ -58,7 +57,7 @@ static ret_t input_engine_pinyin_add_candidate(input_engine_t* engine, uint32_t 
   } else {
     uint32_t i = 0;
     wchar_t wstr[MAX_WORD_LEN + 1];
-    while (i < MAX_WORD_LEN && str16[i]) {
+    while (str16[i] && i < MAX_WORD_LEN) {
       wstr[i] = str16[i];
       i++;
     }
@@ -87,15 +86,8 @@ static ret_t input_engine_pinyin_search(input_engine_t* engine, const char* keys
   uint32_t i = 0;
   uint32_t keys_size = strlen(keys);
   uint32_t nr = 0;
-  keyboard_type_t keyboard_type = system_info()->keyboard_type;
 
-  return_value_if_fail(engine != NULL, RET_FAIL);
-
-  if (RET_OK != input_engine_ensure_data(engine)) {
-    assert(!"Please add \"gpinyin.dat\" to your program!");
-    return RET_FAIL;
-  }
-
+  return_value_if_fail(engine != NULL && input_engine_ensure_data(engine) == RET_OK, RET_FAIL);
   nr = im_search(keys, tk_min(14, keys_size));
   input_engine_reset_candidates(engine);
 
@@ -112,11 +104,8 @@ static ret_t input_engine_pinyin_search(input_engine_t* engine, const char* keys
       break;
     }
   }
-  if (keyboard_type != KEYBOARD_3KEYS && keyboard_type != KEYBOARD_5KEYS) {
-    input_engine_dispatch_candidates(engine, 0);
-  } else {
-    input_engine_dispatch_candidates(engine, -1);
-  }
+
+  input_engine_dispatch_candidates(engine, 0);
 
   return RET_OK;
 }

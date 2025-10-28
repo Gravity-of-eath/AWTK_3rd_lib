@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  use sys tick to implement sleep/get_time_ms64.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,13 +36,5 @@ void sleep_ms(uint32_t ms) {
     rtos_delay(ms);
   } else {
     tk_sys_tick_sleep_tick(ms);
-  }
-}
-
-void sleep_us(uint32_t us) {
-  /*FIXME: implement this function*/
-
-  while (us > 0) {
-    us--;
   }
 }

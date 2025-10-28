@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  stb truetype font loader
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -85,27 +85,17 @@ static bool_t font_stb_match(font_t* f, const char* name, font_size_t font_size)
 }
 
 static font_vmetrics_t font_stb_get_vmetrics(font_t* f, font_size_t font_size) {
-  int ascender = 0;
-  int descender = 0;
-  float scale = 0.0f;
+  font_vmetrics_t vmetrics;
   font_stb_t* font = (font_stb_t*)f;
-  const stbtt_fontinfo* sf = &(font->stb_font);
-  font_vmetrics_t vmetrics = {font_size, 0, 0, 0, 0, 0};
-
-  return_value_if_fail(sf != NULL, vmetrics);
-  scale = stbtt_ScaleForPixelHeight(sf, font_size);
+  stbtt_fontinfo* sf = &(font->stb_font);
+  float scale = stbtt_ScaleForPixelHeight(sf, font_size);
   if (scale == INFINITY) {
     scale = stbtt_ScaleForMappingEmToPixels(sf, font_size);
   }
 
-  vmetrics.ascent = tk_roundi(scale * font->ascent);
-  vmetrics.descent = tk_roundi(scale * font->descent);
+  vmetrics.ascent = scale * font->ascent;
+  vmetrics.descent = scale * font->descent;
   vmetrics.line_gap = scale * font->line_gap;
-
-  stbtt_GetFontVMetrics(sf, &ascender, &descender, NULL);
-  vmetrics.font_ascender = ascender;
-  vmetrics.font_descender = descender;
-  vmetrics.units_per_em = ttUSHORT(sf->data + sf->head + 18);
 
   return vmetrics;
 }
@@ -140,7 +130,7 @@ static ret_t font_stb_get_glyph(font_t* f, wchar_t c, font_size_t font_size, gly
   g->w = w;
   g->h = h;
   g->format = GLYPH_FMT_ALPHA;
-  g->advance = tk_roundi(advance * scale);
+  g->advance = advance * scale;
   g->data = NULL;
 
   if (bitmap != NULL) {

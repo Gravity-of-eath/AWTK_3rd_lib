@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mem_allocator_pool
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -164,7 +164,7 @@ static const mem_allocator_vtable_t s_mem_allocator_pool_vtable = {
 
 static mem_pool_t* mem_pool_create(mem_allocator_t* impl, uint32_t block_size, uint32_t block_nr) {
   uint32_t size = mem_pool_get_min_size(block_size, block_nr);
-  uint8_t* addr = (uint8_t*)MEM_ALLOCATOR_ALLOC(impl, size);
+  uint8_t* addr = (uint8_t*)mem_allocator_alloc(impl, size, __FUNCTION__, __LINE__);
   return_value_if_fail(addr != NULL, NULL);
 
   return mem_pool_init(addr, size, block_size, block_nr);

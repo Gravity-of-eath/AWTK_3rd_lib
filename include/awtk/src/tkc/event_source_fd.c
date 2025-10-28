@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event source fd
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,8 +31,7 @@ static int32_t event_source_fd_get_fd(event_source_t* source) {
 }
 
 static ret_t event_source_fd_check(event_source_t* source) {
-  event_source_fd_t* event_source_fd = EVENT_SOURCE_FD(source);
-  return event_source_fd->fd >= 0 ? RET_OK : RET_FAIL;
+  return RET_OK;
 }
 
 static ret_t event_source_fd_dispatch(event_source_t* source) {
@@ -49,7 +48,7 @@ event_source_t* event_source_fd_create(int fd, event_source_on_event_t on_event,
   tk_object_t* obj = NULL;
   event_source_t* event_source = NULL;
   event_source_fd_t* event_source_fd = NULL;
-  return_value_if_fail(on_event != NULL, NULL);
+  return_value_if_fail(fd >= 0 && on_event != NULL, NULL);
 
   obj = tk_object_create(&s_event_source_fd_vtable);
   event_source = EVENT_SOURCE(obj);
@@ -66,11 +65,4 @@ event_source_t* event_source_fd_create(int fd, event_source_on_event_t on_event,
   event_source->get_wakeup_time = event_source_fd_get_wakeup_time;
 
   return event_source;
-}
-
-ret_t event_source_fd_set_fd(event_source_t* source, int fd) {
-  event_source_fd_t* event_source_fd = EVENT_SOURCE_FD(source);
-  return_value_if_fail(event_source_fd != NULL, RET_BAD_PARAMS);
-  event_source_fd->fd = fd;
-  return RET_OK;
 }

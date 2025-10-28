@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  simple fs api
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,36 +23,6 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include "tkc/path.h"
-
-fs_stat_info_t* fs_stat_info_create(void) {
-  fs_stat_info_t* ret = TKMEM_ZALLOC(fs_stat_info_t);
-  return_value_if_fail(ret != NULL, NULL);
-
-  return ret;
-}
-
-ret_t fs_stat_info_destroy(fs_stat_info_t* fst) {
-  return_value_if_fail(fst != NULL, RET_BAD_PARAMS);
-
-  TKMEM_FREE(fst);
-
-  return RET_OK;
-}
-
-fs_item_t* fs_item_create(void) {
-  fs_item_t* ret = TKMEM_ZALLOC(fs_item_t);
-  return_value_if_fail(ret != NULL, NULL);
-
-  return ret;
-}
-
-ret_t fs_item_destroy(fs_item_t* item) {
-  return_value_if_fail(item != NULL, RET_BAD_PARAMS);
-
-  TKMEM_FREE(item);
-
-  return RET_OK;
-}
 
 int32_t fs_file_read(fs_file_t* file, void* buffer, uint32_t size) {
   return_value_if_fail(file != NULL && file->vt != NULL && buffer != NULL && file->vt->read != NULL,
@@ -145,7 +115,7 @@ ret_t fs_dir_read(fs_dir_t* dir, fs_item_t* item) {
 
 ret_t fs_dir_close(fs_dir_t* dir) {
   return_value_if_fail(dir != NULL && dir->vt != NULL && dir->vt->close != NULL, RET_BAD_PARAMS);
-  TKMEM_FREE(dir->dirname);
+
   return dir->vt->close(dir);
 }
 
@@ -175,14 +145,9 @@ ret_t fs_file_rename(fs_t* fs, const char* name, const char* new_name) {
 }
 
 fs_dir_t* fs_open_dir(fs_t* fs, const char* name) {
-  fs_dir_t* dir = NULL;
   return_value_if_fail(fs != NULL && fs->open_dir != NULL && name != NULL, NULL);
 
-  dir = fs->open_dir(fs, name);
-  return_value_if_fail(dir != NULL, NULL);
-  dir->dirname = tk_strdup(name);
-
-  return dir;
+  return fs->open_dir(fs, name);
 }
 
 ret_t fs_remove_dir(fs_t* fs, const char* name) {
@@ -343,12 +308,6 @@ ret_t fs_test_file(fs_t* fs) {
   char buff[32];
   fs_file_t* fp = NULL;
   const char* filename = "./test.txt";
-  char path[MAX_PATH + 1] = {0};
-
-  assert(fs_get_cwd(os_fs(), path) == RET_OK);
-  assert(fs_get_exe(os_fs(), path) == RET_OK);
-  assert(fs_get_temp_path(os_fs(), path) == RET_OK);
-  assert(fs_get_user_storage_path(os_fs(), path) == RET_OK);
 
   memset(buff, 0x00, sizeof(buff));
   fp = fs_open_file(fs, filename, "w+");
@@ -457,7 +416,6 @@ int32_t fs_file_read_line(fs_file_t* file, char* buffer, uint32_t size) {
   int32_t ret = 0;
   int64_t offset = 0;
   bool_t done = FALSE;
-  bool_t read_flag = FALSE;
   return_value_if_fail(file != NULL && buffer != NULL && size > 1, 0);
 
   while (((d - buffer) < size) && !done) {
@@ -466,7 +424,6 @@ int32_t fs_file_read_line(fs_file_t* file, char* buffer, uint32_t size) {
     if (ret <= 0) {
       break;
     }
-    read_flag = TRUE;
     tbuff[ret] = '\0';
     for (i = 0; (i < ret) && ((d - buffer) < size); i++) {
       offset++;
@@ -499,8 +456,6 @@ int32_t fs_file_read_line(fs_file_t* file, char* buffer, uint32_t size) {
   ret = d - buffer;
   if (ret > 0) {
     *d = '\0';
-  }
-  if (read_flag == TRUE) {
     fs_file_seek(file, offset);
   }
 
@@ -526,7 +481,6 @@ ret_t fs_build_user_storage_file_name(char filename[MAX_PATH + 1], const char* a
 ret_t fs_create_dir_r(fs_t* fs, const char* name) {
   int32_t len = 0;
   char path[MAX_PATH + 1];
-  ret_t ret = RET_OK;
   tokenizer_t tokenizer;
   tokenizer_t* t = NULL;
   return_value_if_fail(fs != NULL && name != NULL, RET_BAD_PARAMS);
@@ -548,14 +502,13 @@ ret_t fs_create_dir_r(fs_t* fs, const char* name) {
     if (!fs_dir_exist(fs, path)) {
       if (fs_create_dir(fs, path) != RET_OK) {
         log_debug("create %s failed\n", path);
-        ret = RET_FAIL;
         break;
       }
     }
   }
   tokenizer_deinit(t);
 
-  return ret;
+  return RET_OK;
 }
 
 ret_t fs_remove_dir_r(fs_t* fs, const char* name) {
@@ -666,53 +619,6 @@ ret_t fs_copy_file(fs_t* fs, const char* src, const char* dst) {
   return ret;
 }
 
-bool_t fs_file_equal(fs_t* fs, const char* src, const char* dst) {
-  int32_t slen = 0;
-  int32_t dlen = 0;
-  bool_t ret = FALSE;
-  fs_file_t* fsrc = NULL;
-  fs_file_t* fdst = NULL;
-  uint8_t sbuff[1024] = {0};
-  uint8_t dbuff[1024] = {0};
-  return_value_if_fail(fs != NULL && src != NULL && dst != NULL, FALSE);
-  return_value_if_fail(file_exist(src), FALSE);
-  return_value_if_fail(file_exist(dst), FALSE);
-  fdst = fs_open_file(fs, dst, "rb");
-  return_value_if_fail(fdst != NULL, FALSE);
-
-  fsrc = fs_open_file(fs, src, "rb");
-  if (fsrc != NULL) {
-    if (fs_file_size(fsrc) != fs_file_size(fdst)) {
-      goto end;
-    }
-
-    while (TRUE) {
-      slen = fs_file_read(fsrc, sbuff, sizeof(sbuff));
-      dlen = fs_file_read(fdst, dbuff, sizeof(dbuff));
-      if (slen != dlen) {
-        goto end;
-      }
-      if (memcmp(sbuff, dbuff, slen) != 0) {
-        goto end;
-      }
-
-      if (fs_file_eof(fsrc)) {
-        ret = TRUE;
-        break;
-      }
-    }
-  }
-end:
-  if (fsrc != NULL) {
-    fs_file_close(fsrc);
-  }
-
-  if (fdst != NULL) {
-    fs_file_close(fdst);
-  }
-  return ret;
-}
-
 static ret_t fs_copy_item(fs_t* fs, fs_item_t* item, const char* src, const char* dst,
                           bool_t overwrite) {
   char subsrc[MAX_PATH + 1];
@@ -775,17 +681,12 @@ ret_t fs_copy_dir_ex(fs_t* fs, const char* src, const char* dst, bool_t overwrit
   return ret;
 }
 
-ret_t fs_foreach(const char* path, int depth, tk_visit_t on_file, tk_visit_t on_dir, void* ctx) {
+ret_t fs_foreach_file(const char* path, tk_visit_t on_file, void* ctx) {
   fs_item_t item;
   fs_t* fs = os_fs();
   fs_dir_t* dir = NULL;
   char filename[MAX_PATH + 1];
-  return_value_if_fail(fs != NULL && path != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(on_file || on_dir, RET_BAD_PARAMS);
-
-  if (depth == 0) {
-    return RET_OK;
-  }
+  return_value_if_fail(fs != NULL && path != NULL && on_file != NULL, RET_BAD_PARAMS);
 
   dir = fs_open_dir(fs, path);
   return_value_if_fail(dir != NULL, RET_BAD_PARAMS);
@@ -796,25 +697,14 @@ ret_t fs_foreach(const char* path, int depth, tk_visit_t on_file, tk_visit_t on_
 
     path_build(filename, MAX_PATH, path, item.name, NULL);
     if (item.is_reg_file) {
-      if (on_file != NULL && on_file(ctx, filename) != RET_OK) {
+      if (on_file(ctx, filename) != RET_OK) {
         break;
       }
     } else if (item.is_dir) {
-      if (on_dir != NULL && on_dir(ctx, filename) != RET_OK) {
-        break;
-      }
-      fs_foreach(filename, depth - 1, on_file, on_dir, ctx);
+      fs_foreach_file(filename, on_file, ctx);
     }
   }
   fs_dir_close(dir);
 
   return RET_OK;
-}
-
-ret_t fs_foreach_file(const char* path, tk_visit_t on_file, void* ctx) {
-  return fs_foreach(path, -1, on_file, NULL, ctx);
-}
-
-ret_t fs_foreach_dir(const char* path, int depth, tk_visit_t on_dir, void* ctx) {
-  return fs_foreach(path, depth, NULL, on_dir, ctx);
 }

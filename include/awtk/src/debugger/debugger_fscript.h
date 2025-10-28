@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger_fscript for fscript
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,10 +31,10 @@ BEGIN_C_DECLS
 
 typedef enum _debugger_fscript_break_type_t {
   DEBUGGER_FSCRIPT_BREAK_NONE = 0,
+  DEBUGGER_FSCRIPT_BREAK_NEXT,
   DEBUGGER_FSCRIPT_BREAK_STEP_IN,
   DEBUGGER_FSCRIPT_BREAK_STEP_OUT,
-  DEBUGGER_FSCRIPT_BREAK_STEP_OVER,
-  DEBUGGER_FSCRIPT_BREAK_STEP_LOOP_OVER
+  DEBUGGER_FSCRIPT_BREAK_STEP_OVER
 } debugger_fscript_break_type_t;
 
 /**
@@ -64,6 +64,7 @@ typedef struct _debugger_fscript_t {
   int32_t next_stop_call_frame_index;
 
   str_t code;
+  bool_t paused;
   str_t temp_str;
   tk_mutex_nest_t* mutex;
   tk_mutex_nest_t* mutex_for_destroy;
@@ -90,7 +91,7 @@ debugger_t* debugger_fscript_create(void);
  * @param {debugger_t*} debugger debugger对象。
  * @param {fscript_t*} fscript 脚本对象。
  *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ * @return {debugger_t*} 返回debugger对象。
  */
 ret_t debugger_fscript_set_fscript(debugger_t* debugger, fscript_t* fscript);
 
@@ -110,7 +111,7 @@ debugger_fscript_t* debugger_fscript_cast(debugger_t* debugger);
  * @param {const binary_data_t*} code 代码。
  * @param {bool_t} changed 是否重新加载。
  *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ * @return {debugger_t*} 返回debugger对象。
  */
 ret_t debugger_fscript_set_code(debugger_t* debugger, const binary_data_t* code, bool_t changed);
 

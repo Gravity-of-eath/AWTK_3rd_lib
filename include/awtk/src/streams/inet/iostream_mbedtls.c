@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  iostream base on mbedtls 
  *
- * Copyright (c) 2021 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2021 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -98,25 +98,5 @@ tk_iostream_t* tk_iostream_mbedtls_create(mbedtls_conn_t* conn) {
   TK_IOSTREAM(obj)->get_ostream = tk_iostream_mbedtls_get_ostream;
 
   return TK_IOSTREAM(obj);
-}
-
-#include "streams/inet/mbedtls_client.h"
-
-tk_iostream_t* tk_iostream_mbedtls_create_client(const char* host, uint16_t port) {
-  mbedtls_conn_t* conn = NULL;
-  tk_iostream_t* io = NULL;
-  char sport[16] = {0};
-  return_value_if_fail(host != NULL, NULL);
-
-  tk_snprintf(sport, sizeof(sport), "%d", (int)port);
-  conn = mbedtls_conn_client_create(host, sport, NULL, 0);
-  return_value_if_fail(conn != NULL, NULL);
-
-  io = tk_iostream_mbedtls_create(conn);
-  if (io == NULL) {
-    mbedtls_conn_destroy(conn);
-  }
-
-  return io;
 }
 #endif /*WITH_MBEDTLS*/

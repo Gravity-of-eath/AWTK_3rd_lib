@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dragger
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,11 +44,6 @@ static ret_t dragger_on_event(widget_t* widget, event_t* e) {
   return_value_if_fail(dragger != NULL, RET_BAD_PARAMS);
 
   switch (type) {
-    case EVT_ANIM_END: {
-      dragger->save_x = widget->x;
-      dragger->save_y = widget->y;
-      break;
-    }
     case EVT_POINTER_DOWN: {
       pointer_event_t* pointer_event = (pointer_event_t*)e;
       event_t evt = event_init(EVT_DRAG_START, widget);
@@ -83,8 +78,6 @@ static ret_t dragger_on_event(widget_t* widget, event_t* e) {
         dragger_move(widget, pointer_event->x - dragger->down_x,
                      pointer_event->y - dragger->down_y);
         widget_dispatch_simple_event(widget, EVT_DRAG);
-        dragger->save_x = widget->x;
-        dragger->save_y = widget->y;
       }
       widget_set_state(widget, WIDGET_STATE_NORMAL);
       widget_dispatch(widget, (event_t*)&evt);
@@ -171,24 +164,6 @@ static ret_t dragger_set_prop(widget_t* widget, const char* name, const value_t*
   return RET_NOT_FOUND;
 }
 
-static ret_t dragger_init(widget_t* widget) {
-  dragger_t* dragger = DRAGGER(widget);
-  return_value_if_fail(dragger != NULL, RET_BAD_PARAMS);
-
-  dragger->x_min = 0;
-  dragger->x_max = 0;
-  dragger->y_min = 0;
-  dragger->y_max = 0;
-  dragger->down_x = 0;
-  dragger->down_y = 0;
-  dragger->moving = 0;
-  dragger->dragging = 0;
-  dragger->save_x = widget->x;
-  dragger->save_y = widget->y;
-
-  return RET_OK;
-}
-
 static const char* const s_dragger_clone_properties[] = {
     WIDGET_PROP_X_MIN, WIDGET_PROP_X_MAX, WIDGET_PROP_Y_MIN, WIDGET_PROP_Y_MAX, NULL};
 TK_DECL_VTABLE(dragger) = {.size = sizeof(dragger_t),
@@ -196,18 +171,13 @@ TK_DECL_VTABLE(dragger) = {.size = sizeof(dragger_t),
                            .clone_properties = s_dragger_clone_properties,
                            .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                            .create = dragger_create,
-                           .init = dragger_init,
                            .set_prop = dragger_set_prop,
                            .get_prop = dragger_get_prop,
                            .on_event = dragger_on_event,
                            .on_paint_self = dragger_on_paint_self};
 
 widget_t* dragger_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
-  widget_t* widget = widget_create(parent, TK_REF_VTABLE(dragger), x, y, w, h);
-  return_value_if_fail(widget != NULL, NULL);
-  dragger_init(widget);
-
-  return widget;
+  return widget_create(parent, TK_REF_VTABLE(dragger), x, y, w, h);
 }
 
 widget_t* dragger_cast(widget_t* widget) {

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  canvas provides basic drawings functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -62,7 +62,7 @@ struct _canvas_t {
   char* font_name;
 
   /**
-   * @property {font_size_t} font_size
+   * @property {uint16_t} font_size
    * @annotation ["readable", "scriptable"]
    * 当前字体大小。
    */
@@ -102,13 +102,6 @@ struct _canvas_t {
    * 当前裁剪矩形的底部位置。
    */
   xy_t clip_bottom;
-
-  /**
-   * @property {point_t} fps_position
-   * @annotation ["readable"]
-   * 当前的帧率绘制坐标。
-   */
-  point_t fps_position;
 
   /**
    * @property {uint32_t} fps
@@ -778,7 +771,6 @@ ret_t canvas_draw_image_repeat3_y(canvas_t* c, bitmap_t* img, const rect_t* dst_
 ret_t canvas_draw_image_scale(canvas_t* c, bitmap_t* img, const rect_t* dst);
 ret_t canvas_draw_image_scale_w(canvas_t* c, bitmap_t* img, const rect_t* dst);
 ret_t canvas_draw_image_scale_h(canvas_t* c, bitmap_t* img, const rect_t* dst);
-ret_t canvas_draw_image_fill(canvas_t* c, bitmap_t* img, const rect_t* dst_in);
 ret_t canvas_draw_image_scale_down(canvas_t* c, bitmap_t* img, const rect_t* src,
                                    const rect_t* dst);
 
@@ -808,7 +800,6 @@ ret_t canvas_draw_image_matrix(canvas_t* c, bitmap_t* img, matrix_t* matrix);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t canvas_set_fps(canvas_t* c, bool_t show_fps, uint32_t fps);
-ret_t canvas_set_fps_ex(canvas_t* c, bool_t show_fps, uint32_t fps, xy_t x, xy_t y);
 
 /**
  * @method canvas_set_font_manager
@@ -955,7 +946,7 @@ ret_t canvas_stroke_rounded_rect(canvas_t* c, const rect_t* r, const rect_t* bg_
  * @param {uint32_t} radius_bl 左下角圆角半径。
  * @param {uint32_t} radius_br 右下角圆角半径。
  * @param {uint32_t} border_width 边宽。
- * @param {int32_t} border_model 边框类型。
+ * @param {uint32_t} border_model 边框类型。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

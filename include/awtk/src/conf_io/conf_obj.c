@@ -4,7 +4,7 @@
  * Author: AWTK Develop Team
  * Brief:  conf obj
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,7 +39,6 @@ typedef struct _conf_obj_t {
   conf_doc_load_t load;
   bool_t readonly;
   bool_t modified;
-  bool_t use_extend_type;
 } conf_obj_t;
 
 static conf_obj_t* conf_obj_cast(tk_object_t* obj);
@@ -85,34 +84,21 @@ static ret_t conf_obj_clear(tk_object_t* obj, const char* name) {
   return conf_doc_clear(o->doc, name);
 }
 
-static ret_t conf_obj_foreach_node(conf_doc_t* doc, conf_node_t* node, tk_visit_t on_prop,
-                                   void* ctx) {
+static ret_t conf_obj_foreach_node(conf_node_t* root, tk_visit_t on_prop, void* ctx) {
   named_value_t nv;
   ret_t ret = RET_FAIL;
-  conf_node_t* iter = conf_node_get_first_child(node);
+  conf_node_t* iter = conf_node_get_first_child(root);
   return_value_if_fail(iter != NULL, RET_BAD_PARAMS);
 
   for (; iter != NULL; iter = iter->next) {
-    ret_t ret_get_value = conf_node_get_value(iter, &(nv.value));
     nv.name = (char*)conf_node_get_name(iter);
-
-    if (RET_NOT_IMPL == ret_get_value) {
-      if (doc != NULL && doc->use_extend_type) {
-        ret = conf_doc_get_value_extend_type(doc, iter, &(nv.value));
-      } else {
-        log_debug("skip object\n");
-        continue;
+    if (conf_node_get_value(iter, &(nv.value)) == RET_OK) {
+      ret = on_prop(ctx, &nv);
+      if (ret != RET_OK) {
+        break;
       }
     } else {
-      ret = ret_get_value;
-    }
-
-    if (ret == RET_OK) {
-      ret = on_prop(ctx, &nv);
-    }
-
-    if (ret != RET_OK) {
-      break;
+      log_debug("skip object\n");
     }
   }
 
@@ -120,10 +106,10 @@ static ret_t conf_obj_foreach_node(conf_doc_t* doc, conf_node_t* node, tk_visit_
 }
 
 static ret_t conf_obj_foreach(tk_object_t* obj, tk_visit_t on_prop, void* ctx) {
-  conf_doc_t* doc = conf_obj_get_doc(obj);
-  return_value_if_fail(doc != NULL && doc->root != NULL, RET_BAD_PARAMS);
+  conf_obj_t* o = CONF_OBJ(obj);
+  return_value_if_fail(o != NULL && o->doc != NULL && o->doc->root != NULL, RET_BAD_PARAMS);
 
-  return conf_obj_foreach_node(doc, doc->root, on_prop, ctx);
+  return conf_obj_foreach_node(o->doc->root, on_prop, ctx);
 }
 
 static ret_t conf_obj_set_prop(tk_object_t* obj, const char* name, const value_t* v) {
@@ -184,9 +170,7 @@ static ret_t conf_obj_load(tk_object_t* obj) {
   return_value_if_fail(o != NULL, RET_BAD_PARAMS);
 
   reader = data_reader_factory_create_reader(data_reader_factory(), o->url);
-  if (reader == NULL) {
-    return RET_FAIL;
-  }
+  return_value_if_fail(reader != NULL, RET_FAIL);
 
   o->doc = o->load(reader);
   data_reader_destroy(reader);
@@ -211,7 +195,6 @@ static ret_t conf_obj_load_or_create(tk_object_t* obj, bool_t create_if_not_exis
   }
 
   if (o->doc != NULL) {
-    conf_doc_use_extend_type(o->doc, o->use_extend_type);
     if (o->doc->root == NULL) {
       o->doc->root = conf_doc_create_node(o->doc, CONF_NODE_ROOT_NAME);
     }
@@ -358,8 +341,8 @@ static conf_obj_t* conf_obj_cast(tk_object_t* obj) {
   return (conf_obj_t*)obj;
 }
 
-tk_object_t* conf_obj_create_ex(conf_doc_save_t save, conf_doc_load_t load, const char* url,
-                                bool_t create_if_not_exist, bool_t use_extend_type) {
+tk_object_t* conf_obj_create(conf_doc_save_t save, conf_doc_load_t load, const char* url,
+                             bool_t create_if_not_exist) {
   conf_obj_t* o = NULL;
   tk_object_t* obj = NULL;
   return_value_if_fail(save != NULL && load != NULL, NULL);
@@ -371,11 +354,7 @@ tk_object_t* conf_obj_create_ex(conf_doc_save_t save, conf_doc_load_t load, cons
 
   o->save = save;
   o->load = load;
-  o->use_extend_type = use_extend_type;
-  if (url != NULL) {
-    o->url = tk_strdup(url);
-  }
-
+  o->url = tk_strdup(url);
   if (o->url == NULL && url != NULL) {
     TK_OBJECT_UNREF(o);
   }
@@ -389,11 +368,6 @@ tk_object_t* conf_obj_create_ex(conf_doc_save_t save, conf_doc_load_t load, cons
   }
 
   return obj;
-}
-
-tk_object_t* conf_obj_create(conf_doc_save_t save, conf_doc_load_t load, const char* url,
-                             bool_t create_if_not_exist) {
-  return conf_obj_create_ex(save, load, url, create_if_not_exist, FALSE);
 }
 
 ret_t conf_obj_set_readonly(tk_object_t* conf, bool_t readonly) {
@@ -464,12 +438,11 @@ static ret_t conf_sub_obj_foreach(tk_object_t* obj, tk_visit_t on_prop, void* ct
   conf_sub_obj_t* o = CONF_SUB_OBJ(obj);
   return_value_if_fail(o != NULL, RET_BAD_PARAMS);
 
-  return conf_obj_foreach_node(conf_obj_get_doc(TK_OBJECT(o->conf)), o->root, on_prop, ctx);
+  return conf_obj_foreach_node(o->root, on_prop, ctx);
 }
 
 static ret_t conf_sub_obj_destroy(tk_object_t* obj) {
   conf_sub_obj_t* o = CONF_SUB_OBJ(obj);
-  ENSURE(o);
   TK_OBJECT_UNREF(o->conf);
   o->root = NULL;
   o->real_root = NULL;
@@ -510,7 +483,6 @@ tk_object_t* conf_sub_obj_create(tk_object_t* conf, const char* path) {
     return_value_if_fail(root != NULL, NULL);
   } else {
     conf_obj = CONF_OBJ(conf);
-    ENSURE(conf_obj);
     root = conf_doc_find_node(conf_obj->doc, conf_obj->doc->root, path, FALSE);
     return_value_if_fail(root != NULL, NULL);
   }

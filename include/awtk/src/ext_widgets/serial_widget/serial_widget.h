@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  用于串口通信的控件
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -227,7 +227,7 @@ ret_t serial_widget_set_flowcontrol(widget_t* widget, uint32_t flowcontrol);
 
 /**
  * @method serial_widget_set_check_interval
- * 设置 轮询时间(毫秒)。
+ * 设置 轮询时间。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
  * @param {uint32_t} check_interval 轮询时间（单位：ms）。

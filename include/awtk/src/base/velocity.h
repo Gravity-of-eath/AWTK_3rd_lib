@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  velocity tracker
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,7 +57,7 @@ velocity_t* velocity_reset(velocity_t* v);
  * 更新位置。
  *
  * @param {velocity_t*} v velocity对象。
- * @param {uint64_t} time 时间(毫秒)。
+ * @param {uint64_t} time 时间。
  * @param {xy_t} x x坐标。
  * @param {xy_t} y y坐标。
  *

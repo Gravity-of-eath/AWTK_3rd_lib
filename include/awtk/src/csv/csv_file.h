@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  csv file
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,7 +23,6 @@
 #define TK_CSV_FILE_H
 
 #include "tkc/istream.h"
-#include "tkc/buffer.h"
 
 BEGIN_C_DECLS
 
@@ -62,18 +61,12 @@ struct _csv_file_t {
    */
   bool_t has_title;
 
-  /**
-   * @property {bool_t} single_select
-   * 是否单选。
-   */
-  bool_t single_select;
   /*private*/
   char sep;
   uint32_t cols;
   char* filename;
   csv_rows_t rows;
   void* filter_ctx;
-  uint32_t max_rows;
   csv_file_filter_t filter;
 };
 
@@ -124,7 +117,7 @@ csv_file_t* csv_file_create(const char* filename, char sep);
  * @param {uint32_t} size 数据长度。
  * @param {char} sep 分隔符。
  * 
- * @return {csv_file_t*} 返回csv对象。
+ * @return {csv_file_t} 返回csv对象。
  */
 csv_file_t* csv_file_create_with_buff(const char* buff, uint32_t size, char sep);
 
@@ -192,25 +185,6 @@ const char* csv_file_get(csv_file_t* csv, uint32_t row, uint32_t col);
 ret_t csv_file_set(csv_file_t* csv, uint32_t row, uint32_t col, const char* value);
 
 /**
- * @method csv_file_uncheck_all
- *  取消勾选全部行。
- * @param {csv_file_t*} csv csv对象。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
-*/
-ret_t csv_file_uncheck_all(csv_file_t* csv);
-
-/**
- * @method csv_file_get_first_checked
- *
- * 获取第一个勾选的行。
- *
- * @param {csv_file_t*} csv csv对象。
- * 
- * @return {int32_t} 返回行号。
- */
-int32_t csv_file_get_first_checked(csv_file_t* csv);
-
-/**
  * @method csv_file_set_row_checked
  *
  * 勾选指定行。
@@ -222,28 +196,6 @@ int32_t csv_file_get_first_checked(csv_file_t* csv);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t csv_file_set_row_checked(csv_file_t* csv, uint32_t row, bool_t checked);
-
-/**
- * @method csv_file_set_max_rows
- *
- * 设置最大行数。
- *
- * @param {csv_file_t*} csv csv对象。
- * @param {uint32_t} max_rows 最大行数。
- * 
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t csv_file_set_max_rows(csv_file_t* csv, uint32_t max_rows);
-
-/**
- * @method csv_file_set_single_select
- * 设置是否单选。
- * @param {csv_file_t*} csv csv对象。
- * @param {bool_t} single_select 是否单选。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- * 
- */
-ret_t csv_file_set_single_select(csv_file_t* csv, bool_t single_select);
 
 /**
  * @method csv_file_is_row_checked
@@ -362,23 +314,12 @@ ret_t csv_file_insert_row(csv_file_t* csv, uint32_t row, const char* data);
 ret_t csv_file_save(csv_file_t* csv, const char* filename);
 
 /**
- * @method csv_file_save_to_buff
- *
- * 保存。
- *
- * @param {csv_file_t*} csv csv对象。
- * @param {wbuffer_t*} buff 保存结果数据。
- * 
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t csv_file_save_to_buff(csv_file_t* csv, wbuffer_t* buff);
-
-/**
  * @method csv_file_clear
  *
  * 保存。
  *
  * @param {csv_file_t*} csv csv对象。
+ * @param {const char*} filename 文件名。
  * 
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -397,19 +338,6 @@ ret_t csv_file_clear(csv_file_t* csv);
 ret_t csv_file_load_file(csv_file_t* csv, const char* filename);
 
 /**
- * @method csv_file_find_first
- *
- * 查找第一个满足条件的行。
- *
- * @param {csv_file_t*} csv csv对象。
- * @param {tk_compare_t} compare 比较函数。
- * @param {void*} ctx 比较函数的上下文。
- * 
- * @return {csv_row_t*} 返回行对象。
- */
-csv_row_t* csv_file_find_first(csv_file_t* csv, tk_compare_t compare, void* ctx);
-
-/**
  * @method csv_file_destroy
  *
  * 销毁csv对象。
@@ -420,94 +348,14 @@ csv_row_t* csv_file_find_first(csv_file_t* csv, tk_compare_t compare, void* ctx)
  */
 ret_t csv_file_destroy(csv_file_t* csv);
 
-/**
- * @method csv_file_get_by_name
- *
- * 根据列名获取数据。
- *
- * @param {csv_file_t*} csv csv对象。
- * @param {uint32_t} row 行号。
- * @param {const char*} name 列名。
- * 
- * @return {const char*} 返回数据。
- */
+/*public for test*/
 const char* csv_file_get_by_name(csv_file_t* csv, uint32_t row, const char* name);
-
-/**
- * @method csv_file_get_col_of_name
- *
- * 根据列名获取列号。
- *
- * @param {csv_file_t*} csv csv对象。
- * @param {const char*} name 列名。
- * 
- * @return {int32_t} 返回列号。
- */
 int32_t csv_file_get_col_of_name(csv_file_t* csv, const char* name);
-
-/**
- * @method csv_file_get_row
- *
- * 获取指定行。
- *
- * @param {csv_file_t*} csv csv对象。
- * @param {uint32_t} row 行号。
- * 
- * @return {csv_row_t*} 返回行对象。
- */
 csv_row_t* csv_file_get_row(csv_file_t* csv, uint32_t row);
 
-/**
- * @class csv_row_t
- * 行对象。
- */
-
-/**
- * @method csv_row_count_cols
- * 获取列数。
- * @param {csv_row_t*} row 行对象。
- * @return {uint32_t} 返回列数。
- */
 uint32_t csv_row_count_cols(csv_row_t* row);
-
-/**
- * @method csv_row_get
- *
- * 获取指定列的数据。
- *
- * @param {csv_row_t*} row 行对象。
- * @param {uint32_t} col 列号。
- * 
- * @return {const char*} 返回数据。
- */
 const char* csv_row_get(csv_row_t* row, uint32_t col);
-
-/**
- * @method csv_row_set
- *
- * 修改指定列的数据。
- *
- * @param {csv_row_t*} row 行对象。
- * @param {uint32_t} col 列号。
- * @param {const char*} value 值。
- * 
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
 ret_t csv_row_set(csv_row_t* row, uint32_t col, const char* value);
-
-/**
- * @method csv_row_get_col
- *
- * 根据列名获取列号。
- *
- * @param {csv_row_t*} row 行对象。
- * @param {const char*} value 列名。
- * 
- * @return {int32_t} 返回列号。
- */
-int32_t csv_row_get_col(csv_row_t* row, const char* value);
-
-/*public for test*/
 ret_t csv_row_init(csv_row_t* row, char* buff, uint32_t size, bool_t should_free_buff);
 ret_t csv_row_reset(csv_row_t* row);
 

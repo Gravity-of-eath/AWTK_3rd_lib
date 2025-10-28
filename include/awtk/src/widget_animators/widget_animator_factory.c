@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  widget animator factory
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -69,7 +69,6 @@ typedef struct _animator_params_t {
   float_t time_scale;
   bool_t auto_start;
   bool_t auto_destroy;
-  bool_t relayout;
 
 } animator_params_t;
 
@@ -188,11 +187,7 @@ static ret_t parser_on_param(func_call_parser_t* parser, const char* name, const
     }
     case 'r': /*repeat_times*/
     {
-      if (tk_str_eq(name, "repeat_times")) {
-        p->params.repeat_times = tk_atoi(value);
-      } else if (tk_str_eq(name, "relayout")) {
-        p->params.relayout = tk_atob(value);
-      }
+      p->params.repeat_times = tk_atoi(value);
       break;
     }
     case 'd': /*duration|delay*/
@@ -234,7 +229,6 @@ static ret_t widget_animator_parser_parse(widget_animator_parser_t* parser, cons
   parser->params.duration = 500;
   parser->params.yoyo_times = -1;
   parser->params.repeat_times = -1;
-  parser->params.relayout = FALSE;
   parser->params.auto_start = TRUE;
   parser->params.auto_destroy = TRUE;
   parser->params.time_scale = 1;
@@ -246,12 +240,6 @@ static ret_t widget_animator_parser_parse(widget_animator_parser_t* parser, cons
   parser->base.on_done = NULL;
 
   return func_call_parser_parse(&(parser->base));
-}
-
-static ret_t widget_animator_start_animator(void* ctx, event_t* evt) {
-  widget_animator_t* wa = (widget_animator_t*)ctx;
-  widget_animator_start(wa);
-  return RET_REMOVE;
 }
 
 widget_animator_t* widget_animator_create(widget_t* widget, const char* params) {
@@ -303,16 +291,9 @@ widget_animator_t* widget_animator_create(widget_t* widget, const char* params) 
     }
 
     if (parser.params.auto_start) {
-      if (widget->loading) {
-        /* 加载控件中启动动画的情况，为了确保不受注册的回调事件顺序影响，所以等控件加载完成后，再启动动画 */
-        widget_on(widget, EVT_WIDGET_LOAD, widget_animator_start_animator, wa);
-      } else {
-        /* 加载控件完成后，用户通过代码 set_prop 注册动画的情况 */
-        widget_animator_start(wa);
-      }
+      widget_animator_start(wa);
     }
 
-    widget_animator_set_relayout(wa, parser.params.relayout);
     widget_animator_set_time_scale(wa, parser.params.time_scale);
     widget_animator_set_destroy_when_done(wa, parser.params.auto_destroy);
     if (parser.params.name[0]) {

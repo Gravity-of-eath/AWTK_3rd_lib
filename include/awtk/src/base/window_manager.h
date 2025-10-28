@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,8 +47,7 @@ typedef ret_t (*window_manager_back_t)(widget_t* widget);
 typedef ret_t (*window_manager_back_to_t)(widget_t* widget, const char* name);
 typedef ret_t (*window_manager_switch_to_t)(widget_t* widget, widget_t* curr_win,
                                             widget_t* target_win, bool_t close);
-typedef ret_t (*window_manager_get_pointer_t)(widget_t* widget, xy_t* x, xy_t* y, bool_t* pressed,
-                                              bool_t* in_pointer_up);
+typedef ret_t (*window_manager_get_pointer_t)(widget_t* widget, xy_t* x, xy_t* y, bool_t* pressed);
 typedef ret_t (*window_manager_is_animating_t)(widget_t* widget, bool_t* playing);
 
 typedef ret_t (*window_manager_dispatch_native_window_event_t)(widget_t* widget, event_t* e,
@@ -60,7 +59,6 @@ typedef ret_t (*window_manager_snap_prev_window_t)(widget_t* widget, widget_t* p
                                                    bitmap_t* img);
 typedef dialog_highlighter_t* (*window_manager_get_dialog_highlighter_t)(widget_t* widget);
 typedef ret_t (*window_manager_resize_t)(widget_t* widget, wh_t w, wh_t h);
-typedef ret_t (*window_manager_set_fullscreen_t)(widget_t* widget, bool_t fullscreen);
 
 typedef struct _window_manager_vtable_t {
   window_manager_back_t back;
@@ -86,7 +84,6 @@ typedef struct _window_manager_vtable_t {
   window_manager_snap_prev_window_t snap_prev_window;
   window_manager_get_dialog_highlighter_t get_dialog_highlighter;
   window_manager_resize_t resize;
-  window_manager_set_fullscreen_t set_fullscreen;
 } window_manager_vtable_t;
 
 /**
@@ -107,16 +104,12 @@ typedef struct _window_manager_t {
 
   /*private*/
   bool_t show_fps;
-  point_t fps_position;
-  uint32_t max_fps;
   widget_t* widget_grab_key;
   bool_t ignore_input_events;
   bool_t show_waiting_pointer_cursor;
   const window_manager_vtable_t* vt;
-  input_device_status_t input_device_status;
+  uint32_t max_fps;
   uint32_t curr_expected_sleep_time;
-
-  native_window_create_t create_native_window;
 } window_manager_t;
 
 /**
@@ -162,7 +155,7 @@ widget_t* window_manager_cast(widget_t* widget);
 /**
  * @method window_manager_set
  * 设置缺省的窗口管理器。
- * @param {widget_t*} widget 窗口管理器对象。
+ * @param {window_manager_t*} widget 窗口管理器对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -187,16 +180,6 @@ widget_t* window_manager_get_top_main_window(widget_t* widget);
  * @return {widget_t*} 返回窗口对象。
  */
 widget_t* window_manager_get_top_window(widget_t* widget);
-
-/**
- * @method window_manager_get_foreground_window
- * 获取前景窗口。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget 窗口管理器对象。
- *
- * @return {widget_t*} 返回窗口对象。
- */
-widget_t* window_manager_get_foreground_window(widget_t* widget);
 
 /**
  * @method window_manager_get_prev_window
@@ -283,7 +266,7 @@ ret_t window_manager_close_window(widget_t* widget, widget_t* window);
 
 /**
  * @method window_manager_close_window_force
- * 强制立即关闭窗口(内部使用函数，关闭窗口请使用 window_manager_close_window)。
+ * 强制立即关闭窗口。
  *
  *> 本函数不会执行窗口动画。
  * @param {widget_t*} widget 窗口管理器对象。
@@ -311,6 +294,7 @@ ret_t window_manager_paint(widget_t* widget);
  *
  *> 仅由主循环调用。
  *
+ * @annotation ["private"]
  * @param {widget_t*} widget 窗口管理器对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -342,18 +326,6 @@ ret_t window_manager_dispatch_input_event(widget_t* widget, event_t* e);
 ret_t window_manager_set_show_fps(widget_t* widget, bool_t show_fps);
 
 /**
- * @method window_manager_set_show_fps_position
- * 设置显示FPS的起始坐标。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget 窗口管理器对象。
- * @param {xy_t} x 左上角x坐标。
- * @param {xy_t} y 左上角x坐标。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t window_manager_set_show_fps_position(widget_t* widget, xy_t x, xy_t y);
-
-/**
  * @method window_manager_set_max_fps
  * 限制最大帧率。
  *
@@ -380,7 +352,7 @@ ret_t window_manager_set_ignore_input_events(widget_t* widget, bool_t ignore_inp
 
 /**
  * @method window_manager_set_screen_saver_time
- * 设置屏保时间(毫秒)。
+ * 设置屏保时间。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget 窗口管理器对象。
  * @param {uint32_t}  screen_saver_time 屏保时间(单位毫秒), 为0关闭屏保。
@@ -443,7 +415,7 @@ ret_t window_manager_back_to(widget_t* widget, const char* target);
 /**
  * @method window_manager_switch_to
  * 切换到指定窗口。
- * 备注：会受到模态窗口影响，如果切换的窗口是模态窗口之前的窗口就会失败。
+ *
  * ```c
  * window_manager_switch_to(wm, win, widget_child(wm, "home"), FALSE);
  * ```
@@ -501,17 +473,6 @@ ret_t window_manager_end_wait_pointer_cursor(widget_t* widget);
 ret_t window_manager_resize(widget_t* widget, wh_t w, wh_t h);
 
 /**
- * @method window_manager_set_fullscreen
- * 设置原生窗口是否全屏。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget 窗口管理器对象。
- * @param {bool_t} fullscreen 是否全屏
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t window_manager_set_fullscreen(widget_t* widget, bool_t fullscreen);
-
-/**
  * @method window_manager_close_all
  * 关闭全部窗口。
  * @annotation ["scriptable"]
@@ -532,34 +493,15 @@ widget_t* window_manager_create(void);
 
 /**
  * @method window_manager_destroy
- * 销毁window_manager。
- * @param {widget_t*} widget window_manager对象。
- * 
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t window_manager_destroy(widget_t* widget);
 
 /*helper for sub class*/
 /**
  * @method window_manager_init
- * 初始化window_manager。
- * @param {window_manager_t*} wm window_manager对象。
- * @param {const widget_vtable_t*} wvt 控件基类虚表。
- * @param {const window_manager_vtable_t*} vt window_manager虚表。
- * 
- * @return {widget_t*} 返回window_manager对象。
  */
 widget_t* window_manager_init(window_manager_t* wm, const widget_vtable_t* wvt,
                               const window_manager_vtable_t* vt);
-
-/**
- * @method window_manager_get_input_device_status
- * 获取输入设备状态。
- * @param {widget_t*} widget 窗口管理器对象。
- * 
- * @return {input_device_status_t*} 返回输入设备状态。
-*/
-input_device_status_t* window_manager_get_input_device_status(widget_t* widget);
 
 widget_t* window_manager_find_target_by_win(widget_t* widget, void* native_win);
 widget_t* window_manager_find_target(widget_t* widget, void* native_win, xy_t x, xy_t y);
@@ -569,7 +511,6 @@ ret_t window_manager_dispatch_window_event(widget_t* window, event_type_t type);
 uint32_t window_manager_get_curr_expected_sleep_time(widget_t* widget);
 ret_t window_manager_set_curr_expected_sleep_time(widget_t* widget,
                                                   uint32_t curr_expected_sleep_time);
-native_window_t* window_manager_create_native_window(window_manager_t* wm, widget_t* widget);
 
 /* public for dialog highlighter */
 #define WIDGET_PROP_CURR_WIN "curr_win"

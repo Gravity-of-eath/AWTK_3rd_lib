@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  default object
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,30 +35,8 @@ BEGIN_C_DECLS
  *
  * 对象接口的缺省实现。
  *
- * 通用当作 map 数据结构使用，内部用有序数组保存所有属性，因此可以快速查找指定名称的属性。
+ * 内部使用有序数组保存所有属性，可以快速查找指定名称的属性。
  *
- * 示例
- *
- *```c
- * // 创建默认对象
- * tk_object_t *obj = object_default_create();
- *
- * // 设置属性
- * tk_object_set_prop_str(obj, "name", "awplc");
- * tk_object_set_prop_int(obj, "age", 18);
- * tk_object_set_prop_double(obj, "weight", 60.5);
- *
- * // 获取属性
- * ENSURE(tk_str_eq(tk_object_get_prop_str(obj, "name"), "awplc"));
- * ENSURE(tk_object_get_prop_int(obj, "age", 0) == 18);
- * ENSURE(tk_object_get_prop_double(obj, "weight", 0) == 60.5);
- *
- * // 遍历属性
- * tk_object_foreach_prop(obj, visit_obj, NULL);
- *
- * // 释放对象
- * TK_OBJECT_UNREF(obj); 
- *```        
  */
 typedef struct _object_default_t {
   tk_object_t object;
@@ -66,9 +44,6 @@ typedef struct _object_default_t {
   /*private*/
   darray_t props;
   bool_t enable_path;
-  /*设置属性值不改变属性的类型*/
-  bool_t keep_prop_type;
-  bool_t name_case_insensitive;
 } object_default_t;
 
 /**
@@ -135,26 +110,6 @@ ret_t object_default_unref(tk_object_t* obj);
 ret_t object_default_clear_props(tk_object_t* obj);
 
 /**
- * @method object_default_set_keep_prop_type
- * 设置属性值时不改变属性的类型。
- * @annotation ["scriptable"]
- * @param {tk_object_t*} obj 对象。
- * @param {bool_t} keep_prop_type 不改变属性的类型。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t object_default_set_keep_prop_type(tk_object_t* obj, bool_t keep_prop_type);
-
-/**
- * @method object_default_set_name_case_insensitive
- * 设置属性名是否大小写不敏感。
- * @annotation ["scriptable"]
- * @param {tk_object_t*} obj 对象。
- * @param {bool_t} name_case_insensitive 属性名是否大小写不敏感。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t object_default_set_name_case_insensitive(tk_object_t* obj, bool_t name_case_insensitive);
-
-/**
  * @method object_default_find_prop
  *
  * 查找满足条件的属性，并返回它的值。
@@ -177,10 +132,7 @@ value_t* object_default_find_prop(tk_object_t* obj, tk_compare_t cmp, const void
  * @return {object_default_t*} object_default对象。
  */
 object_default_t* object_default_cast(tk_object_t* obj);
-
 #define OBJECT_DEFAULT(obj) object_default_cast(obj)
-
-#define OBJECT_DEFAULT_TYPE "object_default"
 
 END_C_DECLS
 

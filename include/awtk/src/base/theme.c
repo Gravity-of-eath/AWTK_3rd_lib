@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  theme manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -79,11 +79,6 @@ ret_t theme_destroy(theme_t* theme) {
     TKMEM_FREE(theme->data);
   }
 
-  if (theme->info != NULL) {
-    asset_info_unref(theme->info);
-    theme->info = NULL;
-  }
-
   if (theme->theme_destroy != NULL) {
     theme->theme_destroy(theme);
   } else {
@@ -120,6 +115,7 @@ ret_t theme_set(theme_t* theme) {
 #include "theme_default.h"
 
 theme_t* theme_load_from_data(const char* name, const uint8_t* data, uint32_t size) {
+  theme_t* t = NULL;
   theme_header_t* header = (theme_header_t*)data;
   return_value_if_fail(name != NULL && data != NULL, NULL);
 
@@ -132,21 +128,8 @@ theme_t* theme_load_from_data(const char* name, const uint8_t* data, uint32_t si
   } else {
     return NULL;
   }
-}
 
-theme_t* theme_load_from_asset(asset_info_t* info) {
-  theme_t* theme = NULL;
-  const char* name = NULL;
-  return_value_if_fail(info != NULL, NULL);
-
-  name = asset_info_get_name(info);
-  theme = theme_load_from_data(name, info->data, info->size);
-  return_value_if_fail(theme != NULL, NULL);
-
-  theme->info = info;
-  asset_info_ref(info);
-
-  return theme;
+  return t;
 }
 
 #ifndef WITHOUT_XML_STYLE

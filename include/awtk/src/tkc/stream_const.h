@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input/ouput stream interface
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,8 +34,6 @@ BEGIN_C_DECLS
 
 #define TK_STREAM_CMD_IFLUSH "iflush"
 #define TK_STREAM_CMD_OFLUSH "oflush"
-#define TK_ISTREAM_DEFAULT_TIMEOUT 3000
-#define TK_OSTREAM_DEFAULT_TIMEOUT 1000
 
 END_C_DECLS
 

@@ -4,7 +4,7 @@
  * Author: AWTK Develop Team
  * Brief:  vector graphic gradient
  *
- * Copyright (c) 2021 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2021 - 2021 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -207,11 +207,9 @@ ret_t vg_gradient_destroy(vg_gradient_t* gradient);
 
 #define vg_gradient_add_stop(gradient, color, stop) \
   gradient_add_stop((gradient_t*)(gradient), color, stop)
-#define vg_gradient_get_stop(gradient, index) \
-  gradient_get_stop((const gradient_t*)(gradient), index)
-#define vg_gradient_get_first_color(gradient) \
-  gradient_get_first_color((const gradient_t*)(gradient))
-#define vg_gradient_get_last_color(gradient) gradient_get_last_color((const gradient_t*)(gradient))
+#define vg_gradient_get_stop(gradient, index) gradient_get_stop((gradient_t*)(gradient), index)
+#define vg_gradient_get_first_color(gradient) gradient_get_first_color((gradient_t*)(gradient))
+#define vg_gradient_get_last_color(gradient) gradient_get_last_color((gradient_t*)(gradient))
 
 END_C_DECLS
 

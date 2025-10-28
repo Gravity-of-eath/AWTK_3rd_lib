@@ -43,7 +43,6 @@ shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/color.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/color_parser.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/darray.h
-shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/date_time.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/easing.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/emitter.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/event.h
@@ -52,7 +51,6 @@ shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/log.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/matrix.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mem.h
-shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mem_allocator.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mmap.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/object.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/object_compat.h
@@ -65,7 +63,6 @@ shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/types_def.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/utils.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/value.h
-shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/wasm_helper.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/wstr.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/widgets/label.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/include/shadow_label.h
@@ -109,7 +106,6 @@ shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/buffer.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/color.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/darray.h
-shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/date_time.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/easing.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/emitter.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/event.h
@@ -119,7 +115,6 @@ shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/log.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/matrix.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mem.h
-shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mem_allocator.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mmap.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/object.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/object_compat.h
@@ -132,7 +127,6 @@ shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/types_def.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/utils.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/value.h
-shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/wasm_helper.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/wstr.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/widgets/label.h
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/include/shadow_label.h

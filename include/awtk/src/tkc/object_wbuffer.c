@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap wbuffer to an object.
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -57,8 +57,8 @@ static ret_t object_wbuffer_get_prop(tk_object_t* obj, const char* name, value_t
   return ret;
 }
 
-static const object_vtable_t s_object_wbuffer_vtable = {.type = OBJECT_WBUFFER_TYPE,
-                                                        .desc = OBJECT_WBUFFER_TYPE,
+static const object_vtable_t s_object_wbuffer_vtable = {.type = "object_wbuffer",
+                                                        .desc = "object_wbuffer",
                                                         .size = sizeof(object_wbuffer_t),
                                                         .is_collection = FALSE,
                                                         .on_destroy = object_wbuffer_on_destroy,

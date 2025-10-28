@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  gauge
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -114,7 +114,7 @@ widget_t* gauge_cast(widget_t* widget);
  * 设置背景图片的名称。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget image对象。
- * @param {const char*}  name 图片名称，该图片必须存在于资源管理器。
+ * @param {char*}  name 图片名称，该图片必须存在于资源管理器。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

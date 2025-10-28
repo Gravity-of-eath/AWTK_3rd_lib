@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  emitter dispatcher
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,7 +36,6 @@ struct _emitter_item_t {
   event_func_t handler;
 
   uint32_t tag;
-  bool_t working;
   bool_t pending_remove;
   tk_destroy_t on_destroy;
   void* on_destroy_ctx;
@@ -69,6 +68,13 @@ typedef struct _emitter_t {
    * 禁用标志。禁用时dispatch无效。
    */
   int32_t disable;
+
+  /**
+   * @property {emitter_item_t*} curr_iter
+   * @annotation ["private"]
+   * 当前正在dispatch的项。
+   */
+  emitter_item_t* curr_iter;
 } emitter_t;
 
 /**
@@ -118,7 +124,7 @@ ret_t emitter_dispatch_simple_event(emitter_t* emitter, uint32_t type);
  * 注册指定事件的处理函数。
  * @annotation ["scriptable:custom"]
  * @param {emitter_t*} emitter emitter对象。
- * @param {uint32_t} etype 事件类型。
+ * @param {event_type_t} etype 事件类型。
  * @param {event_func_t} handler 事件处理函数。
  * @param {void*} ctx 事件处理函数上下文。
  *
@@ -130,8 +136,8 @@ uint32_t emitter_on(emitter_t* emitter, uint32_t etype, event_func_t handler, vo
  * @method emitter_exist
  * 判断指定的事件和回调函数是否已经注册。
  * @param {emitter_t*} emitter emitter对象。
- * @param {uint32_t} etype 事件类型。
- * @param {event_func_t} handler 事件处理函数。
+ * @param {event_type_t} type 事件类型。
+ * @param {event_func_t} on_event 事件处理函数。
  * @param {void*} ctx 事件处理函数上下文。
  *
  * @return {bool_t} 返回TRUE表示已经注册，否则表示没有注册。
@@ -142,8 +148,8 @@ bool_t emitter_exist(emitter_t* emitter, uint32_t etype, event_func_t handler, v
  * @method emitter_on_with_tag
  * 注册指定事件的处理函数。
  * @param {emitter_t*} emitter emitter对象。
- * @param {uint32_t} etype 事件类型。
- * @param {event_func_t} handler 事件处理函数。
+ * @param {event_type_t} type 事件类型。
+ * @param {event_func_t} on_event 事件处理函数。
  * @param {void*} ctx 事件处理函数上下文。
  * @param {uint32_t} tag tag。
  *
@@ -167,8 +173,8 @@ ret_t emitter_off(emitter_t* emitter, uint32_t id);
  * @method emitter_off_by_func
  * 注销指定事件的处理函数。
  * @param {emitter_t*} emitter emitter对象。
- * @param {uint32_t} etype 事件类型。
- * @param {event_func_t} handler 事件处理函数。
+ * @param {event_type_t} type 事件类型。
+ * @param {event_func_t} on_event 事件处理函数。
  * @param {void*} ctx 事件处理函数上下文。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -214,7 +220,7 @@ ret_t emitter_set_on_destroy(emitter_t* emitter, uint32_t id, tk_destroy_t on_de
  * @param {emitter_t*} emitter emitter对象。
  * @param {uint32_t} id emitter_on返回的ID。
  *
- * @return {emitter_item_t*} 若存在,返回id对应的emitter_item_t，否则返回NULL。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 emitter_item_t* emitter_find(emitter_t* emitter, uint32_t id);
 
@@ -295,31 +301,16 @@ emitter_t* emitter_cast(emitter_t* emitter);
  */
 ret_t emitter_forward(void* ctx, event_t* e);
 
-/**
- * @method emitter_forward_retarget
- * 分发事件。并将e->target强制设置为ctx。
- *
- * @param {void*} ctx emitter对象。
- * @param {event_t*} e 分发的事件。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t emitter_forward_retarget(void* ctx, event_t* e);
-
 #define EMITTER(emitter) ((emitter_t*)(emitter))
 
-#define EMITTER_ENABLE(emitter)         \
-  do {                                  \
-    if ((emitter) != NULL) {            \
-      emitter_enable(EMITTER(emitter)); \
-    }                                   \
-  } while (0)
-#define EMITTER_DISABLE(emitter)         \
-  do {                                   \
-    if ((emitter) != NULL) {             \
-      emitter_disable(EMITTER(emitter)); \
-    }                                    \
-  } while (0)
+#define EMITTER_ENABLE(emitter)       \
+  if ((emitter) != NULL) {            \
+    emitter_enable(EMITTER(emitter)); \
+  }
+#define EMITTER_DISABLE(emitter)       \
+  if ((emitter) != NULL) {             \
+    emitter_disable(EMITTER(emitter)); \
+  }
 
 /*public for test*/
 ret_t emitter_remove_item(emitter_t* emitter, emitter_item_t* item);

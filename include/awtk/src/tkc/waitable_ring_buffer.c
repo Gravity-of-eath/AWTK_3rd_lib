@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  waitable_ring_buffer
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -98,12 +98,6 @@ ret_t waitable_ring_buffer_write(waitable_ring_buffer_t* rb, const void* buff, u
   }
 
   return ret;
-}
-
-bool_t waitable_ring_buffer_is_empty(waitable_ring_buffer_t* rb) {
-  return_value_if_fail(rb != NULL, TRUE);
-
-  return ring_buffer_is_empty(rb->ring_buffer);
 }
 
 ret_t waitable_ring_buffer_destroy(waitable_ring_buffer_t* rb) {

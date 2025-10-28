@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  shell of hal
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,10 +34,9 @@ BEGIN_C_DECLS
  */
 
 /**
- * @method network_shell_run
+ * @method hal_shell_run
  * @export none
  * 运行shell。
- * @param {network_interface_t*} network_interface 网口对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

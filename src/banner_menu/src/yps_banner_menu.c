@@ -246,7 +246,7 @@ static void def_on_scroll_vertical(yps_banner_menu_t *parent, widget_t **childre
   float_t gap = fabs(next_top - losing_bottom);
 
   printf("progress:%.2f, direction:%d\n", progress, parent->next_or_prev);
-  printf("losing: %d->%d at y=%.0f, next: %d->%d at y=%.0f\n",
+  printf("losing: %d->%d at y=%d, next: %d->%d at y=%d\n",
          losing_h, r_l->h, r_l->y, next_h, r_n->h, r_n->y);
   printf("gap: %.1f (losing_bottom=%.1f, next_top=%.1f)\n",
          gap, losing_bottom, next_top);

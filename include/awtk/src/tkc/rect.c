@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rect struct and utils functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -123,46 +123,6 @@ rect_t rect_init(xy_t x, xy_t y, wh_t w, wh_t h) {
   return r;
 }
 
-bool_t rect_diff(const rect_t* r1, const rect_t* r2, rect_t* out_r1, rect_t* out_r2, rect_t* out_r3,
-                 rect_t* out_r4) {
-#define RECT_DIFF_INIT(r, r_x, r_y, r_w, r_h) \
-  {                                           \
-    (r)->x = (r_x);                           \
-    (r)->y = (r_y);                           \
-    (r)->w = (r_w);                           \
-    (r)->h = (r_h);                           \
-  }
-  rect_t in;
-  return_value_if_fail(r1 != NULL && r2 != NULL && out_r1 != NULL && out_r2 != NULL &&
-                           out_r3 != NULL && out_r4 != NULL,
-                       FALSE);
-
-  memset(out_r1, 0x0, sizeof(rect_t));
-  memset(out_r2, 0x0, sizeof(rect_t));
-  memset(out_r3, 0x0, sizeof(rect_t));
-  memset(out_r4, 0x0, sizeof(rect_t));
-
-  in = rect_intersect(r1, r2);
-  if (in.w == 0 || in.h == 0) {
-    memcpy(out_r1, r1, sizeof(rect_t));
-    return TRUE;
-  } else {
-    if (memcmp(&in, r1, sizeof(rect_t)) == 0) {
-      return FALSE;
-    } else {
-      int32_t right1 = r1->x + r1->w - 1;
-      int32_t right2 = r2->x + r2->w - 1;
-      int32_t bottom1 = r1->y + r1->h - 1;
-      int32_t bottom2 = r2->y + r2->h - 1;
-      RECT_DIFF_INIT(out_r1, r1->x, r1->y, r1->w, tk_max(in.y - r1->y, 0));
-      RECT_DIFF_INIT(out_r2, r1->x, in.y, tk_max(in.x - r1->x, 0), in.h);
-      RECT_DIFF_INIT(out_r3, in.x + in.w, in.y, tk_max(right1 - right2, 0), in.h);
-      RECT_DIFF_INIT(out_r4, r1->x, in.y + in.h, r1->w, tk_max(bottom1 - bottom2, 0));
-      return TRUE;
-    }
-  }
-}
-
 rect_t rect_intersect(const rect_t* r1, const rect_t* r2) {
   int32_t top = 0;
   int32_t left = 0;
@@ -190,37 +150,6 @@ rect_t rect_intersect(const rect_t* r1, const rect_t* r2) {
   r.y = top;
   r.w = right >= left ? (right - left + 1) : 0;
   r.h = bottom >= top ? (bottom - top + 1) : 0;
-
-  return r;
-}
-
-rectf_t rectf_intersect(const rectf_t* r1, const rectf_t* r2) {
-  float_t top = 0;
-  float_t left = 0;
-  float_t bottom = 0;
-  float_t right = 0;
-  float_t bottom1 = 0;
-  float_t right1 = 0;
-  float_t bottom2 = 0;
-  float_t right2 = 0;
-  rectf_t r = rectf_init(0.0f, 0.0f, 0.0f, 0.0f);
-
-  return_value_if_fail(r1 != NULL && r2 != NULL, r);
-
-  bottom1 = r1->y + r1->h - 1.0f;
-  bottom2 = r2->y + r2->h - 1.0f;
-  right1 = r1->x + r1->w - 1.0f;
-  right2 = r2->x + r2->w - 1.0f;
-
-  top = tk_max(r1->y, r2->y);
-  left = tk_max(r1->x, r2->x);
-  right = tk_min(right1, right2);
-  bottom = tk_min(bottom1, bottom2);
-
-  r.x = left;
-  r.y = top;
-  r.w = right >= left ? (right - left + 1) : 0.0f;
-  r.h = bottom >= top ? (bottom - top + 1) : 0.0f;
 
   return r;
 }

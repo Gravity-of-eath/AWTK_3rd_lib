@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  action_darray_thread
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -68,12 +68,6 @@ struct _action_darray_thread_t {
    */
   uint32_t executed_actions_nr;
 
-  /**
-   * @property {uint32_t} idle_interval
-   * @annotation ["readable"]
-   * 空闲时的时间间隔。
-   */
-  uint32_t idle_interval;
   /*private*/
   /*请求退出*/
   bool_t quit;
@@ -153,15 +147,6 @@ action_darray_thread_t* action_darray_thread_create_with_darray_ex(waitable_acti
  */
 ret_t action_darray_thread_set_strategy(action_darray_thread_t* thread,
                                         action_darray_thread_strategy_t strategy);
-
-/**
- * @method action_darray_thread_set_idle_interval
- * 设置空闲时的时间间隔。
- * @param {action_darray_thread_t*} thread action_darray_thread对象。
- * @param {uint32_t} interval 时间间隔(毫秒)。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t action_darray_thread_set_idle_interval(action_darray_thread_t* thread, uint32_t interval);
 
 /**
  * @method action_darray_thread_exec

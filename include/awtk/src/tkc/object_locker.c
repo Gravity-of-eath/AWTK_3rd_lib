@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  decorate object with lock
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -116,8 +116,8 @@ static ret_t object_locker_exec(tk_object_t* obj, const char* name, const char* 
   return ret;
 }
 
-static const object_vtable_t s_object_locker_vtable = {.type = OBJECT_LOCKER_TYPE,
-                                                       .desc = OBJECT_LOCKER_TYPE,
+static const object_vtable_t s_object_locker_vtable = {.type = "object_locker",
+                                                       .desc = "object_locker",
                                                        .size = sizeof(object_locker_t),
                                                        .is_collection = FALSE,
                                                        .on_destroy = object_locker_on_destroy,

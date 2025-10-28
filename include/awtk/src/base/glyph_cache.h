@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  glyph cache
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -63,7 +63,7 @@ glyph_cache_t* glyph_cache_init(glyph_cache_t* cache, uint32_t capacity,
  * @param {glyph_cache_t*} cache cache对象。
  * @param {wchar_t} code 字符。
  * @param {font_size_t} size 字体大小。
- * @param {glyph_t*} g glyph对象。
+ * @param {glyph_t} g glyph对象。
  * 
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -76,7 +76,7 @@ ret_t glyph_cache_add(glyph_cache_t* cache, wchar_t code, font_size_t size, glyp
  * @param {glyph_cache_t*} cache cache对象。
  * @param {wchar_t} code 字符。
  * @param {font_size_t} size 字体大小。
- * @param {glyph_t*} g glyph对象(用于返回glyph)。
+ * @param {glyph_t} g glyph对象(用于返回glyph)。
  * 
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

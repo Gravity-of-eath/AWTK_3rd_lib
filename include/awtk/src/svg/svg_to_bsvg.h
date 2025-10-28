@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  svg to  bsvg
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +38,7 @@ BEGIN_C_DECLS
  *
  * @param {const char*} xml svg数据。
  * @param {uint32_t} size svg数据长度。
- * @param {uint32_t**} out 用于返回bsvg数据。
+ * @param {uint32_t*} out 用于返回bsvg数据。
  * @param {uint32_t*} out_size bsvg数据长度。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -56,6 +56,9 @@ ret_t svg_to_bsvg(const char* xml, uint32_t size, uint32_t** out, uint32_t* out_
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t svg_file_to_bsvg(const char* ifilename, const char* ofilename);
+
+/*public for test*/
+uint32_t svg_parse_numbers(const char* str, float* out, uint32_t max_nr);
 
 END_C_DECLS
 

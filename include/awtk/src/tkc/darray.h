@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dynamic darray.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -141,19 +141,6 @@ void* darray_find_ex(darray_t* darray, tk_compare_t cmp, void* ctx);
  * @return {int32_t} 如果找到，返回满足条件的对象的位置，否则返回-1。
  */
 int32_t darray_bsearch_index(darray_t* darray, tk_compare_t cmp, void* ctx);
-
-/**
- * @method darray_bsearch_index_ex
- * 二分查找(确保数组有序)，元素不存在时，返回low索引。
- * 
- * @param {darray_t*} darray 数组对象。
- * @param {tk_compare_t} cmp 比较函数，为NULL则使用内置的比较函数。
- * @param {void*} ctx 比较函数的上下文。
- * @param {int32_t*} ret_low low索引。
- *
- * @return {int32_t} 如果找到，返回满足条件的对象的位置，否则返回-1。
- */
-int32_t darray_bsearch_index_ex(darray_t* darray, tk_compare_t cmp, void* ctx, int32_t* ret_low);
 
 /**
  * @method darray_bsearch
@@ -368,7 +355,7 @@ ret_t darray_insert(darray_t* darray, uint32_t index, void* data);
  * 插入一个元素到有序数组。
  * @param {darray_t*} darray 数组对象。
  * @param {void*} data 待插入的元素。
- * @param {tk_compare_t} cmp 元素比较函数。
+ * @param {tk_compare_t} compare 元素比较函数。
  * @param {bool_t} replace_if_exist 如果存在是否替换。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  default window manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -36,6 +36,14 @@ ret_t window_manager_paint_system_bar(widget_t* widget, canvas_t* c);
 static ret_t window_manager_simple_invalidate(widget_t* widget, const rect_t* r);
 static ret_t window_manager_simple_do_open_window(widget_t* wm, widget_t* window);
 static ret_t window_manager_simple_layout_child(widget_t* widget, widget_t* window);
+
+static bool_t window_is_fullscreen(widget_t* widget) {
+  value_t v;
+  value_set_bool(&v, FALSE);
+  widget_get_prop(widget, WIDGET_PROP_FULLSCREEN, &v);
+
+  return value_bool(&v);
+}
 
 static bool_t window_is_opened(widget_t* widget) {
   int32_t stage = widget_get_prop_int(widget, WIDGET_PROP_STAGE, WINDOW_STAGE_NONE);
@@ -260,7 +268,7 @@ static ret_t window_manager_simple_on_paint_children(widget_t* widget, canvas_t*
       widget_paint(iter, c);
 
       if (!has_fullscreen_win) {
-        has_fullscreen_win = widget_is_fullscreen_window(iter);
+        has_fullscreen_win = window_is_fullscreen(iter);
       }
       start = i + 1;
       break;
@@ -336,23 +344,19 @@ static ret_t window_manager_simple_resize(widget_t* widget, wh_t w, wh_t h);
 static ret_t window_manager_simple_post_init(widget_t* widget, wh_t w, wh_t h);
 static ret_t window_manager_simple_dispatch_input_event(widget_t* widget, event_t* e);
 
-static ret_t window_manager_simple_get_pointer(widget_t* widget, xy_t* x, xy_t* y, bool_t* pressed,
-                                               bool_t* in_pointer_up) {
+static ret_t window_manager_simple_get_pointer(widget_t* widget, xy_t* x, xy_t* y,
+                                               bool_t* pressed) {
   window_manager_simple_t* wm = WINDOW_MANAGER_SIMPLE(widget);
-  input_device_status_t* ids = window_manager_get_input_device_status(widget);
-  return_value_if_fail(wm != NULL && ids != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   if (x != NULL) {
-    *x = ids->last_x;
+    *x = wm->input_device_status.last_x;
   }
   if (y != NULL) {
-    *y = ids->last_y;
+    *y = wm->input_device_status.last_y;
   }
   if (pressed != NULL) {
-    *pressed = ids->pressed;
-  }
-  if (in_pointer_up != NULL) {
-    *in_pointer_up = ids->in_pointer_up;
+    *pressed = wm->input_device_status.pressed;
   }
 
   return RET_OK;
@@ -396,7 +400,7 @@ static ret_t window_manager_simple_layout_child(widget_t* widget, widget_t* wind
   }
 
   if (widget_is_normal_window(window)) {
-    if (widget_is_fullscreen_window(window)) {
+    if (window_is_fullscreen(window)) {
       x = 0;
       y = 0;
       w = widget->w;
@@ -427,13 +431,6 @@ static ret_t window_manager_simple_layout_child(widget_t* widget, widget_t* wind
   return RET_OK;
 }
 
-static ret_t window_manager_default_set_fullscreen(widget_t* widget, bool_t fullscreen) {
-  window_manager_simple_t* wm = WINDOW_MANAGER_SIMPLE(widget);
-  return_value_if_fail(wm != NULL, RET_BAD_PARAMS);
-
-  return native_window_set_fullscreen(wm->native_window, fullscreen);
-}
-
 static ret_t window_manager_simple_resize(widget_t* widget, wh_t w, wh_t h) {
   rect_t r = rect_init(0, 0, w, h);
   window_manager_simple_t* wm = WINDOW_MANAGER_SIMPLE(widget);
@@ -455,7 +452,7 @@ static ret_t window_manager_simple_post_init(widget_t* widget, wh_t w, wh_t h) {
 
   wm->lcd_w = w;
   wm->lcd_h = h;
-  wm->native_window = window_manager_create_native_window(wm, widget);
+  wm->native_window = native_window_create(widget);
 
   if (native_window_get_info(wm->native_window, &info) == RET_OK) {
     w = info.w;
@@ -469,11 +466,10 @@ static ret_t window_manager_simple_post_init(widget_t* widget, wh_t w, wh_t h) {
 
 static ret_t window_manager_simple_dispatch_input_event(widget_t* widget, event_t* e) {
   window_manager_simple_t* wm = WINDOW_MANAGER_SIMPLE(widget);
-  input_device_status_t* ids = window_manager_get_input_device_status(widget);
-  return_value_if_fail(wm != NULL && ids != NULL && e != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(wm != NULL && e != NULL, RET_BAD_PARAMS);
 
   native_window_preprocess_event(wm->native_window, e);
-  input_device_status_on_input_event(ids, widget, e);
+  input_device_status_on_input_event(&(wm->input_device_status), widget, e);
 
   return RET_OK;
 }
@@ -528,7 +524,6 @@ static window_manager_vtable_t s_window_manager_self_vtable = {
     .dispatch_input_event = window_manager_simple_dispatch_input_event,
     .dispatch_native_window_event = window_manager_native_dispatch_native_window_event,
     .resize = window_manager_simple_resize,
-    .set_fullscreen = window_manager_default_set_fullscreen,
 };
 
 static const widget_vtable_t s_window_manager_vtable = {

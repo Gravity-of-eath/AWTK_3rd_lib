@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  timer manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -66,7 +66,7 @@ ret_t timer_prepare(timer_get_time_t get_time);
  * @annotation ["scriptable:custom", "static"]
  * @param {timer_func_t} on_timer timer回调函数。
  * @param {void*} ctx timer回调函数的上下文。
- * @param {uint32_t} duration 时间(毫秒)。
+ * @param {uint32_t} duration 时间。
  *
  * @return {uint32_t} 返回timer的ID，TK_INVALID_ID表示失败。
  */
@@ -76,9 +76,10 @@ uint32_t timer_add(timer_func_t on_timer, void* ctx, uint32_t duration);
  * @method timer_queue
  * 用于非GUI线程增加一个timer，本函数向主循环的事件队列中发送一个增加timer的请求。
  * @annotation ["static"]
- * @param {timer_func_t} on_timer timer回调函数，回调函数返回RET_REPEAT，则下次继续执行，否则自动移出。
+ * @param {timer_func_t} on_timer
+ * timer回调函数，回调函数返回RET_REPEAT，则下次继续执行，否则自动移出。
  * @param {void*} ctx timer回调函数的上下文。
- * @param {uint32_t} duration 时间(毫秒)。
+ * @param {uint32_t} duration 时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -88,9 +89,10 @@ ret_t timer_queue(timer_func_t on_timer, void* ctx, uint32_t duration);
  * @method timer_queue_ex
  * 用于非GUI线程增加一个timer，本函数向主循环的事件队列中发送一个增加timer的请求。
  * @annotation ["static"]
- * @param {timer_func_t} on_timer timer回调函数，回调函数返回RET_REPEAT，则下次继续执行，否则自动移出。
+ * @param {timer_func_t} on_timer
+ * timer回调函数，回调函数返回RET_REPEAT，则下次继续执行，否则自动移出。
  * @param {void*} ctx timer回调函数的上下文。
- * @param {uint32_t} duration 时间(毫秒)。
+ * @param {uint32_t} duration 时间。
  * @param {tk_destroy_t} on_destroy 回调函数。
  * @param {void*} on_destroy_ctx 回调函数上下文。
  *
@@ -112,7 +114,7 @@ ret_t timer_remove(uint32_t timer_id);
 /**
  * @method timer_remove_all_by_ctx
  * 根据上下文删除所有对应的timer。
- * @annotation ["static"]
+ * @annotation ["scriptable", "static"]
  * @param {void*} ctx timer回调函数的上下文。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -154,7 +156,7 @@ ret_t timer_resume(uint32_t timer_id);
  * 修改指定的timer的duration，修改之后定时器重新开始计时。
  * @annotation ["scriptable", "static"]
  * @param {uint32_t} timer_id timerID。
- * @param {uint32_t} duration 新的时间(毫秒)。
+ * @param {uint32_t} duration 新的时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -174,9 +176,8 @@ ret_t timer_set_on_destroy(uint32_t timer_id, tk_destroy_t on_destroy, void* on_
 /**
  * @method timer_find
  * 查找指定ID的timer。
- * @param {uint32_t} timer_id timerID。
  *
- * @return {const timer_info_t*} 返回timer的信息。
+ * @return {timer_info_t*} 返回timer的信息。
  */
 const timer_info_t* timer_find(uint32_t timer_id);
 
@@ -200,10 +201,10 @@ uint32_t timer_count(void);
 
 /**
  * @method timer_next_time
- * 返回最近的timer到期时间(毫秒)。
+ * 返回最近的timer到期时间。
  * @annotation ["static"]
  *
- * @return {uint32_t} 返回最近的timer到期时间(毫秒)。
+ * @return {uint32_t} 返回最近的timer到期时间。
  */
 uint32_t timer_next_time(void);
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  gif_image
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -91,7 +91,7 @@ static ret_t gif_image_on_paint_self(widget_t* widget, canvas_t* c) {
 
   if (frames_nr > 0) {
     image->index %= frames_nr;
-    if (image->loop > 0 && image->index == frames_nr - 1 && !image->loop_done) {
+    if (image->loop > 0) {
       image->loop--;
     }
   } else {
@@ -104,14 +104,13 @@ static ret_t gif_image_on_paint_self(widget_t* widget, canvas_t* c) {
     } else {
       image->index = 0;
     }
-    image->loop_done = TRUE;
   }
 #ifdef AWTK_WEB
   if (image->timer_id == TK_INVALID_ID) {
     image->timer_id = timer_add(gif_image_on_timer, image, 16);
   }
 #else
-  if (image->loop > 0 && frames_nr > 1) {
+  if (frames_nr > 1) {
     uint32_t delay = bitmap.gif_delays[image->index];
     if (image->timer_id == TK_INVALID_ID) {
       image->index = 0;
@@ -123,6 +122,7 @@ static ret_t gif_image_on_paint_self(widget_t* widget, canvas_t* c) {
       if (timer) timer->duration = image->delay;
     }
   } else if (image->timer_id != TK_INVALID_ID) {
+    image->index = 0;
     timer_remove(image->timer_id);
     image->timer_id = TK_INVALID_ID;
   }
@@ -201,11 +201,6 @@ ret_t gif_image_set_loop(widget_t* widget, uint32_t loop) {
   gif_image_t* gif_image = GIF_IMAGE(widget);
   return_value_if_fail(gif_image != NULL, RET_BAD_PARAMS);
 
-  if (gif_image->loop_done) {
-    gif_image->index = 0;
-    gif_image->loop_done = FALSE;
-  }
-
   gif_image->loop = loop;
 
   return RET_OK;
@@ -240,17 +235,6 @@ static ret_t gif_image_set_prop(widget_t* widget, const char* name, const value_
   }
 }
 
-static ret_t gif_image_init(widget_t* widget) {
-  gif_image_t* gif_image = GIF_IMAGE(widget);
-  return_value_if_fail(gif_image != NULL, RET_BAD_PARAMS);
-
-  image_base_init(widget);
-  gif_image_play(widget);
-  gif_image->loop = 0xffffffff;
-  gif_image->loop_done = FALSE;
-  return RET_OK;
-}
-
 TK_DECL_VTABLE(gif_image) = {.size = sizeof(gif_image_t),
                              .type = WIDGET_TYPE_GIF_IMAGE,
                              .space_key_to_activate = TRUE,
@@ -259,7 +243,6 @@ TK_DECL_VTABLE(gif_image) = {.size = sizeof(gif_image_t),
                              .persistent_properties = s_gif_image_properties,
                              .get_parent_vt = TK_GET_PARENT_VTABLE(image_base),
                              .create = gif_image_create,
-                             .init = gif_image_init,
                              .on_destroy = gif_image_on_destroy,
                              .on_event = image_base_on_event,
                              .on_paint_self = gif_image_on_paint_self,
@@ -269,7 +252,13 @@ TK_DECL_VTABLE(gif_image) = {.size = sizeof(gif_image_t),
 
 widget_t* gif_image_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(gif_image), x, y, w, h);
-  return_value_if_fail(gif_image_init(widget) == RET_OK, NULL);
+  gif_image_t* gif_image = GIF_IMAGE(widget);
+  return_value_if_fail(gif_image != NULL, NULL);
+
+  image_base_init(widget);
+  gif_image_play(widget);
+  gif_image->loop = 0xffffffff;
+
   return widget;
 }
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  system info
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -90,11 +90,11 @@ struct _system_info_t {
   float_t font_scale;
 
   /**
-   * @property {char*} default_font
+   * @property {const char*} default_font
    * @annotation ["readable"]
    * 缺省字体。
    */
-  char* default_font;
+  const char* default_font;
 
   /**
    * @property {lcd_orientation_t} lcd_orientation
@@ -142,14 +142,14 @@ struct _system_info_t {
   app_type_t app_type;
 
   /**
-   * @property {char*} app_name
+   * @property {const char*} app_name
    * @annotation ["readable"]
    * 应用程序的名称。
    */
-  char* app_name;
+  const char* app_name;
 
   /**
-   * @property {char*} app_root
+   * @property {const char*} app_root
    * @annotation ["readable"]
    * 应用程序的根目录，用于定位资源文件。
    */
@@ -334,25 +334,8 @@ ret_t system_info_set_app_info(system_info_t* info, app_type_t app_type, const c
 ret_t system_info_eval_exprs(system_info_t* info, const char* exprs, tk_visit_t on_expr_result,
                              void* ctx);
 
-/**
- * @method system_info_set_app_name
- * 设置应用程序的名称。
- * @annotation ["static"]
- * @param {system_info_t*} info system_info对象。
- * @param {const char*} app_name 应用程序的名称。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
 ret_t system_info_set_app_name(system_info_t* info, const char* app_name);
 
-/**
- * @method tk_is_swap_size_by_orientation
- * 根据旧的和新的方向判断是否需要交换宽度和高度。
- * @annotation ["static"]
- * @param {lcd_orientation_t} old_orientation 旧的方向。
- * @param {lcd_orientation_t} new_orientation 新的方向。
- * @return {bool_t} 返回是否需要交换宽度和高度。
-*/
 bool_t tk_is_swap_size_by_orientation(lcd_orientation_t old_orientation,
                                       lcd_orientation_t new_orientation);
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  asset info
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -99,7 +99,6 @@ typedef enum _asset_type_t {
 
 /**
  * @enum asset_font_type_t
- * @prefix ASSET_TYPE_FONT_
  * 字体资源类型定义。
  */
 typedef enum _asset_font_type_t {
@@ -122,7 +121,6 @@ typedef enum _asset_font_type_t {
 
 /**
  * @enum asset_data_type_t
- * @prefix ASSET_TYPE_DATA_
  * 数据资源类型定义。
  */
 typedef enum _asset_data_type_t {
@@ -155,7 +153,6 @@ typedef enum _asset_data_type_t {
 
 /**
  * @enum asset_script_type_t
- * @prefix ASSET_TYPE_SCRIPT_
  * 脚本资源类型定义。
  */
 typedef enum _asset_script_type_t {
@@ -183,7 +180,6 @@ typedef enum _asset_script_type_t {
 
 /**
  * @enum asset_image_type_t
- * @prefix ASSET_TYPE_IMAGE_
  * 图片资源类型定义。
  */
 typedef enum _asset_image_type_t {
@@ -241,7 +237,6 @@ typedef enum _asset_image_type_t {
 
 /**
  * @enum asset_ui_type_t
- * @prefix ASSET_TYPE_UI_
  * UI资源类型定义。
  */
 typedef enum _asset_ui_type_t {
@@ -272,29 +267,10 @@ typedef struct _preload_res_t {
 } preload_res_t;
 
 /**
- * @enum asset_info_flag_t
- * @prefix ASSET_INFO_FLAG_
- * 资源标志常量定义。
- */
-typedef enum _asset_info_flag_t {
-  /**
-   * @const ASSET_INFO_FLAG_IN_ROM
-   * 资源在ROM中。
-   */
-  ASSET_INFO_FLAG_IN_ROM = 1,
-  /**
-   * @const ASSET_INFO_FLAG_FULL_NAME
-   * 使用长名字。
-   */
-  ASSET_INFO_FLAG_FULL_NAME = 1 << 1,
-} asset_info_flag_t;
-
-/**
  * @class asset_info_t
  * @annotation ["scriptable"]
  * 单个资源的描述信息。
  */
-#pragma pack(push, 1)
 typedef struct _asset_info_t {
   /**
    * @property {uint16_t} type
@@ -309,11 +285,11 @@ typedef struct _asset_info_t {
    */
   uint8_t subtype;
   /**
-   * @property {uint8_t} flags
+   * @property {uint8_t} is_in_rom
    * @annotation ["readable", "scriptable"]
-   * 资源标志。
+   * 资源是否在ROM中。
    */
-  uint8_t flags;
+  uint8_t is_in_rom;
   /**
    * @property {uint32_t} size
    * @annotation ["readable","scriptable"]
@@ -327,12 +303,12 @@ typedef struct _asset_info_t {
    * is\_in\_rom == FALSE时才有效。
    */
   uint32_t refcount;
-  /* internal */
-  union {
-    char small_name[TK_NAME_LEN + 1];
-    char* full_name;
-  } name;
-
+  /**
+   * @property {char*} name
+   * @annotation ["readable","scriptable"]
+   * 名称。
+   */
+  char name[TK_NAME_LEN + 1];
 #ifdef LOAD_ASSET_WITH_MMAP
   uint8_t* data;
   mmap_t* map;
@@ -340,7 +316,6 @@ typedef struct _asset_info_t {
   uint8_t data[4];
 #endif /*LOAD_ASSET_WITH_MMAP*/
 } asset_info_t;
-#pragma pack(pop)
 
 /**
  * @method asset_info_create
@@ -352,7 +327,7 @@ typedef struct _asset_info_t {
  * @param {uint16_t} type 资源的类型。 
  * @param {uint16_t} subtype  资源的子类型。
  * @param {const char*} name 资源的名称。
- * @param {int32_t} size  资源的数据长度(用于分配空间)。
+ * @param {uint32_t} size  资源的数据长度(用于分配空间)。
  *
  * @return {asset_info_t*} asset_info对象。
  */
@@ -410,11 +385,11 @@ uint16_t asset_info_get_type(asset_info_t* info);
  * 获取名称。
  * @annotation ["scriptable"]
  *
- * @param {const asset_info_t*} info asset_info对象。
+ * @param {asset_info_t*} info asset_info对象。
  *
  * @return {const char*} 返回名称。
  */
-const char* asset_info_get_name(const asset_info_t* info);
+const char* asset_info_get_name(asset_info_t* info);
 
 /**
  * @method asset_info_get_formatted_name
@@ -423,37 +398,9 @@ const char* asset_info_get_name(const asset_info_t* info);
  *
  * @param {const char*} name 未格式化名字。
  *
- * @return {const char*} 返回格式化后的名字。
+ * @return {ret_t} 返回格式化后的名字。
  */
 const char* asset_info_get_formatted_name(const char* name);
-
-/**
- * @method asset_info_is_in_rom
- *
- * 资源是否在ROM中。
- * @annotation ["scriptable"]
- *
- * @param {const asset_info_t*} info asset_info对象。
- *
- * @return {bool_t} 返回 TRUE 为在 ROM 中，返回 FALSE 则不在。
- */
-bool_t asset_info_is_in_rom(const asset_info_t* info);
-
-/**
- * @method asset_info_set_is_in_rom
- *
- * 设置资源是否在ROM中的标记位。
- * @annotation ["scriptable"]
- *
- * @param {asset_info_t*} info asset_info对象。
- * @param {bool_t} is_in_rom 资源是否在ROM中。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t asset_info_set_is_in_rom(asset_info_t* info, bool_t is_in_rom);
-
-/* internal */
-ret_t asset_info_set_name(asset_info_t* info, const char* name, bool_t is_alloc);
 
 END_C_DECLS
 

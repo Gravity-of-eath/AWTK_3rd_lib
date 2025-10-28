@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  定时器。
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -99,14 +99,6 @@ static ret_t timer_widget_on_event(widget_t* widget, event_t* e) {
   return RET_OK;
 }
 
-static ret_t timer_widget_init(widget_t* widget) {
-  timer_widget_t* timer_widget = TIMER_WIDGET(widget);
-  return_value_if_fail(timer_widget != NULL, RET_BAD_PARAMS);
-
-  timer_widget->duration = 1000;
-  return RET_OK;
-}
-
 const char* s_timer_widget_properties[] = {TIMER_WIDGET_PROP_DURATION, NULL};
 
 TK_DECL_VTABLE(timer_widget) = {.size = sizeof(timer_widget_t),
@@ -115,7 +107,6 @@ TK_DECL_VTABLE(timer_widget) = {.size = sizeof(timer_widget_t),
                                 .persistent_properties = s_timer_widget_properties,
                                 .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                 .create = timer_widget_create,
-                                .init = timer_widget_init,
                                 .on_paint_self = timer_widget_on_paint_self,
                                 .set_prop = timer_widget_set_prop,
                                 .get_prop = timer_widget_get_prop,
@@ -124,7 +115,11 @@ TK_DECL_VTABLE(timer_widget) = {.size = sizeof(timer_widget_t),
 
 widget_t* timer_widget_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(timer_widget), x, y, w, h);
-  return_value_if_fail(timer_widget_init(widget) == RET_OK, NULL);
+  timer_widget_t* timer_widget = TIMER_WIDGET(widget);
+  return_value_if_fail(timer_widget != NULL, NULL);
+
+  timer_widget->duration = 1000;
+
   return widget;
 }
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  list_view_h
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,7 +26,6 @@
 #include "scroll_view/scroll_view.h"
 
 static ret_t list_view_h_on_add_child(widget_t* widget, widget_t* child);
-static ret_t list_view_h_on_remove_child(widget_t* widget, widget_t* child);
 
 static ret_t list_view_h_on_paint_self(widget_t* widget, canvas_t* c) {
   return widget_paint_helper(widget, c, NULL, NULL);
@@ -34,7 +33,6 @@ static ret_t list_view_h_on_paint_self(widget_t* widget, canvas_t* c) {
 
 static ret_t list_view_h_get_prop(widget_t* widget, const char* name, value_t* v) {
   list_view_h_t* list_view_h = LIST_VIEW_H(widget);
-  ENSURE(list_view_h);
   return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_ITEM_WIDTH)) {
@@ -50,14 +48,13 @@ static ret_t list_view_h_get_prop(widget_t* widget, const char* name, value_t* v
 
 static ret_t list_view_h_set_prop(widget_t* widget, const char* name, const value_t* v) {
   list_view_h_t* list_view_h = LIST_VIEW_H(widget);
-  ENSURE(list_view_h);
   return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_ITEM_WIDTH)) {
-    list_view_h_set_item_width(widget, value_int(v));
+    list_view_h->item_width = value_int(v);
     return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_SPACING)) {
-    list_view_h_set_spacing(widget, value_int(v));
+    list_view_h->spacing = value_int(v);
     return RET_OK;
   }
 
@@ -96,7 +93,6 @@ TK_DECL_VTABLE(list_view_h) = {.type = WIDGET_TYPE_LIST_VIEW_H,
                                .get_prop = list_view_h_get_prop,
                                .on_event = list_view_h_on_event,
                                .on_add_child = list_view_h_on_add_child,
-                               .on_remove_child = list_view_h_on_remove_child,
                                .on_paint_self = list_view_h_on_paint_self};
 
 static ret_t list_view_h_on_scroll_view_layout_children(widget_t* widget) {
@@ -155,7 +151,6 @@ static ret_t list_view_h_on_scroll_view_layout_children(widget_t* widget) {
 
 static ret_t list_view_h_on_add_child(widget_t* widget, widget_t* child) {
   list_view_h_t* list_view_h = LIST_VIEW_H(widget);
-  ENSURE(list_view_h);
   const char* type = widget_get_type(child);
 
   if (tk_str_eq(type, WIDGET_TYPE_SCROLL_VIEW)) {
@@ -168,50 +163,24 @@ static ret_t list_view_h_on_add_child(widget_t* widget, widget_t* child) {
   return RET_CONTINUE;
 }
 
-static ret_t list_view_h_on_remove_child(widget_t* widget, widget_t* child) {
-  list_view_h_t* list_view_h = LIST_VIEW_H(widget);
-  ENSURE(list_view_h);
-
-  if (list_view_h->scroll_view == child) {
-    scroll_view_t* scroll_view = SCROLL_VIEW(child);
-
-    list_view_h->scroll_view = NULL;
-    scroll_view->on_layout_children = NULL;
-
-    WIDGET_FOR_EACH_CHILD_BEGIN_R(widget, iter, i)
-    if (iter && iter != child && tk_str_eq(iter->vt->type, WIDGET_TYPE_SCROLL_VIEW)) {
-      list_view_h->scroll_view = iter;
-      scroll_view->on_layout_children = list_view_h_on_scroll_view_layout_children;
-      break;
-    }
-    WIDGET_FOR_EACH_CHILD_END();
-  }
-
-  return RET_CONTINUE;
-}
-
 widget_t* list_view_h_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   return widget_create(parent, TK_REF_VTABLE(list_view_h), x, y, w, h);
 }
 
 ret_t list_view_h_set_item_width(widget_t* widget, int32_t item_width) {
   list_view_h_t* list_view_h = LIST_VIEW_H(widget);
-  ENSURE(list_view_h);
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   list_view_h->item_width = item_width;
-  widget_layout_children(widget);
 
   return RET_OK;
 }
 
 ret_t list_view_h_set_spacing(widget_t* widget, int32_t spacing) {
   list_view_h_t* list_view_h = LIST_VIEW_H(widget);
-  ENSURE(list_view_h);
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   list_view_h->spacing = spacing;
-  widget_layout_children(widget);
 
   return RET_OK;
 }

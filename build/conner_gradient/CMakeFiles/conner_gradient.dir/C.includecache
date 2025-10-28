@@ -11,8 +11,6 @@ tkc/asset_info.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/tkc/asset_info.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/assets_manager.h
-tkc/str.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/tkc/str.h
 tkc/darray.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/tkc/darray.h
 tkc/emitter.h
@@ -203,8 +201,6 @@ base/lcd.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/base/lcd.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/theme.h
-tkc/asset_info.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/tkc/asset_info.h
 base/theme_data.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/base/base/theme_data.h
 
@@ -350,13 +346,7 @@ tkc/types_def.h
 tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
 
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/date_time.h
-tkc/types_def.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
-
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/easing.h
-tkc/darray.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/darray.h
 tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
 
@@ -403,12 +393,6 @@ tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
 tkc/platform.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/platform.h
-tkc/mem_allocator.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/mem_allocator.h
-
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mem_allocator.h
-tkc/types_def.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/mmap.h
 tkc/str.h
@@ -417,8 +401,6 @@ tkc/str.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/object.h
 tkc/str.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/str.h
-tkc/darray.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/darray.h
 tkc/emitter.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/emitter.h
 tkc/object_compat.h
@@ -437,8 +419,6 @@ tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/slist.h
 tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
-tkc/mem_allocator.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/mem_allocator.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/str.h
 tkc/value.h
@@ -457,11 +437,19 @@ tkc/timer_info.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/timer_info.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/types_def.h
-stdarg.h
+math.h
+-
+time.h
 -
 ctype.h
 -
+wchar.h
+-
 errno.h
+-
+assert.h
+-
+stdarg.h
 -
 stdint.h
 -
@@ -475,26 +463,12 @@ inttypes.h
 -
 awtk_config.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/awtk_config.h
-stddef.h
--
-math.h
--
-time.h
--
-wchar.h
--
-assert.h
--
-wctype.h
--
 windows.h
 -
 winsock2.h
 -
-lwip/sockets.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/lwip/sockets.h
-lwip/netdb.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/lwip/netdb.h
+unistd.h
+-
 sys/socket.h
 -
 netinet/in.h
@@ -513,8 +487,6 @@ sys/time.h
 -
 sys/types.h
 -
-tkc/wasm_helper.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/wasm_helper.h
 stdio.h
 -
 tkc/log.h
@@ -527,22 +499,10 @@ tkc/rect.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/rect.h
 tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
-tkc/date_time.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/date_time.h
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/value.h
 tkc/types_def.h
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/types_def.h
-tkc/rect.h
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/tkc/rect.h
-
-/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/wasm_helper.h
-math.h
--
-stdio.h
--
-wchar.h
--
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/include/awtk/src/tkc/wstr.h
 tkc/value.h

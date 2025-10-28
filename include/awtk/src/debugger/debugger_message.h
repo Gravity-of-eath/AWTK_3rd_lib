@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger message
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -54,6 +54,11 @@ typedef enum _debugger_req_type_t {
    */
   DEBUGGER_REQ_IS_PAUSED,
   /**
+   * @const DEBUGGER_REQ_NEXT
+   * 运行下一步请求码。
+   */
+  DEBUGGER_REQ_NEXT,
+  /**
    * @const DEBUGGER_REQ_STEP_IN
    * 运行进入函数请求码。
    */
@@ -64,15 +69,10 @@ typedef enum _debugger_req_type_t {
    */
   DEBUGGER_REQ_STEP_OUT,
   /**
-   * @const DEBUGGER_REQ_STEP_OVER
-   * 运行下一步请求码。
+   * @const DEBUGGER_REQ_NEXT
+   * 运行下一行请求码。
    */
   DEBUGGER_REQ_STEP_OVER,
-  /**
-   * @const DEBUGGER_REQ_STEP_LOOP_OVER
-   * 运行下一行请求码。（跳转循环）
-   */
-  DEBUGGER_REQ_STEP_LOOP_OVER,
   /**
    * @const DEBUGGER_REQ_CONTINUE
    * 运行到下一个断点请求码。
@@ -178,6 +178,11 @@ typedef enum _debugger_resp_type_t {
    */
   DEBUGGER_RESP_PAUSE = DEBUGGER_REQ_PAUSE,
   /**
+   * @const DEBUGGER_RESP_NEXT
+   * 运行下一步响应码。
+   */
+  DEBUGGER_RESP_NEXT = DEBUGGER_REQ_NEXT,
+  /**
    * @const DEBUGGER_RESP_STEP_IN
    * 运行进入函数响应码。
    */
@@ -188,22 +193,17 @@ typedef enum _debugger_resp_type_t {
    */
   DEBUGGER_RESP_STEP_OUT = DEBUGGER_REQ_STEP_OUT,
   /**
-   * @const DEBUGGER_RESP_STEP_OVER
-   * 运行下一步响应码。
+   * @const DEBUGGER_RESP_NEXT
+   * 运行下一行响应码。
    */
   DEBUGGER_RESP_STEP_OVER = DEBUGGER_REQ_STEP_OVER,
-  /**
-   * @const DEBUGGER_RESP_STEP_LOOP_OVER
-   * 运行下一行响应码。（跳出循环）
-   */
-  DEBUGGER_RESP_STEP_LOOP_OVER = DEBUGGER_REQ_STEP_LOOP_OVER,
   /**
    * @const DEBUGGER_RESP_CONTINUE
    * 运行到下一个断点响应码。
    */
   DEBUGGER_RESP_CONTINUE = DEBUGGER_REQ_CONTINUE,
   /**
-   * @const DEBUGGER_RESP_SET_BREAK_POINT
+   * @const DEBUGGER_REQ_SET_BREAK_POINT
    * 设置断点响应码。
    */
   DEBUGGER_RESP_SET_BREAK_POINT = DEBUGGER_REQ_SET_BREAK_POINT,
@@ -283,11 +283,6 @@ typedef enum _debugger_resp_type_t {
    */
   DEBUGGER_RESP_MSG_BREAKED,
   /**
-   * @const DEBUGGER_RESP_MSG_FRAME_CHANGED
-   * 用户切换调用堆栈的frame.
-   */
-  DEBUGGER_RESP_MSG_FRAME_CHANGED,
-  /**
    * @const DEBUGGER_RESP_MSG_COMPLETED
    * 程序执行完成的响应码/事件码。
    */
@@ -364,11 +359,11 @@ typedef struct _debugger_resp_t {
 typedef struct _debugger_log_event_t {
   event_t e;
   /**
-   * @property {int32_t} line
+   * @property {uint32_t} line
    * @annotation ["readable"]
-   * 打印日志的行号(<0表示原生代码打印的日志)。
+   * 打印日志的行号。
    */
-  int32_t line;
+  uint32_t line;
   /**
    * @property {const char*} message
    * @annotation ["readable"]
@@ -458,20 +453,6 @@ typedef struct _debugger_breaked_event_t {
    * 中断运行的行号。
    */
   uint32_t line;
-
-  /**
-   * @property {const char*} file_path
-   * @annotation ["readable"]
-   * 中断运行的文件路径。（备注：可能文件路径为空）
-   */
-  const char* file_path;
-
-  /**
-   * @property {const char*} frame_name
-   * @annotation ["readable"]
-   * 中断运行的函数名字。（备注：可能文件路径为空）
-   */
-  const char* frame_name;
 } debugger_breaked_event_t;
 
 /**
@@ -486,20 +467,6 @@ typedef struct _debugger_breaked_event_t {
 event_t* debugger_breaked_event_init(debugger_breaked_event_t* event, uint32_t line);
 
 /**
- * @method debugger_breaked_event_init_ex
- * 初始调试器中断运行的事件。
- *
- * @param {debugger_breaked_event_t*} event event对象。
- * @param {uint32_t} line 中断运行的行号。
- * @param {const char*} file_path 中断运行的行号。
- * @param {const char*} frame_name 中断运行的函数。
- *
- * @return {event_t*} 返回event对象。
- */
-event_t* debugger_breaked_event_init_ex(debugger_breaked_event_t* event, uint32_t line,
-                                        const char* file_path, const char* frame_name);
-
-/**
  * @method debugger_breaked_event_cast
  * @annotation ["cast"]
  *
@@ -509,74 +476,6 @@ event_t* debugger_breaked_event_init_ex(debugger_breaked_event_t* event, uint32_
  * @return {debugger_breaked_event_t*}  返回event对象。
  */
 debugger_breaked_event_t* debugger_breaked_event_cast(event_t* event);
-
-/**
- * @class debugger_frame_changed_event_t
- * @parent event_t
- * 用户切换到调用堆栈指定的frame的事件。
- */
-typedef struct _debugger_frame_changed_event_t {
-  event_t e;
-  /**
-   * @property {uint32_t} line
-   * @annotation ["readable"]
-   * 行号。
-   */
-  uint32_t line;
-
-  /**
-   * @property {const char*} func
-   * @annotation ["readable"]
-   * 函数名。
-   */
-  const char* func;
-
-  /**
-   * @property {const char*} file_path
-   * @annotation ["readable"]
-   * 文件路径。（备注：可能文件路径为空）
-   */
-  const char* file_path;
-} debugger_frame_changed_event_t;
-
-/**
- * @method debugger_frame_changed_event_init
- * 初始化
- *
- * @param {debugger_frame_changed_event_t*} event event对象。
- * @param {const char*} func 函数名。
- * @param {uint32_t} line 行号。
- *
- * @return {event_t*} 返回event对象。
- */
-event_t* debugger_frame_changed_event_init(debugger_frame_changed_event_t* event, const char* func,
-                                           uint32_t line);
-
-/**
- * @method debugger_frame_changed_event_init_ex
- * 初始化
- *
- * @param {debugger_frame_changed_event_t*} event event对象。
- * @param {const char*} func 函数名。
- * @param {uint32_t} line 行号。
- * @param {const char*} file_path 文件路径。
- *
- * @return {event_t*} 返回event对象。
- */
-event_t* debugger_frame_changed_event_init_ex(debugger_frame_changed_event_t* event,
-                                              const char* func, uint32_t line,
-                                              const char* file_path);
-
-/**
- * @method debugger_frame_changed_event_cast
- * @annotation ["cast"]
- *
- * 把event对象转debugger_frame_changed_event_t对象。
- * @param {event_t*} event event对象。
- *
- * @return {debugger_frame_changed_event_t*}  返回event对象。
- */
-debugger_frame_changed_event_t* debugger_frame_changed_event_cast(event_t* event);
 
 END_C_DECLS
 

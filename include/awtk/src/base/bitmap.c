@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  bitmap interface
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -41,7 +41,7 @@ ret_t bitmap_destroy_with_self(bitmap_t* bitmap) {
   return bitmap_destroy(bitmap);
 }
 
-ret_t bitmap_deinit(bitmap_t* bitmap) {
+ret_t bitmap_destroy(bitmap_t* bitmap) {
   return_value_if_fail(bitmap != NULL, RET_BAD_PARAMS);
 
   if (bitmap->specific_destroy != NULL) {
@@ -67,21 +67,9 @@ ret_t bitmap_deinit(bitmap_t* bitmap) {
 
   if (bitmap->should_free_handle) {
     memset(bitmap, 0x00, sizeof(bitmap_t));
-    bitmap->should_free_handle = TRUE;
+    TKMEM_FREE(bitmap);
   } else {
     memset(bitmap, 0x00, sizeof(bitmap_t));
-  }
-
-  return RET_OK;
-}
-
-ret_t bitmap_destroy(bitmap_t* bitmap) {
-  return_value_if_fail(bitmap != NULL, RET_BAD_PARAMS);
-
-  bitmap_deinit(bitmap);
-  if (bitmap->should_free_handle) {
-    bitmap->should_free_handle = FALSE;
-    TKMEM_FREE(bitmap);
   }
 
   return RET_OK;
@@ -136,54 +124,42 @@ static ret_t bitmap_web_destroy(bitmap_t* bitmap) {
   return RET_OK;
 }
 
-static ret_t bitmap_platform_create(bitmap_t* bitmap) {
-  int32_t id = 0;
-  uint8_t* data = NULL;
-  uint32_t w = bitmap->w;
-  uint32_t h = bitmap->h;
-  uint32_t line_length = bitmap_get_physical_line_length(bitmap);
-  bitmap_format_t format = bitmap->format;
-  return_value_if_fail(format == BITMAP_FMT_RGBA8888, RET_BAD_PARAMS);
-
-  data = bitmap_lock_buffer_for_write(bitmap);
-  id = EM_ASM_INT({ return VGCanvas.createMutableImage($0, $1, $2, $3, $4); }, data, w, h,
-                  line_length, format);
-  bitmap->specific = tk_pointer_from_int(id);
-  bitmap->specific_destroy = bitmap_web_destroy;
-  bitmap_unlock_buffer(bitmap);
-
-  return RET_OK;
-}
-#else
-static ret_t bitmap_platform_create(bitmap_t* bitmap) {
-  return RET_OK;
-}
 #endif /*AWTK_WEB*/
 
 bitmap_t* bitmap_create_ex(uint32_t w, uint32_t h, uint32_t line_length, bitmap_format_t format) {
-  bitmap_t* bitmap = bitmap_create();
+  bitmap_t* bitmap = TKMEM_ZALLOC(bitmap_t);
+  uint32_t bpp = bitmap_get_bpp_of_format(format);
+
   return_value_if_fail(bitmap != NULL, NULL);
 
-  bitmap_init_ex(bitmap, w, h, line_length, format, NULL);
+  bitmap->w = w;
+  bitmap->h = h;
+  bitmap->format = format;
   bitmap->should_free_handle = TRUE;
 
+  if (bpp < 4) {
+    bitmap->flags = BITMAP_FLAG_OPAQUE;
+  }
+
+  bitmap_set_line_length(bitmap, line_length);
+
+  bitmap_alloc_data(bitmap);
+  if (bitmap->buffer == NULL) {
+    TKMEM_FREE(bitmap);
+    bitmap = NULL;
+  } else {
+#ifdef AWTK_WEB
+    uint8_t* data = bitmap_lock_buffer_for_write(bitmap);
+    return_value_if_fail(format == BITMAP_FMT_RGBA8888, NULL);
+    int32_t id = EM_ASM_INT({ return VGCanvas.createMutableImage($0, $1, $2, $3, $4); }, data, w, h,
+                            line_length, format);
+    bitmap->specific = tk_pointer_from_int(id);
+    bitmap->specific_destroy = bitmap_web_destroy;
+    bitmap_unlock_buffer(bitmap);
+#endif /*AWTK_WEB*/
+  }
+
   return bitmap;
-}
-
-bitmap_t* bitmap_create_ex3(uint32_t w, uint32_t h, uint32_t line_length, bitmap_format_t format,
-                            uint8_t* data, uint8_t* physical_data_addr, bool_t should_free_data) {
-  bitmap_t* bitmap = bitmap_create();
-  return_value_if_fail(bitmap != NULL, NULL);
-
-  bitmap_init_ex2(bitmap, w, h, line_length, format, data, physical_data_addr, should_free_data);
-  bitmap->should_free_handle = TRUE;
-
-  return bitmap;
-}
-
-bitmap_t* bitmap_create_ex2(uint32_t w, uint32_t h, uint32_t line_length, bitmap_format_t format,
-                            uint8_t* data, bool_t should_free_data) {
-  return bitmap_create_ex3(w, h, line_length, format, data, NULL, should_free_data);
 }
 
 ret_t bitmap_get_pixel(bitmap_t* bitmap, uint32_t x, uint32_t y, rgba_t* rgba) {
@@ -330,7 +306,7 @@ static ret_t bitmap_init_impl_by_rotate(bitmap_t* bitmap, uint32_t w, uint32_t h
       break;
     }
     case LCD_ORIENTATION_180: {
-      bdata = bdata + (h - 1) * line_length + (w - 1) * bpp;
+      bdata = bdata + (h - 1) * line_length + w * bpp;
       for (i = 0; i < h; i++) {
         uint8_t* d = bdata;
         for (j = 0; j < w; j++) {
@@ -604,22 +580,20 @@ ret_t bitmap_init_from_rgba(bitmap_t* bitmap, uint32_t w, uint32_t h, bitmap_for
 }
 
 ret_t bitmap_init(bitmap_t* bitmap, uint32_t w, uint32_t h, bitmap_format_t format, uint8_t* data) {
-  return bitmap_init_ex(bitmap, w, h, 0, format, data);
-}
-
-ret_t bitmap_init_ex2(bitmap_t* bitmap, uint32_t w, uint32_t h, uint32_t line_length,
-                      bitmap_format_t format, uint8_t* data, uint8_t* physical_data_addr,
-                      bool_t should_free_data) {
-  uint32_t bpp = bitmap_get_bpp_of_format(format);
-  return_value_if_fail(bitmap != NULL, RET_BAD_PARAMS);
-
-  bitmap->should_free_data = should_free_data;
+  uint32_t line_length = 0;
   if (bitmap->format == BITMAP_FMT_MONO) {
     line_length = TK_BITMAP_MONO_LINE_LENGTH(w);
   } else {
     uint32_t bpp = bitmap_get_bpp_of_format(format);
     line_length = tk_max(w * bpp, line_length);
   }
+  return bitmap_init_ex(bitmap, w, h, line_length, format, data);
+}
+
+ret_t bitmap_init_ex(bitmap_t* bitmap, uint32_t w, uint32_t h, uint32_t line_length,
+                     bitmap_format_t format, uint8_t* data) {
+  uint32_t bpp = bitmap_get_bpp_of_format(format);
+  return_value_if_fail(bitmap != NULL, RET_BAD_PARAMS);
 
   memset(bitmap, 0x00, sizeof(bitmap_t));
 
@@ -634,20 +608,11 @@ ret_t bitmap_init_ex2(bitmap_t* bitmap, uint32_t w, uint32_t h, uint32_t line_le
   if (data == NULL) {
     bitmap_alloc_data(bitmap);
   } else {
-    bitmap->buffer = GRAPHIC_BUFFER_CREATE_WITH_DATA_EX(data, physical_data_addr, w, h, line_length, format);
+    bitmap->buffer = GRAPHIC_BUFFER_CREATE_WITH_DATA(data, w, h, format);
     bitmap->should_free_data = TRUE;
   }
 
-  if (bitmap->buffer != NULL) {
-    bitmap_platform_create(bitmap);
-  }
-
   return bitmap->buffer != NULL ? RET_OK : RET_OOM;
-}
-
-ret_t bitmap_init_ex(bitmap_t* bitmap, uint32_t w, uint32_t h, uint32_t line_length,
-                     bitmap_format_t format, uint8_t* data) {
-  return bitmap_init_ex2(bitmap, w, h, line_length, format, data, NULL, FALSE);
 }
 
 ret_t bitmap_set_line_length(bitmap_t* bitmap, uint32_t line_length) {
@@ -675,17 +640,41 @@ uint32_t bitmap_get_line_length(bitmap_t* bitmap) {
 
 uint32_t bitmap_get_physical_line_length(bitmap_t* bitmap) {
   return_value_if_fail(bitmap != NULL, 0);
-  return graphic_buffer_get_physical_line_length(bitmap->buffer);
+
+  if (bitmap_flag_is_lcd_orientation(bitmap)) {
+    uint32_t ret = graphic_buffer_get_physical_line_length(bitmap->buffer);
+    if (ret != 0) {
+      return ret;
+    }
+  }
+
+  return bitmap_get_line_length(bitmap);
 }
 
 uint32_t bitmap_get_physical_width(bitmap_t* bitmap) {
+  uint32_t ret = 0;
   return_value_if_fail(bitmap != NULL, 0);
-  return graphic_buffer_get_physical_width(bitmap->buffer);
+
+  if (bitmap_flag_is_lcd_orientation(bitmap)) {
+    ret = graphic_buffer_get_physical_width(bitmap->buffer);
+    if (ret != 0) {
+      return ret;
+    }
+  }
+  return bitmap->w;
 }
 
 uint32_t bitmap_get_physical_height(bitmap_t* bitmap) {
+  uint32_t ret = 0;
   return_value_if_fail(bitmap != NULL, 0);
-  return graphic_buffer_get_physical_height(bitmap->buffer);
+
+  if (bitmap_flag_is_lcd_orientation(bitmap)) {
+    ret = graphic_buffer_get_physical_height(bitmap->buffer);
+    if (ret != 0) {
+      return ret;
+    }
+  }
+  return bitmap->h;
 }
 
 ret_t rgba_data_premulti_alpha(const uint8_t* data, uint8_t a_index, uint32_t w, uint32_t h) {
@@ -912,14 +901,7 @@ ret_t bitmap_mono_dump(const uint8_t* buff, uint32_t w, uint32_t h) {
   return RET_OK;
 }
 
-typedef enum _bitmap_lock_type_t {
-  BITMAP_LOCK_NONE = 0,
-  BITMAP_LOCK_READ,
-  BITMAP_LOCK_WRITE
-} bitmap_lock_type_t;
-
 uint8_t* bitmap_lock_buffer_for_read(bitmap_t* bitmap) {
-  uint8_t* data = NULL;
   return_value_if_fail(bitmap != NULL, NULL);
 
   if (bitmap->buffer != NULL) {
@@ -927,18 +909,13 @@ uint8_t* bitmap_lock_buffer_for_read(bitmap_t* bitmap) {
       assert(!" graphic_buffer is not valid ");
       return NULL;
     }
-    data = graphic_buffer_lock_for_read(bitmap->buffer);
+    return graphic_buffer_lock_for_read(bitmap->buffer);
+  } else {
+    return NULL;
   }
-
-  if (data != NULL) {
-    bitmap->lock_type = BITMAP_LOCK_READ;
-  }
-
-  return data;
 }
 
 uint8_t* bitmap_lock_buffer_for_write(bitmap_t* bitmap) {
-  uint8_t* data = NULL;
   return_value_if_fail(bitmap != NULL, NULL);
 
   if (bitmap->buffer != NULL) {
@@ -946,22 +923,14 @@ uint8_t* bitmap_lock_buffer_for_write(bitmap_t* bitmap) {
       assert(!" graphic_buffer is not valid ");
       return NULL;
     }
-    data = graphic_buffer_lock_for_write(bitmap->buffer);
+    return graphic_buffer_lock_for_write(bitmap->buffer);
+  } else {
+    return NULL;
   }
-
-  if (data != NULL) {
-    bitmap->lock_type = BITMAP_LOCK_WRITE;
-  }
-
-  return data;
 }
 
 ret_t bitmap_unlock_buffer(bitmap_t* bitmap) {
   return_value_if_fail(bitmap != NULL, RET_BAD_PARAMS);
-
-  if (bitmap->lock_type == BITMAP_LOCK_WRITE) {
-    bitmap_set_dirty(bitmap, TRUE);
-  }
 
   if (bitmap->buffer != NULL) {
     assert(graphic_buffer_is_valid_for(bitmap->buffer, bitmap));
@@ -969,24 +938,6 @@ ret_t bitmap_unlock_buffer(bitmap_t* bitmap) {
   } else {
     return RET_FAIL;
   }
-}
-
-ret_t bitmap_set_dirty(bitmap_t* bitmap, bool_t dirty) {
-  return_value_if_fail(bitmap != NULL, RET_BAD_PARAMS);
-
-  if (dirty) {
-    bitmap->flags |= BITMAP_FLAG_CHANGED;
-  } else {
-    bitmap->flags &= ~BITMAP_FLAG_CHANGED;
-  }
-
-  return RET_OK;
-}
-
-bool_t bitmap_is_dirty(bitmap_t* bitmap) {
-  return_value_if_fail(bitmap != NULL, FALSE);
-
-  return (bitmap->flags & BITMAP_FLAG_CHANGED) ? TRUE : FALSE;
 }
 
 ret_t bitmap_transform(bitmap_t* bitmap, bitmap_transform_t transform, void* ctx) {
@@ -1085,6 +1036,7 @@ ret_t bitmap_transform(bitmap_t* bitmap, bitmap_transform_t transform, void* ctx
     }
   }
   bitmap_unlock_buffer(bitmap);
+  bitmap->flags |= BITMAP_FLAG_CHANGED;
 
   return ret;
 }

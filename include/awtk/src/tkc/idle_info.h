@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  idle info
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -80,7 +80,7 @@ struct _idle_info_t {
   uint32_t id;
 
   /**
-   * @property {void*} on_destroy_ctx
+   * @property {tk_destroy_t} on_destroy_ctx
    * @annotation ["readable"]
    * idle销毁时的回调函数的上下文。
    */

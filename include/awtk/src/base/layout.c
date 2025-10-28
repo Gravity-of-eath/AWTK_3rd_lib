@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  widget layout
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,6 @@
 #include "tkc/utils.h"
 #include "base/widget.h"
 #include "base/layout.h"
-#include "base/widget_vtable.h"
 #include "base/self_layouter_factory.h"
 #include "base/children_layouter_factory.h"
 
@@ -63,8 +62,6 @@ ret_t widget_auto_adjust_size(widget_t* widget) {
 }
 
 ret_t widget_layout(widget_t* widget) {
-  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
-
   widget_layout_self(widget);
   widget_layout_children(widget);
 
@@ -105,8 +102,6 @@ ret_t widget_layout_self_reinit(widget_t* widget) {
 }
 
 ret_t widget_layout_children_default(widget_t* widget) {
-  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
-
   if (widget->children_layout != NULL) {
     return children_layouter_layout(widget->children_layout, widget);
   } else {
@@ -119,14 +114,13 @@ ret_t widget_layout_children_default(widget_t* widget) {
 }
 
 ret_t widget_layout_children(widget_t* widget) {
-  ret_t ret = RET_OK;
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
-  ret = widget_vtable_on_layout_children(widget);
-  if (ret == RET_NOT_IMPL) {
+  if (widget->vt->on_layout_children != NULL) {
+    return widget->vt->on_layout_children(widget);
+  } else {
     return widget_layout_children_default(widget);
   }
-  return ret;
 }
 
 ret_t widget_set_self_layout(widget_t* widget, const char* params) {
@@ -171,61 +165,10 @@ ret_t widget_set_children_layout(widget_t* widget, const char* params) {
 
 ret_t widget_set_self_layout_params(widget_t* widget, const char* x, const char* y, const char* w,
                                     const char* h) {
-  bool_t one = FALSE;
-  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
+  char params[128];
+  tk_snprintf(params, sizeof(params) - 1, "default(x=%s, y=%s, w=%s, h=%s)", x, y, w, h);
 
-  if (widget->self_layout == NULL) {
-    ret_t ret;
-    str_t params;
-    str_init(&params, 128);
-    str_append(&params, "default(");
-    if (x != NULL) {
-      one = TRUE;
-      str_append_format(&params, 128, "x=%s", x);
-    }
-    if (y != NULL) {
-      if (one) {
-        str_append(&params, ", ");
-      }
-      one = TRUE;
-      str_append_format(&params, 128, "y=%s", y);
-    }
-    if (w != NULL) {
-      if (one) {
-        str_append(&params, ", ");
-      }
-      one = TRUE;
-      str_append_format(&params, 128, "w=%s", w);
-    }
-    if (h != NULL) {
-      if (one) {
-        str_append(&params, ", ");
-      }
-      one = TRUE;
-      str_append_format(&params, 128, "h=%s", h);
-    }
-    if (one) {
-      str_append(&params, ")");
-    }
-    ret = widget_set_self_layout(widget, params.str);
-    str_reset(&params);
-    return ret;
-  } else {
-    value_t v;
-    if (x != NULL) {
-      self_layouter_set_param(widget->self_layout, "x", value_set_str(&v, x));
-    }
-    if (y != NULL) {
-      self_layouter_set_param(widget->self_layout, "y", value_set_str(&v, y));
-    }
-    if (w != NULL) {
-      self_layouter_set_param(widget->self_layout, "w", value_set_str(&v, w));
-    }
-    if (h != NULL) {
-      self_layouter_set_param(widget->self_layout, "h", value_set_str(&v, h));
-    }
-    return widget_set_need_relayout(widget);
-  }
+  return widget_set_self_layout(widget, params);
 }
 
 ret_t widget_layout_floating_children(widget_t* widget) {

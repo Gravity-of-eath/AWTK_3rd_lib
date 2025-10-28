@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  events structs
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,46 +22,6 @@
 #include "base/events.h"
 #include "tkc/time_now.h"
 #include "base/lcd_orientation_helper.h"
-
-#include "tkc/object_default.h"
-
-static tk_object_t* s_custom_event_names = NULL;
-
-ret_t event_register_custom_name(int32_t event_type, const char* name) {
-  return_value_if_fail(name != NULL, RET_BAD_PARAMS);
-
-  if (s_custom_event_names == NULL) {
-    s_custom_event_names = object_default_create_ex(FALSE);
-    return_value_if_fail(s_custom_event_names != NULL, RET_OOM);
-  }
-  return_value_if_fail(!tk_object_has_prop(s_custom_event_names, name), RET_FAIL);
-
-  return tk_object_set_prop_int32(s_custom_event_names, name, event_type);
-}
-
-ret_t event_unregister_custom_name(const char* name) {
-  ret_t ret = RET_NOT_FOUND;
-  return_value_if_fail(name != NULL, RET_BAD_PARAMS);
-
-  if (s_custom_event_names != NULL) {
-    ret = tk_object_remove_prop(s_custom_event_names, name);
-  }
-
-  return ret;
-}
-
-ret_t event_clear_custom_name(void) {
-  TK_OBJECT_UNREF(s_custom_event_names);
-  return RET_OK;
-}
-
-static inline int32_t event_get_custom_name(const char* name) {
-  if (s_custom_event_names == NULL) {
-    return EVT_NONE;
-  } else {
-    return tk_object_get_prop_int32(s_custom_event_names, name, EVT_NONE);
-  }
-}
 
 wheel_event_t* wheel_event_cast(event_t* event) {
   return_value_if_fail(event != NULL, NULL);
@@ -86,6 +46,15 @@ pointer_event_t* pointer_event_cast(event_t* event) {
   return_value_if_fail(event->size == sizeof(pointer_event_t), NULL);
 
   return (pointer_event_t*)event;
+}
+
+value_change_event_t* value_change_event_cast(event_t* event) {
+  return_value_if_fail(event != NULL, NULL);
+  return_value_if_fail(event->type >= EVT_VALUE_WILL_CHANGE && event->type <= EVT_VALUE_CHANGING,
+                       NULL);
+  return_value_if_fail(event->size == sizeof(value_change_event_t), NULL);
+
+  return (value_change_event_t*)event;
 }
 
 offset_change_event_t* offset_change_event_cast(event_t* event) {
@@ -165,6 +134,15 @@ event_t* pointer_event_init(pointer_event_t* event, uint32_t type, void* target,
   event->x = x;
   event->y = y;
   event->button = 1;
+
+  return (event_t*)event;
+}
+
+event_t* value_change_event_init(value_change_event_t* event, uint32_t type, void* target) {
+  return_value_if_fail(event != NULL, NULL);
+  memset(event, 0x00, sizeof(*event));
+  event->e = event_init(type, target);
+  event->e.size = sizeof(*event);
 
   return (event_t*)event;
 }
@@ -279,27 +257,16 @@ int32_t event_from_name(const char* name) {
       if (tk_str_eq(name, "focus")) {
         return EVT_FOCUS;
       }
-      break;
     }
     case 'b': {
       if (tk_str_eq(name, "blur")) {
         return EVT_BLUR;
       }
-      break;
     }
     case 'd': {
       if (tk_str_eq(name, "data")) {
         return EVT_DATA;
-      } else if (tk_str_eq(name, "drag_start")) {
-        return EVT_DRAG_START;
-      } else if (tk_str_eq(name, "drag")) {
-        return EVT_DRAG;
-      } else if (tk_str_eq(name, "drag_end")) {
-        return EVT_DRAG_END;
-      } else if (tk_str_eq(name, "double_click")) {
-        return EVT_DOUBLE_CLICK;
       }
-      break;
     }
     case 'g': {
       if (tk_str_eq(name, "global_key_up")) {
@@ -308,8 +275,6 @@ int32_t event_from_name(const char* name) {
         return EVT_KEY_DOWN;
       } else if (tk_str_eq(name, "global_key_long_press")) {
         return EVT_KEY_LONG_PRESS;
-      } else if (tk_str_eq(name, "global_screen_saver")) {
-        return EVT_SCREEN_SAVER;
       }
       break;
     }
@@ -332,28 +297,16 @@ int32_t event_from_name(const char* name) {
         return EVT_POINTER_UP;
       } else if (tk_str_eq(name, "pointer_down")) {
         return EVT_POINTER_DOWN;
-      } else if (tk_str_eq(name, "pointer_down_abort")) {
-        return EVT_POINTER_DOWN_ABORT;
       } else if (tk_str_eq(name, "pointer_move")) {
         return EVT_POINTER_MOVE;
-      } else if (tk_str_eq(name, "pointer_enter")) {
-        return EVT_POINTER_ENTER;
-      } else if (tk_str_eq(name, "pointer_leave")) {
-        return EVT_POINTER_LEAVE;
       }
       break;
     }
     case 'c': {
       if (tk_str_eq(name, "click")) {
         return EVT_CLICK;
-      } else if (tk_str_eq(name, "context_menu")) {
-        return EVT_CONTEXT_MENU;
       } else if (tk_str_eq(name, "connect")) {
         return EVT_CONNECT;
-      } else if (tk_str_eq(name, STR_COMPONENT_OPEN)) {
-        return EVT_WIDGET_LOAD;
-      } else if (tk_str_eq(name, STR_COMPONENT_CLOSE)) {
-        return EVT_DESTROY;
       }
       break;
     }
@@ -376,28 +329,6 @@ int32_t event_from_name(const char* name) {
         return EVT_WINDOW_OPEN;
       } else if (tk_str_eq(name, "window_will_open")) {
         return EVT_WINDOW_WILL_OPEN;
-      } else if (tk_str_eq(name, "window_to_background")) {
-        return EVT_WINDOW_TO_BACKGROUND;
-      } else if (tk_str_eq(name, "window_to_foreground")) {
-        return EVT_WINDOW_TO_FOREGROUND;
-      } else if (tk_str_eq(name, "widget_load")) {
-        return EVT_WIDGET_LOAD;
-      } else if (tk_str_eq(name, "widget_animator_end")) {
-        return EVT_ANIM_END;
-      } else if (tk_str_eq(name, "widget_animator_start")) {
-        return EVT_ANIM_START;
-      } else if (tk_str_eq(name, "widget_animator_once")) {
-        return EVT_ANIM_ONCE;
-      }
-      break;
-    }
-    case 'a': {
-      if (tk_str_eq(name, "anim_end")) {
-        return EVT_ANIM_END;
-      } else if (tk_str_eq(name, "anim_start")) {
-        return EVT_ANIM_START;
-      } else if (tk_str_eq(name, "anim_once")) {
-        return EVT_ANIM_ONCE;
       }
       break;
     }
@@ -418,43 +349,13 @@ int32_t event_from_name(const char* name) {
     case 'm': {
       if (tk_str_eq(name, "model_change")) {
         return EVT_MODEL_CHANGE;
-      } else if (tk_str_eq(name, "move")) {
-        return EVT_MOVE;
-      } else if (tk_str_eq(name, "move_resize")) {
-        return EVT_MOVE_RESIZE;
-      }
-      break;
-    }
-    case 'r': {
-      if (tk_str_eq(name, "resize")) {
-        return EVT_RESIZE;
       }
       break;
     }
     default:
       break;
   }
-  return event_get_custom_name(name);
-}
-
-widget_animator_event_t* widget_animator_event_cast(event_t* event) {
-  return_value_if_fail(event != NULL, NULL);
-  return_value_if_fail(event->size == sizeof(widget_animator_event_t), NULL);
-  return_value_if_fail(event->type == EVT_ANIM_START || event->type == EVT_ANIM_STOP ||
-                           event->type == EVT_ANIM_PAUSE || event->type == EVT_ANIM_ONCE ||
-                           event->type == EVT_ANIM_END,
-                       NULL);
-  return (widget_animator_event_t*)event;
-}
-
-event_t* widget_animator_event_init(widget_animator_event_t* event, uint32_t type, widget_t* widget,
-                                    void* animator) {
-  return_value_if_fail(event != NULL && widget != NULL && animator != NULL, NULL);
-  event->e = event_init(type, animator);
-  event->e.size = sizeof(widget_animator_event_t);
-  event->widget = widget;
-  event->animator = animator;
-  return (event_t*)event;
+  return EVT_NONE;
 }
 
 model_event_t* model_event_cast(event_t* event) {
@@ -493,72 +394,6 @@ event_t* system_event_init(system_event_t* event, void* target, void* sdl_event)
   event->e = event_init(EVT_SYSTEM, target);
   event->e.size = sizeof(*event);
   event->sdl_event = sdl_event;
-
-  return (event_t*)event;
-}
-
-touch_event_t* touch_event_cast(event_t* event) {
-  return_value_if_fail(event != NULL, NULL);
-  return_value_if_fail(
-      event->type == EVT_TOUCH_DOWN || event->type == EVT_TOUCH_UP || event->type == EVT_TOUCH_MOVE,
-      NULL);
-  return_value_if_fail(event->size == sizeof(touch_event_t), NULL);
-
-  return (touch_event_t*)event;
-}
-
-event_t* touch_event_init(touch_event_t* event, uint32_t type, void* target, int64_t touch_id,
-                          int64_t finger_id, float x, float y, float pressure) {
-  return_value_if_fail(event != NULL, NULL);
-  memset(event, 0x00, sizeof(touch_event_t));
-
-  event->e = event_init(type, target);
-  event->e.size = sizeof(*event);
-  event->touch_id = touch_id;
-  event->finger_id = finger_id;
-  event->x = x;
-  event->y = y;
-  event->pressure = pressure;
-
-  return (event_t*)event;
-}
-
-ui_load_event_t* ui_load_event_cast(event_t* event) {
-  return_value_if_fail(event != NULL, NULL);
-  return_value_if_fail(event->type == EVT_UI_LOAD, NULL);
-  return_value_if_fail(event->size == sizeof(ui_load_event_t), NULL);
-
-  return (ui_load_event_t*)event;
-}
-
-event_t* ui_load_event_init(ui_load_event_t* event, void* target, widget_t* root,
-                            const char* name) {
-  return_value_if_fail(event != NULL, NULL);
-  memset(event, 0x00, sizeof(ui_load_event_t));
-
-  event->e = event_init(EVT_UI_LOAD, target);
-  event->e.size = sizeof(*event);
-  event->root = root;
-  event->name = name;
-
-  return (event_t*)event;
-}
-
-drop_file_event_t* drop_file_event_cast(event_t* event) {
-  return_value_if_fail(event != NULL, NULL);
-  return_value_if_fail(event->type == EVT_DROP_FILE, NULL);
-  return_value_if_fail(event->size == sizeof(drop_file_event_t), NULL);
-
-  return (drop_file_event_t*)event;
-}
-
-event_t* drop_file_event_init(drop_file_event_t* event, void* target, const char* filename) {
-  return_value_if_fail(event != NULL, NULL);
-  memset(event, 0x00, sizeof(drop_file_event_t));
-
-  event->e = event_init(EVT_DROP_FILE, target);
-  event->e.size = sizeof(*event);
-  event->filename = filename;
 
   return (event_t*)event;
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  time_clock
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,7 +27,6 @@
 #include "base/image_manager.h"
 #include "time_clock/time_clock.h"
 
-static ret_t time_clock_init(widget_t* widget);
 static ret_t time_clock_update_time(time_clock_t* time_clock);
 
 ret_t time_clock_set_hour_anchor(widget_t* widget, const char* anchor_x, const char* anchor_y) {
@@ -311,7 +310,6 @@ static ret_t time_clock_on_paint_self(widget_t* widget, canvas_t* c) {
   bitmap_t bitmap;
   float_t rotation = 0;
   time_clock_t* time_clock = TIME_CLOCK(widget);
-  ENSURE(time_clock);
   rect_t dst = rect_init(0, 0, widget->w, widget->h);
 
   if (time_clock_load_image(widget, time_clock->bg_image, &bitmap) == RET_OK) {
@@ -381,7 +379,6 @@ TK_DECL_VTABLE(time_clock) = {.size = sizeof(time_clock_t),
                               .persistent_properties = s_time_clock_properties,
                               .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                               .create = time_clock_create,
-                              .init = time_clock_init,
                               .on_paint_self = time_clock_on_paint_self,
                               .set_prop = time_clock_set_prop,
                               .get_prop = time_clock_get_prop,
@@ -401,9 +398,10 @@ static ret_t time_clock_update_time(time_clock_t* time_clock) {
   }
 }
 
-static ret_t time_clock_init(widget_t* widget) {
+widget_t* time_clock_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
+  widget_t* widget = widget_create(parent, TK_REF_VTABLE(time_clock), x, y, w, h);
   time_clock_t* time_clock = TIME_CLOCK(widget);
-  return_value_if_fail(time_clock != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(time_clock != NULL, NULL);
 
   time_clock_update_time(time_clock);
   widget_add_timer(widget, time_clock_on_timer, 1000);
@@ -414,12 +412,7 @@ static ret_t time_clock_init(widget_t* widget) {
   time_clock->minute_anchor_y = tk_str_copy(NULL, "0.5");
   time_clock->second_anchor_x = tk_str_copy(NULL, "0.5");
   time_clock->second_anchor_y = tk_str_copy(NULL, "0.5");
-  return RET_OK;
-}
 
-widget_t* time_clock_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
-  widget_t* widget = widget_create(parent, TK_REF_VTABLE(time_clock), x, y, w, h);
-  return_value_if_fail(time_clock_init(widget) == RET_OK, NULL);
   return widget;
 }
 

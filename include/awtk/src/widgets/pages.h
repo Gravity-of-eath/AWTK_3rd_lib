@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  pages
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,16 +61,9 @@ typedef struct _pages_t {
   /**
    * @property {uint32_t} active
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 当前活跃的page。(起始值从0开始。需要用到 MVVM 数据绑定请设置 value 属性)
+   * 当前活跃的page。(需要用到 MVVM 数据绑定请设置 value 属性)
    */
   uint32_t active;
-
-  /**
-   * @property {bool_t} auto_focused
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 选择切换界面时是否自动聚焦上一次保存的焦点。（默认为TRUE）
-   */
-  bool_t auto_focused;
 
   /**
    * @property {uint32_t} value
@@ -81,8 +74,6 @@ typedef struct _pages_t {
   str_t str_target;
   uint32_t init_idle_id;
   uint32_t focused_idle_id;
-  uint32_t page_focused_idle_id;
-  bool_t has_active;
 } pages_t;
 
 /**
@@ -131,29 +122,17 @@ widget_t* pages_cast(widget_t* widget);
 ret_t pages_set_active(widget_t* widget, uint32_t index);
 
 /**
- * @method pages_set_auto_focused
- * 设置切换界面时是否自动聚焦。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget 控件对象。
- * @param {bool_t} auto_focused 切换界面时是否自动聚焦。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t pages_set_auto_focused(widget_t* widget, bool_t auto_focused);
-
-/**
  * @method pages_set_active_by_name
  * 通过页面的名字设置当前的Page。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget 控件对象。
- * @param {const char*} name 当前Page的名字。
+ * @param {char*} name 当前Page的名字。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t pages_set_active_by_name(widget_t* widget, const char* name);
 
 #define PAGES(widget) ((pages_t*)(pages_cast(WIDGET(widget))))
-#define WIDGET_PROP_AUTO_FOCUSED "auto_focused"
 
 /*public for subclass and runtime type check*/
 TK_EXTERN_VTABLE(pages);

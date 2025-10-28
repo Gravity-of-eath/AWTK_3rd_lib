@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  image base
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,6 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include "base/image_base.h"
-#include "base/widget_vtable.h"
 
 ret_t image_base_on_event(widget_t* widget, event_t* e) {
   ret_t ret = RET_OK;
@@ -41,13 +40,10 @@ ret_t image_base_on_event(widget_t* widget, event_t* e) {
       }
       break;
     case EVT_POINTER_UP: {
-      pointer_event_t* up = pointer_event_cast(e);
-
       if (image->pressed) {
-        if ((image->clickable || image->selectable) &&
-            widget_is_point_in(widget, up->x, up->y, FALSE)) {
+        if (image->clickable || image->selectable) {
           pointer_event_t evt;
-          ret = widget_dispatch(widget, pointer_event_init(&evt, EVT_CLICK, widget, up->x, up->y));
+          ret = widget_dispatch(widget, pointer_event_init(&evt, EVT_CLICK, widget, 0, 0));
         }
 
         if (!image->selectable) {
@@ -177,7 +173,7 @@ widget_t* image_base_init(widget_t* widget) {
 
 ret_t image_base_set_image(widget_t* widget, const char* name) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL && name != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL && name != NULL, RET_BAD_PARAMS);
 
   if (!tk_str_eq(image->image, name)) {
     image->image = tk_str_copy(image->image, name);
@@ -189,7 +185,7 @@ ret_t image_base_set_image(widget_t* widget, const char* name) {
 
 ret_t image_base_set_rotation(widget_t* widget, float_t rotation) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   image->rotation = rotation;
 
@@ -198,7 +194,7 @@ ret_t image_base_set_rotation(widget_t* widget, float_t rotation) {
 
 ret_t image_base_set_scale(widget_t* widget, float_t scale_x, float_t scale_y) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   image->scale_x = scale_x;
   image->scale_y = scale_y;
@@ -208,7 +204,7 @@ ret_t image_base_set_scale(widget_t* widget, float_t scale_x, float_t scale_y) {
 
 ret_t image_base_set_anchor(widget_t* widget, float_t anchor_x, float_t anchor_y) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   image->anchor_x = anchor_x;
   image->anchor_y = anchor_y;
@@ -218,7 +214,7 @@ ret_t image_base_set_anchor(widget_t* widget, float_t anchor_x, float_t anchor_y
 
 ret_t image_base_set_selected(widget_t* widget, bool_t selected) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   image->selected = selected;
 
@@ -233,7 +229,7 @@ ret_t image_base_set_selected(widget_t* widget, bool_t selected) {
 
 ret_t image_base_set_selectable(widget_t* widget, bool_t selectable) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   image->selectable = selectable;
 
@@ -242,7 +238,7 @@ ret_t image_base_set_selectable(widget_t* widget, bool_t selectable) {
 
 ret_t image_base_set_clickable(widget_t* widget, bool_t clickable) {
   image_base_t* image = IMAGE_BASE(widget);
-  return_value_if_fail(image != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   image->clickable = clickable;
 
@@ -260,7 +256,7 @@ widget_t* image_base_cast(widget_t* widget) {
 
 bool_t image_need_transform(widget_t* widget) {
   image_base_t* image_base = IMAGE_BASE(widget);
-  return_value_if_fail(image_base != NULL, FALSE);
+  return_value_if_fail(widget != NULL, FALSE);
 
   return !tk_fequal(image_base->scale_x, 1) || !tk_fequal(image_base->scale_y, 1) ||
          !tk_fequal(image_base->rotation, 0);
@@ -272,7 +268,7 @@ ret_t image_transform(widget_t* widget, canvas_t* c) {
   image_base_t* image_base = IMAGE_BASE(widget);
   vgcanvas_t* vg = canvas_get_vgcanvas(c);
 
-  return_value_if_fail(image_base != NULL && vg != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL && vg != NULL, RET_BAD_PARAMS);
 
   anchor_x = image_base->anchor_x * widget->w;
   anchor_y = image_base->anchor_y * widget->h;
@@ -291,7 +287,6 @@ ret_t image_base_on_copy(widget_t* widget, widget_t* other) {
   image_base_t* image_other = IMAGE_BASE(other);
   return_value_if_fail(image != NULL && image_other != NULL, RET_BAD_PARAMS);
 
-  widget_on_copy_recursive(widget, other);
   image->anchor_x = image_other->anchor_x;
   image->anchor_y = image_other->anchor_y;
   image->scale_x = image_other->scale_x;

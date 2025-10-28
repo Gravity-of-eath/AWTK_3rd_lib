@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mutable style
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -131,7 +131,7 @@ ret_t style_mutable_foreach(style_t* s, tk_on_style_item_t on_style_item, void* 
  * @param {style_t*} s style对象。
  * @param {const char*} state 控件状态。
  * @param {const char*} name 属性名。
- * @param {value_t*} v 值。
+ * @param {const value_t*} v 值。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

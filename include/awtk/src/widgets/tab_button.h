@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  tab_button
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -117,13 +117,6 @@ typedef struct _tab_button_t {
    */
   char* icon;
 
-  /**
-   * @property {int32_t} max_w
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 最大宽度。（缺省值为-1，小于 0 则最大宽度无效）
-   */
-  int32_t max_w;
-
   /*private*/
   widget_t* ui;
   bool_t pressed;
@@ -184,7 +177,7 @@ ret_t tab_button_set_value(widget_t* widget, bool_t value);
  * 设置控件的图标。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget tab_button对象。
- * @param {const char*}  name 当前项的图标。
+ * @param {char*}  name 当前项的图标。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -195,40 +188,18 @@ ret_t tab_button_set_icon(widget_t* widget, const char* name);
  * 设置控件的active图标。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget tab_button对象。
- * @param {const char*}  name 当前项的图标。
+ * @param {char*}  name 当前项的图标。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t tab_button_set_active_icon(widget_t* widget, const char* name);
 
 /**
- * @method tab_button_set_max_w
- * 设置控件的最大宽度。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget tab_button对象。
- * @param {int32_t}  max_w 最大宽度。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t tab_button_set_max_w(widget_t* widget, int32_t max_w);
-
-/**
- * @method tab_button_restack
- * 调整控件在父控件中的位置序数。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget tab_button对象。
- * @param {uint32_t} index 位置序数(大于等于总个数，则放到最后)。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t tab_button_restack(widget_t* widget, uint32_t index);
-
-/**
  * @method tab_button_set_load_ui
  * 设置控件动态加载显示UI。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget tab_button对象。
- * @param {const char*}  name 动态加载UI的资源名称。
+ * @param {char*}  name 动态加载UI的资源名称。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

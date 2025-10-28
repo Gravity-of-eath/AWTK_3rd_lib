@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  vector graphics canvas interface.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -193,10 +193,10 @@ ret_t vgcanvas_close_path(vgcanvas_t* vg) {
   return vg->vt->close_path(vg);
 }
 
-ret_t vgcanvas_set_fill_mode(vgcanvas_t* vg, vgcanvas_fill_mode_t fill_mode) {
-  return_value_if_fail(vg != NULL && vg->vt->set_fill_mode != NULL, RET_BAD_PARAMS);
+ret_t vgcanvas_path_winding(vgcanvas_t* vg, bool_t dir) {
+  return_value_if_fail(vg != NULL && vg->vt->path_winding != NULL, RET_BAD_PARAMS);
 
-  return vg->vt->set_fill_mode(vg, fill_mode);
+  return vg->vt->path_winding(vg, dir);
 }
 
 ret_t vgcanvas_transform(vgcanvas_t* vg, float_t a, float_t b, float_t c, float_t d, float_t e,
@@ -257,6 +257,7 @@ ret_t vgcanvas_set_font(vgcanvas_t* vg, const char* font) {
 ret_t vgcanvas_set_font_size(vgcanvas_t* vg, float_t size) {
   return_value_if_fail(vg != NULL && vg->vt->set_font_size != NULL, RET_BAD_PARAMS);
 
+  size = system_info()->font_scale * size;
   vg->font_size = size;
 
   return vg->vt->set_font_size(vg, size);
@@ -265,9 +266,6 @@ ret_t vgcanvas_set_font_size(vgcanvas_t* vg, float_t size) {
 ret_t vgcanvas_set_text_align(vgcanvas_t* vg, const char* text_align) {
   return_value_if_fail(vg != NULL && vg->vt->set_text_align != NULL && text_align != NULL,
                        RET_BAD_PARAMS);
-  if (tk_str_eq(vg->text_align, text_align)) {
-    return RET_OK;
-  }
 
   vg->text_align = tk_str_copy(vg->text_align, text_align);
 
@@ -277,11 +275,6 @@ ret_t vgcanvas_set_text_align(vgcanvas_t* vg, const char* text_align) {
 ret_t vgcanvas_set_text_baseline(vgcanvas_t* vg, const char* text_baseline) {
   return_value_if_fail(vg != NULL && vg->vt->set_text_baseline != NULL && text_baseline != NULL,
                        RET_BAD_PARAMS);
-#ifndef AWTK_WEB
-  if (tk_str_eq(vg->text_baseline, text_baseline)) {
-    return RET_OK;
-  }
-#endif /*AWTK_WEB*/
 
   vg->text_baseline = tk_str_copy(vg->text_baseline, text_baseline);
 
@@ -578,18 +571,6 @@ ret_t vgcanvas_clear_cache(vgcanvas_t* vg) {
   return vg->vt->clear_cache(vg);
 }
 
-ret_t vgcanvas_set_canvas(vgcanvas_t* vg, canvas_t* c) {
-  return_value_if_fail(vg != NULL && c != NULL, RET_BAD_PARAMS);
-  vg->c = c;
-  return RET_OK;
-}
-
-canvas_t* vgcanvas_get_canvas(vgcanvas_t* vg) {
-  return_value_if_fail(vg != NULL, NULL);
-
-  return vg->c;
-}
-
 ret_t vgcanvas_set_stroke_gradient(vgcanvas_t* vg, const vg_gradient_t* gradient) {
   return_value_if_fail(vg != NULL && vg->vt != NULL && gradient != NULL, RET_BAD_PARAMS);
 
@@ -633,22 +614,3 @@ ret_t vgcanvas_set_fill_gradient(vgcanvas_t* vg, const vg_gradient_t* gradient) 
 }
 
 #include "vg_gradient.inc"
-
-ret_t vgcanvas_draw_circle(vgcanvas_t* vg, double x, double y, double r, color_t color, bool_t fill,
-                           bool_t stroke) {
-  vgcanvas_save(vg);
-  vgcanvas_set_fill_color(vg, color);
-  vgcanvas_begin_path(vg);
-  vgcanvas_arc(vg, x, y, r, 0, 2 * M_PI, FALSE);
-
-  if (fill) {
-    vgcanvas_fill(vg);
-  }
-
-  if (stroke) {
-    vgcanvas_stroke(vg);
-  }
-  vgcanvas_restore(vg);
-
-  return RET_OK;
-}

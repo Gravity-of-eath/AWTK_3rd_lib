@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  widget factory
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -94,11 +94,10 @@ ret_t widget_factory_register_multi(widget_factory_t* factory,
  * @annotation ["constructor"]
  * @param {widget_factory_t*} factory 控件工厂对象。
  * @param {const char*} type 控件类型。
- * @param {widget_t*} parent 父控件。
  * @param {xy_t} x 初始X坐标。
  * @param {xy_t} y 初始Y坐标。
- * @param {wh_t} w 初始宽度。
- * @param {wh_t} h 初始高度。
+ * @param {xy_t} w 初始宽度。
+ * @param {xy_t} h 初始高度。
  *
  * @return {widget_t*} 返回控件对象。
  */

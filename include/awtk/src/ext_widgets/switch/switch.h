@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  switch
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -79,7 +79,7 @@ typedef struct _switch_t {
   /**
    * @property {float_t} max_xoffset_ratio
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 主要用于当开关处于关闭时，图片偏移相对于图片宽度的比例(缺省为1/3)。
+   * 当开关处于关闭时，图片偏移相对于图片宽度的比例(缺省为1/3)。
    */
   float_t max_xoffset_ratio;
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  svg path_parser
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,267 +20,256 @@
  */
 
 #include "tkc/utils.h"
-#include "tkc/mem.h"
 #include "svg/svg_path.h"
 #include "svg/svg_path_parser.h"
-#include "svgtiny/include/svgtiny_arc.h"
 
 typedef struct _svg_path_parser_t {
-  char* path;
+  const char* p;
+  const char* path;
   void* ctx;
   tk_visit_t on_path;
 } svg_path_parser_t;
 
-static ret_t svg_path_parser_parse(svg_path_parser_t* parser) {
-  char* s = parser->path;
-  float first_x = 0, first_y = 0;
-  float last_x = 0, last_y = 0;
-  float last_cubic_x = 0, last_cubic_y = 0;
-  float last_quad_x = 0, last_quad_y = 0;
+typedef enum _token_type_t { TOKEN_NUMBER, TOKEN_CMD, TOKEN_EOF } token_type_t;
 
-  /* parse d and build path */
-  s = parser->path;
-  while (*s) {
-    if (*s == ',') {
-      *s = ' ';
-    }
-    s++;
+static token_type_t svg_path_parser_next_token_type(svg_path_parser_t* parser) {
+  const char* p = parser->p;
+  while (tk_isspace(*p) || *p == ',') {
+    p++;
   }
 
-  s = parser->path;
-  while (*s) {
-    int n;
-    char command[2];
-    float x, y, x1, y1, x2, y2, rx, ry, rotation, large_arc, sweep;
+  parser->p = p;
+  if (!*p) {
+    return TOKEN_EOF;
+  }
 
-    /* moveto (M, m) (2 arguments) */
-    if (tk_sscanf(s, " %1[Mm] %f %f %n", command, &x, &y, &n) == 3) {
+  if (tk_isalpha(*p)) {
+    return TOKEN_CMD;
+  } else {
+    return TOKEN_NUMBER;
+  }
+}
+
+static char svg_path_parser_get_cmd(svg_path_parser_t* parser) {
+  char c = parser->p[0];
+
+  parser->p++;
+
+  return c;
+}
+
+static float svg_path_parser_get_number(svg_path_parser_t* parser) {
+  uint32_t i = 0;
+  const char* p = NULL;
+  char token[TK_NUM_MAX_LEN + 1];
+  memset(token, 0x00, sizeof(token));
+
+  return_value_if_fail(svg_path_parser_next_token_type(parser) == TOKEN_NUMBER, 0);
+
+  p = parser->p;
+  if (*p == '+' || *p == '-') {
+    token[i++] = *p++;
+  }
+  while (*p == '.' || (*p >= '0' && *p <= '9')) {
+    if (*p == '.' && strrchr(token, '.') != NULL) break;
+    token[i++] = *p++;
+  }
+  token[i] = '\0';
+  parser->p = p;
+
+  return tk_atof(token);
+}
+
+static ret_t svg_path_parser_parse_cmd(svg_path_parser_t* parser, char c) {
+  float x = 0;
+  float y = 0;
+  float x1 = 0;
+  float y1 = 0;
+  float x2 = 0;
+  float y2 = 0;
+
+  switch (c) {
+    case 'M':
+    case 'm': {
       svg_path_move_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
 
-      do {
-        if (*command == 'm') {
-          x += last_x;
-          y += last_y;
+        if (c == 'M') {
+          svg_path_move_init(&path, x, y);
+        } else {
+          svg_path_move_rel_init(&path, x, y);
         }
-        first_x = last_cubic_x = last_quad_x = last_x = x;
-        first_y = last_cubic_y = last_quad_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_move_init(&path, x, y);
         parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %f %n", &x, &y, &n) == 2);
-
-      /* lineto (L, l) (2 arguments) */
-    } else if (tk_sscanf(s, " %1[Ll] %f %f %n", command, &x, &y, &n) == 3) {
-      svg_path_line_t path;
-
-      do {
-        if (*command == 'l') {
-          x += last_x;
-          y += last_y;
-        }
-        last_cubic_x = last_quad_x = last_x = x;
-        last_cubic_y = last_quad_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_line_init(&path, x, y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %f %n", &x, &y, &n) == 2);
-
-      /* closepath (Z, z) (no arguments) */
-    } else if (tk_sscanf(s, " %1[Zz] %n", command, &n) == 1) {
-      svg_path_t path;
-
-      last_x = first_x;
-      last_y = first_y;
-      s += n;
-
-      memset(&path, 0, sizeof(path));
-      path.type = SVG_PATH_Z;
-      parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      /* horizontal lineto (H, h) (1 argument) */
-    } else if (tk_sscanf(s, " %1[Hh] %f %n", command, &x, &n) == 2) {
-      svg_path_line_t path;
-
-      do {
-        if (*command == 'h') {
-          x += last_x;
-        }
-        last_cubic_x = last_quad_x = last_x = x;
-        last_cubic_y = last_quad_y = last_y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_line_init(&path, x, last_y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %n", &x, &n) == 1);
-
-      /* vertical lineto (V, v) (1 argument) */
-    } else if (tk_sscanf(s, " %1[Vv] %f %n", command, &y, &n) == 2) {
-      svg_path_line_t path;
-
-      do {
-        if (*command == 'v') {
-          y += last_y;
-        }
-        last_cubic_x = last_quad_x = last_x;
-        last_cubic_y = last_quad_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_line_init(&path, last_x, y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %n", &y, &n) == 1);
-
-      /* curveto (C, c) (6 arguments) */
-    } else if (tk_sscanf(s, " %1[Cc] %f %f %f %f %f %f %n", command, &x1, &y1, &x2, &y2, &x, &y,
-                         &n) == 7) {
-      svg_path_curve_to_t path;
-
-      do {
-        if (*command == 'c') {
-          x1 += last_x;
-          y1 += last_y;
-          x2 += last_x;
-          y2 += last_y;
-          x += last_x;
-          y += last_y;
-        }
-        last_cubic_x = x2;
-        last_cubic_y = y2;
-        last_quad_x = last_x = x;
-        last_quad_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_curve_to_init(&path, x1, y1, x2, y2, x, y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %f %f %f %f %f %n", &x1, &y1, &x2, &y2, &x, &y, &n) == 6);
-
-      /* shorthand/smooth curveto (S, s) (4 arguments) */
-    } else if (tk_sscanf(s, " %1[Ss] %f %f %f %f %n", command, &x2, &y2, &x, &y, &n) == 5) {
-      svg_path_curve_to_t path;
-
-      do {
-        x1 = last_x + (last_x - last_cubic_x);
-        y1 = last_y + (last_y - last_cubic_y);
-        if (*command == 's') {
-          x2 += last_x;
-          y2 += last_y;
-          x += last_x;
-          y += last_y;
-        }
-        last_cubic_x = x2;
-        last_cubic_y = y2;
-        last_quad_x = last_x = x;
-        last_quad_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_curve_to_init(&path, x1, y1, x2, y2, x, y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %f %f %f %n", &x2, &y2, &x, &y, &n) == 4);
-
-      /* quadratic Bezier curveto (Q, q) (4 arguments) */
-    } else if (tk_sscanf(s, " %1[Qq] %f %f %f %f %n", command, &x1, &y1, &x, &y, &n) == 5) {
-      svg_path_curve_to_t path;
-      float p[4];
-
-      do {
-        if (*command == 'q') {
-          x1 += last_x;
-          y1 += last_y;
-          x += last_x;
-          y += last_y;
-        }
-        last_quad_x = x1;
-        last_quad_y = y1;
-        p[0] = 1. / 3 * last_x + 2. / 3 * x1;
-        p[1] = 1. / 3 * last_y + 2. / 3 * y1;
-        p[2] = 2. / 3 * x1 + 1. / 3 * x;
-        p[3] = 2. / 3 * y1 + 1. / 3 * y;
-        last_cubic_x = last_x = x;
-        last_cubic_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_curve_to_init(&path, p[0], p[1], p[2], p[3], x, y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %f %f %f %n", &x1, &y1, &x, &y, &n) == 4);
-
-      /* shorthand/smooth quadratic Bezier curveto (T, t)
-		   (2 arguments) */
-    } else if (tk_sscanf(s, " %1[Tt] %f %f %n", command, &x, &y, &n) == 3) {
-      svg_path_curve_to_t path;
-      float p[4];
-
-      do {
-        x1 = last_x + (last_x - last_quad_x);
-        y1 = last_y + (last_y - last_quad_y);
-        last_quad_x = x1;
-        last_quad_y = y1;
-        if (*command == 't') {
-          x += last_x;
-          y += last_y;
-        }
-        p[0] = 1. / 3 * last_x + 2. / 3 * x1;
-        p[1] = 1. / 3 * last_y + 2. / 3 * y1;
-        p[2] = 2. / 3 * x1 + 1. / 3 * x;
-        p[3] = 2. / 3 * y1 + 1. / 3 * y;
-        last_cubic_x = last_x = x;
-        last_cubic_y = last_y = y;
-        s += n;
-
-        memset(&path, 0, sizeof(path));
-        svg_path_curve_to_init(&path, p[0], p[1], p[2], p[3], x, y);
-        parser->on_path(parser->ctx, (svg_path_t*)&path);
-
-      } while (tk_sscanf(s, "%f %f %n", &x, &y, &n) == 2);
-
-      /* elliptical arc (A, a) (7 arguments) */
-    } else if (tk_sscanf(s, " %1[Aa] %f %f %f %f %f %f %f %n", command, &rx, &ry, &rotation,
-                         &large_arc, &sweep, &x, &y, &n) == 8) {
-      svg_path_curve_to_t path;
-
-      do {
-        arc_info_t info;
-        pointf_t cp1 = {0, 0};
-        pointf_t cp2 = {0, 0};
-        pointf_t end = {0, 0};
-        pointf_t r = {rx, ry};
-        pointf_t from = {last_x, last_y};
-        pointf_t to = {x, y};
-        if (*command == 'a') {
-          to.x += last_x;
-          to.y += last_y;
-        }
-        arc_info_init(&info, from, to, r, rotation, large_arc, sweep);
-        while (arc_info_next(&info, &cp1, &cp2, &end)) {
-          memset(&path, 0, sizeof(path));
-          svg_path_curve_to_init(&path, cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y);
-          parser->on_path(parser->ctx, (svg_path_t*)&path);
-        }
-
-        last_x = to.x;
-        last_y = to.y;
-        s += n;
-      } while (tk_sscanf(s, "%f %f %f %f %f %f %f %n", &rx, &ry, &rotation, &large_arc, &sweep, &x,
-                         &y, &n) == 7);
-
-    } else {
-      log_error("parse failed at \"%s\"\n", s);
-      return RET_FAIL;
+      }
+      break;
     }
+    case 'Z':
+    case 'z': {
+      svg_path_t path = {SVG_PATH_Z};
+      parser->on_path(parser->ctx, (svg_path_t*)&path);
+      break;
+    }
+    case 'L':
+    case 'l': {
+      svg_path_line_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'L') {
+          svg_path_line_init(&path, x, y);
+        } else {
+          svg_path_line_rel_init(&path, x, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'H':
+    case 'h': {
+      svg_path_hline_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x = svg_path_parser_get_number(parser);
+
+        if (c == 'H') {
+          svg_path_hline_init(&path, x);
+        } else {
+          svg_path_hline_rel_init(&path, x);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'V':
+    case 'v': {
+      svg_path_vline_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'V') {
+          svg_path_vline_init(&path, y);
+        } else {
+          svg_path_vline_rel_init(&path, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'C':
+    case 'c': {
+      svg_path_curve_to_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x1 = svg_path_parser_get_number(parser);
+        y1 = svg_path_parser_get_number(parser);
+        x2 = svg_path_parser_get_number(parser);
+        y2 = svg_path_parser_get_number(parser);
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'C') {
+          svg_path_curve_to_init(&path, x1, y1, x2, y2, x, y);
+        } else {
+          svg_path_curve_to_rel_init(&path, x1, y1, x2, y2, x, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'S':
+    case 's': {
+      svg_path_scurve_to_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x2 = svg_path_parser_get_number(parser);
+        y2 = svg_path_parser_get_number(parser);
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'S') {
+          svg_path_scurve_to_init(&path, x2, y2, x, y);
+        } else {
+          svg_path_scurve_to_rel_init(&path, x2, y2, x, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'Q':
+    case 'q': {
+      svg_path_qcurve_to_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x1 = svg_path_parser_get_number(parser);
+        y1 = svg_path_parser_get_number(parser);
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'Q') {
+          svg_path_qcurve_to_init(&path, x1, y1, x, y);
+        } else {
+          svg_path_qcurve_to_rel_init(&path, x1, y1, x, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'T':
+    case 't': {
+      svg_path_tcurve_to_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'T') {
+          svg_path_tcurve_to_init(&path, x, y);
+        } else {
+          svg_path_tcurve_to_rel_init(&path, x, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    case 'A':
+    case 'a': {
+      svg_path_arc_t path;
+      while (svg_path_parser_next_token_type(parser) == TOKEN_NUMBER) {
+        float rx = svg_path_parser_get_number(parser);
+        float ry = svg_path_parser_get_number(parser);
+        float rotation = svg_path_parser_get_number(parser);
+        float large_arc = svg_path_parser_get_number(parser);
+        float sweep = svg_path_parser_get_number(parser);
+        x = svg_path_parser_get_number(parser);
+        y = svg_path_parser_get_number(parser);
+
+        if (c == 'A') {
+          svg_path_arc_init(&path, rx, ry, rotation, large_arc, sweep, x, y);
+        } else {
+          svg_path_arc_rel_init(&path, rx, ry, rotation, large_arc, sweep, x, y);
+        }
+        parser->on_path(parser->ctx, (svg_path_t*)&path);
+      }
+      break;
+    }
+    default: {
+      assert(!"not supported path!");
+    } break;
+  }
+
+  return RET_OK;
+}
+
+static ret_t svg_path_parser_parse(svg_path_parser_t* parser) {
+  token_type_t type = svg_path_parser_next_token_type(parser);
+
+  while (type != TOKEN_EOF) {
+    if (type == TOKEN_CMD) {
+      char c = svg_path_parser_get_cmd(parser);
+      svg_path_parser_parse_cmd(parser, c);
+    } else {
+      assert(!"unexpected number");
+      svg_path_parser_get_number(parser);
+    }
+    type = svg_path_parser_next_token_type(parser);
   }
 
   return RET_OK;
@@ -290,24 +279,17 @@ static ret_t svg_path_parser_init(svg_path_parser_t* parser, const char* path, v
                                   tk_visit_t on_path) {
   memset(parser, 0x00, sizeof(*parser));
 
+  parser->p = path;
   parser->ctx = ctx;
-  parser->path = (char*)path;
   parser->on_path = on_path;
 
   return RET_OK;
 }
 
 ret_t svg_path_parse(const char* path, void* ctx, tk_visit_t on_path) {
-  ret_t ret;
-  char* p = NULL;
   svg_path_parser_t parser;
   return_value_if_fail(path != NULL && on_path != NULL, RET_BAD_PARAMS);
 
-  p = tk_strdup(path);
-  return_value_if_fail(p != NULL, RET_OOM);
-
-  svg_path_parser_init(&parser, p, ctx, on_path);
-  ret = svg_path_parser_parse(&parser);
-  TKMEM_FREE(p);
-  return ret;
+  svg_path_parser_init(&parser, path, ctx, on_path);
+  return svg_path_parser_parse(&parser);
 }

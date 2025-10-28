@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  定时器。
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,7 +56,7 @@ typedef struct _timer_widget_t {
   /**
    * @property {uint32_t} duration
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 时长(毫秒)。
+   * 时长(ms)。
    */
   uint32_t duration;
 
@@ -95,10 +95,10 @@ widget_t* timer_widget_cast(widget_t* widget);
 
 /**
  * @method timer_widget_set_duration
- * 设置 时长(毫秒)。
+ * 设置 时长(ms)。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
- * @param {uint32_t} duration 时长(毫秒)。
+ * @param {uint32_t} duration 时长(ms)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,7 +23,6 @@
 #include "tkc/utils.h"
 #include "base/enums.h"
 #include "base/window.h"
-#include "base/widget_vtable.h"
 #include "base/window_manager.h"
 
 static const char* s_window_properties[] = {WIDGET_PROP_FULLSCREEN, NULL};
@@ -76,7 +75,7 @@ ret_t window_set_fullscreen(widget_t* widget, bool_t fullscreen) {
 
 static ret_t window_on_copy(widget_t* widget, widget_t* other) {
   window_base_on_copy(widget, other);
-  return widget_on_copy_recursive(widget, other);
+  return widget_copy_props(widget, other, s_window_properties);
 }
 
 TK_DECL_VTABLE(window) = {.type = WIDGET_TYPE_NORMAL_WINDOW,

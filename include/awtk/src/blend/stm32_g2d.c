@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  stm32 dma2d implemented hardware 2d
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * this program is distributed in the hope that it will be useful,
  * but without any warranty; without even the implied warranty of
@@ -44,7 +44,8 @@
 #define DMA2D_WORKING ((DMA2D->CR & DMA2D_CR_START))
 #define DMA2D_WAIT                  \
   do {                              \
-    while (DMA2D_WORKING);          \
+    while (DMA2D_WORKING)           \
+      ;                             \
     DMA2D->IFCR = DMA2D_IFSR_CTCIF; \
   } while (0);
 
@@ -283,14 +284,6 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, const rect_t* dst, const rect
   bitmap_unlock_buffer(fb);
   bitmap_unlock_buffer(img);
 
-  return RET_OK;
-}
-
-ret_t tk_g2d_init(void) {
-  return RET_OK;
-}
-
-ret_t tk_g2d_deinit(void) {
   return RET_OK;
 }
 #endif /*WITH_STM32_G2D*/

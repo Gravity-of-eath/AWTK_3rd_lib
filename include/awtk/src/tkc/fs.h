@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  simple fs api
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -77,21 +77,6 @@ typedef struct _fs_stat_info_t {
   bool_t is_reg_file;
 } fs_stat_info_t;
 
-/**
- * @method fs_stat_info_create
- * 创建文件状态信息对象。
- * @return {fs_stat_info_t*} 返回文件状态信息对象。
-*/
-fs_stat_info_t* fs_stat_info_create(void);
-
-/**
- * @method fs_stat_info_destroy
- * 销毁文件状态信息对象。
- * @param {fs_stat_info_t*} fst 文件状态信息对象。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
-*/
-ret_t fs_stat_info_destroy(fs_stat_info_t* fst);
-
 struct _fs_file_t;
 typedef struct _fs_file_t fs_file_t;
 
@@ -107,22 +92,9 @@ typedef ret_t (*fs_file_stat_t)(fs_file_t* file, fs_stat_info_t* fst);
 typedef ret_t (*fs_file_sync_t)(fs_file_t* file);
 typedef ret_t (*fs_file_close_t)(fs_file_t* file);
 
-typedef struct _fs_file_vtable_t {
-  fs_file_read_t read;
-  fs_file_write_t write;
-  fs_printf_t printf;
-  fs_file_seek_t seek;
-  fs_file_truncate_t truncate;
-  fs_file_eof_t eof;
-  fs_file_tell_t tell;
-  fs_file_size_t size;
-  fs_file_sync_t sync;
-  fs_file_stat_t stat;
-  fs_file_close_t close;
-} fs_file_vtable_t;
-
 /**
  * @class fs_file_t
+ * @annotation ["fake"]
  * 文件接口。
  *
  * 示例：
@@ -142,6 +114,20 @@ typedef struct _fs_file_vtable_t {
  * ```
  *
  */
+typedef struct _fs_file_vtable_t {
+  fs_file_read_t read;
+  fs_file_write_t write;
+  fs_printf_t printf;
+  fs_file_seek_t seek;
+  fs_file_truncate_t truncate;
+  fs_file_eof_t eof;
+  fs_file_tell_t tell;
+  fs_file_size_t size;
+  fs_file_sync_t sync;
+  fs_file_stat_t stat;
+  fs_file_close_t close;
+} fs_file_vtable_t;
+
 struct _fs_file_t {
   const fs_file_vtable_t* vt;
   void* data;
@@ -205,7 +191,7 @@ int32_t fs_file_printf(fs_file_t* file, const char* const format_str, ...);
  * 定位读写指针到指定的位置。
  *
  * @param {fs_file_t*} file 文件对象。
- * @param {int32_t} offset 数据长度。
+ * @param {uint32_t} offset 数据长度。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -217,7 +203,6 @@ ret_t fs_file_seek(fs_file_t* file, int32_t offset);
  * 清除文件内容。
  *
  * @param {fs_file_t*} file 文件对象。
- * @param {int32_t} offset 数据长度。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -321,26 +306,6 @@ typedef struct _fs_item_t {
   char name[MAX_PATH + 1];
 } fs_item_t;
 
-/**
- * @method fs_item_create
- *
- * 创建文件或目录对象。
- *
- * @return {fs_item_t*} 返回文件或目录对象。
- */
-fs_item_t* fs_item_create(void);
-
-/**
- * @method fs_item_destroy
- *
- * 销毁文件或目录对象。
- *
- * @param {fs_item_t*} item 文件或目录对象。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t fs_item_destroy(fs_item_t* item);
-
 struct _fs_dir_t;
 typedef struct _fs_dir_t fs_dir_t;
 
@@ -348,6 +313,12 @@ typedef ret_t (*fs_dir_rewind_t)(fs_dir_t* dir);
 typedef ret_t (*fs_dir_read_t)(fs_dir_t* dir, fs_item_t* item);
 typedef ret_t (*fs_dir_close_t)(fs_dir_t* dir);
 
+/**
+ * @class fs_dir_t
+ *
+ * 文件夹接口。
+ *
+ */
 typedef struct _fs_dir_vtable_t {
   fs_dir_rewind_t rewind;
   fs_dir_read_t read;
@@ -355,16 +326,9 @@ typedef struct _fs_dir_vtable_t {
   void* data;
 } fs_dir_vtable_t;
 
-/**
- * @class fs_dir_t
- *
- * 文件夹接口。
- *
- */
 struct _fs_dir_t {
   const fs_dir_vtable_t* vt;
   void* data;
-  char* dirname;
 };
 
 /**
@@ -462,7 +426,7 @@ struct _fs_t {
  * @param {const char*} name 文件名。
  * @param {const char*} mode 打开方式，取值请参考POSIX的[fopen函数](https://www.runoob.com/cprogramming/c-function-fopen.html)相应的参数。
  *
- * @return {fs_file_t*} 返回非NULL表示成功，否则表示失败。
+ * @return {ret_t} 返回非NULL表示成功，否则表示失败。
  */
 fs_file_t* fs_open_file(fs_t* fs, const char* name, const char* mode);
 
@@ -517,19 +481,6 @@ ret_t fs_file_rename(fs_t* fs, const char* name, const char* new_name);
 ret_t fs_copy_file(fs_t* fs, const char* src, const char* dst);
 
 /**
- * @method fs_file_equal
- *
- * 比较二进制文件。
- *
- * @param {fs_t*} fs 文件系统对象，一般赋值为os_fs()。
- * @param {const char*} src 源文件名。
- * @param {const char*} dst 目标文件名。
- *
- * @return {bool_t} 返回TRUE表示相同，否则表示不同。
- */
-bool_t fs_file_equal(fs_t* fs, const char* src, const char* dst);
-
-/**
  * @method fs_copy_dir
  *
  * 拷贝目录。
@@ -564,7 +515,7 @@ ret_t fs_copy_dir_ex(fs_t* fs, const char* src, const char* dst, bool_t overwrit
  * @param {fs_t*} fs 文件系统对象，一般赋值为os_fs()。
  * @param {const char*} name 目录名称。
  *
- * @return {fs_dir_t*} 返回非NULL表示成功，否则表示失败。
+ * @return {fs_dir_t} 返回非NULL表示成功，否则表示失败。
  */
 fs_dir_t* fs_open_dir(fs_t* fs, const char* name);
 
@@ -673,7 +624,7 @@ ret_t fs_dir_rename(fs_t* fs, const char* name, const char* new_name);
  * @param {fs_t*} fs 文件系统对象，一般赋值为os_fs()。
  * @param {const char*} name 文件名。
  *
- * @return {int32_t} 返回不是-1表示成功，否则表示失败。
+ * @return {ret_t} 返回不是-1表示成功，否则表示失败。
  */
 int32_t fs_get_file_size(fs_t* fs, const char* name);
 
@@ -683,7 +634,7 @@ int32_t fs_get_file_size(fs_t* fs, const char* name);
  * 获取文件系统信息。
  *
  * @param {fs_t*} fs 文件系统对象，一般赋值为os_fs()。
- * @param {const char*} volume 卷名。
+ * @param {const char*} value 卷名。
  * @param {int32_t*} free_kb 用于返回空闲空间大小(KB)
  * @param {int32_t*} total_kb 用于返回总共空间大小(KB)
  *
@@ -791,7 +742,7 @@ fs_t* os_fs(void);
  *  }
  *  return RET_OK;
  * }
- * ...
+ * ...  
  * fs_foreach_file("tests/testdata", on_file, (void*)".json");
  *```
  *
@@ -799,36 +750,9 @@ fs_t* os_fs(void);
  * @param {tk_visit_t} on_file 回调函数(完整文件名通过data参数传入)。
  * @param {void*} ctx 回调函数上下文。
  *
- * @return {ret_t} 返回TRUE表示成功，否则表示失败。
+ * @return {bool_t} 返回TRUE表示成功，否则表示失败。
  */
 ret_t fs_foreach_file(const char* path, tk_visit_t on_file, void* ctx);
-
-/**
- * @method fs_foreach_dir
- * 遍历指定目录下全部文件夹。
- *
- * @param {const char*} path 目录。
- * @param {int} depth 遍历深度。
- * @param {tk_visit_t} on_dir 回调函数(完整目录名通过data参数传入)。
- * @param {void*} ctx 回调函数上下文。
- *
- * @return {ret_t} 返回TRUE表示成功，否则表示失败。
- */
-ret_t fs_foreach_dir(const char* path, int depth, tk_visit_t on_dir, void* ctx);
-
-/**
- * @method fs_foreach
- * 遍历指定目录下全部文件和文件夹。
- *
- * @param {const char*} path    要遍历的目录路径。
- * @param {int}         depth   遍历的最大深度。
- * @param {tk_visit_t}  on_file 文件的回调函数(完整文件名通过data参数传入)。
- * @param {tk_visit_t}  on_dir  文件夹的回调函数(完整文件名通过data参数传入)。
- * @param {void*}       ctx     传递给回调函数的上下文数据。
- *
- * @return {ret_t} 返回 RET_OK 表示成功。
- */
-ret_t fs_foreach(const char* path, int depth, tk_visit_t on_file, tk_visit_t on_dir, void* ctx);
 
 /**
  * @method file_exist
@@ -892,7 +816,7 @@ void* file_read(const char* name, uint32_t* size);
  * 从某个位置读取文件。
  *
  * @param {const char*} name 文件名。
- * @param {void*} buff 数据缓冲区。
+ * @param {const void*} buffer 数据缓冲区。
  * @param {uint32_t} size 数据长度。
  * @param {uint32_t} offset 偏移量。
  *
@@ -906,7 +830,7 @@ int32_t file_read_part(const char* name, void* buff, uint32_t size, uint32_t off
  * 写入文件。
  *
  * @param {const char*} name 文件名。
- * @param {const void*} buff 数据缓冲区。
+ * @param {const void*} buffer 数据缓冲区。
  * @param {uint32_t} size 数据长度。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。

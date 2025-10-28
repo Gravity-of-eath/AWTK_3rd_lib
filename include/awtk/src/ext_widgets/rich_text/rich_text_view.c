@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rich_text_view
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -67,10 +67,9 @@ static ret_t rich_text_view_sync_rich_text_to_scroll_bar(widget_t* widget) {
 
   if (rich_text_view->scroll_bar != NULL) {
     emitter_disable(rich_text_view->scroll_bar->emitter);
-    widget_set_prop_int(rich_text_view->scroll_bar, WIDGET_PROP_MAX, tk_max(0, max - h));
-    widget_set_prop_int(rich_text_view->scroll_bar, WIDGET_PROP_VALUE, tk_max(0, value));
+    widget_set_prop_int(rich_text_view->scroll_bar, WIDGET_PROP_MAX, max);
+    widget_set_prop_int(rich_text_view->scroll_bar, WIDGET_PROP_VALUE, value);
     emitter_enable(rich_text_view->scroll_bar->emitter);
-    widget_layout(widget);
   }
 
   return RET_OK;

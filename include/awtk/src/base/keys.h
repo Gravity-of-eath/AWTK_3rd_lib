@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  key code constants
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -715,58 +715,6 @@ typedef enum _key_code_t {
   TK_KEY_LCOMMAND = TK_KEY_LGUI,
   TK_KEY_RCOMMAND = TK_KEY_RGUI,
   TK_KEY_BACK = TK_KEY_AC_BACK,
-#elif defined(AWTK_WEB)
-  TK_KEY_LSHIFT = 16,
-  TK_KEY_RSHIFT = 16,
-  TK_KEY_LCTRL = 17,
-  TK_KEY_RCTRL = 17,
-  TK_KEY_LALT = 18,
-  TK_KEY_RALT = 18,
-  TK_KEY_CAPSLOCK = 20,
-  TK_KEY_HOME = 36,
-  TK_KEY_END = 35,
-  TK_KEY_INSERT = 45,
-  TK_KEY_UP = 38,
-  TK_KEY_DOWN = 40,
-  TK_KEY_LEFT = 37,
-  TK_KEY_RIGHT = 39,
-  TK_KEY_PAGEUP = 33,
-  TK_KEY_PAGEDOWN = 34,
-  TK_KEY_F1 = 112,
-  TK_KEY_F2 = 113,
-  TK_KEY_F3 = 114,
-  TK_KEY_F4 = 115,
-  TK_KEY_F5 = 116,
-  TK_KEY_F6 = 117,
-  TK_KEY_F7 = 118,
-  TK_KEY_F8 = 119,
-  TK_KEY_F9 = 120,
-  TK_KEY_F10 = 121,
-  TK_KEY_F11 = 122,
-  TK_KEY_F12 = 123,
-  TK_KEY_MENU = 0x20 + 163,
-  TK_KEY_COMMAND = 91,
-  TK_KEY_LCOMMAND = 91,
-  TK_KEY_RCOMMAND = 91,
-  TK_KEY_BACK = 0x20 + 166,
-  TK_KEY_CANCEL = 0x20 + 167,
-  TK_KEY_KP_DIVIDE = 111,
-  TK_KEY_KP_MULTIPLY = 106,
-  TK_KEY_KP_MINUS = 109,
-  TK_KEY_KP_PLUS = 107,
-  TK_KEY_KP_ENTER = 13,
-  TK_KEY_KP_1 = 97,
-  TK_KEY_KP_2 = 98,
-  TK_KEY_KP_3 = 99,
-  TK_KEY_KP_4 = 100,
-  TK_KEY_KP_5 = 101,
-  TK_KEY_KP_6 = 102,
-  TK_KEY_KP_7 = 103,
-  TK_KEY_KP_8 = 104,
-  TK_KEY_KP_9 = 105,
-  TK_KEY_KP_0 = 96,
-  TK_KEY_KP_PERIOD = 110,
-  TK_KEY_NUMLOCKCLEAR = 12,
 #else
   /**
    * @const TK_KEY_LSHIFT
@@ -930,91 +878,6 @@ typedef enum _key_code_t {
    * TK_KEY_CANCEL
    */
   TK_KEY_CANCEL = 0x20 + 167,
-  /**
-   * @const TK_KEY_KP_DIVIDE
-   * TK_KEY_KP_DIVIDE
-   */
-  TK_KEY_KP_DIVIDE = 0x20 + 169,
-  /**
-   * @const TK_KEY_KP_MULTIPLY
-   * TK_KEY_KP_MULTIPLY
-   */
-  TK_KEY_KP_MULTIPLY = 0x20 + 170,
-  /**
-   * @const TK_KEY_KP_MINUS
-   * TK_KEY_KP_MINUS
-   */
-  TK_KEY_KP_MINUS = 0x20 + 171,
-  /**
-   * @const TK_KEY_KP_PLUS
-   * TK_KEY_KP_PLUS
-   */
-  TK_KEY_KP_PLUS = 0x20 + 172,
-  /**
-   * @const TK_KEY_KP_ENTER
-   * TK_KEY_KP_ENTER
-   */
-  TK_KEY_KP_ENTER = 0x20 + 173,
-  /**
-   * @const TK_KEY_KP_1
-   * TK_KEY_KP_1
-   */
-  TK_KEY_KP_1 = 0x20 + 174,
-  /**
-   * @const TK_KEY_KP_2
-   * TK_KEY_KP_2
-   */
-  TK_KEY_KP_2 = 0x20 + 175,
-  /**
-   * @const TK_KEY_KP_3
-   * TK_KEY_KP_3
-   */
-  TK_KEY_KP_3 = 0x20 + 176,
-  /**
-   * @const TK_KEY_KP_4
-   * TK_KEY_KP_4
-   */
-  TK_KEY_KP_4 = 0x20 + 177,
-  /**
-   * @const TK_KEY_KP_5
-   * TK_KEY_KP_5
-   */
-  TK_KEY_KP_5 = 0x20 + 178,
-  /**
-   * @const TK_KEY_KP_6
-   * TK_KEY_KP_6
-   */
-  TK_KEY_KP_6 = 0x20 + 179,
-  /**
-   * @const TK_KEY_KP_7
-   * TK_KEY_KP_7
-   */
-  TK_KEY_KP_7 = 0x20 + 180,
-  /**
-   * @const TK_KEY_KP_8
-   * TK_KEY_KP_8
-   */
-  TK_KEY_KP_8 = 0x20 + 181,
-  /**
-   * @const TK_KEY_KP_9
-   * TK_KEY_KP_9
-   */
-  TK_KEY_KP_9 = 0x20 + 182,
-  /**
-   * @const TK_KEY_KP_0
-   * TK_KEY_KP_0
-   */
-  TK_KEY_KP_0 = 0x20 + 183,
-  /**
-   * @const TK_KEY_KP_PERIOD
-   * TK_KEY_KP_PERIOD
-   */
-  TK_KEY_KP_PERIOD = 0x20 + 184,
-  /**
-   * @const TK_KEY_NUMLOCKCLEAR
-   * TK_KEY_NUMLOCKCLEAR
-   */
-  TK_KEY_NUMLOCKCLEAR = 0x20 + 185,
 #endif
   /**
    * @const TK_KEY_WHEEL
@@ -1036,7 +899,11 @@ typedef enum _key_code_t {
 #endif /*TK_KEY_TOGGLE_INPUT_METHOD*/
 
 static inline bool_t key_code_is_enter(int key) {
+#ifdef WITH_SDL
   return (key == TK_KEY_RETURN || key == TK_KEY_KP_ENTER);
+#else
+  return key == TK_KEY_RETURN;
+#endif /*WITH_SDL*/
 }
 
 END_C_DECLS

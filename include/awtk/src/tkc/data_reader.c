@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  data_reader
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -65,17 +65,4 @@ void* data_reader_read_all(const char* url, uint32_t* size) {
   data_reader_destroy(reader);
 
   return data;
-}
-
-bool_t data_reader_can_read(const char* url) {
-  bool_t can = FALSE;
-  data_reader_t* reader = data_reader_factory_create_reader(data_reader_factory(), url);
-  if (!reader) {
-    return FALSE;
-  }
-  if (data_reader_get_size(reader) > 0) {
-    can = TRUE;
-  }
-  data_reader_destroy(reader);
-  return can;
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  basic types definitions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,76 +22,43 @@
 #ifndef TYPES_DEF_H
 #define TYPES_DEF_H
 
-#ifdef __cplusplus
-#define BEGIN_C_DECLS extern "C" {
-#define END_C_DECLS }
-#else
-#define BEGIN_C_DECLS
-#define END_C_DECLS
-#endif
-
-#if TK_DISABLE_DEPRECATE_WARNINGS
-#define TK_DEPRECATED(message)
-#else
-#if ((__GNUC__ * 100 + __GNUC_MINOR__) >= 405) || defined(__clang__)
-#define TK_DEPRECATED(message) __attribute__((deprecated(message)))
-#elif ((__GNUC__ * 100 + __GNUC_MINOR__) >= 301)
-#define TK_DEPRECATED(message) __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#define TK_DEPRECATED(message) __declspec(deprecated(message))
-#else
-/* Not support TK_DEPRECATED */
-#define TK_DEPRECATED(message)
-#endif
-#endif /* TK_DISABLE_DEPRECATE_WARNINGS */
-
-#if defined(__GNUC__)
-#define TK_MAYBE_UNUSED __attribute__((unused))
-#else
-#define TK_MAYBE_UNUSED
-#endif
-
-#include <stdarg.h>
+#include <math.h>
+#include <time.h>
 #include <ctype.h>
+#include <wchar.h>
 #include <errno.h>
+#include <assert.h>
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <inttypes.h>
 
-#if defined(HAS_AWTK_CONFIG) || defined(CONFIG_HAS_AWTK_CONFIG)
+#if defined(__MINGW32__) || defined(__MINGW64__)
+#ifndef MINGW
+#define MINGW 1
+#endif
+#endif
+
+#if defined(HAS_AWTK_CONFIG)
 #include "awtk_config.h"
+#ifdef FRAGMENT_FRAME_BUFFER_SIZE
+#endif /*FRAGMENT_FRAME_BUFFER_SIZE*/
 #endif /*HAS_AWTK_CONFIG*/
 
 #if defined(WIN32) || defined(LINUX) || defined(MACOS) || defined(ANDROID) || defined(IOS)
 #define WITH_SOCKET 1
 #endif /*WIN32 || MACOS || LINUX || IOS || ANDROID*/
 
-#ifndef TK_IS_PC
-#if defined(WITH_SDL) && !defined(ANDROID) && !defined(IOS)
-#define TK_IS_PC 1
-#endif
-#endif /*TK_IS_PC*/
-
-#ifndef WITH_WASM
-#include <stddef.h>
-#include <math.h>
-#include <time.h>
-#include <wchar.h>
-#include <assert.h>
-#include <wctype.h>
 #ifdef WITH_SOCKET
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
 #include <winsock2.h>
 typedef int socklen_t;
-#elif defined(WITH_LWIP)
-#include "lwip/sockets.h"
-#include "lwip/netdb.h"
-#define perror(s)
 #else
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -103,15 +70,12 @@ typedef int socklen_t;
 #include <sys/types.h>
 #endif /*WIN32*/
 #endif /*WITH_SOCKET*/
-
+#ifdef __cplusplus
+#define BEGIN_C_DECLS extern "C" {
+#define END_C_DECLS }
 #else
-#include "tkc/wasm_helper.h"
-#endif /*WITH_WASM*/
-
-#if defined(__MINGW32__) || defined(__MINGW64__)
-#ifndef MINGW
-#define MINGW 1
-#endif
+#define BEGIN_C_DECLS
+#define END_C_DECLS
 #endif
 
 #if defined(HAS_STDIO) || defined(AWTK_WEB)
@@ -146,17 +110,6 @@ typedef int socklen_t;
 #ifndef FALSE
 #define FALSE 0
 #endif /*FALSE*/
-
-#define _TK_STRINGIZE_(symbol) #symbol
-#define TK_STRINGIZE(macro) _TK_STRINGIZE_(macro)
-
-#define _TK_CONCAT_(a, b) a##b
-#define TK_CONCAT(a, b) _TK_CONCAT_(a, b)
-
-#define TK_STATIC_ASSERT(p)                                                                  \
-  typedef struct {                                                                           \
-    TK_MAYBE_UNUSED char TK_CONCAT(Static_Assert_Failed_at_Line_, __LINE__)[!!(p) ? 1 : -1]; \
-  } TK_CONCAT(_sTATIC_aSSERT_, __LINE__)
 
 #if defined(__GNUC__) && !defined(__cplusplus)
 typedef _Bool bool_t;
@@ -196,7 +149,6 @@ typedef struct _tk_object_t tk_object_t;
 
 /**
  * @enum ret_t
- * @prefix RET_
  * @annotation ["scriptable"]
  * 函数返回值常量定义。
  */
@@ -311,31 +263,11 @@ typedef enum _ret_t {
    * 没有改变。
    */
   RET_NOT_MODIFIED,
-  /**
-   * @const RET_NO_PERMISSION
-   * 没有权限。
-   */
-  RET_NO_PERMISSION,
-  /**
-   * @const RET_INVALID_ADDR
-   * 无效地址。
-   */
-  RET_INVALID_ADDR,
-  /**
-   * @const RET_EXCEED_RANGE
-   * 超出范围。
-   */
-  RET_EXCEED_RANGE,
-  /**
-   * @const RET_MAX_NR
-   * 最大值。
-   */
-  RET_MAX_NR
 } ret_t;
 
 #include "tkc/log.h"
 
-#if defined(WIN32) || defined(__ARMCC_VERSION) || defined(MINGW)
+#if defined(WIN32) || defined(__ARMCC_VERSION)
 #define random rand
 #define srandom srand
 #endif /*WIN32||__ARMCC_VERSION*/
@@ -356,124 +288,73 @@ typedef enum _ret_t {
 #endif /*snprintf*/
 
 #define strcasecmp stricmp
-#define strncasecmp strnicmp
-#define wcscasecmp wcsicmp
-
 #endif /*TK_PATH_SEP*/
 
-#define log_if_fail(p)                                                       \
-  do {                                                                       \
-    if (!(p)) {                                                              \
-      log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
-    }                                                                        \
-  } while (0)
+#define log_if_fail(p)                                                     \
+  if (!(p)) {                                                              \
+    log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
+  }
 
 #if defined(NDEBUG) || defined(SYLIXOS)
-#ifdef WITH_INFERCHECK
-#define __INFER_ENSURE__(p) (void)(!!(p) || (exit(0), 0))
-#define ENSURE(p) __INFER_ENSURE__(p)
-#else
 #define ENSURE(p) (void)(p)
-#endif
 #define goto_error_if_fail(p) \
-  do {                        \
-    if (!(p)) {               \
-      goto error;             \
-    }                         \
-  } while (0)
-
-#define goto_error_if_fail_ex(p, sentence) \
-  do {                                     \
-    if (!(p)) {                            \
-      sentence;                            \
-      goto error;                          \
-    }                                      \
-  } while (0)
+  if (!(p)) {                 \
+    goto error;               \
+  }
 
 #define return_if_fail(p) \
-  do {                    \
-    if (!(p)) {           \
-      return;             \
-    }                     \
-  } while (0)
+  if (!(p)) {             \
+    return;               \
+  }
 
 #define break_if_fail(p) \
-  {                      \
-    if (!(p)) {          \
-      break;             \
-    }                    \
+  if (!(p)) {            \
+    break;               \
   }
 
 #define return_value_if_fail(p, value) \
-  do {                                 \
-    if (!(p)) {                        \
-      return (value);                  \
-    }                                  \
-  } while (0)
+  if (!(p)) {                          \
+    return (value);                    \
+  }
 #else
 #define ENSURE(p) assert(p)
-#define goto_error_if_fail(p)                                                \
-  do {                                                                       \
-    if (!(p)) {                                                              \
-      log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
-      goto error;                                                            \
-    }                                                                        \
-  } while (0)
-
-#define goto_error_if_fail_ex(p, sentence)                                   \
-  do {                                                                       \
-    if (!(p)) {                                                              \
-      log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
-      sentence;                                                              \
-      goto error;                                                            \
-    }                                                                        \
-  } while (0)
-
-#define break_if_fail(p)                                                     \
-  {                                                                          \
-    if (!(p)) {                                                              \
-      log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
-      break;                                                                 \
-    }                                                                        \
+#define goto_error_if_fail(p)                                              \
+  if (!(p)) {                                                              \
+    log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
+    goto error;                                                            \
   }
 
-#define return_if_fail(p)                                                    \
-  do {                                                                       \
-    if (!(p)) {                                                              \
-      log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
-      return;                                                                \
-    }                                                                        \
-  } while (0)
+#define break_if_fail(p)                                                   \
+  if (!(p)) {                                                              \
+    log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
+    break;                                                                 \
+  }
 
-#define return_value_if_fail(p, value)                                       \
-  do {                                                                       \
-    if (!(p)) {                                                              \
-      log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
-      return (value);                                                        \
-    }                                                                        \
-  } while (0)
+#define return_if_fail(p)                                                  \
+  if (!(p)) {                                                              \
+    log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
+    return;                                                                \
+  }
+
+#define return_value_if_fail(p, value)                                     \
+  if (!(p)) {                                                              \
+    log_warn("%s:%d condition(" #p ") failed!\n", __FUNCTION__, __LINE__); \
+    return (value);                                                        \
+  }
+
 #endif
 
 #define return_value_if_equal(p, value) \
-  do {                                  \
-    if ((p) == value) {                 \
-      return (value);                   \
-    }                                   \
-  } while (0)
+  if ((p) == value) {                   \
+    return (value);                     \
+  }
 
 #define tk_min(a, b) ((a) < (b) ? (a) : (b))
 #define tk_abs(a) ((a) < (0) ? (-(a)) : (a))
 #define tk_max(a, b) ((a) > (b) ? (a) : (b))
-#define tk_roundi(a) (int32_t)(((a) >= 0) ? ((a) + 0.5f) : ((a) - 0.5f))
-#define tk_roundi64(a) (int64_t)(((a) >= 0) ? ((a) + 0.5f) : ((a) - 0.5f))
+#define tk_roundi(a) (int32_t)(((a) >= 0) ? ((a) + 0.5f) : ((a)-0.5f))
 #define tk_clamp(a, mn, mx) ((a) < (mn) ? (mn) : ((a) > (mx) ? (mx) : (a)))
 #define tk_clampi(a, mn, mx) (int32_t)((a) < (mn) ? (mn) : ((a) > (mx) ? (mx) : (a)))
-#define tk_swap(a, b, type)               \
-  do {                                    \
-    type TK_CONCAT(_tEMP_, __LINE__) = a; \
-    a = b;                                \
-    b = TK_CONCAT(_tEMP_, __LINE__);      \
-  } while (0)
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
@@ -496,12 +377,9 @@ typedef ret_t (*tk_callback_t)(void* ctx);
 enum { TK_NAME_LEN = 31, TK_FUNC_NAME_LEN = 63 };
 
 #ifdef WITH_CPPCHECK
-int __cppcheck__strcmp(const char* s1, const char* s2);
-int __cppcheck__strcasecmp(const char* s1, const char* s2);
-int __cppcheck__strncmp(const char* s1, const char* s2, size_t n);
-#define tk_str_eq(s1, s2) (__cppcheck__strcmp((s1), (s2)) == 0)
-#define tk_str_ieq(s1, s2) (__cppcheck__strcasecmp((s1), (s2)) == 0)
-#define tk_str_eq_with_len(s1, s2, len) (__cppcheck__strncmp((s1), (s2), len) == 0)
+#define tk_str_eq strcmp("abc", "123")
+#define tk_str_ieq strcasecmp
+#define tk_str_eq_with_len strncmp
 #else
 #define tk_str_eq(s1, s2)                                                           \
   (((s1) == NULL && (s2) == NULL) ||                                                \
@@ -520,16 +398,12 @@ int __cppcheck__strncmp(const char* s1, const char* s2, size_t n);
     wcscmp((s1), (s2)) == 0))
 #endif /*WITH_CPPCHECK*/
 
-#define tk_fequal(f1, f2) (fabs((f1) - (f2)) < 0.0001)
-#define tk_lfequal(f1, f2) (fabs((f1) - (f2)) < 0.0000001)
+#define tk_lfequal(f1, f2) (fabs((f1) - (f2)) < 0.0001)
+#define tk_fequal(f1, f2) (fabs((f1) - (f2)) < 0.0000001)
 
 #ifndef M_PI
 #define M_PI 3.1415926f
 #endif /*M_PI*/
-
-#ifndef M_E
-#define M_E 2.71828f
-#endif /*M_E*/
 
 #ifndef M_SQRT2
 #define M_SQRT2 1.4142135f
@@ -541,8 +415,8 @@ int __cppcheck__strncmp(const char* s1, const char* s2, size_t n);
 #define TK_LOCALE_MAGIC "$locale$"
 #define TK_OBJECT_PROP_NAME_MAX_LEN 64u
 
-#define TK_D2R(d) (((d) * M_PI) / 180)
-#define TK_R2D(r) (((r) * 180) / M_PI)
+#define TK_D2R(d) (((d)*M_PI) / 180)
+#define TK_R2D(r) (((r)*180) / M_PI)
 
 #ifdef _MSC_VER
 #define TK_CONST_DATA_ALIGN(v) __declspec(align(8)) v
@@ -556,16 +430,13 @@ typedef void (*tk_sleep_ms_t)(uint32_t ms);
 
 #if defined(WIN32) && !defined(NDEBUG) && defined(_CONSOLE)
 #define TK_ENABLE_CONSOLE()                   \
-  do {                                        \
+  {                                           \
     AllocConsole();                           \
     FILE* fp = NULL;                          \
     freopen_s(&fp, "CONOUT$", "w+t", stdout); \
-    system("chcp 65001");                     \
-  } while (0)
+  }
 #else
-#define TK_ENABLE_CONSOLE() \
-  do {                      \
-  } while (0)
+#define TK_ENABLE_CONSOLE()
 #endif /*WIN32 && !NDEBUG*/
 
 struct _event_source_t;
@@ -582,7 +453,7 @@ typedef struct _event_source_manager_t event_source_manager_t;
 #define TK_ROUND_TO4(size) ((((size) + 3) >> 2) << 2)
 #define TK_ROUND_TO8(size) ((((size) + 7) >> 3) << 3)
 #define TK_ROUND_TO_MACH(size) ((sizeof(void*) == 4) ? TK_ROUND_TO4(size) : TK_ROUND_TO8(size))
-#define TK_ROUND_TO(size, round_size) ((((size) + (round_size) - 1) / (round_size)) * (round_size))
+#define TK_ROUND_TO(size, round_size) ((((size) + (round_size)-1) / (round_size)) * (round_size))
 
 #define TK_SET_BIT(v, n) ((v) |= 1UL << (n))
 #define TK_CLEAR_BIT(v, n) ((v) &= ~(1UL << (n)))
@@ -600,14 +471,11 @@ typedef struct _event_source_manager_t event_source_manager_t;
 #define TK_ISFINITE(x) ((x) * (x) >= 0.) /* check for NaNs */
 #endif
 
-#define tk_isspace(c) ((0 <= (int)(c)) && ((int)(c) < 128) && isspace(c))
-#define tk_isdigit(c) ((int)(c) >= '0' && (int)(c) <= '9')
-#define tk_isxdigit(c) ((0 <= (int)(c)) && ((int)(c) < 128) && isxdigit(c))
-#define tk_isprint(c) ((0 <= (int)(c)) && ((int)(c) < 128) && isprint(c))
-#define tk_isalpha(c) ((0 <= (int)(c)) && ((int)(c) < 128) && isalpha(c))
-#define tk_islower(c) ((0 <= (int)(c)) && ((int)(c) < 128) && islower(c))
-#define tk_isupper(c) ((0 <= (int)(c)) && ((int)(c) < 128) && isupper(c))
-#define tk_isalnum(c) ((0 <= (int)(c)) && ((int)(c) < 128) && isalnum(c))
+#define tk_isspace(c) (((int)(c) < 128) && isspace(c))
+#define tk_isdigit(c) (((int)(c) < 128) && isdigit(c))
+#define tk_isxdigit(c) (((int)(c) < 128) && isxdigit(c))
+#define tk_isprint(c) (((int)(c) < 128) && isprint(c))
+#define tk_isalpha(c) (((int)(c) < 128) && isalpha(c))
 
 #define STR_SCHEMA_TCP "tcp://"
 #define STR_SCHEMA_UDP "udp://"
@@ -616,7 +484,6 @@ typedef struct _event_source_manager_t event_source_manager_t;
 #define STR_SCHEMA_FTP "ftp://"
 #define STR_SCHEMA_HTTP "http://"
 #define STR_SCHEMA_HTTPS "https://"
-#define STR_SCHEMA_MEM "mem://"
 
 #define TK_STR_IS_EMPTY(s) (s == NULL || *s == '\0')
 #define TK_STR_IS_NOT_EMPTY(s) ((s != NULL) && *s)
@@ -625,15 +492,5 @@ typedef struct _event_source_manager_t event_source_manager_t;
 #define popen _popen
 #define pclose _pclose
 #endif /*WIN32*/
-
-#define TK_VALUE_UNDEFINED "undefined"
-
-#define TK_ADR_EQ(p1, p2) (((uint8_t*)(p1)) - ((uint8_t*)(p2)) == 0)
-
-typedef struct _key_type_value_t {
-  char* name;
-  uint32_t type;
-  uint32_t value;
-} key_type_value_t;
 
 #endif /*TYPES_DEF_H*/

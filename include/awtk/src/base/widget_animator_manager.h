@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  animator manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -123,7 +123,7 @@ ret_t widget_animator_manager_remove(widget_animator_manager_t* am, widget_anima
  * 获取动画个数。
  * @param {widget_animator_manager_t*} am 控件动画管理器。
  *
- * @return {uint32_t} 返回动画个数。
+ * @return {ret_t} 返回动画个数。
  */
 uint32_t widget_animator_manager_count(widget_animator_manager_t* am);
 

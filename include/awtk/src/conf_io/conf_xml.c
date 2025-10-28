@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  xml 
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,9 +23,6 @@
 #include "tkc/utils.h"
 #include "xml/xml_parser.h"
 #include "conf_io/conf_xml.h"
-#include "tkc/data_reader_mem.h"
-#include "tkc/data_writer_wbuffer.h"
-#include "tkc/data_reader_factory.h"
 #include "tkc/data_writer_factory.h"
 
 typedef struct _xml_builter_t {
@@ -175,7 +172,6 @@ static ret_t conf_doc_save_xml_node(conf_doc_t* doc, str_t* str, conf_node_t* no
                                     uint32_t level) {
   uint32_t size = 0;
   const char* name = conf_node_get_name(node);
-  ENSURE(name);
   conf_node_t* text = NULL;
   conf_node_t* iter = conf_node_get_first_child(node);
 
@@ -194,12 +190,12 @@ static ret_t conf_doc_save_xml_node(conf_doc_t* doc, str_t* str, conf_node_t* no
     iter = iter->next;
   }
 
+  size = str->size;
   if (text == NULL) {
     str_append(str, ">\n");
   } else {
     str_append(str, ">");
   }
-  size = str->size;
 
   iter = conf_node_get_first_child(node);
   while (iter != NULL) {
@@ -212,26 +208,15 @@ static ret_t conf_doc_save_xml_node(conf_doc_t* doc, str_t* str, conf_node_t* no
   if (text != NULL) {
     value_t v;
     if (conf_node_get_value(text, &v) == RET_OK) {
-      const char* p = value_str(&v);
-      if (tk_str_start_with(p, "<![CDATA[") && tk_str_end_with(p, "]]>")) {
-        return_value_if_fail(str_append(str, p) == RET_OK, RET_OOM);
-      } else {
-        return_value_if_fail(str_encode_xml_entity(str, p) == RET_OK, RET_OOM);
-      }
+      return_value_if_fail(str_encode_xml_entity(str, value_str(&v)) == RET_OK, RET_OOM);
     }
   }
 
-  if (size == str->size) {
-    if (text == NULL) {
-      str->size -= 2;
-    } else {
-      str->size -= 1;
-    }
+  if ((size + 2) == str->size) {
+    str->size -= 2;
     str_append(str, "/>\n");
   } else {
-    if (text == NULL) {
-      str_append_n_chars(str, ' ', level * 2);
-    }
+    str_append_n_chars(str, ' ', level * 2);
     str_append_format(str, strlen(name) + 10, "</%s>\n", name);
   }
 
@@ -309,22 +294,4 @@ ret_t conf_xml_save_as(tk_object_t* obj, const char* url) {
 
 tk_object_t* conf_xml_create(void) {
   return conf_xml_load(NULL, TRUE);
-}
-
-tk_object_t* conf_xml_load_from_buff(const void* buff, uint32_t size, bool_t create_if_not_exist) {
-  char url[MAX_PATH + 1] = {0};
-  return_value_if_fail(buff != NULL, NULL);
-  data_reader_mem_build_url(buff, size, url);
-
-  return conf_xml_load(url, create_if_not_exist);
-}
-
-ret_t conf_xml_save_to_buff(tk_object_t* obj, wbuffer_t* wb) {
-  char url[MAX_PATH + 1] = {0};
-  return_value_if_fail(obj != NULL && wb != NULL, RET_BAD_PARAMS);
-
-  wbuffer_init_extendable(wb);
-  data_writer_wbuffer_build_url(wb, url);
-
-  return conf_xml_save_as(obj, url);
 }

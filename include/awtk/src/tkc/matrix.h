@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  matrix struct and utils functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -31,11 +31,6 @@ BEGIN_C_DECLS
  * 2D矩阵对象。
  */
 typedef struct _matrix_t {
-  /**
-   * ⎡a0 a2 a4⎤
-   * ⎢a1 a3 a5⎢
-   * ⎣ 0  0  1⎦
-   */
   float a0;
   float a1;
   float a2;
@@ -106,8 +101,8 @@ matrix_t* matrix_multiply(matrix_t* m, matrix_t* b);
  * 平移。
  *
  * @param {matrix_t*} m 矩阵对象。
- * @param {xy_t} x x
- * @param {xy_t} y y
+ * @param {float} x x
+ * @param {float} y y
  *
  * @return {matrix_t*} 矩阵对象。
  */
@@ -157,8 +152,8 @@ matrix_t* matrix_transform_point(matrix_t* m, xy_t x, xy_t y, xy_t* out_x, xy_t*
  * @param {matrix_t*} m 矩阵对象。
  * @param {float} x x
  * @param {float} y y
- * @param {float*} ox out_x
- * @param {float*} oy out_y
+ * @param {float*} out_x out_x
+ * @param {float*} out_y out_y
  *
  * @return {matrix_t*} 矩阵对象。
  */

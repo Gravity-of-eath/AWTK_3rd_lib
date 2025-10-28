@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  sdl implemented thread related functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -197,6 +197,7 @@ ret_t tk_semaphore_destroy(tk_semaphore_t* semaphore) {
 
 struct _tk_thread_t {
   void* args;
+  bool_t running;
   SDL_Thread* thread;
   tk_thread_entry_t entry;
   char name[TK_NAME_LEN + 1];
@@ -265,6 +266,7 @@ static int entry(void* arg) {
   tk_thread_t* thread = (tk_thread_t*)arg;
 
   thread->entry(thread->args);
+  thread->running = FALSE;
 
   return 0;
 }
@@ -281,10 +283,11 @@ ret_t tk_thread_start(tk_thread_t* thread) {
                                               thread->stack_size, thread);
   }
 
-  if (thread->thread != NULL) {
+  thread->running = thread->thread != NULL;
+  if (thread->running) {
     SDL_SetThreadPriority((SDL_ThreadPriority)(thread->priority));
   }
-  return thread->thread != NULL ? RET_OK : RET_FAIL;
+  return thread->running ? RET_OK : RET_FAIL;
 }
 
 ret_t tk_thread_join(tk_thread_t* thread) {
@@ -295,9 +298,10 @@ ret_t tk_thread_join(tk_thread_t* thread) {
     return RET_OK;
   }
 
-  if (thread->thread != NULL) {
-    SDL_WaitThread(thread->thread, NULL);
-    thread->thread = NULL;
+  if (thread->running) {
+    if (thread->thread) {
+      SDL_WaitThread(thread->thread, NULL);
+    }
   }
 
   return RET_OK;

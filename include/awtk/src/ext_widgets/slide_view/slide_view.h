@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  slide_view
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -89,7 +89,7 @@ typedef struct _slide_view_t {
   /**
    * @property {uint16_t} auto_play
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 自动播放。0表示禁止自动播放，非0表示自动播放时每一页播放的时间(毫秒)。
+   * 自动播放。0表示禁止自动播放，非0表示自动播放时每一页播放的时间。
    */
   uint16_t auto_play;
 
@@ -133,12 +133,10 @@ typedef struct _slide_view_t {
   int32_t xoffset;
   int32_t yoffset;
   uint32_t active;
-  uint32_t last_active;
   uint32_t timer_id;
   bool_t dragged;
   bool_t pressed;
   bool_t animating;
-  bool_t check_last;
   bool_t remove_when_anim_done;
 
   /* for save focused child */
@@ -204,7 +202,7 @@ widget_t* slide_view_cast(widget_t* widget);
  * 设置为自动播放模式。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget slide_view对象。
- * @param {uint16_t} auto_play 0表示禁止自动播放，非0表示自动播放时每一页播放的时间(毫秒)。
+ * @param {uint16_t} auto_play 0表示禁止自动播放，非0表示自动播放时每一页播放的时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -291,10 +289,10 @@ ret_t slide_view_set_drag_threshold(widget_t* widget, uint32_t drag_threshold);
 
 /**
  * @method slide_view_set_animating_time
- * 设置动画时间(毫秒)。
+ * 设置动画时间。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget slide_view对象。
- * @param {uint32_t} animating_time 动画时间(毫秒)。
+ * @param {uint32_t} animating_time 动画时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

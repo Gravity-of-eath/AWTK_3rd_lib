@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  URL parser 
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,10 +30,10 @@ url_t* url_create(const char* surl) {
   url_t* url = TKMEM_ZALLOC(url_t);
   return_value_if_fail(url != NULL, NULL);
 
-  str_init(&(url->url), 0);
   if (surl != NULL) {
     return url_parse(url, surl);
   }
+  str_init(&(url->url), 0);
 
   return url;
 }
@@ -218,10 +218,11 @@ static url_t* url_parse(url_t* url, const char* surl) {
       }
       case STATE_VALUE: {
         if (*p == '&' || *p == '\0') {
-          uint32_t name_size = str.size;
+          const char* name = str.str;
+          const char* value = str.str + str.size + 1;
           str.size++;
           goto_error_if_fail(str_append_with_len(&str, start, p - start) == RET_OK);
-          goto_error_if_fail(url_set_param(url, str.str, str.str + name_size + 1) == RET_OK);
+          goto_error_if_fail(url_set_param(url, name, value) == RET_OK);
           state = STATE_KEY;
           start = p + 1;
         }
@@ -314,24 +315,6 @@ const char* url_get_param(url_t* url, const char* name) {
   }
 
   return tk_object_get_prop_str(url->params, name);
-}
-
-int32_t url_get_param_int32(url_t* url, const char* name, int32_t defval) {
-  const char* value = url_get_param(url, name);
-  if (value != NULL) {
-    return tk_atoi(value);
-  } else {
-    return defval;
-  }
-}
-
-bool_t url_get_param_bool(url_t* url, const char* name, bool_t defval) {
-  const char* value = url_get_param(url, name);
-  if (value != NULL) {
-    return tk_atob(value);
-  } else {
-    return defval;
-  }
 }
 
 static ret_t url_on_visit_param(void* ctx, const void* data) {

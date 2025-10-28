@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  layout type def
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -46,9 +46,9 @@ typedef enum _y_attr_t {
   Y_ATTR_UNDEF
 } y_attr_t;
 
-typedef enum _w_attr_t { W_ATTR_PIXEL = 0, W_ATTR_PERCENT, W_ATTR_FLEX, W_ATTR_UNDEF } w_attr_t;
+typedef enum _w_attr_t { W_ATTR_PIXEL = 0, W_ATTR_PERCENT, W_ATTR_UNDEF } w_attr_t;
 
-typedef enum _h_attr_t { H_ATTR_PIXEL = 0, H_ATTR_PERCENT, H_ATTR_FLEX, H_ATTR_UNDEF } h_attr_t;
+typedef enum _h_attr_t { H_ATTR_PIXEL = 0, H_ATTR_PERCENT, H_ATTR_UNDEF } h_attr_t;
 
 END_C_DECLS
 

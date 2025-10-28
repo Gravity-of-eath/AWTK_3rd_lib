@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rect struct and utils functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -279,8 +279,6 @@ bool_t rect_contains(const rect_t* r, xy_t x, xy_t y);
  * 确保rect在指定的大小范围内。
  *
  * @param {rect_t*} r rect对象。
- * @param {wh_t} max_w 最大宽度。
- * @param {wh_t} max_h 最大高度。
  *
  * @return {rect_t} 返回修复之后的rect对象。
  */
@@ -298,17 +296,6 @@ rect_t rect_fix(rect_t* r, wh_t max_w, wh_t max_h);
 rect_t rect_intersect(const rect_t* r1, const rect_t* r2);
 
 /**
- * @method rectf_intersect
- * 求两个rectf的交集。
- *
- * @param {const rectf_t*} r1 rect对象。
- * @param {const rectf_t*} r2 rect对象。
- *
- * @return {rectf_t} 返回交集。
- */
-rectf_t rectf_intersect(const rectf_t* r1, const rectf_t* r2);
-
-/**
  * @method rect_has_intersect
  * 判断两个rect的是否存在交集。
  *
@@ -318,24 +305,6 @@ rectf_t rectf_intersect(const rectf_t* r1, const rectf_t* r2);
  * @return {bool_t} 返回TRUE表示存在，否则表示不存在。
  */
 bool_t rect_has_intersect(const rect_t* r1, const rect_t* r2);
-
-/**
- * @method rect_diff
- * 求第一个矩形和第二个矩形的差集。
- * 
- * 备注：第一个矩形包含第二个矩形的话，就会返回第一个矩形的四个矩形区域。
- *
- * @param {const rect_t*} r1 第一个矩形。
- * @param {const rect_t*} r2 第二个矩形。
- * @param {rect_t*} out_r1 返回差集的第一个矩形数据。
- * @param {rect_t*} out_r2 返回差集的第二个矩形数据。
- * @param {rect_t*} out_r3 返回差集的第三个矩形数据。
- * @param {rect_t*} out_r4 返回差集的第四个矩形数据。
- *
- * @return {bool_t} 返回TRUE表示存在差集，否则表示不存在差集。
- */
-bool_t rect_diff(const rect_t* r1, const rect_t* r2, rect_t* out_r1, rect_t* out_r2, rect_t* out_r3,
-                 rect_t* out_r4);
 
 /**
  * @method rectf_scale
@@ -353,9 +322,7 @@ rectf_t* rectf_scale(rectf_t* r, float_t scale);
  * 确保rectf在指定的大小范围内。
  *
  * @param {rectf_t*} r rectf对象。
- * @param {wh_t} max_w 最大宽度。
- * @param {wh_t} max_h 最大高度。
- * 
+ *
  * @return {rectf_t} 返回修复之后的rect对象。
  */
 rectf_t rectf_fix(rectf_t* r, wh_t max_w, wh_t max_h);
@@ -364,7 +331,7 @@ rectf_t rectf_fix(rectf_t* r, wh_t max_w, wh_t max_h);
  * @method rect_to_rectf
  * rect 类型转换到 rectf 类型。
  *
- * @param {const rect_t*} r rect对象。
+ * @param {const rect_t*} r1 rect 对象。
  *
  * @return {rectf_t} 返回 rectf_t 对象。
  */

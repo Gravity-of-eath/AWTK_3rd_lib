@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  single link list
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,16 +23,13 @@
 #define TK_SLIST_H
 
 #include "tkc/types_def.h"
-#include "tkc/mem_allocator.h"
 
 BEGIN_C_DECLS
 
-typedef struct _slist_node_t slist_node_t;
-
-struct _slist_node_t {
-  slist_node_t* next;
+typedef struct _slist_node_t {
+  struct _slist_node_t* next;
   void* data;
-};
+} slist_node_t;
 
 /**
  * @class slist_t
@@ -65,20 +62,6 @@ typedef struct _slist_t {
   slist_node_t* first;
 
   /**
-   * @property {slist_node_t*} last
-   * @annotation ["readable"]
-   * 尾节点。
-   */
-  slist_node_t* last;
-
-  /**
-   * @property {int32_t} size
-   * @annotation ["readable"]
-   * 元素个数。
-   */
-  int32_t size;
-
-  /**
    * @property {tk_destroy_t} destroy
    * @annotation ["readable"]
    * 元素销毁函数。
@@ -91,12 +74,6 @@ typedef struct _slist_t {
    * 元素比较函数。
    */
   tk_compare_t compare;
-
-  /**
-   * @property {mem_allocator_t*} node_allocator
-   * 节点内存分配器。
-   */
-  mem_allocator_t* node_allocator;
 } slist_t;
 
 /**
@@ -132,17 +109,6 @@ slist_t* slist_init(slist_t* slist, tk_destroy_t destroy, tk_compare_t compare);
 void* slist_find(slist_t* slist, void* ctx);
 
 /**
- * @method slist_find_ex
- * 查找第一个满足条件的元素。
- * @param {slist_t*} slist 单向链表对象。
- * @param {tk_compare_t} compare 元素比较函数。
- * @param {void*} ctx 比较函数的上下文。
- *
- * @return {void*} 返回节点。
- */
-void* slist_find_ex(slist_t* slist, tk_compare_t compare, void* ctx);
-
-/**
  * @method slist_remove
  * 删除第一个满足条件的元素。
  * @param {slist_t*} slist 单向链表对象。
@@ -153,23 +119,21 @@ void* slist_find_ex(slist_t* slist, tk_compare_t compare, void* ctx);
 ret_t slist_remove(slist_t* slist, void* ctx);
 
 /**
- * @method slist_remove_ex
+ * @method slist_remove_with_compare
  * 删除满足条件的元素。
  * 备注：
  * 如果队列中符合条件的元素不足 remove_size，移除最后一个符合条件的元素后返回 RET_OK。
  * 如果队列中符合条件的元素大于 remove_size，在队列中移除 remove_size 个元素后返回 RET_OK。
  * remove_size 为负数则会移除所有符合条件的元素。
  * @param {slist_t*} slist 单向链表对象。
- * @param {tk_compare_t} compare 元素比较函数。
  * @param {void*} ctx 比较函数的上下文。
+ * @param {tk_compare_t} compare 元素比较函数。
  * @param {int32_t} remove_size 删除个数。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t slist_remove_ex(slist_t* slist, tk_compare_t compare, void* ctx, int32_t remove_size);
-
-#define slist_remove_with_compare(slist, ctx, compare, remove_size) \
-  slist_remove_ex(slist, compare, ctx, remove_size)
+ret_t slist_remove_with_compare(slist_t* slist, void* ctx, tk_compare_t compare,
+                                int32_t remove_size);
 
 /**
  * @method slist_remove_all
@@ -227,7 +191,7 @@ ret_t slist_foreach(slist_t* slist, tk_visit_t visit, void* ctx);
  * 弹出最后一个元素。
  * @param {slist_t*} slist 单向链表对象。
  *
- * @return {void*} 成功返回最后一个元素，失败返回NULL。
+ * @return {ret_t} 成功返回最后一个元素，失败返回NULL。
  */
 void* slist_tail_pop(slist_t* slist);
 
@@ -236,36 +200,9 @@ void* slist_tail_pop(slist_t* slist);
  * 弹出第一个元素。
  * @param {slist_t*} slist 单向链表对象。
  *
- * @return {void*} 成功返回最后一个元素，失败返回NULL。
+ * @return {ret_t} 成功返回最后一个元素，失败返回NULL。
  */
 void* slist_head_pop(slist_t* slist);
-
-/**
- * @method slist_tail
- * 返回最后一个元素。
- * @param {slist_t*} slist 单向链表对象。
- *
- * @return {void*} 成功返回最后一个元素，失败返回NULL。
- */
-void* slist_tail(slist_t* slist);
-
-/**
- * @method slist_head
- * 返回第一个元素。
- * @param {slist_t*} slist 单向链表对象。
- *
- * @return {void*} 成功返回最后一个元素，失败返回NULL。
- */
-void* slist_head(slist_t* slist);
-
-/**
- * @method slist_is_empty
- * 列表是否为空。
- * @param {slist_t*} slist 单向链表对象。
- *
- * @return {bool_t} 返回 TRUE 表示空列表，返回 FALSE 表示列表有数据。
- */
-bool_t slist_is_empty(slist_t* slist);
 
 /**
  * @method slist_size
@@ -287,25 +224,6 @@ int32_t slist_size(slist_t* slist);
 int32_t slist_count(slist_t* slist, void* ctx);
 
 /**
- * @method slist_reverse
- * 反转链表。
- * @param {slist_t*} slist 单向链表对象。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t slist_reverse(slist_t* slist);
-
-/**
- * @method slist_set_node_allocator
- * 设置节点内存分配器。
- * @param {slist_t*} slist 单向链表对象。
- * @param {mem_allocator_t*} allocator 内存分配器对象。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t slist_set_node_allocator(slist_t* slist, mem_allocator_t* allocator);
-
-/**
  * @method slist_deinit
  * 清除单向链表中的元素。
  * @param {slist_t*} slist 单向链表对象。
@@ -320,6 +238,7 @@ ret_t slist_deinit(slist_t* slist);
  * @param {slist_t*} slist 单向链表对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ *
  */
 ret_t slist_destroy(slist_t* slist);
 

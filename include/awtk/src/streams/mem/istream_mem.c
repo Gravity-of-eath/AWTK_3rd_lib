@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on memory
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,12 +35,10 @@ static int32_t tk_istream_mem_read(tk_istream_t* stream, uint8_t* buff, uint32_t
   }
 
   if (size > 0) {
-    memcpy(buff, ((uint8_t*)istream_mem->buff) + istream_mem->cursor, size);
+    memcpy(buff, istream_mem->buff + istream_mem->cursor, size);
     istream_mem->cursor += size;
-#ifdef TK_IS_PC
   } else {
     errno = EIO;
-#endif /*TK_IS_PC*/
   }
 
   return size;
@@ -108,7 +106,7 @@ static const object_vtable_t s_tk_istream_mem_vtable = {.type = "tk_istream_mem"
                                                         .get_prop = tk_istream_mem_get_prop,
                                                         .set_prop = tk_istream_mem_set_prop};
 
-tk_istream_t* tk_istream_mem_create(void* buff, uint32_t size, uint32_t packet_size,
+tk_istream_t* tk_istream_mem_create(uint8_t* buff, uint32_t size, uint32_t packet_size,
                                     bool_t own_the_buff) {
   tk_object_t* obj = NULL;
   tk_istream_mem_t* istream_mem = NULL;
@@ -130,8 +128,4 @@ tk_istream_t* tk_istream_mem_create(void* buff, uint32_t size, uint32_t packet_s
   TK_ISTREAM(obj)->wait_for_data = tk_istream_mem_wait_for_data;
 
   return TK_ISTREAM(obj);
-}
-
-tk_istream_t* tk_istream_mem_create_simple(void* buff, uint32_t size) {
-  return tk_istream_mem_create(buff, size, 0, FALSE);
 }

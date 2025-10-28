@@ -419,24 +419,24 @@ static ret_t line_chart_on_event(widget_t *widget, event_t *e)
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(widget != NULL && line_chart != NULL, RET_BAD_PARAMS);
 
-  if (e->type == EVT_TOUCH_DOWN && widget_get_prop_bool(widget, "touch_down", FALSE))
-  {
-    printf("line_chart_on_event EVT_TOUCH_DOWN\n");
-    return RET_STOP;
-  }
-  else if (e->type == EVT_TOUCH_MOVE && widget_get_prop_bool(widget, "touch_move", FALSE))
-  {
-    printf("line_chart_on_event EVT_TOUCH_MOVE\n");
-    return RET_STOP;
-  }
-  else if (e->type == EVT_TOUCH_UP && widget_get_prop_bool(widget, "touch_up", FALSE))
-  {
-    printf("line_chart_on_event EVT_TOUCH_UP\n");
-    return RET_STOP;
-  }
-  else
-  {
-  }
+  // if (e->type == EVT_TOUCH_DOWN && widget_get_prop_bool(widget, "touch_down", FALSE))
+  // {
+  //   printf("line_chart_on_event EVT_TOUCH_DOWN\n");
+  //   return RET_STOP;
+  // }
+  // else if (e->type == EVT_TOUCH_MOVE && widget_get_prop_bool(widget, "touch_move", FALSE))
+  // {
+  //   printf("line_chart_on_event EVT_TOUCH_MOVE\n");
+  //   return RET_STOP;
+  // }
+  // else if (e->type == EVT_TOUCH_UP && widget_get_prop_bool(widget, "touch_up", FALSE))
+  // {
+  //   printf("line_chart_on_event EVT_TOUCH_UP\n");
+  //   return RET_STOP;
+  // }
+  // else
+  // {
+  // }
 
   return RET_OK;
 }
@@ -446,24 +446,24 @@ static ret_t on_event_before_children(widget_t *widget, event_t *e)
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(widget != NULL && line_chart != NULL, RET_BAD_PARAMS);
 
-  if (e->type == EVT_TOUCH_DOWN && widget_get_prop_bool(widget, "touch_down_b", FALSE))
-  {
-    printf("on_event_before_children EVT_TOUCH_DOWN\n");
-    return RET_STOP;
-  }
-  else if (e->type == EVT_TOUCH_MOVE && widget_get_prop_bool(widget, "touch_move_b", FALSE))
-  {
-    printf("on_event_before_children EVT_TOUCH_MOVE\n");
-    return RET_STOP;
-  }
-  else if (e->type == EVT_TOUCH_UP && widget_get_prop_bool(widget, "touch_up_b", FALSE))
-  {
-    printf("on_event_before_children EVT_TOUCH_UP\n");
-    return RET_STOP;
-  }
-  else
-  {
-  }
+  // if (e->type == EVT_TOUCH_DOWN && widget_get_prop_bool(widget, "touch_down_b", FALSE))
+  // {
+  //   printf("on_event_before_children EVT_TOUCH_DOWN\n");
+  //   return RET_STOP;
+  // }
+  // else if (e->type == EVT_TOUCH_MOVE && widget_get_prop_bool(widget, "touch_move_b", FALSE))
+  // {
+  //   printf("on_event_before_children EVT_TOUCH_MOVE\n");
+  //   return RET_STOP;
+  // }
+  // else if (e->type == EVT_TOUCH_UP && widget_get_prop_bool(widget, "touch_up_b", FALSE))
+  // {
+  //   printf("on_event_before_children EVT_TOUCH_UP\n");
+  //   return RET_STOP;
+  // }
+  // else
+  // {
+  // }
 
   return RET_OK;
 }

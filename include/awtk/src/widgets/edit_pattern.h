@@ -21,7 +21,7 @@ static bool_t edit_pattern_is_valid(widget_t* widget, wchar_t sep, uint32_t sep_
   }
 
   ps = text->str;
-  pe = wcschr(ps, sep);
+  pe = wcs_chr(ps, sep);
 
   do {
     int v = 0;
@@ -41,7 +41,7 @@ static bool_t edit_pattern_is_valid(widget_t* widget, wchar_t sep, uint32_t sep_
 
     i++;
     ps = pe + 1;
-    pe = wcschr(ps, sep);
+    pe = wcs_chr(ps, sep);
     if (pe == NULL) {
       pe = ps + wcslen(ps);
     }
@@ -70,7 +70,7 @@ static ret_t edit_pattern_fix_ex(widget_t* widget, bool_t strict, const char* de
   }
 
   ps = text->str;
-  pe = wcschr(ps, sep);
+  pe = wcs_chr(ps, sep);
 
   do {
     int v = 0;
@@ -93,7 +93,7 @@ static ret_t edit_pattern_fix_ex(widget_t* widget, bool_t strict, const char* de
     i++;
     pd = p;
     ps = pe + 1;
-    pe = wcschr(ps, sep);
+    pe = wcs_chr(ps, sep);
     if (pe == NULL) {
       pe = ps + wcslen(ps);
     }
@@ -157,8 +157,8 @@ static bool_t edit_pattern_is_valid_char(widget_t* widget, wchar_t c, wchar_t se
           return FALSE;
         } else if (text->str[cursor] == sep) {
           /*输入到下一个part*/
-          text_edit_set_cursor(edit->model, cursor + 1);
           if (text->str[cursor + 1] == sep || text->str[cursor + 1] == 0) {
+            text_edit_set_cursor(edit->model, cursor + 1);
           } else {
             text_edit_set_select(edit->model, cursor + 1, cursor + 2);
           }

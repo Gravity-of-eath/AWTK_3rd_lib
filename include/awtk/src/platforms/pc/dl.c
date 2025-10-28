@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dynamic libaray api
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -97,7 +97,6 @@ void* tk_dl_sym(tk_dl_t* dl, const char* name) {
 }
 
 const char* tk_dl_error(void) {
-  log_debug("GetLastError:%u\n", GetLastError());
   return NULL;
 }
 
@@ -110,23 +109,5 @@ ret_t tk_dl_close(tk_dl_t* dl) {
   return RET_OK;
 }
 #else
-struct _tk_dl_t {
-  void* h;
-};
-
-tk_dl_t* tk_dl_open(const char* filename) {
-  return NULL;
-}
-
-void* tk_dl_sym(tk_dl_t* dl, const char* name) {
-  return NULL;
-}
-
-const char* tk_dl_error(void) {
-  return NULL;
-}
-
-ret_t tk_dl_close(tk_dl_t* dl) {
-  return RET_NOT_IMPL;
-}
+#error "not support platform"
 #endif

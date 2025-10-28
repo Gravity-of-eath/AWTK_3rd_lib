@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger server
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -91,7 +91,7 @@ ret_t debugger_server_tcp_start_async(void) {
 
 ret_t debugger_server_tcp_deinit(void) {
   return_value_if_fail(s_server_sock >= 0, RET_BAD_PARAMS);
-  tk_socket_close(s_server_sock);
+  socket_close(s_server_sock);
   s_server_sock = -1;
 
   if (s_accept_thread != NULL) {

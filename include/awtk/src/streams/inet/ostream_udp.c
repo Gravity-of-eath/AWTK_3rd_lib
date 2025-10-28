@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on socket
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,11 +32,11 @@ static int32_t tk_ostream_udp_write(tk_ostream_t* stream, const uint8_t* buff, u
   tk_ostream_udp_t* ostream_udp = TK_OSTREAM_UDP(stream);
   struct sockaddr* addr = (struct sockaddr*)&(ostream_udp->addr);
 
-  ret = tk_socket_sendto(ostream_udp->sock, buff, max_size, 0, addr, sizeof(ostream_udp->addr));
+  ret = sendto(ostream_udp->sock, buff, max_size, 0, addr, sizeof(ostream_udp->addr));
 
   if (ret <= 0) {
-    if (tk_socket_last_io_has_error()) {
-      perror("tk_socket_send_to");
+    if (socket_last_io_has_error()) {
+      perror("send to");
       ostream_udp->is_broken = TRUE;
     }
   }
@@ -90,7 +90,7 @@ ret_t tk_ostream_udp_set_target_with_addr(tk_ostream_t* stream, struct sockaddr_
 ret_t tk_ostream_udp_set_target_with_host(tk_ostream_t* stream, const char* host, int port) {
   struct sockaddr_in addr_in;
   return_value_if_fail(stream != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(tk_socket_resolve(host, port, &addr_in) != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(socket_resolve(host, port, &addr_in) != NULL, RET_BAD_PARAMS);
 
   return tk_ostream_udp_set_target_with_addr(stream, addr_in);
 }

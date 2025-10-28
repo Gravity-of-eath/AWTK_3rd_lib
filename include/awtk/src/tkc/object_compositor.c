@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  compositor two objects into one
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -40,6 +40,10 @@ static ret_t object_compositor_on_destroy(tk_object_t* obj) {
   TK_OBJECT_UNREF(o->obj2);
 
   return RET_OK;
+}
+
+static int32_t object_compositor_compare(tk_object_t* obj, tk_object_t* other) {
+  return strcmp(obj->name, other->name);
 }
 
 static ret_t object_compositor_remove_prop(tk_object_t* obj, const char* name) {
@@ -105,14 +109,14 @@ static ret_t object_compositor_exec(tk_object_t* obj, const char* name, const ch
 }
 
 static const object_vtable_t s_object_compositor_vtable = {
-    .type = OBJECT_COMPOSITOR_TYPE,
-    .desc = OBJECT_COMPOSITOR_TYPE,
+    .type = "object_compositor",
+    .desc = "object_compositor",
     .size = sizeof(object_compositor_t),
     .is_collection = FALSE,
     .on_destroy = object_compositor_on_destroy,
     .exec = object_compositor_exec,
     .can_exec = object_compositor_can_exec,
-    .compare = tk_object_compare_name_without_nullptr,
+    .compare = object_compositor_compare,
     .get_prop = object_compositor_get_prop,
     .set_prop = object_compositor_set_prop,
     .remove_prop = object_compositor_remove_prop,

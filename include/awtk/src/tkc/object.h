@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  reference count object
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,7 +23,6 @@
 #define TK_OBJECT_H
 
 #include "tkc/str.h"
-#include "tkc/darray.h"
 #include "tkc/emitter.h"
 
 BEGIN_C_DECLS
@@ -38,36 +37,24 @@ typedef ret_t (*tk_object_remove_prop_t)(tk_object_t* obj, const char* name);
 typedef ret_t (*tk_object_get_prop_t)(tk_object_t* obj, const char* name, value_t* v);
 typedef ret_t (*tk_object_foreach_prop_t)(tk_object_t* obj, tk_visit_t on_prop, void* ctx);
 typedef ret_t (*tk_object_set_prop_t)(tk_object_t* obj, const char* name, const value_t* v);
-typedef ret_t (*tk_object_copy_props_t)(tk_object_t* obj, tk_object_t* src, bool_t overwrite);
-typedef ret_t (*tk_object_clear_props_t)(tk_object_t* obj);
-typedef value_t* (*tk_object_find_prop_t)(tk_object_t* obj, tk_compare_t cmp, const void* ctx);
-typedef ret_t (*tk_object_find_props_t)(tk_object_t* obj, tk_compare_t cmp, const void* ctx,
-                                        darray_t* matched);
 typedef bool_t (*tk_object_can_exec_t)(tk_object_t* obj, const char* name, const char* args);
 typedef ret_t (*tk_object_exec_t)(tk_object_t* obj, const char* name, const char* args);
-typedef ret_t (*tk_object_exec_ex_t)(tk_object_t* obj, const char* name, const char* args,
-                                     value_t* result);
 typedef tk_object_t* (*tk_object_clone_t)(tk_object_t* obj);
 
 struct _tk_object_vtable_t {
   const char* type;
   const char* desc;
-  uint32_t size;
-  bool_t is_collection;
+  uint32_t size : 28;
+  uint32_t is_collection : 1;
   tk_object_on_destroy_t on_destroy;
 
   tk_object_compare_t compare;
   tk_object_get_prop_t get_prop;
   tk_object_set_prop_t set_prop;
-  tk_object_copy_props_t copy_props;
   tk_object_remove_prop_t remove_prop;
   tk_object_foreach_prop_t foreach_prop;
-  tk_object_clear_props_t clear_props;
-  tk_object_find_prop_t find_prop;
-  tk_object_find_props_t find_props;
   tk_object_can_exec_t can_exec;
   tk_object_exec_t exec;
-  tk_object_exec_ex_t exec_ex;
   tk_object_clone_t clone;
 };
 
@@ -98,8 +85,8 @@ struct _tk_object_t {
   char* name;
 
   /*private*/
+  uint32_t visiting : 1;
   const object_vtable_t* vt;
-  uint32_t visiting;
 };
 
 /**
@@ -224,9 +211,9 @@ ret_t tk_object_set_name(tk_object_t* obj, const char* name);
  * @param {tk_object_t*} obj object对象。
  * @param {tk_object_t*} other 比较的object对象。
  *
- * @return {int32_t} 返回比较结果。
+ * @return {int} 返回比较结果。
  */
-int32_t tk_object_compare(tk_object_t* obj, tk_object_t* other);
+int tk_object_compare(tk_object_t* obj, tk_object_t* other);
 
 /**
  * @method tk_object_get_prop
@@ -348,7 +335,7 @@ ret_t tk_object_remove_prop(tk_object_t* obj, const char* name);
  * @annotation ["scriptable"]
  * @param {tk_object_t*} obj object对象。
  * @param {const char*} name 属性的名称。
- * @param {const value_t*} value 属性的值。
+ * @param {value_t*} value 属性的值。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -366,19 +353,6 @@ ret_t tk_object_set_prop(tk_object_t* obj, const char* name, const value_t* valu
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t tk_object_set_prop_str(tk_object_t* obj, const char* name, const char* value);
-
-/**
- * @method tk_object_set_prop_str_with_format
- * 设置指定属性的字符串类型的值。
- *
- * @param {tk_object_t*} obj object对象。
- * @param {const char*} name 属性的名称。
- * @param {const char*} format 格式字符串。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t tk_object_set_prop_str_with_format(tk_object_t* obj, const char* name, const char* format,
-                                         ...);
 
 /**
  * @method tk_object_set_prop_pointer
@@ -561,19 +535,6 @@ bool_t tk_object_can_exec(tk_object_t* obj, const char* name, const char* args);
 ret_t tk_object_exec(tk_object_t* obj, const char* name, const char* args);
 
 /**
- * @method tk_object_exec_ex
- * 执行指定的命令。
- *
- * @param {tk_object_t*} obj object对象。
- * @param {const char*} name 命令的名称。
- * @param {const char*} args 命令的参数。
- * @param {value_t*} result 执行命令的结果。
- * 
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t tk_object_exec_ex(tk_object_t* obj, const char* name, const char* args, value_t* result);
-
-/**
  * @method tk_object_notify_changed
  * 触发EVT_PROPS_CHANGED事件。
  *
@@ -690,7 +651,7 @@ float_t tk_object_get_prop_float_by_path(tk_object_t* obj, const char* path, flo
  * @annotation ["scriptable"]
  * @param {tk_object_t*} obj object对象。
  * @param {const char*} path 属性的path。
- * @param {const value_t*} value 属性的值。
+ * @param {value_t*} value 属性的值。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1001,50 +962,6 @@ uint64_t tk_object_get_prop_uint64(tk_object_t* obj, const char* name, uint64_t 
 ret_t tk_object_set_prop_uint64(tk_object_t* obj, const char* name, uint64_t value);
 
 /**
- * @method tk_object_clear_props
- * 清除全部属性。
- *
- * @annotation ["scriptable"]
- * @param {tk_object_t*} obj 对象。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t tk_object_clear_props(tk_object_t* obj);
-
-/**
- * @method tk_object_find_prop
- * 查找满足条件的属性，并返回它的值。
- *
- * @param {tk_object_t*} obj 对象。
- * @param {tk_compare_t} cmp 比较函数。
- * @param {const void*} data 要比较的数据。
- *
- * @return {value_t*} 返回属性的值。
- *
- */
-value_t* tk_object_find_prop(tk_object_t* obj, tk_compare_t cmp, const void* data);
-
-/**
- * @method tk_object_find_props
- * 查找全部满足条件的属性。
- *
- * ```c
- * darray_t matched;
- * darray_init(&matched, 0, NULL, NULL);
- * tk_object_find_props(obj, my_cmp, my_data, &matched);
- * ...
- * darray_deinit(&matched);
- * ```
- * @param {tk_object_t*} obj 对象。
- * @param {tk_compare_t} cmp 比较函数。
- * @param {const void*} data 要比较的数据。
- * @param {darray_t*} matched 返回满足条件的属性。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t tk_object_find_props(tk_object_t* obj, tk_compare_t cmp, const void* data, darray_t* matched);
-
-/**
  * @method tk_object_to_json
  * 转换成JSON字符串。
  *
@@ -1056,8 +973,7 @@ ret_t tk_object_find_props(tk_object_t* obj, tk_compare_t cmp, const void* data,
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t tk_object_to_json(tk_object_t* obj, str_t* json, uint32_t indent, uint32_t level,
-                        bool_t oneline);
+ret_t tk_object_to_json(tk_object_t* obj, str_t* json, uint32_t indent, uint32_t level, bool_t oneline);
 
 /**
  * @method tk_object_get_child_object
@@ -1072,46 +988,15 @@ ret_t tk_object_to_json(tk_object_t* obj, str_t* json, uint32_t indent, uint32_t
  */
 tk_object_t* tk_object_get_child_object(tk_object_t* obj, const char* path, const char** next_path);
 
-/**
- * @method tk_object_is_instance_of
- * 检查对象是否是指定类型的实例。
- * ```
- * if(tk_object_is_instance_of(obj, OBJECT_ARRAY_TYPE)) {
- * }
- * ```
- * @param {tk_object_t*} obj object对象。
- * @param {const char*} type 类型。
- * 
- * @return {bool_t} 返回TRUE表示是指定类型的实例，否则表示不是。
- */
-bool_t tk_object_is_instance_of(tk_object_t* obj, const char* type);
-
-/* private */
-
-/**
- * @method tk_object_compare_name_without_nullptr
- * @annotation ["static"]
- * @export none
- * 根据名称比较两个对象，如果两个对象的名称都为NULL，则比较两个对象的地址。
- *
- * @param {tk_object_t*} obj object对象。
- * @param {tk_object_t*} other 比较的object对象。
- *
- * @return {int32_t} 返回比较结果。
- */
-int32_t tk_object_compare_name_without_nullptr(tk_object_t* obj, tk_object_t* other);
-
 #define TK_OBJECT(obj) ((tk_object_t*)(obj))
 
 #define TK_OBJECT_REF(obj) tk_object_ref((tk_object_t*)(obj))
 
-#define TK_OBJECT_UNREF(obj)                \
-  do {                                      \
-    if ((obj) != NULL) {                    \
-      tk_object_unref((tk_object_t*)(obj)); \
-      (obj) = NULL;                         \
-    }                                       \
-  } while (0)
+#define TK_OBJECT_UNREF(obj)              \
+  if ((obj) != NULL) {                    \
+    tk_object_unref((tk_object_t*)(obj)); \
+    (obj) = NULL;                         \
+  }
 
 /**
  * @enum object_cmd_t
@@ -1207,37 +1092,7 @@ int32_t tk_object_compare_name_without_nullptr(tk_object_t* obj, tk_object_t* ot
  */
 #define TK_OBJECT_PROP_CHECKED "checked"
 
-/**
- * @const TK_OBJECT_PROP_SELECTED_INDEX
- * 选中的索引。
- */
-#define TK_OBJECT_PROP_SELECTED_INDEX "selected_index"
-
 #include "tkc/object_compat.h"
-
-/**
- * @enum tk_object_life_t
- * @prefix TK_OBJECT_LIFE_
- * @annotation ["scriptable"]
- * 对象生命周期的定义。如果需要保存对象的实例，如何决定对象的生命周期。 
- */
-typedef enum _tk_object_life_t {
-  /**
-   * @const TK_OBJECT_LIFE_NONE
-   * 不关心对象的生命周期(假设对象的生命周期长于当前的上下文)。
-   */
-  TK_OBJECT_LIFE_NONE,
-  /**
-   * @const TK_OBJECT_LIFE_OWN
-   * 拥有对象的生命周期。当前上下文开始时，*不会* 增加对象的引用计数。当前上下文结束时，自动减少(unref)对象引用计数。
-   */
-  TK_OBJECT_LIFE_OWN,
-  /**
-   * @const TK_OBJECT_LIFE_HOLD
-   * 持有对象的生命周期。当前上下文开始时，增加对象的引用计数。当前上下文结束时，自动减少(unref)对象引用计数。
-   */
-  TK_OBJECT_LIFE_HOLD
-} tk_object_life_t;
 
 END_C_DECLS
 

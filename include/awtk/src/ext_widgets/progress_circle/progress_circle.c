@@ -1,9 +1,9 @@
-﻿/**
+/**
  * File:   progress_circle.c
  * Author: AWTK Develop Team
  * Brief:  progress_circle
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,47 +25,85 @@
 #include "base/image_manager.h"
 #include "progress_circle/progress_circle.h"
 
-static float_t progress_circle_get_radius(widget_t* widget);
 static ret_t progress_circle_on_paint_background(widget_t* widget, canvas_t* c) {
-  float_t r = 0;
+  bitmap_t img;
+  style_t* style = widget->astyle;
+  color_t trans = color_init(0, 0, 0, 0);
+  vgcanvas_t* vg = canvas_get_vgcanvas(c);
   progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  return_value_if_fail(progress_circle != NULL, RET_BAD_PARAMS);
+  color_t color = style_get_color(style, STYLE_ID_BG_COLOR, trans);
+  const char* image_name = style_get_str(style, STYLE_ID_BG_IMAGE, NULL);
+  bool_t has_image = image_name && widget_load_image(widget, image_name, &img) == RET_OK;
 
-  r = progress_circle_get_radius(widget);
-  return widget_draw_arc_at_center(widget, c, TRUE, progress_circle->line_width, 0, M_PI * 2,
-                                   progress_circle->counter_clock_wise, progress_circle->line_cap,
-                                   r);
-}
+  if (vg != NULL && (has_image || color.rgba.a)) {
+    xy_t cx = widget->w / 2;
+    xy_t cy = widget->h / 2;
+    float_t r = tk_min(cx, cy) - progress_circle->line_width / 2;
+    vgcanvas_save(vg);
+    vgcanvas_translate(vg, c->ox, c->oy);
+    vgcanvas_set_stroke_color(vg, color);
+    vgcanvas_set_line_width(vg, progress_circle->line_width);
+    vgcanvas_begin_path(vg);
+    vgcanvas_arc(vg, cx, cy, r, 0, M_PI * 2, FALSE);
+    if (has_image) {
+      vgcanvas_paint(vg, TRUE, &img);
+    } else {
+      vgcanvas_stroke(vg);
+    }
 
-static ret_t progress_circle_update_text(widget_t* widget) {
-  const char* unit = NULL;
-  const char* format = NULL;
-  progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  return_value_if_fail(progress_circle != NULL, RET_BAD_PARAMS);
-
-  unit = widget_get_prop_str(widget, PROGRESS_CIRCLE_PROP_UNIT, NULL);
-  format = progress_circle->format ? progress_circle->format : "%d";
-  widget_set_text_with_double(widget, format, progress_circle->value);
-  if (unit != NULL) {
-    wstr_append_utf8(&(widget->text), unit);
+    vgcanvas_restore(vg);
   }
 
   return RET_OK;
 }
 
-static float_t progress_circle_value_to_angle(widget_t* widget, float_t value) {
+static ret_t progress_circle_update_text(widget_t* widget) {
+  char format[TK_NUM_MAX_LEN + 1];
+  char str[TK_NUM_MAX_LEN + 1];
   progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  return_value_if_fail(progress_circle != NULL, 0);
+  return_value_if_fail(progress_circle != NULL, RET_BAD_PARAMS);
 
-  return tk_value_to_angle(value, 0, progress_circle->max, progress_circle->start_angle,
-                           progress_circle->start_angle + 360, progress_circle->counter_clock_wise);
+  const char* unit = widget_get_prop_str(widget, PROGRESS_CIRCLE_PROP_UNIT, NULL);
+  if (progress_circle->format == NULL) {
+    const char* temp = unit != NULL ? unit : "";
+    tk_snprintf(format, TK_NUM_MAX_LEN, "%u%s", (uint32_t)progress_circle->value, temp);
+  } else {
+    uint32_t len = tk_strlen(progress_circle->format);
+    tk_strncpy_s(format, TK_NUM_MAX_LEN, progress_circle->format, len);
+  }
+
+  if (strchr(format, 'd') != NULL || strchr(format, 'x') != NULL || strchr(format, 'X') != NULL) {
+    tk_snprintf(str, TK_NUM_MAX_LEN, format, tk_roundi(progress_circle->value));
+  } else {
+    tk_snprintf(str, TK_NUM_MAX_LEN, format, progress_circle->value);
+  }
+
+  return widget_set_text_utf8(widget, str);
+}
+
+static float_t progress_circle_value_to_angle(widget_t* widget, float_t value) {
+  float_t end_angle = 0;
+  progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
+  bool_t ccw = progress_circle->counter_clock_wise;
+  float_t start_angle = TK_D2R(progress_circle->start_angle);
+  float_t angle = (M_PI * 2 * value) / progress_circle->max;
+
+  if (ccw) {
+    end_angle = start_angle - angle + M_PI * 2;
+    if (fabs(end_angle - start_angle) < 0.001f) {
+      end_angle = start_angle + 0.001f;
+    }
+  } else {
+    end_angle = start_angle + angle;
+  }
+
+  return end_angle;
 }
 
 static float_t progress_circle_get_radius(widget_t* widget) {
   xy_t cx = widget->w / 2;
   xy_t cy = widget->h / 2;
   progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  ENSURE(progress_circle);
 
   return tk_min(cx, cy) - progress_circle->line_width / 2;
 }
@@ -74,7 +112,6 @@ rect_t progress_circle_calc_text_dirty_rect(widget_t* widget) {
   rect_t r = {0, 0, 0, 0};
   canvas_t* c = widget_get_canvas(widget);
   progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  ENSURE(progress_circle);
 
   if (widget->w < 1 || widget->h < 1) {
     return r;
@@ -107,7 +144,6 @@ rect_t progress_circle_calc_line_dirty_rect(widget_t* widget, float_t old_value,
   point_t start_p = {0, 0};
   point_t end_p = {0, 0};
   progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  ENSURE(progress_circle);
   float_t line_width = progress_circle->line_width;
 
   start_angle = progress_circle_value_to_angle(widget, old_value);
@@ -123,21 +159,22 @@ rect_t progress_circle_calc_line_dirty_rect(widget_t* widget, float_t old_value,
     end_angle = t;
   }
 
-  if (!progress_circle->is_redraw && (end_angle - start_angle) < (M_PI / 2)) {
+  if ((end_angle - start_angle) < (M_PI / 2)) {
     xy_t cx = widget->w / 2;
     xy_t cy = widget->h / 2;
+    int32_t delta = line_width / 2 + 1;
     float_t r = progress_circle_get_radius(widget);
 
-    start_p.y = tk_roundi(r * sin(start_angle));
-    start_p.x = tk_roundi(r * cos(start_angle));
+    start_p.y = round(r * sin(start_angle));
+    start_p.x = round(r * cos(start_angle));
 
-    end_p.y = tk_roundi(r * sin(end_angle));
-    end_p.x = tk_roundi(r * cos(end_angle));
+    end_p.y = round(r * sin(end_angle));
+    end_p.x = round(r * cos(end_angle));
 
-    min_x = tk_min(start_p.x, end_p.x) - line_width;
-    max_x = tk_max(start_p.x, end_p.x) + line_width;
-    min_y = tk_min(start_p.y, end_p.y) - line_width;
-    max_y = tk_max(start_p.y, end_p.y) + line_width;
+    min_x = tk_min(start_p.x, end_p.x) - delta;
+    max_x = tk_max(start_p.x, end_p.x) + delta;
+    min_y = tk_min(start_p.y, end_p.y) - delta;
+    max_y = tk_max(start_p.y, end_p.y) + delta;
     if (start_p.x > 0 && end_p.x < 0) {
       /*跨越第1和2象限*/
       max_y = tk_max_int(r, max_y);
@@ -158,7 +195,6 @@ rect_t progress_circle_calc_line_dirty_rect(widget_t* widget, float_t old_value,
     rect.x += cx;
     rect.y += cy;
   } else {
-    progress_circle->is_redraw = FALSE;
     rect = rect_init(0, 0, widget->w, widget->h);
   }
 
@@ -182,19 +218,10 @@ static ret_t progress_circle_on_paint_self(widget_t* widget, canvas_t* c) {
   if (vg != NULL && (has_image || color.rgba.a)) {
     xy_t cx = widget->w / 2;
     xy_t cy = widget->h / 2;
-    float_t end_angle = 0.0f;
     float_t r = progress_circle_get_radius(widget);
     bool_t ccw = progress_circle->counter_clock_wise;
     float_t start_angle = TK_D2R(progress_circle->start_angle);
-
-    if (tk_fequal(progress_circle->value, 0)) {
-      end_angle = start_angle;
-    } else {
-      end_angle = progress_circle_value_to_angle(widget, progress_circle->value);
-      if (progress_circle->value == progress_circle->max) {
-        end_angle = start_angle + M_PI * 2;
-      }
-    }
+    float_t end_angle = progress_circle_value_to_angle(widget, progress_circle->value);
 
     vgcanvas_save(vg);
     vgcanvas_translate(vg, c->ox, c->oy);
@@ -208,37 +235,16 @@ static ret_t progress_circle_on_paint_self(widget_t* widget, canvas_t* c) {
       vgcanvas_set_line_cap(vg, VGCANVAS_LINE_CAP_BUTT);
     }
     vgcanvas_begin_path(vg);
-
     if (end_angle > start_angle) {
-      float max_r = tk_min(widget->w, widget->h) / 2;
-      if (progress_circle->line_width > max_r / 2) {
-        //画扇形
-        vgcanvas_set_fill_color(vg, color);
-        vgcanvas_move_to(vg, cx, cy);
-        vgcanvas_line_to(vg, cx + max_r * cos(start_angle), cy + max_r * sin(start_angle));
-        vgcanvas_arc(vg, cx, cy, max_r, start_angle, end_angle, ccw);
-        vgcanvas_close_path(vg);
-
-        if (has_image) {
-          vgcanvas_paint(vg, FALSE, &img);
-        } else {
-          vgcanvas_fill(vg);
-        }
+      vgcanvas_arc(vg, cx, cy, r, start_angle, end_angle, ccw);
+      if (has_image) {
+        vgcanvas_paint(vg, TRUE, &img);
       } else {
-        vgcanvas_arc(vg, cx, cy, r, start_angle, end_angle, ccw);
-        if (has_image) {
-          vgcanvas_paint(vg, TRUE, &img);
-        } else {
-          vgcanvas_stroke(vg);
-        }
+        vgcanvas_stroke(vg);
       }
     }
 
     vgcanvas_restore(vg);
-    progress_circle->last_dirty_rect =
-        rect_init(progress_circle->dirty_rect.x, progress_circle->dirty_rect.y,
-                  progress_circle->dirty_rect.w, progress_circle->dirty_rect.h);
-    progress_circle->dirty_rect = rect_init(0, 0, 0, 0);
   }
 
   color = style_get_color(style, STYLE_ID_TEXT_COLOR, trans);
@@ -263,10 +269,7 @@ ret_t progress_circle_set_value(widget_t* widget, float_t value) {
 
     if (widget_dispatch(widget, (event_t*)&evt) != RET_STOP) {
       rect_t r = progress_circle_calc_line_dirty_rect(widget, old_value, value);
-      rect_merge(&progress_circle->dirty_rect, &r);
-      rect_merge(&r, &progress_circle->last_dirty_rect);
-
-      widget_invalidate_force(widget, &r);
+      widget_invalidate(widget, &r);
 
       progress_circle->value = value;
       evt.e.type = EVT_VALUE_CHANGED;
@@ -380,53 +383,27 @@ static ret_t progress_circle_get_prop(widget_t* widget, const char* name, value_
 }
 
 static ret_t progress_circle_set_prop(widget_t* widget, const char* name, const value_t* v) {
-  progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  return_value_if_fail(progress_circle != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_VALUE)) {
     return progress_circle_set_value(widget, value_float(v));
   } else if (tk_str_eq(name, WIDGET_PROP_MAX)) {
-    progress_circle->is_redraw = TRUE;
     return progress_circle_set_max(widget, value_int(v));
   } else if (tk_str_eq(name, WIDGET_PROP_FORMAT)) {
     return progress_circle_set_format(widget, value_str(v));
   } else if (tk_str_eq(name, WIDGET_PROP_SHOW_TEXT)) {
     return progress_circle_set_show_text(widget, value_bool(v));
   } else if (tk_str_eq(name, PROGRESS_CIRCLE_PROP_COUNTER_CLOCK_WISE)) {
-    progress_circle->is_redraw = TRUE;
     return progress_circle_set_counter_clock_wise(widget, value_bool(v));
   } else if (tk_str_eq(name, PROGRESS_CIRCLE_PROP_LINE_WIDTH)) {
-    progress_circle->is_redraw = TRUE;
     return progress_circle_set_line_width(widget, value_int(v));
   } else if (tk_str_eq(name, PROGRESS_CIRCLE_PROP_START_ANGLE)) {
-    progress_circle->is_redraw = TRUE;
     return progress_circle_set_start_angle(widget, value_int(v));
   } else if (tk_str_eq(name, PROGRESS_CIRCLE_PROP_LINE_CAP)) {
-    progress_circle->is_redraw = TRUE;
     return progress_circle_set_line_cap(widget, value_str(v));
-  } else if (tk_str_eq(name, WIDGET_PROP_W)) {
-    progress_circle->is_redraw = TRUE;
-    progress_circle->dirty_rect = rect_init(0, 0, value_int(v), widget->h);
-  } else if (tk_str_eq(name, WIDGET_PROP_H)) {
-    progress_circle->is_redraw = TRUE;
-    progress_circle->dirty_rect = rect_init(0, 0, widget->w, value_int(v));
   }
 
   return RET_NOT_FOUND;
-}
-
-static ret_t progress_circle_init(widget_t* widget) {
-  progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
-  return_value_if_fail(progress_circle != NULL, RET_BAD_PARAMS);
-
-  progress_circle->max = 100;
-  progress_circle->line_width = 8;
-  progress_circle->start_angle = -90;
-  progress_circle->show_text = TRUE;
-  progress_circle->counter_clock_wise = FALSE;
-  progress_circle->dirty_rect = rect_init(0, 0, widget->w, widget->h);
-  progress_circle_set_line_cap(widget, VGCANVAS_LINE_CAP_ROUND);
-  return RET_OK;
 }
 
 static const char* s_progress_circle_clone_properties[] = {WIDGET_PROP_VALUE,
@@ -442,7 +419,6 @@ TK_DECL_VTABLE(progress_circle) = {.size = sizeof(progress_circle_t),
                                    .clone_properties = s_progress_circle_clone_properties,
                                    .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                    .create = progress_circle_create,
-                                   .init = progress_circle_init,
                                    .on_paint_self = progress_circle_on_paint_self,
                                    .on_paint_background = progress_circle_on_paint_background,
                                    .on_destroy = progress_circle_on_destroy,
@@ -451,7 +427,15 @@ TK_DECL_VTABLE(progress_circle) = {.size = sizeof(progress_circle_t),
 
 widget_t* progress_circle_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(progress_circle), x, y, w, h);
-  return_value_if_fail(progress_circle_init(widget) == RET_OK, NULL);
+  progress_circle_t* progress_circle = PROGRESS_CIRCLE(widget);
+  return_value_if_fail(progress_circle != NULL, NULL);
+
+  progress_circle->max = 100;
+  progress_circle->line_width = 8;
+  progress_circle->start_angle = -90;
+  progress_circle->show_text = TRUE;
+  progress_circle->counter_clock_wise = FALSE;
+  progress_circle_set_line_cap(widget, VGCANVAS_LINE_CAP_ROUND);
 
   return widget;
 }

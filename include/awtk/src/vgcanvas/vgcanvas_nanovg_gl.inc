@@ -94,9 +94,7 @@ static ret_t vgcanvas_nanovg_destroy_fbo(vgcanvas_t* vgcanvas, framebuffer_objec
 
 static ret_t vgcanvas_nanovg_bind_fbo(vgcanvas_t* vgcanvas, framebuffer_object_t* fbo) {
   NVGcontext* vg = NULL;
-	float anchor_x = 0.0f;
-	float anchor_y = 0.0f;
-  enum NVGorientation orientation = NVG_ORIENTATION_0;
+  system_info_t* info = system_info();
   vgcanvas_nanovg_t* canvas = (vgcanvas_nanovg_t*)vgcanvas;
   NVGLUframebuffer* handle = (NVGLUframebuffer*)fbo->handle;
   
@@ -105,33 +103,30 @@ static ret_t vgcanvas_nanovg_bind_fbo(vgcanvas_t* vgcanvas, framebuffer_object_t
   fbo->online_fbo = nvgluGetCurrFramebuffer();
   fbo->online_dirty_rect = rect_init(vgcanvas->dirty_rect.x, vgcanvas->dirty_rect.y, vgcanvas->dirty_rect.w, vgcanvas->dirty_rect.h);
 
-  fbo->online_w = nvgGetWidth(vg);
-  fbo->online_h = nvgGetHeight(vg);
-
   handle->fbo = fbo->offline_fbo;
   vgcanvas->dirty_rect = rect_init(0, 0, fbo->w, fbo->h);
   nvgluBindFramebuffer(handle);
   if (!fbo->custom_draw_model) {
     glViewport(0, 0, fbo->w * fbo->ratio, fbo->h * fbo->ratio);
     if (!fbo->init) {
+      glScissor(0, 0, fbo->w * fbo->ratio, fbo->h * fbo->ratio);
+      glEnable(GL_SCISSOR_TEST);
       glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+      glDisable(GL_SCISSOR_TEST);
       fbo->init = TRUE;
     }
-#ifdef WITH_FAST_LCD_PORTRAIT
-    orientation = vgcanvas_nanovg_lcd_orientation_to_NVGorientation(system_info()->lcd_orientation);
-#endif
+    nvgBeginFrameEx(vg, fbo->w, fbo->h, fbo->ratio, FALSE, vgcanvas_nanovg_lcd_orientation_to_NVGorientation(info->lcd_orientation));
     nvgSave(vg);
     nvgReset(vg);
-    nvgBeginFrameEx(vg, fbo->w, fbo->h, fbo->ratio, FALSE, orientation);
   }
 
   return RET_OK;
 }
 
 static ret_t vgcanvas_nanovg_unbind_fbo(vgcanvas_t* vgcanvas, framebuffer_object_t* fbo) {
-  uint32_t w, h;
   NVGcontext* vg = NULL;
+  system_info_t* info = system_info();
   vgcanvas_nanovg_t* canvas = (vgcanvas_nanovg_t*)vgcanvas;
   NVGLUframebuffer* handle = (NVGLUframebuffer*)fbo->handle;
 
@@ -146,12 +141,10 @@ static ret_t vgcanvas_nanovg_unbind_fbo(vgcanvas_t* vgcanvas, framebuffer_object
   nvgluBindFramebuffer(handle);
 
   vgcanvas->dirty_rect = rect_init(fbo->online_dirty_rect.x, fbo->online_dirty_rect.y, fbo->online_dirty_rect.w, fbo->online_dirty_rect.h);
-  w = fbo->online_w;
-  h = fbo->online_h;
-
-  glViewport(0, 0, w * fbo->ratio, h * fbo->ratio);
+  glViewport(0, 0, vgcanvas->w * fbo->ratio, vgcanvas->h * fbo->ratio);
+  glScissor(0, 0, vgcanvas->w * fbo->ratio, vgcanvas->h * fbo->ratio);
   if (!fbo->custom_draw_model) {
-    nvgBeginFrameEx(vg, w, h, fbo->ratio, FALSE, NVG_ORIENTATION_0);
+    nvgBeginFrameEx(vg, vgcanvas->w, vgcanvas->h, fbo->ratio, FALSE, vgcanvas_nanovg_lcd_orientation_to_NVGorientation(info->lcd_orientation));
   }
   return RET_OK;
 }
@@ -228,9 +221,7 @@ static ret_t vgcanvas_nanovg_destroy(vgcanvas_t* vgcanvas) {
   vgcanvas_asset_manager_remove_vg(vgcanvas_asset_manager(), vgcanvas);
 
   vgcanvas_nanovg_deinit(vgcanvas);
-#if defined(WITH_NANOVG_GL2)
-  nvgDeleteGL2(vg);
-#elif defined(WITH_NANOVG_GL3)
+#if defined(WITH_NANOVG_GL3)
   nvgDeleteGL3(vg);
 #elif defined(WITH_NANOVG_GLES2)
   nvgDeleteGLES2(vg);

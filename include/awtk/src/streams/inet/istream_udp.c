@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on socket
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,6 +22,7 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN 1
 #endif /*WIN32_LEAN_AND_MEAN*/
+
 #include "tkc/mem.h"
 #include "tkc/socket_helper.h"
 #include "streams/inet/istream_udp.h"
@@ -29,14 +30,14 @@
 static int32_t tk_istream_udp_read(tk_istream_t* stream, uint8_t* buff, uint32_t max_size) {
   int32_t ret = 0;
   tk_istream_udp_t* istream_udp = TK_ISTREAM_UDP(stream);
-  uint32_t addr_size = sizeof(istream_udp->addr);
+  socklen_t addr_size = sizeof(istream_udp->addr);
 
-  ret = tk_socket_recvfrom(istream_udp->sock, buff, max_size, 0,
-                           (struct sockaddr*)&(istream_udp->addr), &addr_size);
+  ret = recvfrom(istream_udp->sock, buff, max_size, 0, (struct sockaddr*)&(istream_udp->addr),
+                 &addr_size);
 
   if (ret <= 0) {
-    if (tk_socket_last_io_has_error()) {
-      perror("tk_socket_recvfrom");
+    if (socket_last_io_has_error()) {
+      perror("recvfrom");
       istream_udp->is_broken = TRUE;
     }
   }
@@ -97,7 +98,7 @@ ret_t tk_istream_udp_set_target_with_addr(tk_istream_t* stream, struct sockaddr_
 ret_t tk_istream_udp_set_target_with_host(tk_istream_t* stream, const char* host, int port) {
   struct sockaddr_in addr_in;
   return_value_if_fail(stream != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(tk_socket_resolve(host, port, &addr_in) != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(socket_resolve(host, port, &addr_in) != NULL, RET_BAD_PARAMS);
 
   return tk_istream_udp_set_target_with_addr(stream, addr_in);
 }

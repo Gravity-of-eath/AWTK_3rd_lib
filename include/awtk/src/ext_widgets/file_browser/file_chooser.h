@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  file/folder choosers
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2021 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -72,7 +72,7 @@ typedef struct _file_chooser_t {
   str_t cwd;
 
   /**
-   * @property {str_t} filename 
+   * @property {str_t} filename; 
    * 当前选择的文件。
    */
   str_t filename;
@@ -225,7 +225,6 @@ ret_t file_chooser_destroy(file_chooser_t* chooser);
 /*控件名*/
 #define FILE_CHOOSER_OK "ok"
 #define FILE_CHOOSER_CANCEL "cancel"
-#define FILE_CHOOSER_CLOSE "close"
 
 END_C_DECLS
 

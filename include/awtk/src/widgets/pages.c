@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  pages
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -49,32 +49,12 @@ static ret_t pages_save_target(widget_t* widget) {
   return RET_OK;
 }
 
-static ret_t pages_on_idle_set_page_focused(const idle_info_t* idle) {
-  pages_t* pages = NULL;
-  return_value_if_fail(idle != NULL, RET_BAD_PARAMS);
-  pages = PAGES(idle->ctx);
-  ENSURE(pages);
-
-  if (!pages->widget.focused) {
-    widget_set_focused(&(pages->widget), TRUE);
-  }
-
-  pages->page_focused_idle_id = TK_INVALID_ID;
-
-  return RET_OK;
-}
-
 static ret_t pages_on_idle_set_target_focused(const idle_info_t* idle) {
   pages_t* pages = NULL;
-  system_info_t* info = system_info();
   return_value_if_fail(idle != NULL, RET_BAD_PARAMS);
   pages = PAGES(idle->ctx);
-  ENSURE(pages);
 
-  if (pages->widget.focused || info->keyboard_type == KEYBOARD_3KEYS ||
-      info->keyboard_type == KEYBOARD_5KEYS) {
-    default_focused_child_set_target_focused(&(pages->str_target), WIDGET(pages));
-  }
+  default_focused_child_set_target_focused(&(pages->str_target), WIDGET(pages));
 
   pages->focused_idle_id = TK_INVALID_ID;
 
@@ -97,9 +77,6 @@ static ret_t pages_restore_target(widget_t* widget) {
     if (target == NULL || target->parent == NULL || target == widget) {
       target = active_view;
     }
-    if (pages->auto_focused == FALSE) {
-      target = active_view;
-    }
     if (pages_target_is_page(target)) {
       pages_restore_target(target);
     } else {
@@ -115,7 +92,6 @@ static ret_t pages_restore_target(widget_t* widget) {
 
 static ret_t pages_show_active(widget_t* widget) {
   pages_t* pages = PAGES(widget);
-  ENSURE(pages);
   WIDGET_FOR_EACH_CHILD_BEGIN(widget, iter, i)
   widget_set_visible(iter, i == pages->active);
   WIDGET_FOR_EACH_CHILD_END()
@@ -127,7 +103,6 @@ ret_t pages_set_active(widget_t* widget, uint32_t index) {
   pages_t* pages = PAGES(widget);
   return_value_if_fail(pages != NULL, RET_BAD_PARAMS);
 
-  pages->has_active = TRUE;
   if (pages->active != index && widget->children != NULL) {
     value_change_event_t evt;
 
@@ -141,14 +116,8 @@ ret_t pages_set_active(widget_t* widget, uint32_t index) {
       pages_show_active(widget);
       evt.e.type = EVT_VALUE_CHANGED;
       widget_dispatch(widget, (event_t*)&evt);
-      widget_dispatch_simple_event(widget, EVT_PAGE_CHANGED);
       widget_invalidate(widget, NULL);
     }
-
-    if (pages->page_focused_idle_id == TK_INVALID_ID) {
-      pages->page_focused_idle_id = idle_add(pages_on_idle_set_page_focused, widget);
-    }
-
     pages_restore_target(widget);
   } else {
     pages->active = index;
@@ -169,15 +138,6 @@ ret_t pages_set_active_by_name(widget_t* widget, const char* name) {
   return RET_NOT_FOUND;
 }
 
-ret_t pages_set_auto_focused(widget_t* widget, bool_t auto_focused) {
-  pages_t* pages = PAGES(widget);
-  return_value_if_fail(pages != NULL, RET_BAD_PARAMS);
-
-  pages->auto_focused = auto_focused;
-
-  return RET_OK;
-}
-
 static widget_t* pages_find_target(widget_t* widget, xy_t x, xy_t y) {
   pages_t* pages = PAGES(widget);
   return_value_if_fail(pages != NULL, NULL);
@@ -196,9 +156,6 @@ static ret_t pages_get_prop(widget_t* widget, const char* name, value_t* v) {
   if (tk_str_eq(name, WIDGET_PROP_VALUE) || tk_str_eq(name, WIDGET_PROP_ACTIVE)) {
     value_set_uint32(v, pages->active);
     return RET_OK;
-  } else if (tk_str_eq(name, WIDGET_PROP_AUTO_FOCUSED)) {
-    value_set_bool(v, pages->auto_focused);
-    return RET_OK;
   }
 
   return RET_NOT_FOUND;
@@ -209,8 +166,6 @@ static ret_t pages_set_prop(widget_t* widget, const char* name, const value_t* v
 
   if (tk_str_eq(name, WIDGET_PROP_VALUE) || tk_str_eq(name, WIDGET_PROP_ACTIVE)) {
     return pages_set_active(widget, value_int(v));
-  } else if (tk_str_eq(name, WIDGET_PROP_AUTO_FOCUSED)) {
-    return pages_set_auto_focused(widget, value_bool(v));
   }
 
   return RET_NOT_FOUND;
@@ -249,7 +204,6 @@ static ret_t pages_on_idle_init_save_target(const idle_info_t* idle) {
   pages_t* pages = NULL;
   return_value_if_fail(idle != NULL, RET_BAD_PARAMS);
   pages = PAGES(idle->ctx);
-  ENSURE(pages);
 
   pages_restore_target(WIDGET(pages));
   pages->init_idle_id = TK_INVALID_ID;
@@ -274,17 +228,8 @@ static ret_t pages_on_destroy(widget_t* widget) {
 }
 
 static ret_t pages_on_add_child(widget_t* widget, widget_t* child) {
-  pages_t* pages = PAGES(widget);
-  widget_t* active = NULL;
-  return_value_if_fail(pages != NULL, RET_BAD_PARAMS);
-  active = widget_get_child(widget, pages->active);
-
   widget_add_child_default(widget, child);
   pages_show_active(widget);
-
-  if (active != widget_get_child(widget, pages->active)) {
-    widget_dispatch_simple_event(widget, EVT_PAGE_CHANGED);
-  }
   return RET_OK;
 }
 
@@ -293,18 +238,14 @@ static ret_t pages_on_remove_child(widget_t* widget, widget_t* child) {
   return_value_if_fail(widget != NULL && pages != NULL && child != NULL, RET_BAD_PARAMS);
 
   if (!widget->destroying) {
-    widget_t* active = NULL;
-    int32_t active_index = (int32_t)(pages->active);
+    int32_t active = (int32_t)(pages->active);
     int32_t remove_index = widget_index_of(child);
-    bool_t is_last = remove_index == (widget->children->size - 1);
     return_value_if_fail(remove_index >= 0, RET_BAD_PARAMS);
-    active = widget_get_child(widget, pages->active);
-    if (remove_index < active_index || (remove_index == active_index && is_last)) {
-      active_index = tk_max(active_index - 1, 0);
-      pages_set_active(widget, active_index);
-    }
-    if (active != widget_get_child(widget, pages->active)) {
-      widget_dispatch_simple_event(widget, EVT_PAGE_CHANGED);
+
+    if (remove_index < active ||
+        (remove_index == active && remove_index == widget->children->size - 1)) {
+      active = tk_max(active - 1, 0);
+      pages->active = (uint32_t)active;
     }
   }
   return RET_CONTINUE;
@@ -318,16 +259,6 @@ static ret_t pages_get_only_active_children(widget_t* widget, darray_t* all_focu
   return RET_SKIP;
 }
 
-static ret_t pages_init(widget_t* widget) {
-  pages_t* pages = PAGES(widget);
-  return_value_if_fail(pages != NULL, RET_BAD_PARAMS);
-  str_init(&(pages->str_target), DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGTH);
-  pages->init_idle_id = idle_add(pages_on_idle_init_save_target, widget);
-  pages->active = 0xffffffff;
-  pages->auto_focused = TRUE;
-  return RET_OK;
-}
-
 static const char* const s_pages_clone_properties[] = {WIDGET_PROP_VALUE, NULL};
 
 TK_DECL_VTABLE(pages) = {.size = sizeof(pages_t),
@@ -337,7 +268,6 @@ TK_DECL_VTABLE(pages) = {.size = sizeof(pages_t),
                          .clone_properties = s_pages_clone_properties,
                          .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                          .create = pages_create,
-                         .init = pages_init,
                          .on_paint_self = widget_on_paint_null,
                          .on_paint_children = widget_on_paint_children_clip,
                          .find_target = pages_find_target,
@@ -350,7 +280,11 @@ TK_DECL_VTABLE(pages) = {.size = sizeof(pages_t),
 
 widget_t* pages_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(pages), x, y, w, h);
-  return_value_if_fail(pages_init(widget) == RET_OK, NULL);
+  pages_t* pages = PAGES(widget);
+  return_value_if_fail(pages != NULL, NULL);
+  str_init(&(pages->str_target), DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGT);
+  pages->init_idle_id = idle_add(pages_on_idle_init_save_target, widget);
+  pages->active = 0xffffffff;
 
   return widget;
 }

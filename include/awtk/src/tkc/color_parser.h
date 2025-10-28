@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  color parser
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -58,7 +58,7 @@ BEGIN_C_DECLS
  * @annotation ["static"]
  * @param {const char*} color 字符串格式的颜色。
  *
- * @return {color_t} 返回color_t对象。
+ * @return {void*} 返回color_t对象。
  */
 color_t color_parse(const char* color);
 

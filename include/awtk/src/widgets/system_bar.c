@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  system_bar
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,7 +27,6 @@
 #include "base/layout.h"
 #include "base/window.h"
 #include "widgets/system_bar.h"
-#include "base/widget_vtable.h"
 #include "base/window_manager.h"
 
 static const char* s_system_bar_properties[] = {NULL};
@@ -133,12 +132,7 @@ static ret_t system_bar_on_destroy(widget_t* widget) {
 
 static ret_t system_bar_on_copy(widget_t* widget, widget_t* other) {
   window_base_on_copy(widget, other);
-  return widget_on_copy_recursive(widget, other);
-}
-
-static ret_t system_bar_init(widget_t* widget) {
-  widget_on(widget->parent, EVT_TOP_WINDOW_CHANGED, system_bar_on_top_window_changed, widget);
-  return RET_OK;
+  return widget_copy_props(widget, other, s_system_bar_properties);
 }
 
 TK_DECL_VTABLE(system_bar) = {.size = sizeof(system_bar_t),
@@ -148,7 +142,6 @@ TK_DECL_VTABLE(system_bar) = {.size = sizeof(system_bar_t),
                               .persistent_properties = s_system_bar_properties,
                               .get_parent_vt = TK_GET_PARENT_VTABLE(window_base),
                               .create = system_bar_create,
-                              .init = system_bar_init,
                               .on_copy = system_bar_on_copy,
                               .on_event = system_bar_on_event,
                               .set_prop = window_base_set_prop,
@@ -162,7 +155,7 @@ widget_t* system_bar_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = window_base_create(parent, TK_REF_VTABLE(system_bar), x, y, w, h);
   return_value_if_fail(widget != NULL, NULL);
 
-  system_bar_init(widget);
+  widget_on(widget->parent, EVT_TOP_WINDOW_CHANGED, system_bar_on_top_window_changed, widget);
 
   return widget;
 }
@@ -174,7 +167,6 @@ TK_DECL_VTABLE(system_bar_bottom) = {.size = sizeof(system_bar_t),
                                      .persistent_properties = s_system_bar_properties,
                                      .get_parent_vt = TK_GET_PARENT_VTABLE(window_base),
                                      .create = system_bar_create,
-                                     .init = system_bar_init,
                                      .on_event = system_bar_on_event,
                                      .set_prop = window_base_set_prop,
                                      .get_prop = window_base_get_prop,
@@ -187,7 +179,7 @@ widget_t* system_bar_bottom_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_
   widget_t* widget = window_base_create(parent, TK_REF_VTABLE(system_bar_bottom), x, y, w, h);
   return_value_if_fail(widget != NULL, NULL);
 
-  system_bar_init(widget);
+  widget_on(widget->parent, EVT_TOP_WINDOW_CHANGED, system_bar_on_top_window_changed, widget);
 
   return widget;
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  enumerations
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,8 +20,6 @@
  */
 
 #include "tkc/utils.h"
-#include "tkc/darray.h"
-#include "tkc/easing.h"
 #include "base/keys.h"
 #include "base/enums.h"
 #include "base/widget.h"
@@ -75,7 +73,6 @@ static const key_type_value_t image_draw_type_name_value[] = {
     {"auto", 0, IMAGE_DRAW_SCALE_AUTO},
     {"scale_auto", 0, IMAGE_DRAW_SCALE_AUTO},
     {"scale_down", 0, IMAGE_DRAW_SCALE_DOWN},
-    {"fill", 0, IMAGE_DRAW_FILL},
     {"scale_w", 0, IMAGE_DRAW_SCALE_W},
     {"scale_h", 0, IMAGE_DRAW_SCALE_H},
     {"repeat", 0, IMAGE_DRAW_REPEAT},
@@ -123,25 +120,21 @@ static const key_type_value_t keys_type_name_value[] = {
     {"BACKSPACE", 0, TK_KEY_BACKSPACE},
     {"TAB", 0, TK_KEY_TAB},
     {"SPACE", 0, TK_KEY_SPACE},
+    {"EXCLAIM", 0, TK_KEY_EXCLAIM},
+    {"QUOTEDBL", 0, TK_KEY_QUOTEDBL},
+    {"HASH", 0, TK_KEY_HASH},
+    {"PERCENT", 0, TK_KEY_PERCENT},
+    {"DOLLAR", 0, TK_KEY_DOLLAR},
+    {"AMPERSAND", 0, TK_KEY_AMPERSAND},
+    {"QUOTE", 0, TK_KEY_QUOTE},
+    {"LEFTPAREN", 0, TK_KEY_LEFTPAREN},
+    {"RIGHTPAREN", 0, TK_KEY_RIGHTPAREN},
+    {"ASTERISK", 0, TK_KEY_ASTERISK},
     {"PLUS", 0, TK_KEY_PLUS},
     {"COMMA", 0, TK_KEY_COMMA},
     {"MINUS", 0, TK_KEY_MINUS},
     {"PERIOD", 0, TK_KEY_PERIOD},
     {"SLASH", 0, TK_KEY_SLASH},
-    {"RIGHTPAREN", 0, TK_KEY_RIGHTPAREN},
-    {"LEFTBRACKET", 0, TK_KEY_LEFTBRACKET},
-    {"ASTERISK", 0, TK_KEY_ASTERISK},
-#ifndef AWTK_WEB /*web上key冲突，去掉一些不常用的键*/
-    {"PERCENT", 0, TK_KEY_PERCENT},
-    {"AMPERSAND", 0, TK_KEY_AMPERSAND},
-    {"QUOTE", 0, TK_KEY_QUOTE},
-    {"LEFTBRACE", 0, TK_KEY_LEFTBRACE},
-    {"LEFTPAREN", 0, TK_KEY_LEFTPAREN},
-    {"QUOTEDBL", 0, TK_KEY_QUOTEDBL},
-    {"EXCLAIM", 0, TK_KEY_EXCLAIM},
-    {"HASH", 0, TK_KEY_HASH},
-    {"DOLLAR", 0, TK_KEY_DOLLAR},
-#endif /*AWTK_WEB*/
     {"0", 0, TK_KEY_0},
     {"1", 0, TK_KEY_1},
     {"2", 0, TK_KEY_2},
@@ -159,6 +152,7 @@ static const key_type_value_t keys_type_name_value[] = {
     {"GREATER", 0, TK_KEY_GREATER},
     {"QUESTION", 0, TK_KEY_QUESTION},
     {"AT", 0, TK_KEY_AT},
+    {"LEFTBRACKET", 0, TK_KEY_LEFTBRACKET},
     {"BACKSLASH", 0, TK_KEY_BACKSLASH},
     {"RIGHTBRACKET", 0, TK_KEY_RIGHTBRACKET},
     {"CARET", 0, TK_KEY_CARET},
@@ -218,14 +212,15 @@ static const key_type_value_t keys_type_name_value[] = {
     {"Z", 0, TK_KEY_Z},
     {"DOT", 0, TK_KEY_DOT},
     {"DELETE", 0, TK_KEY_DELETE},
+    {"LEFTBRACE", 0, TK_KEY_LEFTBRACE},
     {"RIGHTBRACE", 0, TK_KEY_RIGHTBRACE},
     {"BACK", 0, TK_KEY_BACK},
     {"CANCEL", 0, TK_KEY_CANCEL},
-    {"NUMLOCKCLEAR", 0, TK_KEY_NUMLOCKCLEAR},
 #ifdef WITH_SDL
     {"PRINTSCREEN", 0, TK_KEY_PRINTSCREEN},
     {"SCROLLLOCK", 0, TK_KEY_SCROLLLOCK},
     {"PAUSE", 0, TK_KEY_PAUSE},
+    {"NUMLOCKCLEAR", 0, TK_KEY_NUMLOCKCLEAR},
     {"APPLICATION", 0, TK_KEY_APPLICATION},
     {"POWER", 0, TK_KEY_POWER},
     {"F13", 0, TK_KEY_F13},
@@ -396,34 +391,11 @@ const key_type_value_t* input_type_find(const char* name) {
 }
 
 const key_type_value_t* easing_type_find(const char* name) {
-  const key_type_value_t* kv =
-      find_item(easing_type_name_value, ARRAY_SIZE(easing_type_name_value), name);
-  if (kv != NULL) {
-    return kv;
-  } else {
-    easing_name_func_t* easing_name_func = darray_find(easing_name_func_darray(), (void*)name);
-    if (easing_name_func != NULL) {
-      return easing_name_func->type_name_value;
-    } else {
-      return NULL;
-    }
-  }
+  return find_item(easing_type_name_value, ARRAY_SIZE(easing_type_name_value), name);
 }
 
 const key_type_value_t* easing_type_find_by_value(uint32_t value) {
-  const key_type_value_t* kv =
-      find_item_by_value(easing_type_name_value, ARRAY_SIZE(easing_type_name_value), value);
-  if (kv != NULL) {
-    return kv;
-  } else {
-    easing_name_func_t* easing_name_func =
-        darray_get(easing_name_func_darray(), value - EASING_FUNC_NR - 1);
-    if (easing_name_func != NULL) {
-      return easing_name_func->type_name_value;
-    } else {
-      return NULL;
-    }
-  }
+  return find_item_by_value(easing_type_name_value, ARRAY_SIZE(easing_type_name_value), value);
 }
 
 const key_type_value_t* keys_type_find(const char* name) {

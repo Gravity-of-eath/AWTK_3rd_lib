@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  data_reader
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,17 +61,10 @@ static const data_reader_vtable_t s_data_reader_file_vtable = {
 
 data_reader_t* data_reader_file_create(const char* filename) {
   fs_stat_info_t st;
-  const char* p = NULL;
   data_reader_file_t* file = NULL;
   return_value_if_fail(filename != NULL, NULL);
   file = TKMEM_ZALLOC(data_reader_file_t);
   return_value_if_fail(file != NULL, NULL);
-
-  p = strstr(filename, "://");
-  if (p != NULL) {
-    p += 3;
-    filename = p;
-  }
 
   if (fs_stat(os_fs(), filename, &st) == RET_OK) {
     file->size = st.size;

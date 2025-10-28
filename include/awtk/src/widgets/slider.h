@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  slider
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -143,14 +143,6 @@ typedef struct _slider_t {
    */
   bool_t slide_with_bar;
 
-  /**
-   * @property {uint32_t} drag_threshold
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 进入拖动状态的拖动临界值。
-   *
-   */
-  uint32_t drag_threshold;
-
   /*private*/
   bool_t pressed;
   bool_t dragging;
@@ -278,17 +270,6 @@ ret_t slider_set_bar_size(widget_t* widget, uint32_t bar_size);
  */
 ret_t slider_set_vertical(widget_t* widget, bool_t vertical);
 
-/**
- * @method slider_set_drag_threshold
- * 设置拖拽临界值。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget 控件对象。
- * @param {uint32_t}  drag_threshold 拖拽临界值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t slider_set_drag_threshold(widget_t* widget, uint32_t drag_threshold);
-
 #define SLIDER_PROP_DRAGGER_SIZE "dragger_size"
 #define SLIDER_PROP_DRAGGER_ADAPT_TO_ICON "dragger_adapt_to_icon"
 #define SLIDER_PROP_SLIDE_WITH_BAR "slide_with_bar"
@@ -309,12 +290,12 @@ ret_t slider_inc(widget_t* widget);
  *
  * @param {widget_t*} widget 控件对象。
  * @param {double}  value 值。
- * @param {uint32_t} etype 触发事件。
+ * @param {event_type_t} etype 触发事件。
  * @param {bool_t} force 不管有没有变化都设置。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t slider_set_value_internal(widget_t* widget, double value, uint32_t etype, bool_t force);
+ret_t slider_set_value_internal(widget_t* widget, double value, event_type_t etype, bool_t force);
 
 END_C_DECLS
 

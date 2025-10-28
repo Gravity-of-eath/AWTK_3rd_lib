@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event_queue
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -65,7 +65,6 @@ typedef union _event_queue_req_t {
   event_t event;
   key_event_t key_event;
   wheel_event_t wheel_event;
-  touch_event_t touch_event;
   pointer_event_t pointer_event;
   multi_gesture_event_t multi_gesture_event;
   add_idle_t add_idle;

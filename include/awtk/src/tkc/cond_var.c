@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  cond_var simple
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,16 +61,6 @@ ret_t tk_cond_var_awake(tk_cond_var_t* cond_var) {
   cond_var->has_signal = TRUE;
   tk_mutex_unlock(cond_var->mutex);
   tk_cond_signal(cond_var->cond);
-
-  return RET_OK;
-}
-
-ret_t tk_cond_var_clear(tk_cond_var_t* cond_var) {
-  return_value_if_fail(cond_var != NULL && cond_var->inited, RET_BAD_PARAMS);
-
-  tk_mutex_lock(cond_var->mutex);
-  cond_var->has_signal = FALSE;
-  tk_mutex_unlock(cond_var->mutex);
 
   return RET_OK;
 }

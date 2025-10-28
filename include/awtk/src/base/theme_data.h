@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  theme data
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -59,7 +59,6 @@ typedef struct _style_name_value_t {
 
 #pragma pack(pop)
 
-ret_t style_data_get_value(const uint8_t* s, const char* name, value_t* v);
 int32_t style_data_get_int(const uint8_t* s, const char* name, int32_t defval);
 uint32_t style_data_get_uint(const uint8_t* s, const char* name, uint32_t defval);
 color_t style_data_get_color(const uint8_t* s, const char* name, color_t defval);

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  lcd interface
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -233,7 +233,7 @@ struct _lcd_t {
    */
   wh_t w;
   /**
-   * @property {wh_t} h
+   * @property {wh_t} height
    * @annotation ["readable"]
    * 屏幕的高度
    */
@@ -319,7 +319,7 @@ struct _lcd_t {
  * 准备绘制。
  * @param {lcd_t*} lcd lcd对象。
  * @param {const dirty_rects_t*} dirty_rects 需要绘制的区域。
- * @param {lcd_draw_mode_t} draw_mode 绘制模式，如果可能，直接画到显存而不是离线的framebuffer。
+ * @param {lcd_draw_mode_t} anim_mode 动画模式，如果可能，直接画到显存而不是离线的framebuffer。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -424,7 +424,7 @@ ret_t lcd_set_font_size(lcd_t* lcd, uint32_t font_size);
  * @param {lcd_t*} lcd lcd对象。
  * @param {xy_t} x x坐标。
  * @param {xy_t} y y坐标。
- * @param {wh_t} h 直线高度。
+ * @param {xy_t} h 直线高度。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -436,7 +436,7 @@ ret_t lcd_draw_vline(lcd_t* lcd, xy_t x, xy_t y, wh_t h);
  * @param {lcd_t*} lcd lcd对象。
  * @param {xy_t} x x坐标。
  * @param {xy_t} y y坐标。
- * @param {wh_t} w 直线宽度。
+ * @param {xy_t} w 直线宽度。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

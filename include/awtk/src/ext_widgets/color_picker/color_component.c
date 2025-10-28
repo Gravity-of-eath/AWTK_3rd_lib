@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  color_component
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,7 +25,6 @@
 #include "color_picker/rgb_and_hsv.h"
 #include "color_picker/color_component.h"
 
-static ret_t color_component_init(widget_t* widget);
 static ret_t color_component_update_h(widget_t* widget);
 static ret_t color_component_update_sv(widget_t* widget);
 static ret_t color_component_ensure_image(widget_t* widget);
@@ -156,7 +155,6 @@ TK_DECL_VTABLE(color_component) = {.size = sizeof(color_component_t),
                                    .type = WIDGET_TYPE_COLOR_COMPONENT,
                                    .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                    .create = color_component_create,
-                                   .init = color_component_init,
                                    .on_destroy = color_component_on_destroy,
                                    .on_event = color_component_on_event,
                                    .on_paint_self = color_component_on_paint_self};
@@ -201,7 +199,7 @@ static ret_t color_component_ensure_image(widget_t* widget) {
     bitmap_t* image = color_component->image;
 
     color_component->update(widget);
-    bitmap_set_dirty(image, TRUE);
+    image->flags |= BITMAP_FLAG_CHANGED;
     color_component->need_update = FALSE;
   }
 
@@ -293,18 +291,13 @@ static ret_t color_component_update_h(widget_t* widget) {
   return RET_OK;
 }
 
-static ret_t color_component_init(widget_t* widget) {
+widget_t* color_component_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
+  widget_t* widget = widget_create(parent, TK_REF_VTABLE(color_component), x, y, w, h);
   color_component_t* color_component = COLOR_COMPONENT(widget);
-  return_value_if_fail(color_component != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(color_component != NULL, NULL);
 
   color_component->c = color_init(0xff, 0xff, 0xff, 0xff);
   color_component->last_hue = -1;
-  return RET_OK;
-}
-
-widget_t* color_component_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
-  widget_t* widget = widget_create(parent, TK_REF_VTABLE(color_component), x, y, w, h);
-  return_value_if_fail(color_component_init(widget) == RET_OK, NULL);
 
   return widget;
 }

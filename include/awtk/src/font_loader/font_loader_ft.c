@@ -69,7 +69,8 @@ static ret_t font_ft_get_glyph(font_t* f, wchar_t c, font_size_t font_size, glyp
   ft_fontinfo* sf = &(font->ft_font);
   FT_Glyph glyph;
   FT_GlyphSlot glyf;
-  uint32_t flags = FT_LOAD_DEFAULT | FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT;
+  uint32_t flags =
+      FT_LOAD_DEFAULT | FT_LOAD_RENDER | FT_LOAD_NO_AUTOHINT | FT_OUTLINE_HIGH_PRECISION;
 
   g->data = NULL;
   if (glyph_cache_lookup(&(font->cache), c, font_size, g) == RET_OK) {
@@ -133,10 +134,6 @@ static font_vmetrics_t font_ft_get_vmetrics(font_t* f, font_size_t font_size) {
   vmetrics.ascent = FT_MulFix(sf->face->ascender, sf->face->size->metrics.y_scale);
   vmetrics.descent = FT_MulFix(sf->face->descender, sf->face->size->metrics.y_scale);
   vmetrics.line_gap = height - (vmetrics.ascent - vmetrics.descent);
-
-  vmetrics.font_ascender = sf->face->ascender;
-  vmetrics.font_descender = sf->face->descender;
-  vmetrics.units_per_em = sf->face->units_per_EM;
 
   vmetrics.ascent = vmetrics.ascent >> 6;
   vmetrics.descent = vmetrics.descent >> 6;

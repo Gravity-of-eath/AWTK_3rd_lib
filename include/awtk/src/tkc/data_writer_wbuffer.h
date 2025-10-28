@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  data_writer wbuffer
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -60,7 +60,7 @@ data_writer_t* data_writer_wbuffer_create(const char* wbuffer_name);
  *
  * @return {const char*} 返回URL。
  */
-const char* data_writer_wbuffer_build_url(wbuffer_t* wbuffer, char url[MAX_PATH + 1]);
+const char* data_writer_wbuffer_build_url(wbuffer_t* buffer, char url[MAX_PATH + 1]);
 
 #define DATA_WRITER_WBUFFER(writer) ((data_writer_t*)(writer))
 

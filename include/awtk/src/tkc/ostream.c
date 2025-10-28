@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  output stream interface
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,7 +19,6 @@
  *
  */
 
-#include "tkc/utils.h"
 #include "tkc/platform.h"
 #include "tkc/time_now.h"
 #include "tkc/ostream.h"
@@ -94,70 +93,8 @@ ret_t tk_ostream_flush(tk_ostream_t* stream) {
   return RET_OK;
 }
 
-ret_t tk_ostream_write_byte(tk_ostream_t* stream, uint8_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_uint8(tk_ostream_t* stream, uint8_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_uint16(tk_ostream_t* stream, uint16_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_uint32(tk_ostream_t* stream, uint32_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_uint64(tk_ostream_t* stream, uint64_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_int8(tk_ostream_t* stream, int8_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_int16(tk_ostream_t* stream, int16_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_int32(tk_ostream_t* stream, int32_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_int64(tk_ostream_t* stream, int64_t value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_float(tk_ostream_t* stream, float value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
-}
-
-ret_t tk_ostream_write_double(tk_ostream_t* stream, double value) {
-  int32_t ret = tk_ostream_write_len(stream, &value, sizeof(value), TK_OSTREAM_DEFAULT_TIMEOUT);
-
-  return ret == sizeof(value) ? RET_OK : RET_FAIL;
+ret_t tk_ostream_write_byte(tk_ostream_t* stream, uint8_t byte) {
+  return tk_ostream_write_len(stream, &byte, 1, 1000) == 1 ? RET_OK : RET_FAIL;
 }
 
 int32_t tk_ostream_tell(tk_ostream_t* stream) {
@@ -165,24 +102,4 @@ int32_t tk_ostream_tell(tk_ostream_t* stream) {
   return_value_if_fail(stream->tell != NULL, -1);
 
   return stream->tell(stream);
-}
-
-ret_t tk_ostream_write_str(tk_ostream_t* stream, const char* str) {
-  int32_t len = tk_strlen(str);
-  return tk_ostream_write(stream, str, len) == len ? RET_OK : RET_IO;
-}
-
-ret_t tk_ostream_printf(tk_ostream_t* stream, const char* format, ...) {
-  va_list va;
-  char buff[1024] = {0};
-
-  va_start(va, format);
-  tk_vsnprintf(buff, sizeof(buff) - 1, format, va);
-  va_end(va);
-
-  return tk_ostream_write_str(stream, buff);
-}
-
-ret_t tk_ostream_unref(tk_ostream_t* stream) {
-  return tk_object_unref(TK_OBJECT(stream));
 }

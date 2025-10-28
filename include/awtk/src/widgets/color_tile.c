@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  color_tile
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -120,25 +120,17 @@ static ret_t color_tile_on_paint_fill(widget_t* widget, canvas_t* c) {
   return ret;
 }
 
-static ret_t color_tile_on_paint_border(widget_t* widget, canvas_t* c) {
-  return_value_if_fail(widget != NULL && c != NULL, RET_BAD_PARAMS);
-
-  color_tile_on_paint_stroke(widget, c);
-
-  return RET_OK;
-}
-
 static ret_t color_tile_on_paint_self(widget_t* widget, canvas_t* c) {
   return_value_if_fail(widget != NULL && c != NULL, RET_BAD_PARAMS);
   color_tile_on_paint_fill(widget, c);
   widget_paint_helper(widget, c, NULL, NULL);
+  color_tile_on_paint_stroke(widget, c);
 
   return RET_OK;
 }
 
 static ret_t color_tile_get_prop(widget_t* widget, const char* name, value_t* v) {
   color_tile_t* color_tile = COLOR_TILE(widget);
-  ENSURE(color_tile);
   return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_BG_COLOR)) {
@@ -171,32 +163,25 @@ static ret_t color_tile_set_prop(widget_t* widget, const char* name, const value
   return RET_NOT_FOUND;
 }
 
-static ret_t color_tile_init(widget_t* widget) {
-  color_tile_t* color_tile = COLOR_TILE(widget);
-  return_value_if_fail(color_tile != NULL, RET_BAD_PARAMS);
-
-  color_tile_set_bg_color(widget, "#ffffff");
-  color_tile_set_border_color(widget, "#00000000");
-  return RET_OK;
-}
-
 static const char* const s_color_tile_properties[] = {WIDGET_PROP_BG_COLOR,
                                                       WIDGET_PROP_BORDER_COLOR, NULL};
 TK_DECL_VTABLE(color_tile) = {.size = sizeof(color_tile_t),
                               .type = WIDGET_TYPE_COLOR_TILE,
                               .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                               .create = color_tile_create,
-                              .init = color_tile_init,
                               .clone_properties = s_color_tile_properties,
                               .persistent_properties = s_color_tile_properties,
                               .set_prop = color_tile_set_prop,
                               .get_prop = color_tile_get_prop,
-                              .on_paint_border = color_tile_on_paint_border,
                               .on_paint_self = color_tile_on_paint_self};
 
 widget_t* color_tile_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(color_tile), x, y, w, h);
-  return_value_if_fail(color_tile_init(widget) == RET_OK, NULL);
+  color_tile_t* color_tile = COLOR_TILE(widget);
+  return_value_if_fail(color_tile != NULL, NULL);
+
+  color_tile_set_bg_color(widget, "#ffffff");
+  color_tile_set_border_color(widget, "#000000");
 
   return widget;
 }

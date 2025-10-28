@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  canvas provides basic drawings functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,7 +29,7 @@
 #include "tkc/time_now.h"
 #include "tkc/color_parser.h"
 #include "base/system_info.h"
-#include "base/events.h"
+
 #include "base/lcd_profile.h"
 
 #ifndef CANVAS_MEASURE_TEXT_CACHE_MAX_LENGTH
@@ -90,7 +90,7 @@ canvas_t* canvas_init(canvas_t* c, lcd_t* lcd, font_manager_t* font_manager) {
   memset(c, 0x00, sizeof(canvas_t));
 
   c->lcd = lcd_profile_create(lcd);
-  canvas_set_font_manager(c, font_manager);
+  c->font_manager = font_manager;
 
   c->clip_left = 0;
   c->clip_top = 0;
@@ -113,32 +113,10 @@ wh_t canvas_get_height(canvas_t* c) {
   return lcd_get_height(c->lcd);
 }
 
-static ret_t canvas_on_font_manager_events(void* ctx, event_t* e) {
-  canvas_t* c = (canvas_t*)ctx;
-
-  if (e->type == EVT_ASSET_MANAGER_UNLOAD_ASSET) {
-    if (c->font) {
-      font_t* font = (font_t*)e->target;
-      if (c->font == font) {
-        canvas_reset_font(c);
-      }
-    }
-  }
-  return RET_OK;
-}
-
 ret_t canvas_set_font_manager(canvas_t* c, font_manager_t* font_manager) {
   return_value_if_fail(c != NULL && font_manager != NULL, RET_BAD_PARAMS);
 
-  if (c->font_manager) {
-    emitter_off_by_func(EMITTER(c->font_manager), EVT_ASSET_MANAGER_UNLOAD_ASSET,
-                        canvas_on_font_manager_events, c);
-  }
   c->font_manager = font_manager;
-  if (c->font_manager) {
-    emitter_on(EMITTER(c->font_manager), EVT_ASSET_MANAGER_UNLOAD_ASSET,
-               canvas_on_font_manager_events, c);
-  }
 
   return RET_OK;
 }
@@ -278,39 +256,13 @@ ret_t canvas_set_global_alpha(canvas_t* c, uint8_t alpha) {
   return RET_OK;
 }
 
-static float_t canvas_standard_font_size_to_local_size(canvas_t* c, const char* font_name,
-                                                       font_size_t px) {
-  font_t* font = NULL;
-  font_vmetrics_t vmetrics;
-  float_t local_size = 0.0f;
-  float_t font_height = 0.0f;
-  font_manager_t* fm = c->font_manager;
-  return_value_if_fail(c != NULL && fm != NULL && font_name != NULL && px > 0, 0.0f);
-
-  font = font_manager_get_font(c->font_manager, font_name, px);
-  return_value_if_fail(font != NULL, 0.0f);
-
-  vmetrics = font_get_vmetrics(font, px);
-  font_height = (float_t)(vmetrics.font_ascender - vmetrics.font_descender);
-  local_size = ((float_t)(px * font_height) / (float_t)vmetrics.units_per_em);
-
-  return local_size;
-}
-
 ret_t canvas_set_font(canvas_t* c, const char* name, font_size_t size) {
-  float_t local_size = 0.0f;
   return_value_if_fail(c != NULL && c->lcd != NULL, RET_BAD_PARAMS);
 
   name = system_info_fix_font_name(name);
+  size = system_info()->font_scale * size;
 
-  if (font_manager_get_standard_font_size(c->font_manager) == TRUE) {
-    local_size = canvas_standard_font_size_to_local_size(c, name, size);
-    size = system_info()->font_scale * local_size;
-  } else {
-    size = system_info()->font_scale * size;
-  }
-
-  if (c->font_size != size || c->lcd->font_size != size) {
+  if (c->font_size != size) {
     c->font_size = size;
     c->last_text_length = 0;
   }
@@ -352,7 +304,7 @@ ret_t canvas_set_text_align(canvas_t* c, align_h_t align_h, align_v_t align_v) {
 }
 
 static float_t canvas_measure_text_default(canvas_t* c, const wchar_t* str, uint32_t nr) {
-  glyph_t g = {0};
+  glyph_t g;
   float_t w = 0;
   uint32_t i = 0;
   return_value_if_fail(c != NULL && str != NULL && c->font != NULL, 0);
@@ -360,7 +312,7 @@ static float_t canvas_measure_text_default(canvas_t* c, const wchar_t* str, uint
   for (i = 0; i < nr; i++) {
     wchar_t chr = str[i];
     if (font_get_glyph(c->font, chr, c->font_size, &g) == RET_OK) {
-      w += g.advance;
+      w += g.advance + 1;
     } else {
       w += 4;
     }
@@ -512,9 +464,9 @@ ret_t canvas_draw_vline(canvas_t* c, xy_t x, xy_t y, wh_t h) {
 
 static ret_t canvas_draw_line_impl(canvas_t* c, xy_t x1, xy_t y1, xy_t x2, xy_t y2) {
   if (x1 == x2) {
-    return canvas_draw_vline_impl(c, x1, tk_min(y1, y2), tk_abs(y2 - y1) + 1);
+    return canvas_draw_vline_impl(c, x1, y1, tk_abs(y2 - y1) + 1);
   } else if (y1 == y2) {
-    return canvas_draw_hline_impl(c, tk_min(x1, x2), y1, tk_abs(x2 - x1) + 1);
+    return canvas_draw_hline_impl(c, x1, y1, tk_abs(x2 - x1) + 1);
   } else {
     assert(!"Not implemented yet, please use vgcanvas to draw line");
     return RET_NOT_IMPL;
@@ -607,8 +559,6 @@ ret_t canvas_fill_rect(canvas_t* c, xy_t x, xy_t y, wh_t w, wh_t h) {
 static ret_t canvas_fill_rect_gradient_impl(canvas_t* c, xy_t x, xy_t y, wh_t w, wh_t h,
                                             gradient_t* gradient) {
   rect_t r;
-  xy_t widget_y = y;
-  wh_t widget_h = h;
   xy_t x2 = x + w - 1;
   xy_t y2 = y + h - 1;
   vgcanvas_t* vg = NULL;
@@ -638,15 +588,8 @@ static ret_t canvas_fill_rect_gradient_impl(canvas_t* c, xy_t x, xy_t y, wh_t w,
     if (gradient->degree == 180) {
       uint32_t i = 0;
       lcd_t* lcd = c->lcd;
-      float_t offset = 0.0f;
-      float_t base_y = 0.0f;
-
-      if (r.y > widget_y && r.h < widget_h) {
-        base_y = (float_t)(tk_abs(r.y - widget_y));
-      }
-
       for (i = 0; i < h; i++) {
-        offset = (float_t)(base_y + i) / (float_t)widget_h;
+        float offset = (float)i / (float)h;
         color_t color = gradient_get_color(gradient, offset);
         lcd_set_stroke_color(lcd, color);
         lcd_draw_hline(lcd, x, y + i, w);
@@ -654,9 +597,6 @@ static ret_t canvas_fill_rect_gradient_impl(canvas_t* c, xy_t x, xy_t y, wh_t w,
       return RET_OK;
     }
   }
-#else
-  (void)widget_y;
-  (void)widget_h;
 #endif
   vg = canvas_get_vgcanvas(c);
   if (vg != NULL) {
@@ -809,7 +749,7 @@ static ret_t canvas_draw_text_impl(canvas_t* c, const wchar_t* str, uint32_t nr,
       xy_t yy = y + g.y + baseline;
 
       canvas_draw_glyph(c, &g, xx, yy);
-      x += g.advance;
+      x += g.advance + 1;
     } else {
       x += 4;
     }
@@ -1640,38 +1580,6 @@ ret_t canvas_draw_image_scale_h(canvas_t* c, bitmap_t* img, const rect_t* dst_in
   return canvas_draw_image(c, img, &s, &d);
 }
 
-ret_t canvas_draw_image_fill(canvas_t* c, bitmap_t* img, const rect_t* dst_in) {
-  rect_t s;
-  rect_t d;
-  wh_t src_w = 0;
-  wh_t src_h = 0;
-  float scale_w = 0;
-  float scale_h = 0;
-  rect_t r_fix = rect_init(0, 0, 0, 0);
-  rect_t* dst = canvas_fix_rect(dst_in, &r_fix);
-  return_value_if_fail(c != NULL && img != NULL && dst != NULL, RET_BAD_PARAMS);
-
-  scale_w = (float)(dst->w) / img->w;
-  scale_h = (float)(dst->h) / img->h;
-
-  if (scale_w > scale_h) {
-    src_w = img->w;
-    src_h = (float)(img->h * dst->h) / (img->h * scale_w);
-  } else {
-    src_h = img->h;
-    src_w = (float)(img->w * dst->w) / (img->w * scale_h);
-  }
-
-  s.x = 0;
-  s.y = 0;
-  s.h = src_h;
-  s.w = src_w;
-
-  d = *dst;
-
-  return canvas_draw_image(c, img, &s, &d);
-}
-
 ret_t canvas_draw_image_scale(canvas_t* c, bitmap_t* img, const rect_t* dst_in) {
   rect_t s;
   rect_t d;
@@ -1773,8 +1681,6 @@ ret_t canvas_draw_image_ex(canvas_t* c, bitmap_t* img, image_draw_type_t draw_ty
       return canvas_draw_image_scale_w(c, img, dst);
     case IMAGE_DRAW_SCALE_H:
       return canvas_draw_image_scale_h(c, img, dst);
-    case IMAGE_DRAW_FILL:
-      return canvas_draw_image_fill(c, img, dst);
     case IMAGE_DRAW_REPEAT:
       return canvas_draw_image_repeat(c, img, dst);
     case IMAGE_DRAW_REPEAT_X:
@@ -1947,17 +1853,12 @@ ret_t canvas_draw_image_at(canvas_t* c, bitmap_t* img, xy_t x, xy_t y) {
   return canvas_do_draw_image(c, img, &src, &dst);
 }
 
-ret_t canvas_set_fps_ex(canvas_t* c, bool_t show_fps, uint32_t fps, xy_t x, xy_t y) {
+ret_t canvas_set_fps(canvas_t* c, bool_t show_fps, uint32_t fps) {
   return_value_if_fail(c != NULL, RET_BAD_PARAMS);
   c->show_fps = show_fps;
   c->fps = fps;
-  c->fps_position = point_init(x, y);
 
   return RET_OK;
-}
-
-ret_t canvas_set_fps(canvas_t* c, bool_t show_fps, uint32_t fps) {
-  return canvas_set_fps_ex(c, show_fps, fps, 0, 0);
 }
 
 static ret_t canvas_draw_fps(canvas_t* c) {
@@ -1968,7 +1869,7 @@ static ret_t canvas_draw_fps(canvas_t* c) {
     char fps[20];
     wchar_t wfps[20];
 
-    r = rect_init(c->fps_position.x, c->fps_position.y, 60, 30);
+    r = rect_init(0, 0, 60, 30);
     canvas_set_font(c, NULL, 16);
     canvas_set_text_color(c, color_init(0xf0, 0xf0, 0xf0, 0xff));
     canvas_set_fill_color(c, color_init(0x20, 0x20, 0x20, 0xff));
@@ -2053,7 +1954,7 @@ static ret_t canvas_draw_text_in_rect_ellipses(canvas_t* c, const wchar_t* str, 
 
   r.w = text_w;
   canvas_draw_text_in_rect(c, str, i, &r);
-  r.x += text_w;
+  r.x = text_w;
   r.w = ellipses_w;
   canvas_draw_text_in_rect(c, STR_ELLIPSES, wcslen(STR_ELLIPSES), &r);
 
@@ -2109,7 +2010,6 @@ vgcanvas_t* canvas_get_vgcanvas(canvas_t* c) {
   if (vg != NULL) {
     rect_t r;
     canvas_get_clip_rect(c, &r);
-    vgcanvas_set_canvas(vg, c);
     vgcanvas_clip_rect(vg, r.x, r.y, r.w, r.h);
     vgcanvas_begin_path(vg);
     vgcanvas_set_text_align(vg, "left");
@@ -2155,11 +2055,6 @@ ret_t canvas_restore(canvas_t* c) {
   vgcanvas_restore(lcd_get_vgcanvas(c->lcd));
 #endif /*AWTK_WEB*/
 
-#if defined(WITH_GPU)
-  lcd_set_font_name(c->lcd, c->font_name);
-  lcd_set_font_size(c->lcd, c->font_size);
-#endif /*WITH_GPU*/
-
   return RET_OK;
 }
 
@@ -2171,10 +2066,6 @@ ret_t canvas_reset(canvas_t* c) {
   return_value_if_fail(c != NULL && c->lcd != NULL, RET_BAD_PARAMS);
 
   canvas_reset_cache(c);
-  if (c->font_manager) {
-    emitter_off_by_func(EMITTER(c->font_manager), EVT_ASSET_MANAGER_UNLOAD_ASSET,
-                        canvas_on_font_manager_events, c);
-  }
   TKMEM_FREE(c->last_text_str);
   memset(c, 0x00, sizeof(canvas_t));
 
@@ -2212,7 +2103,7 @@ ret_t canvas_get_text_metrics(canvas_t* c, float_t* ascent, float_t* descent, fl
 
     *ascent = vmetrics.ascent;
     *descent = vmetrics.descent;
-    *line_hight = vmetrics.ascent - vmetrics.descent + vmetrics.line_gap;
+    *line_hight = vmetrics.line_gap + vmetrics.ascent + vmetrics.descent;
     return RET_OK;
   } else {
     *ascent = 0;
@@ -2221,7 +2112,7 @@ ret_t canvas_get_text_metrics(canvas_t* c, float_t* ascent, float_t* descent, fl
     return RET_FAIL;
   }
 }
-// #define WITHOUT_ROUNDED_RECT 1
+
 #ifndef WITHOUT_ROUNDED_RECT
 #include "ffr_draw_rounded_rect.inc"
 

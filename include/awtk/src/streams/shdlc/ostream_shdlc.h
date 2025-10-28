@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  reliable ostream base on simple HDLC
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,11 +43,11 @@ struct _tk_ostream_shdlc_t {
 
   /**
    * @property {uint32_t} timeout
-   * 读写超时时间(毫秒)
+   * 读写超时时间(ms)
    */
   uint32_t timeout;
   /**
-   * @property {uint8_t} retry_times
+   * @property {uint32_t} retry_times
    * 失败重传次数。
    */
   uint8_t retry_times;

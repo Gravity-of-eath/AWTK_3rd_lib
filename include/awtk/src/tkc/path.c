@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  path
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,14 +27,15 @@
 #define IS_PATH_SEP(c) ((c) == '/' || (c) == '\\')
 
 ret_t path_basename_ex(const char* path, bool_t remove_ext_name, char* result, int32_t size) {
-  const char *p = NULL, *p2 = NULL;
+  const char* p = NULL;
   int32_t real_size = 0;
   return_value_if_fail(path != NULL && result != NULL, RET_BAD_PARAMS);
 
   memset(result, 0x00, size);
-  p = strrchr(path, '/');
-  p2 = strrchr(path, '\\');
-  p = tk_max(p, p2);
+  p = strrchr(path, TK_PATH_SEP);
+  if (p == NULL) {
+    p = strrchr(path, TK_PATH_SEP == '/' ? '\\' : '/');
+  }
   if (p == NULL) {
     p = path;
   } else {
@@ -181,10 +182,6 @@ ret_t path_normalize(const char* path, char* result, int32_t size) {
     switch (*s) {
       case '/':
       case '\\': {
-        if (s[1] == '.' && s[2] == '\0') {
-          s += 2;
-          break;
-        }
         if (d == result || !IS_PATH_SEP(d[-1])) {
           *d++ = TK_PATH_SEP;
         }
@@ -347,73 +344,4 @@ const char* path_prepend_app_root(char full_path[MAX_PATH + 1], const char* path
   path_build(full_path, MAX_PATH, app_root, path, NULL);
 
   return full_path;
-}
-
-const char* path_prepend_temp_path(char full_path[MAX_PATH + 1], const char* path) {
-  char temp_path[MAX_PATH + 1] = {0};
-  return_value_if_fail(path != NULL, NULL);
-  return_value_if_fail(fs_get_temp_path(os_fs(), temp_path) == RET_OK, NULL);
-
-  path_build(full_path, MAX_PATH, temp_path, path, NULL);
-
-  return full_path;
-}
-
-const char* path_prepend_user_storage_path(char full_path[MAX_PATH + 1], const char* path) {
-  char user_storage_path[MAX_PATH + 1] = {0};
-  return_value_if_fail(path != NULL, NULL);
-  return_value_if_fail(fs_get_user_storage_path(os_fs(), user_storage_path) == RET_OK, NULL);
-
-  path_build(full_path, MAX_PATH, user_storage_path, path, NULL);
-
-  return full_path;
-}
-
-ret_t path_abs_normalize(const char* filename, char* result, int32_t size) {
-  char path[MAX_PATH + 1];
-  return_value_if_fail(filename != NULL && result != NULL && size > 0, RET_BAD_PARAMS);
-
-  path_abs(filename, path, MAX_PATH);
-  return path_normalize(path, result, size);
-}
-
-const char* path_abs_normalize_with_root(const char* root, const char* rel_filename,
-                                         char filename[MAX_PATH + 1]) {
-  char path[MAX_PATH + 1];
-  char abs_root[MAX_PATH + 1];
-  return_value_if_fail(root != NULL && rel_filename != NULL, NULL);
-
-  path_abs_normalize(root, abs_root, MAX_PATH);
-
-  path_build(path, MAX_PATH, abs_root, rel_filename, NULL);
-  path_normalize(path, filename, MAX_PATH);
-
-  if (strncmp(filename, abs_root, strlen(abs_root)) == 0) {
-    return filename;
-  } else {
-    return NULL;
-  }
-}
-
-ret_t path_expand_vars(const char* filename, char* result, int32_t size) {
-  str_t str;
-  char path[MAX_PATH + 1] = {0};
-  return_value_if_fail(filename != NULL && result != NULL && size > 0, RET_BAD_PARAMS);
-
-  str_init(&str, MAX_PATH + 1);
-  str_set(&str, filename);
-
-  fs_get_user_storage_path(os_fs(), path);
-  str_replace(&str, "${user_dir}", path);
-
-  fs_get_temp_path(os_fs(), path);
-  str_replace(&str, "${temp_dir}", path);
-
-  path_app_root(path);
-  str_replace(&str, "${app_dir}", path);
-
-  tk_strncpy_s(result, size, str.str, str.size);
-  str_reset(&str);
-
-  return RET_OK;
 }

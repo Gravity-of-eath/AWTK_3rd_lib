@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  button
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -62,7 +62,6 @@ static ret_t button_notify_pressed_changed(widget_t* widget) {
   value_t v;
   prop_change_event_t e;
   button_t* button = BUTTON(widget);
-  ENSURE(button);
 
   e.e = event_init(EVT_PROP_CHANGED, widget);
   e.name = "pressed";
@@ -154,7 +153,6 @@ static ret_t button_draw_preview(void* ctx, event_t* e) {
   widget_t* widget = WIDGET(ctx);
   point_t p = {0, 0};
   paint_event_t* evt = paint_event_cast(e);
-  ENSURE(evt);
   canvas_t* c = evt->c;
   int32_t ox = c->ox;
   int32_t oy = c->oy;
@@ -241,7 +239,6 @@ static ret_t button_on_event(widget_t* widget, event_t* e) {
     case EVT_POINTER_UP: {
       pointer_event_t click;
       pointer_event_t* up = pointer_event_cast(e);
-      ENSURE(up);
       pointer_event_init(&click, EVT_CLICK, widget, up->x, up->y);
 
       if (button->pressed && widget_is_point_in(widget, click.x, click.y, FALSE)) {
@@ -322,16 +319,6 @@ static ret_t button_get_prop(widget_t* widget, const char* name, value_t* v) {
   } else if (tk_str_eq(name, WIDGET_PROP_ENABLE_PREVIEW)) {
     value_set_bool(v, button->enable_preview);
     return RET_OK;
-  } else if (tk_str_eq(name, WIDGET_PROP_STATE_FOR_STYLE)) {
-    if (button->is_accept_status) {
-      if (widget->visible && widget->sensitive && widget->enable) {
-        value_set_str(v, WIDGET_STATE_FOCUSED);
-        return RET_OK;
-      }
-    }
-  } else if (tk_str_eq(name, WIDGET_PROP_IS_ACCEPT_STATUS)) {
-    value_set_bool(v, button->is_accept_status);
-    return RET_OK;
   }
 
   return RET_NOT_FOUND;
@@ -358,8 +345,7 @@ static ret_t button_get_prop_default_value(widget_t* widget, const char* name, v
 }
 
 static ret_t button_set_prop(widget_t* widget, const char* name, const value_t* v) {
-  button_t* button = BUTTON(widget);
-  return_value_if_fail(button != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_REPEAT)) {
     return button_set_repeat(widget, value_int(v));
@@ -369,9 +355,6 @@ static ret_t button_set_prop(widget_t* widget, const char* name, const value_t* 
     return button_set_enable_long_press(widget, value_bool(v));
   } else if (tk_str_eq(name, WIDGET_PROP_ENABLE_PREVIEW)) {
     return button_set_enable_preview(widget, value_bool(v));
-  } else if (tk_str_eq(name, WIDGET_PROP_IS_ACCEPT_STATUS)) {
-    button->is_accept_status = value_bool(v);
-    return RET_OK;
   }
 
   return RET_NOT_FOUND;
@@ -402,20 +385,11 @@ static ret_t button_auto_adjust_size(widget_t* widget) {
     widget_prepare_text_style(widget, c);
     h = c->font_size + margin_top + margin_bottom;
     w = canvas_measure_text(c, widget->text.str, widget->text.size) + margin_left + margin_right;
-    return widget_move_resize_ex(widget, widget->x, widget->y, w, h, FALSE);
-  }
-}
+    widget->w = w;
+    widget->h = h;
 
-static ret_t button_init(widget_t* widget) {
-  button_t* button = BUTTON(widget);
-  return_value_if_fail(button != NULL, RET_BAD_PARAMS);
-  button->repeat = 0;
-  button->repeat_nr = 0;
-  button->pressed = FALSE;
-  button->enable_long_press = FALSE;
-  button->timer_id = TK_INVALID_ID;
-  button->long_press_time = TK_LONG_PRESS_TIME;
-  return RET_OK;
+    return RET_OK;
+  }
 }
 
 static const char* const s_button_properties[] = {WIDGET_PROP_REPEAT, WIDGET_PROP_LONG_PRESS_TIME,
@@ -428,7 +402,6 @@ TK_DECL_VTABLE(button) = {.size = sizeof(button_t),
                           .return_key_to_activate = TRUE,
                           .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                           .create = button_create,
-                          .init = button_init,
                           .invalidate = button_invalidate,
                           .clone_properties = s_button_properties,
                           .persistent_properties = s_button_properties,
@@ -442,7 +415,16 @@ TK_DECL_VTABLE(button) = {.size = sizeof(button_t),
 
 widget_t* button_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(button), x, y, w, h);
-  button_init(widget);
+  button_t* button = BUTTON(widget);
+  return_value_if_fail(button != NULL, NULL);
+
+  button->repeat = 0;
+  button->repeat_nr = 0;
+  button->pressed = FALSE;
+  button->enable_long_press = FALSE;
+  button->timer_id = TK_INVALID_ID;
+  button->long_press_time = TK_LONG_PRESS_TIME;
+
   return widget;
 }
 

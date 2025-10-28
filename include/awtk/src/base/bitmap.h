@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  bitmap interface
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -111,10 +111,9 @@ struct _bitmap_t {
   /*用于销毁specific*/
   bitmap_destroy_t specific_destroy;
 
-  int lock_type;
-
   /*virtual functions*/
   bitmap_destroy_t destroy;
+
   image_manager_t* image_manager;
 };
 
@@ -139,53 +138,6 @@ bitmap_t* bitmap_create(void);
  */
 bitmap_t* bitmap_create_ex(uint32_t w, uint32_t h, uint32_t line_length, bitmap_format_t format);
 
-/**
- * @method bitmap_create_ex2
- * 创建图片对象。
- * @param {uint32_t} w 宽度。
- * @param {uint32_t} h 高度。
- * @param {uint32_t} line_length line_length。
- * @param {bitmap_format_t} format 格式。
- * @param {uint8_t*} data 图像数据。
- * @param {bool_t} should_free_data 是否释放数据。
- *
- * @return {bitmap_t*} 返回bitmap对象。
- */
-bitmap_t* bitmap_create_ex2(uint32_t w, uint32_t h, uint32_t line_length, bitmap_format_t format,
-                            uint8_t* data, bool_t should_free_data);
-
-/**
- * @method bitmap_create_ex3
- * 创建图片对象。
- * @param {uint32_t} w 宽度。
- * @param {uint32_t} h 高度。
- * @param {uint32_t} line_length line_length。
- * @param {bitmap_format_t} format 格式。
- * @param {uint8_t*} data 图像数据。
- * @param {uint8_t*} physical_data_addr 物理地址(部分硬件加速需要)。
- * @param {bool_t} should_free_data 是否释放数据。
- *
- * @return {bitmap_t*} 返回bitmap对象。
- */
-bitmap_t* bitmap_create_ex3(uint32_t w, uint32_t h, uint32_t line_length, bitmap_format_t format,
-                            uint8_t* data, uint8_t* physical_data_addr, bool_t should_free_data);
-/**
- * @method bitmap_init_ex2
- * 创建图片对象。
- * @param {bitmap_t*} bitmap bitmap对象。
- * @param {uint32_t} w 宽度。
- * @param {uint32_t} h 高度。
- * @param {uint32_t} line_length line_length。
- * @param {bitmap_format_t} format 格式。
- * @param {uint8_t*} data 图像数据。
- * @param {uint8_t*} physical_data_addr 物理地址(部分硬件加速需要)。
- * @param {bool_t} should_free_data 是否释放数据。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t bitmap_init_ex2(bitmap_t* bitmap, uint32_t w, uint32_t h, uint32_t line_length,
-                      bitmap_format_t format, uint8_t* data, uint8_t* physical_data_addr,
-                      bool_t should_free_data);
 /**
  * @method bitmap_get_bpp
  * 获取图片一个像素占用的字节数。
@@ -241,7 +193,6 @@ ret_t bitmap_get_pixel(bitmap_t* bitmap, uint32_t x, uint32_t y, rgba_t* rgba);
 /**
  * @method bitmap_set_line_length
  * 设置line_length。
- * 备注：如果使用该函数设置位图的行长的时候，需要特别注意该位图的 graphic_buffer_t 对象的行长是否与设置的一致，否则容易导致位图异常。
  * @param {bitmap_t*} bitmap bitmap对象。
  * @param {uint32_t} line_length line_length。
  *
@@ -316,7 +267,8 @@ ret_t bitmap_transform(bitmap_t* bitmap, bitmap_transform_t transform, void* ctx
  * @param {uint32_t} w 宽度。
  * @param {uint32_t} h 高度。
  * @param {bitmap_format_t} format 格式。
- * @param {const uint8_t*} data 数据。3通道时为RGB888格式，4通道时为RGBA888格式(内部拷贝该数据，不会引用，调用者自行释放)。
+ * @param {const uint8_t*} data
+ * 数据。3通道时为RGB888格式，4通道时为RGBA888格式(内部拷贝该数据，不会引用，调用者自行释放)。
  * @param {uint32_t} comp 颜色通道数(目前支持3(rgb)和4(rgba))。
  * @param {lcd_orientation_t} o 旋转方向。
  *
@@ -332,7 +284,8 @@ ret_t bitmap_init_from_rgba(bitmap_t* bitmap, uint32_t w, uint32_t h, bitmap_for
  * @param {uint32_t} w 宽度。
  * @param {uint32_t} h 高度。
  * @param {bitmap_format_t} format 格式。
- * @param {const uint8_t*} data 数据。3通道时为BGR888格式，4通道时为BGRA888格式(内部拷贝该数据，不会引用，调用者自行释放)。
+ * @param {const uint8_t*} data
+ * 数据。3通道时为BGR888格式，4通道时为BGRA888格式(内部拷贝该数据，不会引用，调用者自行释放)。
  * @param {uint32_t} comp 颜色通道数(目前支持3(bgr)和4(bgra))。
  * @param {lcd_orientation_t} o 旋转方向。
  *
@@ -348,7 +301,7 @@ ret_t bitmap_init_from_bgra(bitmap_t* bitmap, uint32_t w, uint32_t h, bitmap_for
  * @param {uint32_t} w 宽度。
  * @param {uint32_t} h 高度。
  * @param {bitmap_format_t} format 格式。
- * @param {uint8_t*} data 数据，直接引用，但不负责释放。如果为空，由内部自动分配和释放。
+ * @param {const uint8_t*} data 数据，直接引用，但不负责释放。如果为空，由内部自动分配和释放。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -362,29 +315,12 @@ ret_t bitmap_init(bitmap_t* bitmap, uint32_t w, uint32_t h, bitmap_format_t form
  * @param {uint32_t} h 高度。
  * @param {uint32_t} line_length 行长。
  * @param {bitmap_format_t} format 格式。
- * @param {uint8_t*} data 数据，直接引用，但不负责释放。如果为空，由内部自动分配和释放。
+ * @param {const uint8_t*} data 数据，直接引用，但不负责释放。如果为空，由内部自动分配和释放。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t bitmap_init_ex(bitmap_t* bitmap, uint32_t w, uint32_t h, uint32_t line_length,
                      bitmap_format_t format, uint8_t* data);
-
-/**
- * @method bitmap_set_dirty
- * 设置图片是否脏。
- * @param {bitmap_t*} bitmap bitmap对象。
- * @param {bool_t} dirty 是否脏。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t bitmap_set_dirty(bitmap_t* bitmap, bool_t dirty);
-
-/**
- * @method bitmap_is_dirty
- * 获取图片是否脏。
- * @param {bitmap_t*} bitmap bitmap对象。
- * @return {bool_t} 返回TRUE表示脏，FALSE表示不脏。
- */
-bool_t bitmap_is_dirty(bitmap_t* bitmap);
 
 #if defined(WITH_STB_IMAGE) || defined(WITH_FS_RES)
 /*for helping debug drawing bugs*/
@@ -423,15 +359,6 @@ ret_t bitmap_mono_dump(const uint8_t* buff, uint32_t w, uint32_t h);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t bitmap_destroy_with_self(bitmap_t* bitmap);
-
-/**
- * @method bitmap_deinit
- * 反初始化图片。
- * @annotation ["deconstructor"]
- * @param {bitmap_t*} bitmap bitmap对象。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t bitmap_deinit(bitmap_t* bitmap);
 
 /**
  * @method bitmap_destroy
@@ -507,12 +434,6 @@ typedef enum _image_draw_type_t {
    * 高度缩放显示。将图片缩放至目标矩形的高度，宽度按此比例进行缩放，超出不部分不显示。
    */
   IMAGE_DRAW_SCALE_H,
-
-  /**
-   * @const IMAGE_DRAW_FILL
-   * 填充整个区域。将图片缩放至目标矩形的高度或宽度，包装填满整个目标区域，超出不部分不显示。
-   */
-  IMAGE_DRAW_FILL,
 
   /**
    * @const IMAGE_DRAW_REPEAT

@@ -120,8 +120,7 @@ static ret_t vgcanvas_asset_manager_font_ctx_list_destroy(void* data) {
     font_ctx->font_destroy(NULL, font_ctx->font_name, font_ctx->base.ctx);
   }
   TKMEM_FREE(font_ctx);
-
-  return RET_OK;
+  return 1;
 }
 
 static ret_t vgcanvas_asset_manager_image_list_destroy(void* data) {
@@ -157,8 +156,7 @@ static ret_t vgcanvas_asset_manager_image_ctx_list_destroy(void* data) {
     ctx->bitmap_destroy(NULL, ctx->base.ctx);
   }
   TKMEM_FREE(ctx);
-
-  return RET_OK;
+  return 1;
 }
 
 static int vgcanvas_asset_manager_vg_list_compare_by_id(const void* a, const void* b) {
@@ -234,12 +232,12 @@ ret_t vgcanvas_asset_manager_destroy(vgcanvas_asset_manager_t* vgcanvas_asset_ma
   return RET_OK;
 }
 
-const void* vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager_t* vgcanvas_asset_manager, void* vg, bitmap_t* img, ret_t* result) {
+const void* vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager_t* vgcanvas_asset_manager, void* vg, bitmap_t* img, ret_t* reuslt) {
   int32_t i = 0;
   int32_t size = 0;
   darray_t* darray = NULL;
   vgcanvas_asset_vg_t* vg_data = NULL;
-  *result = RET_FAIL;
+  *reuslt = RET_FAIL;
   return_value_if_fail(vgcanvas_asset_manager != NULL, NULL);
   darray = &(vgcanvas_asset_manager->image_list);
   size = darray->size;
@@ -252,7 +250,7 @@ const void* vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager_t* 
         int32_t image_ctx_id = darray_find_index(&(image->image_ctx_list), tk_pointer_from_int(vg_data->vg_id));
         if (image_ctx_id >= 0) {
           vgcanvas_asset_ctx_t* image_ctx = (vgcanvas_asset_ctx_t*)darray_get(&(image->image_ctx_list), image_ctx_id);
-          *result = RET_OK;
+          *reuslt = RET_OK;
           return (const void*)(image_ctx->ctx);
         }
         break;
@@ -346,12 +344,12 @@ ret_t vgcanvas_asset_manager_remove_image(vgcanvas_asset_manager_t* vgcanvas_ass
   return RET_OK;
 }
 
-const void* vgcanvas_asset_manager_get_font_ctx(vgcanvas_asset_manager_t* vgcanvas_asset_manager, void* vg, const char* font_name, ret_t* result) {
+const void* vgcanvas_asset_manager_get_font_ctx(vgcanvas_asset_manager_t* vgcanvas_asset_manager, void* vg, const char* font_name, ret_t* reuslt) {
   int32_t i = 0;
   int32_t size = 0;
   darray_t* darray = NULL;
   vgcanvas_asset_vg_t* vg_data = NULL;
-  *result = RET_FAIL;
+  *reuslt = RET_FAIL;
   return_value_if_fail(vgcanvas_asset_manager != NULL, NULL);
   darray = &(vgcanvas_asset_manager->font_list);
   size = darray->size;
@@ -364,7 +362,7 @@ const void* vgcanvas_asset_manager_get_font_ctx(vgcanvas_asset_manager_t* vgcanv
         int32_t ctx_id = darray_find_index(&(font->font_ctx_list), tk_pointer_from_int(vg_data->vg_id));
         if (ctx_id >= 0) {
           vgcanvas_asset_ctx_t* ctx = (vgcanvas_asset_ctx_t*)darray_get(&(font->font_ctx_list), ctx_id);
-          *result = RET_OK;
+          *reuslt = RET_OK;
           return (const void*)(ctx->ctx);
         }
         break;

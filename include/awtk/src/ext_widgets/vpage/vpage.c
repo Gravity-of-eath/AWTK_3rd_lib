@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  虚拟页面(根据情况自动加载/卸载页面)。
  *
- * Copyright (c) 2021 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2021 - 2021 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -173,7 +173,6 @@ static ret_t vpage_on_enter(widget_t* widget, uint32_t index, uint32_t old_index
 
 static ret_t vpage_on_leave_done(widget_t* widget) {
   vpage_t* vpage = VPAGE(widget);
-  ENSURE(vpage);
 
   if (vpage->ui_asset != NULL) {
     vpage_dispatch_event(widget, EVT_VPAGE_CLOSE);

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  bitmap manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,10 +43,6 @@ static int bitmap_cache_cmp_name(bitmap_cache_t* a, bitmap_cache_t* b) {
 
 static int bitmap_cache_cmp_data(bitmap_cache_t* a, bitmap_cache_t* b) {
   return (char*)(a->image.buffer) - (char*)(b->image.buffer);
-}
-
-static int bitmap_cache_cmp_with_name(bitmap_cache_t* a, const char* name) {
-  return strcmp(a->name, name);
 }
 
 static int bitmap_cache_cmp_access_time_dec(bitmap_cache_t* a, bitmap_cache_t* b) {
@@ -223,7 +219,7 @@ static ret_t image_manager_get_bitmap_impl(image_manager_t* imm, const char* nam
   res = assets_manager_ref(imm->assets_manager, ASSET_TYPE_IMAGE, name);
   if (res == NULL) {
     if (imm->fallback_get_bitmap != NULL) {
-      return imm->fallback_get_bitmap(imm->fallback_get_bitmap_ctx, name, image);
+      return imm->fallback_get_bitmap(imm, name, image);
     }
     return RET_NOT_FOUND;
   }
@@ -236,7 +232,7 @@ static ret_t image_manager_get_bitmap_impl(image_manager_t* imm, const char* nam
     image->h = header->h;
     image->flags = header->flags;
     image->format = header->format;
-    image->name = asset_info_get_name((asset_info_t*)res);
+    image->name = res->name;
     image->image_manager = imm;
     image->orientation =
         (header->flags & BITMAP_FLAG_LCD_ORIENTATION) ? header->orientation : LCD_ORIENTATION_0;
@@ -262,8 +258,8 @@ static ret_t image_manager_get_bitmap_impl(image_manager_t* imm, const char* nam
     ret_t ret = image_loader_load_image(res, image);
     if (ret == RET_OK) {
       image_manager_add(imm, name, image);
+      assets_manager_unref(imm->assets_manager, res);
     }
-    assets_manager_unref(imm->assets_manager, res);
 
     return image_manager_lookup(imm, name, image);
   } else {
@@ -378,25 +374,6 @@ ret_t image_manager_unload_bitmap(image_manager_t* imm, bitmap_t* image) {
   return darray_remove_all(&(imm->images), NULL, &b);
 }
 
-ret_t image_manager_unload_bitmap_by_name(image_manager_t* imm, const char* name) {
-  return_value_if_fail(imm != NULL && name != NULL, RET_BAD_PARAMS);
-
-  return darray_remove_all(&(imm->images), (tk_compare_t)bitmap_cache_cmp_with_name, (void*)name);
-}
-
-ret_t image_manager_dump(image_manager_t* im, str_t* result) {
-  uint32_t i = 0;
-  return_value_if_fail(im != NULL && result != NULL, RET_BAD_PARAMS);
-
-  for (i = 0; i < im->images.size; i++) {
-    bitmap_cache_t* cache = (bitmap_cache_t*)darray_get(&(im->images), i);
-    str_append_format(result, 1024, "%s: w=%d h=%d format=%d\n", cache->name, cache->image.w,
-                      cache->image.h, cache->image.format);
-  }
-
-  return RET_OK;
-}
-
 ret_t image_manager_deinit(image_manager_t* imm) {
   return_value_if_fail(imm != NULL, RET_BAD_PARAMS);
 
@@ -444,7 +421,7 @@ static int image_manager_cmp_by_name(image_manager_t* imm, const char* name) {
   return -1;
 }
 
-static ret_t image_manager_fallback_get_bitmap_default(void* ctx, const char* name,
+static ret_t image_manager_fallback_get_bitmap_default(image_manager_t* imm, const char* name,
                                                        bitmap_t* image) {
   return image_manager_get_bitmap(image_manager(), name, image);
 }
@@ -481,7 +458,7 @@ ret_t image_managers_unref(image_manager_t* imm) {
   assert(imm->refcount > 0);
   if (imm->refcount == 1) {
     assets_managers_unref(imm->assets_manager);
-    darray_remove(s_image_managers, imm->name);
+    darray_remove(s_image_managers, imm);
     if (s_image_managers->size == 0) {
       darray_destroy(s_image_managers);
       s_image_managers = NULL;

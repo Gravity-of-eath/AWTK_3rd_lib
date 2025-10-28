@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  edit
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,7 +34,6 @@ typedef ret_t (*edit_inc_value_t)(widget_t* widget);
 typedef ret_t (*edit_dec_value_t)(widget_t* widget);
 typedef bool_t (*edit_is_valid_value_t)(widget_t* widget);
 typedef ret_t (*edit_pre_input_t)(widget_t* widget, uint32_t key);
-typedef ret_t (*edit_pre_delete_t)(widget_t* widget, delete_type_t delete_type);
 typedef bool_t (*edit_is_valid_char_t)(widget_t* widget, wchar_t c);
 
 /**
@@ -126,14 +125,6 @@ typedef struct _edit_t {
    * 
    */
   char* action_text;
-  /**
-   * @property {char*} validator
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * fscript脚本，用输入校验，如：(len(text) > 3) && (len(text) < 10)。
-   *
-   * > 用于校验输入的文本是否合法。
-   */
-  char* validator;
 
   /**
    * @property {char*} keyboard
@@ -221,14 +212,7 @@ typedef struct _edit_t {
    * > * 2.为TRUE时，如果内容有变化，会设置编辑器的状态为changed，所以此时编辑器需要支持changed状态的style。
    */
   bool_t cancelable;
-  /**
-   * @property {bool_t} focus_next_when_enter
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 
-   * 输入回车后是否跳到下一个控件中。
-   *
-   */
-  bool_t focus_next_when_enter;
+
   /*private*/
   uint8_t margin;
   uint8_t top_margin;
@@ -237,23 +221,15 @@ typedef struct _edit_t {
   uint8_t right_margin;
 
   bool_t is_key_inputing;
-  bool_t is_text_error;
-
-  bool_t is_text_deleted;
-  bool_t is_activated;
 
   uint32_t idle_id;
   uint32_t timer_id;
   text_edit_t* model;
   wstr_t saved_text;
-  uint32_t selected_idle_id;
-  wstr_t last_changing_text;
-  wstr_t last_changed_text;
   edit_inc_value_t inc_value;
   edit_dec_value_t dec_value;
   edit_fix_value_t fix_value;
   edit_pre_input_t pre_input;
-  edit_pre_delete_t pre_delete;
   edit_is_valid_char_t is_valid_char;
   edit_is_valid_value_t is_valid_value;
 } edit_t;
@@ -265,7 +241,7 @@ typedef struct _edit_t {
 
 /**
  * @event {value_change_event_t} EVT_VALUE_CHANGED
- * 文本改变事件(编辑完成或设置文本时触发)。
+ * 文本改变事件。
  */
 
 /**
@@ -476,7 +452,7 @@ ret_t edit_set_input_type(widget_t* widget, input_type_t type);
  * 设置软键盘上action按钮的文本。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
- * @param {const char*} action_text 软键盘上action按钮的文本。
+ * @param {char*} action_text 软键盘上action按钮的文本。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -487,7 +463,7 @@ ret_t edit_set_action_text(widget_t* widget, const char* action_text);
  * 设置编辑器的输入提示。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
- * @param {const char*} tips 输入提示。
+ * @param {char*} tips 输入提示。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -510,7 +486,7 @@ ret_t edit_set_tr_tips(widget_t* widget, const char* tr_tips);
  * 
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
- * @param {const char*} keyboard 键盘名称(相应UI资源必须存在)。
+ * @param {char*} keyboard 键盘名称(相应UI资源必须存在)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -584,18 +560,6 @@ ret_t edit_set_is_valid_char(widget_t* widget, edit_is_valid_char_t is_valid_cha
 ret_t edit_set_is_valid_value(widget_t* widget, edit_is_valid_value_t is_valid_value);
 
 /**
- * @method edit_set_validator
- * 设置输入内容校验脚本。
- *> 如果内置函数不能满足需求时，可以设置自定义的检查脚本。
- *
- * @param {widget_t*} widget widget对象。
- * @param {const char*} validator 校验输入内容的脚本。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t edit_set_validator(widget_t* widget, const char* validator);
-
-/**
  * @method edit_set_fix_value
  * 设置修正输入内容的回调函数。
  *> 如果内置函数不能满足需求时，可以设置自定义的检查函数。
@@ -633,7 +597,7 @@ ret_t edit_set_dec_value(widget_t* widget, edit_dec_value_t dec_value);
 
 /**
  * @method edit_set_pre_input
- * 设置预输入处理的回调函数。
+ * 设置预输入处的回调函数。
  *> 如果内置函数不能满足需求时，可以设置自定义的检查函数。
  *
  * @param {widget_t*} widget widget对象。
@@ -642,18 +606,6 @@ ret_t edit_set_dec_value(widget_t* widget, edit_dec_value_t dec_value);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t edit_set_pre_input(widget_t* widget, edit_pre_input_t pre_input);
-
-/**
- * @method edit_set_pre_delete
- * 设置预删除处理的回调函数。
- *> 如果内置函数不能满足需求时，可以设置自定义的检查函数。
- *
- * @param {widget_t*} widget widget对象。
- * @param {edit_pre_delete_t} pre_delete 预删除处理的回调函数(删除时保留分隔符)。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t edit_set_pre_delete(widget_t* widget, edit_pre_delete_t pre_delete);
 
 /**
  * @method edit_set_select
@@ -678,17 +630,6 @@ ret_t edit_set_select(widget_t* widget, uint32_t start, uint32_t end);
  */
 char* edit_get_selected_text(widget_t* widget);
 
-/**
- * @method edit_set_focus_next_when_enter
- * 设置输入回车后是否跳到下一个控件中。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget widget对象。
- * @param {bool_t} focus_next_when_enter 是否跳入下一个控件中。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t edit_set_focus_next_when_enter(widget_t* widget, bool_t focus_next_when_enter);
-
 #define EDIT(widget) ((edit_t*)(edit_cast(WIDGET(widget))))
 
 /*public for subclass and runtime type check*/
@@ -702,6 +643,8 @@ ret_t edit_on_event(widget_t* widget, event_t* e);
 ret_t edit_get_prop(widget_t* widget, const char* name, value_t* v);
 ret_t edit_set_prop(widget_t* widget, const char* name, const value_t* v);
 ret_t edit_on_add_child(widget_t* widget, widget_t* child);
+widget_t* edit_create_ex(widget_t* parent, const widget_vtable_t* vt, xy_t x, xy_t y, wh_t w,
+                         wh_t h);
 
 /*public for test*/
 ret_t edit_inc(edit_t* edit);
@@ -714,7 +657,6 @@ bool_t edit_is_valid_char(widget_t* widget, wchar_t c);
 /*common functions for edit_xxx*/
 ret_t edit_add_value_with_sep(widget_t* widget, int delta, char sep);
 ret_t edit_pre_input_with_sep(widget_t* widget, uint32_t key, char sep);
-ret_t edit_pre_delete_with_sep(widget_t* widget, delete_type_t delete_type, char sep);
 
 /*for compatability*/
 #define edit_set_input_tips(w, t) edit_set_tips(w, t)
@@ -723,7 +665,6 @@ ret_t edit_pre_delete_with_sep(widget_t* widget, delete_type_t delete_type, char
 #define STR_EDIT_DEC_NAME "dec"
 #define STR_EDIT_CLEAR_NAME "clear"
 #define STR_EDIT_VISIBLE_NAME "visible"
-#define EDIT_PROP_FOCUS_NEXT_WHEN_ENTER "focus_next_when_enter"
 
 #define TK_EDIT_PROPS                                                                            \
   WIDGET_PROP_MIN, WIDGET_PROP_MAX, WIDGET_PROP_STEP, WIDGET_PROP_INPUT_TYPE,                    \

@@ -9,8 +9,8 @@
 #include "pixel.h"
 #include "base/lcd.h"
 #include "base/bitmap.h"
-#include "tkc/darray.h"
-#include "tkc/types_def.h"
+#include "../tkc/darray.h"
+#include "../tkc/types_def.h"
 
 /*
 把二维坐标的象限通过45度分为上下区域，一共8个区域
@@ -1080,8 +1080,8 @@ static ret_t ffr_draw_stroke_rounded_rect_ex(canvas_t* c, const rect_t* r, const
   uint32_t radius = 0;
   xy_t x = r->x + c->ox;
   xy_t y = r->y + c->oy;
-  xy_t x2 = x + r->w - 1 + (border_width + 1) / 2;
-  xy_t y2 = y + r->h - 1 + (border_width + 1) / 2;
+  xy_t x2 = x + r->w - 1;
+  xy_t y2 = y + r->h - 1;
   return_value_if_fail(c != NULL && r != NULL && color != NULL, RET_BAD_PARAMS);
   tc = *color;
   if (!canvas_is_rect_in_clip_rect(c, x, y, x2, y2) || border_model == BORDER_NONE) {

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  string
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,31 +27,9 @@
 #include "tkc/object.h"
 #include "tkc/tokenizer.h"
 
-str_t* str_create(uint32_t capacity) {
-  str_t* str = TKMEM_ZALLOC(str_t);
-  return_value_if_fail(str != NULL, NULL);
-
-  return str_init(str, capacity);
-}
-
-ret_t str_destroy(str_t* str) {
-  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
-
-  str_reset(str);
-  TKMEM_FREE(str);
-
-  return RET_OK;
-}
-
 ret_t str_extend(str_t* str, uint32_t capacity) {
-  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
-
   if (capacity <= str->capacity) {
     return RET_OK;
-  }
-
-  if (!str->extendable) {
-    return RET_FAIL;
   }
 
   if (capacity > 0) {
@@ -67,48 +45,12 @@ ret_t str_extend(str_t* str, uint32_t capacity) {
   return RET_OK;
 }
 
-ret_t str_shrink(str_t* str, uint32_t size) {
-  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
-
-  if (size < str->size) {
-    str->size = size;
-    str->str[size] = '\0';
-  }
-
-  return RET_OK;
-}
-
 str_t* str_init(str_t* str, uint32_t capacity) {
   return_value_if_fail(str != NULL, NULL);
 
   memset(str, 0x00, sizeof(str_t));
-  str->extendable = TRUE;
 
   return str_extend(str, capacity) == RET_OK ? str : NULL;
-}
-
-str_t* str_attach_with_size(str_t* str, char* buff, uint32_t size, uint32_t capacity) {
-  return_value_if_fail(str != NULL && buff != NULL && capacity > 0, NULL);
-  return_value_if_fail(size < capacity, NULL);
-
-  memset(str, 0x00, sizeof(str_t));
-
-  str->str = buff;
-  str->size = size;
-  str->capacity = capacity;
-  str->extendable = FALSE;
-  buff[size] = '\0';
-
-  return str;
-}
-
-str_t* str_attach(str_t* str, char* buff, uint32_t capacity) {
-  return_value_if_fail(str != NULL && buff != NULL && capacity > 0, NULL);
-
-  memset(str, 0x00, sizeof(str_t));
-  memset(buff, 0x00, capacity);
-
-  return str_attach_with_size(str, buff, 0, capacity);
 }
 
 ret_t str_set(str_t* str, const char* text) {
@@ -158,51 +100,6 @@ ret_t str_append(str_t* str, const char* text) {
   return str_append_with_len(str, text, strlen(text));
 }
 
-ret_t str_append_wchar_with_len(str_t* str, const wchar_t* text, uint32_t len) {
-  uint32_t size = len * 6 + 1;
-  return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(str_extend(str, str->size + size + 1) == RET_OK, RET_OOM);
-
-  tk_utf8_from_utf16_ex(text, len, str->str + str->size, str->capacity - str->size - 1);
-  str->size += strlen(str->str + str->size);
-  return RET_OK;
-}
-
-
-ret_t str_append_wchar(str_t* str, const wchar_t* text) {
-  return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
-
-  return str_append_wchar_with_len(str, text, wcslen(text));
-}
-
-ret_t str_append_uppercase(str_t* str, const char* text) {
-  ret_t ret = RET_OK;
-  const char* p = text;
-  return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
-
-  while (*p) {
-    ret = str_append_char(str, toupper(*p));
-    break_if_fail(ret == RET_OK);
-    p++;
-  }
-
-  return ret;
-}
-
-ret_t str_append_lowercase(str_t* str, const char* text) {
-  ret_t ret = RET_OK;
-  const char* p = text;
-  return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
-
-  while (*p) {
-    ret = str_append_char(str, tolower(*p));
-    break_if_fail(ret == RET_OK);
-    p++;
-  }
-
-  return ret;
-}
-
 ret_t str_append_more(str_t* str, const char* text, ...) {
   va_list va;
   const char* p = NULL;
@@ -228,13 +125,6 @@ ret_t str_append_more(str_t* str, const char* text, ...) {
 ret_t str_append_int(str_t* str, int32_t value) {
   char num[32] = {0};
   tk_snprintf(num, sizeof(num) - 1, "%d", value);
-
-  return str_append(str, num);
-}
-
-ret_t str_append_uint32(str_t* str, uint32_t value) {
-  char num[32] = {0};
-  tk_snprintf(num, sizeof(num) - 1, "%u", value);
 
   return str_append(str, num);
 }
@@ -370,159 +260,6 @@ ret_t str_encode_xml_entity_with_len(str_t* str, const char* text, uint32_t len)
 }
 
 /*https://en.wikipedia.org/wiki/Escape_sequences_in_C*/
-char str_escape_char(char c) {
-  switch (c) {
-    case '\a': {
-      c = 'a';
-      break;
-    }
-    case '\b': {
-      c = 'b';
-      break;
-    }
-    case '\033': {
-      c = 'e';
-      break;
-    }
-    case '\f': {
-      c = 'f';
-      break;
-    }
-    case '\n': {
-      c = 'n';
-      break;
-    }
-    case '\r': {
-      c = 'r';
-      break;
-    }
-    case '\t': {
-      c = 't';
-      break;
-    }
-    case '\v': {
-      c = 'v';
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-
-  return c;
-}
-
-char str_unescape_char(const char* s, uint32_t* nr) {
-  char c = 0;
-  const char* start = s;
-  return_value_if_fail(s != NULL && nr != NULL, 0);
-
-  switch (*s++) {
-    case 'a': {
-      c = '\a';
-      break;
-    }
-    case 'b': {
-      c = '\b';
-      break;
-    }
-    case 'e': {
-      c = '\033';
-      break;
-    }
-    case 'f': {
-      c = '\f';
-      break;
-    }
-    case 'n': {
-      c = '\n';
-      break;
-    }
-    case 'r': {
-      c = '\r';
-      break;
-    }
-    case 't': {
-      c = '\t';
-      break;
-    }
-    case 'v': {
-      c = '\v';
-      break;
-    }
-    case '\'': {
-      c = '\'';
-      break;
-    }
-    case '\"': {
-      c = '\"';
-      break;
-    }
-    case '\\': {
-      c = '\\';
-      break;
-    }
-    case '?': {
-      c = '\?';
-      break;
-    }
-    case 'x': {
-      int32_t v = 0;
-      tk_sscanf(s, "%02x", &v);
-      c = v;
-      s += 2;
-      break;
-    }
-    case '\0': {
-      c = '\\';
-      break;
-    }
-    default: {
-      log_warn("not support char: [%c]\n", *s);
-      break;
-    }
-  }
-
-  *nr = s - start;
-  return c;
-}
-
-ret_t str_append_unescape(str_t* str, const char* s, uint32_t size) {
-  uint32_t i = 0;
-  return_value_if_fail(str != NULL && s != NULL, RET_BAD_PARAMS);
-
-  size = tk_min_int(strlen(s), size);
-  for (i = 0; i < size; i++) {
-    char c = *s++;
-    if (c == '\\') {
-      uint32_t nr = 0;
-      c = str_unescape_char(s, &nr);
-      i += nr;
-      s += nr;
-    }
-
-    str_append_char(str, c);
-  }
-
-  return RET_OK;
-}
-
-ret_t str_append_escape(str_t* str, const char* s, uint32_t size) {
-  uint32_t i = 0;
-  return_value_if_fail(str != NULL && s != NULL, RET_BAD_PARAMS);
-
-  size = tk_min_int(strlen(s), size);
-  for (i = 0; i < size; i++) {
-    char c = str_escape_char(s[i]);
-    if (c != s[i] || c == '\\' || c == '\'' || c == '\"') {
-      str_append_char(str, '\\');
-    }
-    str_append_char(str, c);
-  }
-
-  return RET_OK;
-}
-
 ret_t str_unescape(str_t* str) {
   char* s = NULL;
   char* d = NULL;
@@ -532,10 +269,73 @@ ret_t str_unescape(str_t* str) {
 
   while ((s - str->str) < str->size) {
     char c = *s++;
+
     if (c == '\\') {
-      uint32_t nr = 0;
-      c = str_unescape_char(s, &nr);
-      s += nr;
+      switch (*s++) {
+        case 'a': {
+          c = '\a';
+          break;
+        }
+        case 'b': {
+          c = '\b';
+          break;
+        }
+        case 'e': {
+          c = '\e';
+          break;
+        }
+        case 'f': {
+          c = '\f';
+          break;
+        }
+        case 'n': {
+          c = '\n';
+          break;
+        }
+        case 'r': {
+          c = '\r';
+          break;
+        }
+        case 't': {
+          c = '\t';
+          break;
+        }
+        case 'v': {
+          c = '\v';
+          break;
+        }
+        case '\'': {
+          c = '\'';
+          break;
+        }
+        case '\"': {
+          c = '\"';
+          break;
+        }
+        case '\\': {
+          c = '\\';
+          break;
+        }
+        case '0': {
+          c = '\0';
+          break;
+        }
+        case '?': {
+          c = '\?';
+          break;
+        }
+        case 'x': {
+          int32_t v = 0;
+          tk_sscanf(s, "%02x", &v);
+          c = v;
+          s += 2;
+          break;
+        }
+        default: {
+          log_warn("not support char: %s [%c]\n", str->str, *s);
+          break;
+        }
+      }
     }
     *d++ = c;
   }
@@ -559,26 +359,6 @@ bool_t str_eq(str_t* str, const char* text) {
   }
 
   return strcmp(str->str, text) == 0;
-}
-
-bool_t str_equal(str_t* str, str_t* other) {
-  if (str == other) {
-    return TRUE;
-  }
-
-  if (str == NULL || other == NULL) {
-    return FALSE;
-  }
-
-  if (str->str == other->str) {
-    return TRUE;
-  }
-
-  if (str->str == NULL || other->str == NULL) {
-    return FALSE;
-  }
-
-  return strcmp(str->str, other->str) == 0;
 }
 
 ret_t str_from_int(str_t* str, int32_t value) {
@@ -664,12 +444,8 @@ ret_t str_to_float(str_t* str, double* v) {
 
 ret_t str_reset(str_t* str) {
   return_value_if_fail(str != NULL, RET_OK);
-  if (str->extendable) {
-    TKMEM_FREE(str->str);
-  }
-  str->str = NULL;
-  str->size = 0;
-  str->capacity = 0;
+  TKMEM_FREE(str->str);
+  memset(str, 0x00, sizeof(str_t));
 
   return RET_OK;
 }
@@ -780,54 +556,49 @@ static uint32_t str_count_sub_str(str_t* s, const char* str) {
   return count;
 }
 
-static uint32_t str_replace_impl(char* dst, char* src, const char* text, const char* new_text) {
-  char* d = dst;
-  char* s = src;
-  uint32_t text_len = strlen(text);
-  uint32_t new_text_len = strlen(new_text);
-
-  while (*s) {
-    if (memcmp(s, text, text_len) == 0) {
-      memcpy(d, new_text, new_text_len);
-      s += text_len;
-      d += new_text_len;
-    } else {
-      *d++ = *s++;
-    }
-  }
-  *d = '\0';
-
-  return d - dst;
-}
-
 ret_t str_replace(str_t* str, const char* text, const char* new_text) {
   uint32_t count = 0;
-  uint32_t text_len = 0;
-  uint32_t new_text_len = 0;
-  return_value_if_fail(str != NULL && str->str != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(text != NULL && new_text != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(*text, RET_BAD_PARAMS);
+  return_value_if_fail(str != NULL && str->str != NULL && text != NULL && new_text != NULL,
+                       RET_BAD_PARAMS);
 
-  text_len = strlen(text);
-  new_text_len = strlen(new_text);
   count = str_count_sub_str(str, text);
-  if (count > 0) {
-    int32_t delta_len = new_text_len - text_len;
-    uint32_t capacity = str->size + count * delta_len + 1;
 
-    if (delta_len <= 0) {
-      uint32_t size = str_replace_impl(str->str, str->str, text, new_text);
-      str->size = size;
-    } else if (str->extendable) {
-      char* temp_str = (char*)TKMEM_ALLOC(capacity);
-      uint32_t size = str_replace_impl(temp_str, str->str, text, new_text);
-      TKMEM_FREE(str->str);
-      str->str = temp_str;
-      str->size = size;
-      str->capacity = capacity;
-    } else {
-      return_value_if_fail(str->extendable, RET_FAIL);
-    }
+  if (count > 0) {
+    char* p = str->str;
+    char* src = str->str;
+    uint32_t str_len = strlen(text);
+    uint32_t new_text_len = strlen(new_text);
+    uint32_t new_capacity = str->size + count * (strlen(new_text) - strlen(text)) + 1;
+    uint32_t capacity = tk_max(str->capacity, new_capacity);
+
+    char* temp_str = (char*)TKMEM_ALLOC(capacity);
+    char* dst = temp_str;
+    return_value_if_fail(temp_str != NULL, RET_OOM);
+    do {
+      uint32_t size = 0;
+      p = strstr(src, text);
+      if (p != NULL) {
+        size = (uint32_t)(p - src);
+      } else {
+        size = (uint32_t)strlen(src);
+      }
+      memcpy(dst, src, size);
+      src += size;
+      dst += size;
+      if (p != NULL) {
+        if (new_text_len > 0) {
+          memcpy(dst, new_text, new_text_len);
+          dst += new_text_len;
+        }
+        src += str_len;
+      }
+      *dst = '\0';
+    } while (p != NULL);
+
+    TKMEM_FREE(str->str);
+    str->str = temp_str;
+    str->size = strlen(str->str);
+    str->capacity = capacity;
   }
 
   return RET_OK;
@@ -961,16 +732,6 @@ ret_t str_append_double(str_t* str, const char* format, double value) {
   return str_append(str, buff);
 }
 
-ret_t str_append_c_str(str_t* str, const char* c_str) {
-  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(str_append_char(str, '\"') == RET_OK, RET_OOM);
-  if (c_str != NULL) {
-    str_append_escape(str, c_str, strlen(c_str));
-  }
-  return_value_if_fail(str_append_char(str, '\"') == RET_OK, RET_OOM);
-  return RET_OK;
-}
-
 ret_t str_append_json_str(str_t* str, const char* json_str) {
   const char* p = json_str;
   return_value_if_fail(str != NULL, RET_BAD_PARAMS);
@@ -983,14 +744,6 @@ ret_t str_append_json_str(str_t* str, const char* json_str) {
         return_value_if_fail(str_append(str, "\\n") == RET_OK, RET_OOM);
       } else if (*p == '\r') {
         return_value_if_fail(str_append(str, "\\r") == RET_OK, RET_OOM);
-      } else if (*p == '\t') {
-        return_value_if_fail(str_append(str, "\\t") == RET_OK, RET_OOM);
-      } else if (*p == '\b') {
-        return_value_if_fail(str_append(str, "\\b") == RET_OK, RET_OOM);
-      } else if (*p == '\f') {
-        return_value_if_fail(str_append(str, "\\f") == RET_OK, RET_OOM);
-      } else if (*p == '\\') {
-        return_value_if_fail(str_append(str, "\\\\") == RET_OK, RET_OOM);
       } else {
         return_value_if_fail(str_append_char(str, *p) == RET_OK, RET_OOM);
       }
@@ -1041,10 +794,9 @@ ret_t str_append_json_bool_pair(str_t* str, const char* key, bool_t value) {
   return RET_OK;
 }
 
-ret_t str_encode_hex(str_t* str, const void* data, uint32_t size, const char* format) {
+ret_t str_encode_hex(str_t* str, const uint8_t* data, uint32_t size, const char* format) {
   char tstr[64];
   uint32_t i = 0;
-  const uint8_t* p = data;
   return_value_if_fail(str != NULL && data != NULL, RET_BAD_PARAMS);
 
   if (format == NULL) {
@@ -1052,21 +804,20 @@ ret_t str_encode_hex(str_t* str, const void* data, uint32_t size, const char* fo
   }
 
   for (i = 0; i < size; i++) {
-    tk_snprintf(tstr, sizeof(tstr) - 1, format, p[i]);
+    tk_snprintf(tstr, sizeof(tstr) - 1, format, data[i]);
     return_value_if_fail(str_append(str, tstr) == RET_OK, RET_OOM);
   }
 
   return RET_OK;
 }
 
-ret_t str_decode_hex(str_t* str, void* data, uint32_t size) {
-  char* p = NULL;
-  char v[3] = {0, 0, 0};
-  uint8_t* d = data;
-  uint8_t* dend = d + size;
+ret_t str_decode_hex(str_t* str, uint8_t* data, uint32_t size) {
+  uint8_t* dend = data + size;
+  char* p;
+  char v[3];
   return_value_if_fail(str != NULL && data != NULL, RET_BAD_PARAMS);
 
-  for (p = str->str; p < str->str + str->size && d < dend; p += 2) {
+  for (p = str->str; p < str->str + str->size && data < dend; p += 2) {
     while (p[0] == ' ') {
       p++;
     }
@@ -1074,8 +825,8 @@ ret_t str_decode_hex(str_t* str, void* data, uint32_t size) {
       p += 2;
     }
     tk_strncpy(v, p, 2);
-    *d = tk_strtol(v, 0, 16);
-    d++;
+    *data = tk_strtol(v, 0, 16);
+    data++;
   }
 
   return RET_OK;
@@ -1148,89 +899,6 @@ ret_t str_append_format(str_t* str, uint32_t size, const char* format, ...) {
 
   return_value_if_fail(ret >= 0, RET_BAD_PARAMS);
   str->size += ret;
-
-  return RET_OK;
-}
-
-ret_t str_append_format_padding(str_t* str, uint32_t size, const char* format, ...) {
-  va_list va;
-  int32_t ret = 0;
-  uint32_t old_size = 0;
-  return_value_if_fail(str != NULL && format != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(str_extend(str, str->size + size + 1) == RET_OK, RET_OOM);
-
-  old_size = str->size;
-  va_start(va, format);
-  ret = tk_vsnprintf(str->str + str->size, size, format, va);
-  va_end(va);
-
-  return_value_if_fail(ret >= 0, RET_BAD_PARAMS);
-  str->size += ret;
-
-  if (str->size < (old_size + size)) {
-    uint32_t n = (old_size + size) - str->size;
-    str_append_n_chars(str, ' ', n);
-  }
-
-  return RET_OK;
-}
-
-ret_t str_append_json_pair(str_t* str, const char* key, const value_t* value) {
-  ret_t ret;
-  return_value_if_fail(str != NULL && key != NULL && value, RET_BAD_PARAMS);
-
-  return_value_if_fail(str_append_json_str(str, key) == RET_OK, RET_OOM);
-  return_value_if_fail(str_append_char(str, ':') == RET_OK, RET_OOM);
-
-  if (value->type == VALUE_TYPE_BOOL) {
-    return_value_if_fail(str_append(str, value_bool(value) ? "true" : "false") == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_INT8 || value->type == VALUE_TYPE_INT16 ||
-             value->type == VALUE_TYPE_INT32) {
-    return_value_if_fail(str_append_int(str, value_int32(value)) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_UINT8 || value->type == VALUE_TYPE_UINT16 ||
-             value->type == VALUE_TYPE_UINT32) {
-    return_value_if_fail(str_append_uint32(str, value_uint32(value)) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_UINT64) {
-    return_value_if_fail(str_append_uint64(str, value_uint64(value)) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_INT64) {
-    return_value_if_fail(str_append_int64(str, value_int64(value)) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_DOUBLE || value->type == VALUE_TYPE_FLOAT32 ||
-             value->type == VALUE_TYPE_FLOAT) {
-    return_value_if_fail(str_append_double(str, NULL, value_double(value)) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_STRING) {
-    return_value_if_fail(str_append_json_str(str, value_str(value)) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_SIZED_STRING) {
-    sized_str_t* ss = value_sized_str(value);
-    return_value_if_fail(ss, RET_BAD_PARAMS);
-    return_value_if_fail(str_append_json_str(str, ss->str) == RET_OK, RET_OOM);
-
-  } else if (value->type == VALUE_TYPE_BINARY) {
-    str_t hexstr;
-    binary_data_t* bd = value_binary_data(value);
-
-    return_value_if_fail(bd, RET_BAD_PARAMS);
-    return_value_if_fail(str_init(&hexstr, bd->size * 2 + 1) != NULL, RET_OOM);
-
-    ret = str_encode_hex(&hexstr, bd->data, bd->size, NULL);
-    if (ret != RET_OK) {
-      str_reset(&hexstr);
-      return ret;
-    }
-
-    ret = str_append_json_str(str, hexstr.str);
-    if (ret != RET_OK) {
-      str_reset(&hexstr);
-      return ret;
-    }
-    str_reset(&hexstr);
-  }
 
   return RET_OK;
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  scroll_view
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -79,8 +79,8 @@ static ret_t scroll_view_update_virtual_size(widget_t* widget) {
   scroll_view_t* scroll_view = SCROLL_VIEW(widget);
   return_value_if_fail(scroll_view != NULL && widget != NULL, RET_BAD_PARAMS);
 
-  virtual_w = widget->w;
-  virtual_h = widget->h;
+  virtual_w = tk_max(scroll_view->virtual_w, widget->w);
+  virtual_h = tk_max(scroll_view->virtual_h, widget->h);
 
   WIDGET_FOR_EACH_CHILD_BEGIN(widget, iter, i)
   int32_t r = 0;
@@ -399,7 +399,7 @@ static int32_t scroll_view_calc_bight_offset(scroll_view_t* scroll_view, int32_t
     virtual_size = scroll_view->virtual_w;
   }
 
-  r = (float_t)(max_d * M_SQRT2 / (M_SQRT2 - 1.0f));
+  r = max_d * M_SQRT2 / (M_SQRT2 - 1.0);
   translate = r - max_d;
 
   /* Calculation formula: (offset - translate)^2 + (ret + translate)^2 = r^2 */
@@ -628,10 +628,10 @@ static ret_t scroll_view_get_prop(widget_t* widget, const char* name, value_t* v
   scroll_view_t* scroll_view = SCROLL_VIEW(widget);
   return_value_if_fail(scroll_view != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
-  if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_W) || tk_str_eq(name, WIDGET_PROP_LAYOUT_W)) {
+  if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_W)) {
     value_set_int(v, tk_max(widget->w, scroll_view->virtual_w));
     return RET_OK;
-  } else if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_H) || tk_str_eq(name, WIDGET_PROP_LAYOUT_H)) {
+  } else if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_H)) {
     value_set_int(v, tk_max(widget->h, scroll_view->virtual_h));
     return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_XOFFSET)) {
@@ -762,18 +762,6 @@ static ret_t scroll_view_get_only_active_children(widget_t* widget, darray_t* al
   return RET_SKIP;
 }
 
-static ret_t scroll_view_init(widget_t* widget) {
-  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
-  return_value_if_fail(scroll_view != NULL, RET_BAD_PARAMS);
-
-  scroll_view->snap_to_page = FALSE;
-  scroll_view->xspeed_scale = SCROLL_VIEW_DEFAULT_XSPEED_SCALE;
-  scroll_view->yspeed_scale = SCROLL_VIEW_DEFAULT_YSPEED_SCALE;
-  scroll_view->fix_end_offset = scroll_view_fix_end_offset_default;
-  scroll_view->slide_limit_ratio = 1.0;
-  return RET_OK;
-}
-
 static const char* s_scroll_view_clone_properties[] = {
     WIDGET_PROP_VIRTUAL_W,     WIDGET_PROP_VIRTUAL_H,     WIDGET_PROP_XSLIDABLE,
     WIDGET_PROP_YSLIDABLE,     WIDGET_PROP_XOFFSET,       WIDGET_PROP_YOFFSET,
@@ -797,7 +785,15 @@ TK_DECL_VTABLE(scroll_view) = {.size = sizeof(scroll_view_t),
 
 widget_t* scroll_view_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(scroll_view), x, y, w, h);
-  return_value_if_fail(scroll_view_init(widget) == RET_OK, NULL);
+  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
+  return_value_if_fail(scroll_view != NULL, NULL);
+
+  scroll_view->snap_to_page = FALSE;
+  scroll_view->xspeed_scale = SCROLL_VIEW_DEFAULT_XSPEED_SCALE;
+  scroll_view->yspeed_scale = SCROLL_VIEW_DEFAULT_YSPEED_SCALE;
+  scroll_view->fix_end_offset = scroll_view_fix_end_offset_default;
+  scroll_view->slide_limit_ratio = 1.0;
+
   return widget;
 }
 
@@ -817,28 +813,6 @@ ret_t scroll_view_set_virtual_h(widget_t* widget, wh_t h) {
   scroll_view->virtual_h = h;
 
   return RET_OK;
-}
-
-ret_t scroll_view_fix_offset(widget_t* widget) {
-  int32_t xoffset = 0, yoffset = 0;
-  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
-  return_value_if_fail(scroll_view != NULL, RET_BAD_PARAMS);
-
-  if (scroll_view->xoffset + widget->w > scroll_view->virtual_w) {
-    xoffset = scroll_view->virtual_w - widget->w;
-  } else {
-    xoffset = scroll_view->xoffset;
-  }
-  xoffset = tk_max(0, xoffset);
-
-  if (scroll_view->yoffset + widget->h > scroll_view->virtual_h) {
-    yoffset = scroll_view->virtual_h - widget->h;
-  } else {
-    yoffset = scroll_view->yoffset;
-  }
-  yoffset = tk_max(0, yoffset);
-
-  return scroll_view_set_offset(widget, xoffset, yoffset);
 }
 
 ret_t scroll_view_set_speed_scale(widget_t* widget, float_t xspeed_scale, float_t yspeed_scale) {

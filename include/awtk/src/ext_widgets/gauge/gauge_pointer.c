@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  gauge_pointer
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,16 +44,15 @@ static rect_t gauge_pointer_calc_dirty_rect(widget_t* widget, int32_t img_w, int
   int32_t ox = widget->x;
   int32_t oy = widget->y;
   gauge_pointer_t* gauge_pointer = GAUGE_POINTER(widget);
-  ENSURE(gauge_pointer);
   float_t rotation = TK_D2R(gauge_pointer->angle);
   float_t anchor_x = tk_eval_ratio_or_px(gauge_pointer->anchor_x, widget->w);
   float_t anchor_y = tk_eval_ratio_or_px(gauge_pointer->anchor_y, widget->h);
 
   matrix_init(&m);
-  matrix_translate(&m, -anchor_x, -anchor_y);
-  matrix_rotate(&m, rotation);
-  matrix_translate(&m, anchor_x, anchor_y);
   matrix_translate(&m, ox, oy);
+  matrix_translate(&m, anchor_x, anchor_y);
+  matrix_rotate(&m, rotation);
+  matrix_translate(&m, -anchor_x, -anchor_y);
 
   matrix_transform_point(&m, 0, 0, &(x), &(y));
   min_x = x;
@@ -82,14 +81,15 @@ static rect_t gauge_pointer_calc_dirty_rect(widget_t* widget, int32_t img_w, int
   return rect_init(min_x, min_y, max_x - min_x, max_y - min_y);
 }
 
-rect_t gauge_pointer_get_dirty_rect(widget_t* widget) {
+static ret_t gauge_pointer_invalidate(widget_t* widget, const rect_t* rect) {
+  rect_t r;
   int32_t w = 0;
   int32_t h = 0;
-  rect_t r = rect_init(0, 0, widget->w, widget->h);
+  widget_t* parent = widget->parent;
   gauge_pointer_t* gauge_pointer = GAUGE_POINTER(widget);
-  return_value_if_fail(gauge_pointer != NULL, r);
   if (widget->initializing) {
-    return r;
+    r = rect_init(0, 0, widget->w, widget->h);
+    return widget_invalidate_force(parent, &r);
   }
 
   if (gauge_pointer->bsvg_asset != NULL || gauge_pointer->image == NULL) {
@@ -97,46 +97,31 @@ rect_t gauge_pointer_get_dirty_rect(widget_t* widget) {
       bsvg_t bsvg;
       const asset_info_t* asset = gauge_pointer->bsvg_asset;
 
-      if (bsvg_init(&bsvg, (const uint32_t*)asset->data, asset->size) != NULL) {
-        w = bsvg.header->w;
-        h = bsvg.header->h;
-      } else {
-        w = widget->w;
-        h = widget->h * DEFAULT_POINTER_SIZE * 1.2f;
-      }
+      bsvg_init(&bsvg, (const uint32_t*)asset->data, asset->size);
+      w = bsvg.header->w;
+      h = bsvg.header->h;
     } else {
       w = widget->w;
       h = widget->h * DEFAULT_POINTER_SIZE * 1.2f;
     }
   } else {
     bitmap_t bitmap;
-    if (widget_load_image(widget, gauge_pointer->image, &bitmap) == RET_OK) {
+    if (parent != NULL && !parent->destroying &&
+        widget_load_image(widget, gauge_pointer->image, &bitmap) == RET_OK) {
       w = bitmap.w;
       h = bitmap.h;
     } else {
-      return r;
+      return RET_OK;
     }
   }
 
-  return gauge_pointer_calc_dirty_rect(widget, w, h);
-}
-
-static ret_t gauge_pointer_invalidate(widget_t* widget, const rect_t* rect) {
-  rect_t r;
-  widget_t* parent = NULL;
-  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
-  parent = widget->parent;
-  r = gauge_pointer_get_dirty_rect(widget);
-  if (parent != NULL && !parent->destroying) {
-    return widget_invalidate_force(parent, &r);
-  } else {
-    return RET_OK;
-  }
+  r = gauge_pointer_calc_dirty_rect(widget, w, h);
+  return widget_invalidate_force(parent, &r);
 }
 
 ret_t gauge_pointer_set_angle(widget_t* widget, float_t angle) {
   gauge_pointer_t* gauge_pointer = GAUGE_POINTER(widget);
-  return_value_if_fail(gauge_pointer != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   if (gauge_pointer->angle != angle) {
     value_change_event_t evt;
@@ -226,7 +211,6 @@ ret_t gauge_pointer_set_image(widget_t* widget, const char* image) {
 
 static ret_t gauge_pointer_get_prop(widget_t* widget, const char* name, value_t* v) {
   gauge_pointer_t* gauge_pointer = GAUGE_POINTER(widget);
-  ENSURE(gauge_pointer);
   return_value_if_fail(widget != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, GAUGE_POINTER_PROP_ANGLE) || tk_str_eq(name, WIDGET_PROP_VALUE)) {
@@ -240,9 +224,6 @@ static ret_t gauge_pointer_get_prop(widget_t* widget, const char* name, value_t*
     return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_ANCHOR_Y)) {
     value_set_str(v, gauge_pointer->anchor_y);
-    return RET_OK;
-  } else if (tk_str_eq(name, WIDGET_PROP_DIRTY_RECT)) {
-    value_set_rect(v, gauge_pointer_get_dirty_rect(widget));
     return RET_OK;
   }
 
@@ -352,14 +333,6 @@ static ret_t gauge_pointer_on_paint_self(widget_t* widget, canvas_t* c) {
   return RET_OK;
 }
 
-static ret_t gauge_pointer_init(widget_t* widget) {
-  gauge_pointer_t* gauge_pointer = GAUGE_POINTER(widget);
-  return_value_if_fail(gauge_pointer != NULL, RET_BAD_PARAMS);
-  gauge_pointer->anchor_x = tk_strdup("0.5");
-  gauge_pointer->anchor_y = tk_strdup("0.5");
-  return RET_OK;
-}
-
 static const char* s_gauge_pointer_properties[] = {
     GAUGE_POINTER_PROP_ANGLE, WIDGET_PROP_IMAGE, WIDGET_PROP_ANCHOR_X, WIDGET_PROP_ANCHOR_Y, NULL};
 
@@ -370,7 +343,6 @@ TK_DECL_VTABLE(gauge_pointer) = {.size = sizeof(gauge_pointer_t),
                                  .allow_draw_outside = TRUE,
                                  .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                  .create = gauge_pointer_create,
-                                 .init = gauge_pointer_init,
                                  .on_paint_self = gauge_pointer_on_paint_self,
                                  .on_paint_background = widget_on_paint_null,
                                  .set_prop = gauge_pointer_set_prop,
@@ -379,9 +351,12 @@ TK_DECL_VTABLE(gauge_pointer) = {.size = sizeof(gauge_pointer_t),
                                  .on_destroy = gauge_pointer_on_destroy};
 
 widget_t* gauge_pointer_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
-  widget_t* widget = widget_create(parent, TK_REF_VTABLE(gauge_pointer), x, y, w, h);
-  return_value_if_fail(gauge_pointer_init(widget) == RET_OK, NULL);
-  return widget;
+  gauge_pointer_t* gauge_pointer =
+      GAUGE_POINTER(widget_create(parent, TK_REF_VTABLE(gauge_pointer), x, y, w, h));
+  return_value_if_fail(gauge_pointer != NULL, NULL);
+  gauge_pointer->anchor_x = tk_strdup("0.5");
+  gauge_pointer->anchor_y = tk_strdup("0.5");
+  return (widget_t*)gauge_pointer;
 }
 
 widget_t* gauge_pointer_cast(widget_t* widget) {

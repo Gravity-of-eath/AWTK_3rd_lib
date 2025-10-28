@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  platform struct and utils functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -58,21 +58,6 @@ uint64_t get_time_us64(void);
  * @return {void} 无。
  */
 void sleep_ms(uint32_t ms);
-
-/**
- * @method sleep_us
- *
- * 睡眠指定时间。
- *
- * @param {uint32_t} us 睡眠时间(微秒)。
- *
- * @return {void} 无。
- */
-#ifndef HAS_SLEEP_US64
-void sleep_us(uint32_t us);
-#else
-void sleep_us(uint64_t us);
-#endif/*HAS_SLEEP_US64*/
 
 /**
  * @method platform_prepare

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dialog
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -121,7 +121,7 @@ typedef enum _dialog_quit_code_t {
  * </dialog>
  * ```
  *
- * 打开非模态对话框时，其用法与普通窗口一样。打开模态对话框时，还需要调用dialog\_modal。
+ * 打开非模态对话框时，其用法与普通窗口一样。打开非模态对话框时，还需要调用dialog\_modal。
  *
  * ```c
  *  widget_t* dlg = dialog_open(name);
@@ -181,7 +181,7 @@ typedef struct _dialog_t {
   window_base_t window;
 
   /**
-   * @property {char*} highlight
+   * @property {const char*} highlight
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 对话框高亮策略。
    * 
@@ -273,7 +273,7 @@ widget_t* dialog_open(const char* name);
  * 设置对话框的标题文本。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget dialog对象。
- * @param {const char*}  title 标题。
+ * @param {char*}  title 标题。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -284,11 +284,10 @@ ret_t dialog_set_title(widget_t* widget, const char* title);
  * 模态显示对话框。
  * dialog_modal返回后，dialog对象将在下一个idle函数中回收。
  * 也就是在dialog_modal调用完成后仍然可以访问dialog中控件，直到本次事件结束。
- * 调用该函数会使线程进入阻塞状态，需要调用dialog_quit来解除阻塞。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget dialog对象。
  *
- * @return {dialog_quit_code_t} 返回退出码，值为dialog_quit函数中传入的参数。
+ * @return {dialog_quit_code_t} 返回退出码。
  */
 dialog_quit_code_t dialog_modal(widget_t* widget);
 
@@ -398,8 +397,6 @@ widget_t* dialog_create_with_ok_cancel(const char* stitle, uint32_t w, uint32_t 
 
 /**
  * @method dialog_simple_show
- * 根据所选标题，内容与主题等创建一个对话框。
- * 
  * @param {const char*} stitle 标题。
  * @param {const char*} scontent 内容。
  * @param {const char*} theme 主题。

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  button
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -97,7 +97,7 @@ typedef struct _button_t {
    *
    */
   bool_t enable_long_press;
-
+  
   /**
    * @property {bool_t} enable_preview
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
@@ -107,12 +107,12 @@ typedef struct _button_t {
   bool_t enable_preview;
 
   /**
-   * @property {bool_t} is_accept_status
-   * @annotation ["set_prop","get_prop","readable","scriptable"]
-   * 是否为 accept 状态
+   * @property {uint32_t} long_press_time
+   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
+   * 触发长按事件的时间(ms)
    *
    */
-  bool_t is_accept_status;
+  uint32_t long_press_time;
 
   /**
    * @property {bool_t} pressed
@@ -121,14 +121,6 @@ typedef struct _button_t {
    *
    */
   bool_t pressed;
-
-  /**
-   * @property {uint32_t} long_press_time
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 触发长按事件的时间(毫秒)
-   *
-   */
-  uint32_t long_press_time;
 
   /*private*/
   int32_t timer_id;
@@ -182,7 +174,7 @@ ret_t button_set_repeat(widget_t* widget, int32_t repeat);
 
 /**
  * @method button_set_long_press_time
- * 设置触发长按事件的时间(毫秒)。
+ * 设置触发长按事件的时间。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget 控件对象。
  * @param {uint32_t}  long_press_time 触发长按事件的时间(毫秒)。

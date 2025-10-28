@@ -22,11 +22,10 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include "tkc/tokenizer.h"
-#include "base/window_manager.h"
 
-#define DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGTH 16
+#define DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGT 16
 #define DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_NUMBER 32
-#define DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_SEPARATOR '/'
+#define DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_SEPARTOR '/'
 
 #define DEFAULT_FOCUSED_CHILD_SAVE_TARGET_STRING "save_target"
 
@@ -48,12 +47,12 @@ static widget_t* default_focused_child_find_child(widget_t* widget, uint32_t v) 
 static widget_t* default_focused_child_save_target_from_string(str_t* tag, widget_t* parent) {
   tokenizer_t tokenizer;
   tokenizer_t* t = NULL;
-  char separator[2] = {0};
+  char separtor[2] = {0};
   widget_t* save_target = NULL;
   return_value_if_fail(tag != NULL && parent != NULL, NULL);
-  memset(&separator, 0x0, sizeof(separator));
-  separator[0] = DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_SEPARATOR;
-  t = tokenizer_init(&tokenizer, tag->str, tag->size, (const char*)separator);
+  memset(&separtor, 0x0, sizeof(separtor));
+  separtor[0] = DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_SEPARTOR;
+  t = tokenizer_init(&tokenizer, tag->str, tag->size, (const char*)separtor);
   return_value_if_fail(t != NULL, NULL);
 
   save_target = parent;
@@ -87,7 +86,7 @@ static str_t* default_focused_child_save_target_to_string(str_t* tag, widget_t* 
   for (i = ptrs.size - 1; i >= 0; i--) {
     int32_t v = tk_pointer_to_int(darray_get(&ptrs, i));
     str_append_int(tag, v);
-    str_append_char(tag, DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_SEPARATOR);
+    str_append_char(tag, DEFAULT_FOCUSED_CHILD_FIND_SAVE_TARGET_SEPARTOR);
   }
   str_append_char(tag, '\0');
   darray_deinit(&ptrs);
@@ -98,7 +97,7 @@ static widget_t* default_focused_child_get_save_target(widget_t* widget, widget_
   str_t str_tag;
   widget_t* target = NULL;
   return_value_if_fail(widget != NULL && active_view != NULL, NULL);
-  str_init(&str_tag, DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGTH);
+  str_init(&str_tag, DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGT);
   const char* str_target = widget_get_prop_str(active_view, DEFAULT_FOCUSED_CHILD_SAVE_TARGET_STRING, NULL);
   if (str_target != NULL) {
     str_set(&str_tag, str_target);
@@ -132,7 +131,7 @@ static ret_t default_focused_child_set_save_target(widget_t* widget, widget_t* a
 
   if (active_view != target) {
     str_t str_target;
-    str_init(&str_target, DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGTH);
+    str_init(&str_target, DEFAULT_FOCUSED_CHILD_SAVE_TARGET_TAG_LENGT);
     default_focused_child_save_target_to_string(&str_target, target, widget);
     widget_set_prop_str(active_view, DEFAULT_FOCUSED_CHILD_SAVE_TARGET_STRING, str_target.str);
     str_reset(&str_target);
@@ -142,27 +141,17 @@ static ret_t default_focused_child_set_save_target(widget_t* widget, widget_t* a
 }
 
 static ret_t default_focused_child_set_target_focused(str_t* tag, widget_t* widget) {
-  pointer_event_t event;
   widget_t* target = NULL;
   widget_t* save_target = NULL;
-  input_device_status_t* ids = window_manager_get_input_device_status(window_manager());
-  return_value_if_fail(widget != NULL && ids != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
   save_target = target = default_focused_child_save_target_from_string(tag, widget);
   if (target != NULL) {
     while (target->parent != NULL) {
-      widget_t* tmp_target = target;
       if (target == target->parent->target) {
         break;
       }
-      pointer_event_init(&event, EVT_POINTER_LEAVE, target->parent->target, ids->last_x, ids->last_y);
-      widget_dispatch_leave_event(target->parent->target, &event);
-      
       target->parent->target = target;
       target = target->parent;
-
-      event.e.type = EVT_POINTER_ENTER;
-      event.e.target = tmp_target;
-      widget_dispatch(tmp_target, (event_t*)(&event));
     }
 
     widget_set_focused(save_target, TRUE);

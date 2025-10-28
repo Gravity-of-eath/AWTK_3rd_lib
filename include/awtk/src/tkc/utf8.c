@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  utf8 encode decode
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -64,9 +64,9 @@
     (Result) |= ((Chars)[(Count)] & 0x3f);        \
   }
 
-#define UNICODE_VALID(Char)                                  \
-  ((Char) < 0x110000 && (((Char) & 0xFFFFF800) != 0xD800) && \
-   ((Char) < 0xFDD0 || (Char) > 0xFDEF) && ((Char) & 0xFFFE) != 0xFFFE)
+#define UNICODE_VALID(Char)                                                                        \
+  ((Char) < 0x110000 && (((Char)&0xFFFFF800) != 0xD800) && ((Char) < 0xFDD0 || (Char) > 0xFDEF) && \
+   ((Char)&0xFFFE) != 0xFFFE)
 static const char utf8_skip_data[256] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -84,14 +84,14 @@ uint32_t tk_utf8_get_bytes_of_leading(uint8_t c) {
 const char* const g_utf8_skip = utf8_skip_data;
 #define g_utf8_next_char(p) (char*)((p) + g_utf8_skip[*(const unsigned char*)(p)])
 
-static int32_t utf8_get_char(const char* p, const char** next) {
+static uint32_t utf8_get_char(const char* p, const char** next) {
   uint32_t mask = 0;
-  int32_t result = 0;
+  uint32_t result = 0;
   int32_t i = 0, len = 0;
   unsigned char c = (unsigned char)*p;
 
   UTF8_COMPUTE(c, mask, len);
-  if (len == -1) return -1;
+  if (len == -1) return (uint32_t)-1;
   UTF8_GET(result, p, i, mask, len);
 
   if (next != NULL) {
@@ -138,7 +138,7 @@ static int unichar_to_utf8(uint32_t c, char* outbuf) {
   return len;
 }
 
-#define SURROGATE_VALUE(h, l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
+#define SURROGATE_VALUE(h, l) (((h)-0xd800) * 0x400 + (l)-0xdc00 + 0x10000)
 
 static char* utf16_to_utf8(const wchar_t* str, int32_t len, char* utf8, int out_len) {
   /* This function and g_utf16_to_ucs4 are almost exactly identical - The lines
@@ -247,21 +247,21 @@ char* tk_utf8_from_utf16_ex(const wchar_t* in, uint32_t in_size, char* out, uint
   return utf16_to_utf8(in, in_size, out, out_size);
 }
 
-char* tk_utf8_from_utf16(const wchar_t* str, char* out, uint32_t out_size) {
-  return_value_if_fail(str != NULL && out != NULL && out_size > 0, NULL);
+char* tk_utf8_from_utf16(const wchar_t* str, char* out, uint32_t size) {
+  return_value_if_fail(str != NULL && out != NULL && size > 0, NULL);
 
-  return utf16_to_utf8(str, wcslen(str), out, out_size);
+  return utf16_to_utf8(str, wcslen(str), out, size);
 }
 
-wchar_t* tk_utf8_to_utf16(const char* str, wchar_t* out, uint32_t out_size) {
-  return_value_if_fail(str != NULL && out != NULL && out_size > 0, NULL);
+wchar_t* tk_utf8_to_utf16(const char* str, wchar_t* out, uint32_t size) {
+  return_value_if_fail(str != NULL && out != NULL, NULL);
 
-  return tk_utf8_to_utf16_ex(str, strlen(str), out, out_size);
+  return tk_utf8_to_utf16_ex(str, strlen(str), out, size);
 }
 
 wchar_t* tk_utf8_to_utf16_ex(const char* str, uint32_t size, wchar_t* out, uint32_t out_size) {
   uint32_t i = 0;
-  int32_t val = 0;
+  uint32_t val = 0;
   const char* p = str;
   const char* end = NULL;
   const char* next = NULL;

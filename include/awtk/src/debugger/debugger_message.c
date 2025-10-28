@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger message
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -71,58 +71,9 @@ event_t* debugger_breaked_event_init(debugger_breaked_event_t* event, uint32_t l
   return (event_t*)event;
 }
 
-event_t* debugger_breaked_event_init_ex(debugger_breaked_event_t* event, uint32_t line,
-                                        const char* file_path, const char* frame_name) {
-  return_value_if_fail(event != NULL, NULL);
-
-  memset(event, 0x00, sizeof(*event));
-  event->e = event_init(DEBUGGER_RESP_MSG_BREAKED, NULL);
-  event->e.size = sizeof(*event);
-  event->line = line;
-  event->file_path = file_path;
-  event->frame_name = frame_name;
-
-  return (event_t*)event;
-}
-
 debugger_breaked_event_t* debugger_breaked_event_cast(event_t* event) {
   return_value_if_fail(event != NULL && event->type == DEBUGGER_RESP_MSG_BREAKED, NULL);
   return_value_if_fail(event->size == sizeof(debugger_breaked_event_t), NULL);
 
   return (debugger_breaked_event_t*)event;
-}
-
-event_t* debugger_frame_changed_event_init(debugger_frame_changed_event_t* event, const char* func,
-                                           uint32_t line) {
-  return_value_if_fail(event != NULL, NULL);
-
-  memset(event, 0x00, sizeof(*event));
-  event->e = event_init(DEBUGGER_RESP_MSG_FRAME_CHANGED, NULL);
-  event->e.size = sizeof(*event);
-  event->func = func;
-  event->line = line;
-
-  return (event_t*)event;
-}
-
-event_t* debugger_frame_changed_event_init_ex(debugger_frame_changed_event_t* event,
-                                              const char* func, uint32_t line,
-                                              const char* file_path) {
-  return_value_if_fail(event != NULL, NULL);
-
-  memset(event, 0x00, sizeof(*event));
-  event->e = event_init(DEBUGGER_RESP_MSG_FRAME_CHANGED, NULL);
-  event->e.size = sizeof(*event);
-  event->func = func;
-  event->line = line;
-  event->file_path = file_path;
-
-  return (event_t*)event;
-}
-
-debugger_frame_changed_event_t* debugger_frame_changed_event_cast(event_t* event) {
-  return_value_if_fail(event != NULL && event->type == DEBUGGER_RESP_MSG_FRAME_CHANGED, NULL);
-  return_value_if_fail(event->size == sizeof(debugger_frame_changed_event_t), NULL);
-
-  return (debugger_frame_changed_event_t*)event;
 }

@@ -522,9 +522,7 @@ void init_child_recursive(widget_t *parent, ui_tree_node *parent_node, int32_t l
         if (tk_str_eq(widget_get_type(child_widget), WIDGET_TYPE_LABEL) ||
             tk_str_eq(widget_get_type(child_widget), "shadow_label"))
         {
-            value_t value;
-            widget_get_style(child_widget, "normal:font_size", &value);
-            child_node->text_size = value_int32(&value);
+            child_node->text_size = widget_get_prop_int(child_widget, "style:normal:font_size", 16);
         }
 
         if (child_node)

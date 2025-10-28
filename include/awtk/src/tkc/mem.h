@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  memory manager functions.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,22 +23,7 @@
 #define TK_TKMEM_MANAGER_H
 
 #include "tkc/types_def.h"
-#ifdef WITH_WASM
-void* realloc(void* ptr, size_t size);
-#define TKMEM_ALLOC(size) malloc(size)
-#define TKMEM_CALLOC(nmemb, size) calloc(nmemb, size)
-#define TKMEM_REALLOC(p, size) realloc(p, size)
-#define TKMEM_FREE(p) \
-  do {                \
-    free((void*)p);   \
-    p = NULL;         \
-  } while (0)
-#define TKMEM_ZALLOC(type) (type*)TKMEM_CALLOC(1, sizeof(type))
-#define TKMEM_REALLOCT(type, p, n) (type*)realloc(p, (n) * sizeof(type))
-#define TKMEM_ZALLOCN(type, n) (type*)calloc(n, sizeof(type))
-#else
 #include "tkc/platform.h"
-#include "tkc/mem_allocator.h"
 
 BEGIN_C_DECLS
 
@@ -123,13 +108,13 @@ void tk_free(void* ptr);
 #define TKMEM_FREE tk_free
 #else
 #define TKMEM_FREE(p)  \
-  do {                 \
+  {                    \
     tk_free((void*)p); \
     p = NULL;          \
-  } while (0)
+  }
 #endif /*WITH_CPPCHECK*/
 
-/*helper*/
+/*helpler*/
 #define TKMEM_ZALLOC(type) (type*)tk_calloc(1, sizeof(type), __FUNCTION__, __LINE__)
 #define TKMEM_ZALLOCN(type, n) (type*)tk_calloc(n, sizeof(type), __FUNCTION__, __LINE__)
 #define TKMEM_REALLOCT(type, p, n) (type*)tk_realloc(p, (n) * sizeof(type), __FUNCTION__, __LINE__)
@@ -193,9 +178,8 @@ ret_t tk_mem_init_stage2(void);
 /**
  * @method tk_mem_is_valid_addr
  * 检查给定的地址是否是一个有效的heap地址。
- * > 用于辅助发现内存问题。
  * 
- * @param {void*} addr 内存地址。
+ * > 用于辅助发现内存问题。
  *
  * @return {bool_t} 返回FALSE一定是无效地址，返回TRUE在PC则不太确定。
  */
@@ -204,6 +188,5 @@ bool_t tk_mem_is_valid_addr(void* addr);
 #define TK_IS_VALID_ADDR(addr) tk_mem_is_valid_addr(addr)
 
 END_C_DECLS
-#endif /*WITH_WASM*/
 
 #endif /*TK_TKMEM_MANAGER_H*/

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  file_browser
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -114,8 +114,8 @@ typedef struct _file_browser_t {
 /**
  * @method file_browser_create
  * 创建file_browser对象
+ * 
  * @annotation ["constructor"]
- * @param {fs_t*} fs 文件系统对象。
  *
  * @return {file_browser_t*} 对象。
  */
@@ -124,12 +124,7 @@ file_browser_t* file_browser_create(fs_t* fs);
 /**
  * @method file_browser_set_cwd
  * 设置当前目录。
- * 目录支持变量：
- * ```
- * ${app_dir} -> app 文件目录。
- * ${temp_dir} -> 临时文件目录。
- * ${user_dir} -> 用户目录。 
- * ```
+ * 
  * @param {file_browser_t*} fb file browser对象。
  * @param {const char*} cwd 当前目录。
  *
@@ -141,12 +136,6 @@ ret_t file_browser_set_cwd(file_browser_t* fb, const char* cwd);
  * @method file_browser_set_top_dir
  * 设置顶层目录。
  * 
- * 目录支持变量：
- * ```
- * ${app_dir} -> app 文件目录。
- * ${temp_dir} -> 临时文件目录。
- * ${user_dir} -> 用户目录。 
- * ```
  * @param {file_browser_t*} fb file browser对象。
  * @param {const char*} top_dir 顶层目录。
  *

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  svg builder
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,7 +27,8 @@ bsvg_builder_t* bsvg_builder_init(bsvg_builder_t* svg, uint32_t* buff, uint32_t 
   svg->header = (bsvg_header_t*)buff;
   memset(svg->header, 0x00, sizeof(bsvg_header_t));
 
-  svg->header->version = BSVG_VERSION;
+  svg->header->version = 1;
+  svg->header->stroke_width = 1;
   svg->header->magic = BSVG_MAGIC;
 
   svg->current_shape_type = SVG_SHAPE_NULL;
@@ -54,12 +55,6 @@ ret_t bsvg_builder_add_sub_path(bsvg_builder_t* svg, const svg_path_t* path) {
   return_value_if_fail(svg->current_shape_type == SVG_SHAPE_PATH, RET_BAD_PARAMS);
 
   return wbuffer_write_binary(&(svg->buff), path, svg_path_size(path));
-}
-
-ret_t bsvg_builder_add_sub_text(bsvg_builder_t* svg, const char* text) {
-  return_value_if_fail(svg != NULL && text != NULL, RET_BAD_PARAMS);
-
-  return wbuffer_write_string(&(svg->buff), text);
 }
 
 ret_t bsvg_builder_done(bsvg_builder_t* svg) {

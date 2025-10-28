@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap typed array to an object.
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -69,10 +69,7 @@ tk_object_t* object_typed_array_create(value_type_t type, uint32_t capacity);
  * @return {object_typed_array_t*} object_typed_array对象。
  */
 object_typed_array_t* object_typed_array_cast(tk_object_t* obj);
-
 #define OBJECT_TYPED_ARRAY(obj) object_typed_array_cast(obj)
-
-#define OBJECT_TYPED_ARRAY_TYPE "object_typed_array"
 
 END_C_DECLS
 

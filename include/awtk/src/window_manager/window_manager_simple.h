@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,6 +39,7 @@ typedef struct _window_manager_simple_t {
   uint32_t last_paint_cost;
 
   widget_t* system_bar;
+  input_device_status_t input_device_status;
 
   widget_t* prev_win;
   native_window_t* native_window;
@@ -53,7 +54,7 @@ typedef struct _window_manager_simple_t {
  * 创建窗口管理器。
  * @annotation ["constructor"]
  *
- * @return {widget_t*} 返回窗口管理器对象。
+ * @return {window_manager_t*} 返回窗口管理器对象。
  */
 widget_t* window_manager_create(void);
 

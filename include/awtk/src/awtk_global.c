@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  awtk
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,6 @@
 
 #include "awtk.h"
 #include "tkc/mem.h"
-#include "tkc/easing.h"
 #include "tkc/fscript.h"
 #include "base/idle.h"
 #include "base/timer.h"
@@ -36,7 +35,6 @@
 #include "base/window_manager.h"
 #include "base/widget_factory.h"
 #include "base/assets_manager.h"
-#include "base/events.h"
 #include "fscript_ext/fscript_ext.h"
 #ifdef FSCRIPT_WITH_WIDGET
 #include "fscript_ext/fscript_widget.h"
@@ -45,10 +43,6 @@
 #ifdef WITH_VGCANVAS
 #include "base/vgcanvas_asset_manager.h"
 #endif
-
-#ifdef WITH_SOCKET
-#include "tkc/socket_helper.h"
-#endif /*WITH_SOCKET*/
 
 #ifdef WITH_FSCRIPT_EXT
 #ifndef WITH_DATA_READER_WRITER
@@ -64,9 +58,6 @@
 #include "tkc/data_reader_file.h"
 #include "tkc/data_reader_mem.h"
 #include "base/data_reader_asset.h"
-#ifdef WITH_SOCKET
-#include "tkc/data_reader_http.h"
-#endif /*WITH_SOCKET*/
 #endif /*WITH_DATA_READER_WRITER*/
 
 #include "base/widget_animator_manager.h"
@@ -116,13 +107,11 @@
 static ret_t tk_add_font(const asset_info_t* res) {
   if (res->subtype == ASSET_TYPE_FONT_BMP) {
 #ifdef WITH_BITMAP_FONT
-    font_manager_add_font(font_manager(),
-                          font_bitmap_create(asset_info_get_name(res), res->data, res->size));
+    font_manager_add_font(font_manager(), font_bitmap_create(res->name, res->data, res->size));
 #endif
   } else if (res->subtype == ASSET_TYPE_FONT_TTF) {
 #ifdef WITH_TRUETYPE_FONT
-    font_manager_add_font(font_manager(),
-                          font_truetype_create(asset_info_get_name(res), res->data, res->size));
+    font_manager_add_font(font_manager(), font_truetype_create(res->name, res->data, res->size));
 #endif /*WITH_TRUETYPE_FONT*/
   } else {
     log_debug("not support font type:%d\n", res->subtype);
@@ -143,9 +132,8 @@ ret_t tk_init_assets(void) {
         break;
       case ASSET_TYPE_STYLE: {
         theme_t* t = theme();
-        const char* iter_name = asset_info_get_name(iter);
-        if ((t == NULL || t->data == NULL) && tk_str_eq(iter_name, TK_DEFAULT_STYLE)) {
-          theme_set(theme_load_from_asset((asset_info_t*)iter));
+        if ((t == NULL || t->data == NULL) && tk_str_eq(iter->name, TK_DEFAULT_STYLE)) {
+          theme_set(theme_load_from_data(iter->name, iter->data, iter->size));
         }
         break;
       }
@@ -235,7 +223,6 @@ ret_t tk_init_internal(void) {
   font_loader = font_loader_bitmap();
 #endif /*WITH_TRUETYPE_FONT*/
 
-  return_value_if_fail(easing_init() == RET_OK, RET_FAIL);
   return_value_if_fail(timer_prepare(time_now_ms) == RET_OK, RET_FAIL);
   return_value_if_fail(idle_manager_set(idle_manager_create()) == RET_OK, RET_FAIL);
   return_value_if_fail(widget_factory_set(widget_factory_create()) == RET_OK, RET_FAIL);
@@ -308,12 +295,6 @@ ret_t tk_pre_init(void) {
     data_reader_factory_register(data_reader_factory(), "asset", data_reader_asset_create);
     data_reader_factory_register(data_reader_factory(), "mem", data_reader_mem_create);
     data_writer_factory_register(data_writer_factory(), "wbuffer", data_writer_wbuffer_create);
-#ifdef WITH_SOCKET
-    data_reader_factory_register(data_reader_factory(), "http", data_reader_http_create);
-#ifdef WITH_MBEDTLS
-    data_reader_factory_register(data_reader_factory(), "https", data_reader_http_create);
-#endif /*WITH_MBEDTLS*/
-#endif /*WITH_SOCKET*/
 #endif /*WITH_DATA_READER_WRITER*/
     inited = TRUE;
   }
@@ -321,33 +302,14 @@ ret_t tk_pre_init(void) {
   return RET_OK;
 }
 
-#if WITH_MAIN_LOOP_CONSOLE
-#include "main_loop/main_loop_console.h"
-#endif /*WITH_MAIN_LOOP_CONSOLE*/
-
 ret_t tk_init(wh_t w, wh_t h, app_type_t app_type, const char* app_name, const char* app_root) {
   main_loop_t* loop = NULL;
   return_value_if_fail(tk_pre_init() == RET_OK, RET_FAIL);
   ENSURE(system_info_init(app_type, app_name, app_root) == RET_OK);
   return_value_if_fail(tk_init_internal() == RET_OK, RET_FAIL);
 
-#ifdef WITH_G2D
-  tk_g2d_init();
-#endif /*WITH_G2D*/
-
-  if (APP_CONSOLE == system_info()->app_type) {
-#if WITH_MAIN_LOOP_CONSOLE
-    loop = (main_loop_t*)main_loop_console_init();
-#else
-    assert(!"APP_CONSOLE not supported");
-#endif /*WITH_MAIN_LOOP_CONSOLE*/
-  } else {
-    loop = main_loop_init(w, h);
-  }
+  loop = main_loop_init(w, h);
   return_value_if_fail(loop != NULL, RET_FAIL);
-#ifdef WITH_SOCKET
-  tk_socket_init();
-#endif /*WITH_SOCKET*/
 
   return RET_OK;
 }
@@ -399,8 +361,6 @@ ret_t tk_deinit_internal(void) {
   widget_animator_manager_set(NULL);
 #endif /*WITHOUT_WIDGET_ANIMATORS*/
 
-  easing_deinit();
-
   timer_manager_destroy(timer_manager());
   timer_manager_set(NULL);
 
@@ -419,8 +379,6 @@ ret_t tk_deinit_internal(void) {
   assets_manager_destroy(assets_manager());
   assets_manager_set(NULL);
 
-  assets_managers_clear_applet_res_roots();
-
 #ifdef WITH_VGCANVAS
   vgcanvas_asset_manager_destroy(vgcanvas_asset_manager());
   vgcanvas_asset_manager_set(NULL);
@@ -437,18 +395,7 @@ ret_t tk_deinit_internal(void) {
 #ifndef WITHOUT_FSCRIPT
   fscript_global_deinit();
 #endif
-
-  event_clear_custom_name();
-
   tk_semaphore_destroy(s_clear_cache_semaphore);
-
-#ifdef WITH_SOCKET
-  tk_socket_deinit();
-#endif /*WITH_SOCKET*/
-
-#ifdef WITH_G2D
-  tk_g2d_deinit();
-#endif /*WITH_G2D*/
 
   return RET_OK;
 }
@@ -464,7 +411,7 @@ ret_t tk_run() {
   return main_loop_run(main_loop());
 }
 
-static ret_t tk_quit_in_timer(const timer_info_t* timer) {
+static ret_t tk_quit_idle(const timer_info_t* timer) {
   main_loop_t* loop = main_loop();
 
   loop->app_quited = TRUE;
@@ -472,14 +419,9 @@ static ret_t tk_quit_in_timer(const timer_info_t* timer) {
   return main_loop_quit(loop);
 }
 
-ret_t tk_quit_ex(uint32_t delay_ms) {
-  timer_add(tk_quit_in_timer, NULL, delay_ms);
-
-  return RET_OK;
-}
-
 ret_t tk_quit() {
-  return tk_quit_ex(0);
+  timer_add(tk_quit_idle, NULL, 0);
+  return RET_OK;
 }
 
 ret_t tk_set_lcd_orientation(lcd_orientation_t orientation) {

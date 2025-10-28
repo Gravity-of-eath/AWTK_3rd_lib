@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  config for application
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -50,7 +50,7 @@ BEGIN_C_DECLS
  *
  * @annotation ["static"]
  * 
- * @param {tk_object_t*} obj 配置对象。由app_conf_deinit释放。
+ * @param {tk_object_t*} 配置对象。由app_conf_deinit释放。
  * 
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -317,7 +317,7 @@ const char* app_conf_get_str(const char* key, const char* defval);
  * @annotation ["static"]
  *
  * @param {const char*} key 配置项的名称。
- * @param {wchar_t*} str 返回值。
+ * @param {const wchar_t*} str 返回值。
  * @param {uint32_t} max_size 最大长度(字符数)。
  * 
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  image 2d operations.
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -123,8 +123,6 @@ ret_t image_rotate_blend(bitmap_t* dst, bitmap_t* src, const rectf_t* dst_r, con
                          uint8_t global_alpha, lcd_orientation_t o);
 
 #endif
-
-ret_t image_g2d_benchmark(void);
 
 END_C_DECLS
 

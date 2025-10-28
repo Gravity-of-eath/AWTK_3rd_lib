@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on socket
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -101,10 +101,10 @@ tk_iostream_t* tk_iostream_udp_create_client_ex(const char* host, int port, cons
   int sock = 0;
   struct sockaddr_in addr_in;
   tk_iostream_udp_t* iostream_udp = NULL;
-  struct sockaddr* addr = tk_socket_resolve(host, port, &addr_in);
+  struct sockaddr* addr = socket_resolve(host, port, &addr_in);
   return_value_if_fail(addr != NULL, NULL);
 
-  sock = tk_udp_socket();
+  sock = (int)socket(AF_INET, SOCK_DGRAM, 0);
   return_value_if_fail(sock >= 0, NULL);
 
   if (local_ip != NULL || local_port > 0) {

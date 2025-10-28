@@ -1,9 +1,9 @@
 ﻿/**
  * File:   ubjson.c
  * Author: AWTK Develop Team
- * Brief:  ubjson
+ * Brief:  ubjson 
  *
- * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,8 +24,6 @@
 #include "tkc/buffer.h"
 #include "ubjson/ubjson_parser.h"
 #include "conf_io/conf_ubjson.h"
-#include "tkc/data_reader_mem.h"
-#include "tkc/data_writer_wbuffer.h"
 #include "tkc/data_reader_factory.h"
 #include "tkc/data_writer_factory.h"
 
@@ -53,26 +51,13 @@ static ret_t conf_ubjson_save_node_value_simple(conf_node_t* node, ubjson_writer
     }
   } else if (v.type == VALUE_TYPE_STRING) {
     return ubjson_writer_write_str(writer, value_str(&v));
-  } else if (v.type == VALUE_TYPE_WSTRING) {
-    return ubjson_writer_write_wstr(writer, value_wstr(&v));
   } else if (v.type == VALUE_TYPE_FLOAT || v.type == VALUE_TYPE_FLOAT32) {
     return ubjson_writer_write_float32(writer, value_float32(&v));
   } else if (v.type == VALUE_TYPE_DOUBLE) {
     return ubjson_writer_write_float64(writer, value_double(&v));
-  } else if (v.type == VALUE_TYPE_UINT64 || v.type == VALUE_TYPE_INT64) {
-    return ubjson_writer_write_int64(writer, value_int64(&v));
   } else {
     return ubjson_writer_write_int(writer, value_int(&v));
   }
-}
-
-static ret_t conf_ubjson_save_node_value_array_uint8(conf_node_t* node, ubjson_writer_t* writer) {
-  value_t v;
-  return_value_if_fail(conf_node_get_value(node, &v) == RET_OK, RET_BAD_PARAMS);
-  return_value_if_fail(v.type == VALUE_TYPE_BINARY, RET_BAD_PARAMS);
-
-  return ubjson_writer_write_array_uint8(writer, v.value.binary_data.data,
-                                         v.value.binary_data.size);
 }
 
 static ret_t conf_ubjson_save_node_value(conf_node_t* node, ubjson_writer_t* writer) {
@@ -81,8 +66,6 @@ static ret_t conf_ubjson_save_node_value(conf_node_t* node, ubjson_writer_t* wri
     return conf_ubjson_save_node_value_object(node, writer);
   } else if (node->node_type == CONF_NODE_ARRAY) {
     return conf_ubjson_save_node_value_array(node, writer);
-  } else if (node->node_type == CONF_NODE_ARRAY_UINT8) {
-    return conf_ubjson_save_node_value_array_uint8(node, writer);
   } else {
     return conf_ubjson_save_node_value_simple(node, writer);
   }
@@ -132,8 +115,6 @@ static ret_t conf_ubjson_save_node_children(conf_node_t* node, ubjson_writer_t* 
     return conf_ubjson_save_node_children_object(node, writer);
   } else if (node->node_type == CONF_NODE_ARRAY) {
     return conf_ubjson_save_node_children_array(node, writer);
-  } else if (node->node_type == CONF_NODE_ARRAY_UINT8) {
-    return conf_ubjson_save_node_value_array_uint8(node, writer);
   } else {
     assert(!"invalid type");
     return RET_FAIL;
@@ -149,7 +130,6 @@ ret_t conf_doc_save_ubjson(conf_doc_t* doc, ubjson_writer_t* writer) {
 typedef struct _parse_ctx_t {
   conf_doc_t* doc;
   conf_node_t* node;
-  uint32_t optimized_type;
 } parse_ctx_t;
 
 static ret_t ubjson_conf_on_key_value(void* ctx, const char* key, value_t* v) {
@@ -176,10 +156,6 @@ static ret_t ubjson_conf_on_key_value(void* ctx, const char* key, value_t* v) {
     return_value_if_fail(node != NULL, RET_OOM);
     parser->doc->root = node;
     parser->node = node;
-  } else if (v->type == VALUE_TYPE_TOKEN && value_token(v) == UBJSON_MARKER_UINT8) {
-    node = current;
-  } else if (current->node_type == CONF_NODE_ARRAY_UINT8) {
-    node = current;
   } else {
     node = conf_doc_create_node(parser->doc, key);
     return_value_if_fail(node != NULL, RET_OOM);
@@ -195,26 +171,13 @@ static ret_t ubjson_conf_on_key_value(void* ctx, const char* key, value_t* v) {
     } else if (token == UBJSON_MARKER_ARRAY_BEGIN) {
       node->node_type = CONF_NODE_ARRAY;
       parser->node = node;
-
-    } else if (token == UBJSON_MARKER_UINT8) {
-      parser->optimized_type = token;
-      node->node_type = CONF_NODE_ARRAY_UINT8;
     } else {
       assert(!"not supported");
       ret = RET_NOT_IMPL;
     }
   } else {
-    if (node->node_type == CONF_NODE_ARRAY_UINT8) {
-      if (current->parent != NULL) {
-        parser->node = current->parent;
-      }
-
-      ret = conf_node_set_value(node, v);
-
-    } else {
-      node->node_type = CONF_NODE_SIMPLE;
-      ret = conf_node_set_value(node, v);
-    }
+    node->node_type = CONF_NODE_SIMPLE;
+    ret = conf_node_set_value(node, v);
   }
 
   return ret;
@@ -290,23 +253,4 @@ ret_t conf_ubjson_save_as(tk_object_t* obj, const char* url) {
 
 tk_object_t* conf_ubjson_create(void) {
   return conf_ubjson_load(NULL, TRUE);
-}
-
-tk_object_t* conf_ubjson_load_from_buff(const void* buff, uint32_t size,
-                                        bool_t create_if_not_exist) {
-  char url[MAX_PATH + 1] = {0};
-  return_value_if_fail(buff != NULL, NULL);
-  data_reader_mem_build_url(buff, size, url);
-
-  return conf_ubjson_load(url, create_if_not_exist);
-}
-
-ret_t conf_ubjson_save_to_buff(tk_object_t* obj, wbuffer_t* wb) {
-  char url[MAX_PATH + 1] = {0};
-  return_value_if_fail(obj != NULL && wb != NULL, RET_BAD_PARAMS);
-
-  wbuffer_init_extendable(wb);
-  data_writer_wbuffer_build_url(wb, url);
-
-  return conf_ubjson_save_as(obj, url);
 }

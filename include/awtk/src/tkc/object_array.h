@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  object array
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -60,7 +60,7 @@ typedef struct _object_array_t {
   uint32_t capacity;
 
   /**
-   * @property {value_t*} props
+   * @property {value_t} props
    * @annotation ["readable"]
    * 属性数组。
    *
@@ -407,9 +407,6 @@ object_array_t* object_array_cast(tk_object_t* obj);
 
 #define TK_OBJECT_ARRAY_PROP_SIZE "size"
 #define TK_OBJECT_ARRAY_PROP_LENGTH "length"
-
-#define OBJECT_ARRAY_TYPE "object_array"
-#define OBJECT_ARRRAY_TYPE OBJECT_ARRAY_TYPE
 
 END_C_DECLS
 

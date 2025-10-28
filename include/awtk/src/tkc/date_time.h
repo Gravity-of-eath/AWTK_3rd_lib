@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  date time
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -98,33 +98,6 @@ date_time_t* date_time_create(void);
 date_time_t* date_time_init(date_time_t* dt);
 
 /**
- * @method date_time_parse_time
- * 解析时间。
- * @param {date_time_t*} dt date_time对象。
- * @param {const char*} str 时间字符串。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t date_time_parse_time(date_time_t* dt, const char* str);
-
-/**
- * @method date_time_parse_date
- * 解析日期。
- * @param {date_time_t*} dt date_time对象。
- * @param {const char*} str 日期字符串。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t date_time_parse_date(date_time_t* dt, const char* str);
-
-/**
- * @method date_time_parse_date_time
- * 解析日期和时间。
- * @param {date_time_t*} dt date_time对象。
- * @param {const char*} str 日期和时间字符串。
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t date_time_parse_date_time(date_time_t* dt, const char* str);
-
-/**
  * @method date_time_set_year
  * 设置年。
  *
@@ -209,26 +182,26 @@ ret_t date_time_set(date_time_t* dt);
 
 /**
  * @method date_time_from_time
- * 从time转换而来(按GMT转换)。
+ * 从time转换而来。
  *
  * @annotation ["scriptable"]
  * @param {date_time_t*} dt date_time对象。
- * @param {int64_t} time 时间。
+ * @param {uint64_t} time 时间。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t date_time_from_time(date_time_t* dt, int64_t time);
+ret_t date_time_from_time(date_time_t* dt, uint64_t time);
 
 /**
  * @method date_time_to_time
- * 转换成time(按GMT转换)。
+ * 转换成time。
  *
  * @annotation ["scriptable"]
  * @param {date_time_t*} dt date_time对象。
  *
- * @return {int64_t} 返回time。
+ * @return {uint64_t} 返回time。
  */
-int64_t date_time_to_time(date_time_t* dt);
+uint64_t date_time_to_time(date_time_t* dt);
 
 /**
  * @method date_time_add_delta
@@ -259,7 +232,7 @@ bool_t date_time_is_leap(uint32_t year);
  *
  * @annotation ["scriptable", "static"]
  * @param {uint32_t} year 年份。
- * @param {uint32_t} month 月份(1-12)。
+ * @param {uint32_t} montn 月份(1-12)。
  *
  * @return {int32_t} 返回大于0表示天数，否则表示失败。
  */
@@ -271,7 +244,7 @@ int32_t date_time_get_days(uint32_t year, uint32_t month);
  *
  * @annotation ["scriptable", "static"]
  * @param {uint32_t} year 年份。
- * @param {uint32_t} month 月份(1-12)。
+ * @param {uint32_t} montn 月份(1-12)。
  * @param {uint32_t} day 日(1-31)。
  *
  * @return {int32_t} 返回大于等于0表示周几(0-6)，否则表示失败。
@@ -283,7 +256,7 @@ int32_t date_time_get_wday(uint32_t year, uint32_t month, uint32_t day);
  * 获取指定月份的英文名称(简写)。
  *
  * @annotation ["scriptable", "static"]
- * @param {uint32_t} month 月份(1-12)。
+ * @param {uint32_t} montn 月份(1-12)。
  *
  * @return {const char*} 返回指定月份的英文名称(简写)。
  */
@@ -329,16 +302,14 @@ typedef struct _date_time_vtable_t {
  *
  * > 嵌入式平台需要提供并设置获取当前日期和时间的函数，否则相关的功能(如时钟控件)将无法正常工作。
  *
- * @param {const date_time_vtable_t*} vt 日期和时间的相关函数的实现。
+ * @param {date_time_vtable_t} vt 日期和时间的相关函数的实现。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t date_time_global_init_ex(const date_time_vtable_t* vt);
 
 /*deprecated*/
-TK_DEPRECATED("")
 ret_t date_time_set_impl(date_time_get_now_t date_time_get_now);
-TK_DEPRECATED("")
 ret_t date_time_global_init(date_time_get_now_t get, date_time_set_now_t set);
 END_C_DECLS
 

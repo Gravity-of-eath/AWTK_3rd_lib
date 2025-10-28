@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger server
  *
- * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,7 +37,7 @@ debugger_t* debugger_client_tcp_create(const char* host, uint32_t port) {
     debugger = debugger_client_create(io);
     TK_OBJECT_UNREF(io);
   } else {
-    tk_socket_close(sock);
+    socket_close(sock);
   }
 
   return debugger;

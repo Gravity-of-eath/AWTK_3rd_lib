@@ -5,8 +5,9 @@
 #include "tkc/fs.h"
 #include "tkc/mem.h"
 #include "tkc/platform.h"
-#include "tkc/socket_helper.h"
 #include "streams/serial/iostream_serial.h"
+#include "tkc/socket_helper.h"
+#include "streams/serial/serial_helper.h"
 
 void do_send(tk_iostream_t* iostream, const char* filename) {
   int32_t ret = 0;

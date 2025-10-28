@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mledit
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -90,6 +90,12 @@ typedef struct _mledit_t {
    */
   uint32_t max_chars;
   /**
+   * @property {uint32_t} scroll_line
+   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
+   * 鼠标一次滚动行数。
+   */
+  uint32_t scroll_line;
+  /**
    * @property {bool_t} overwrite
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 是否启用覆盖行。
@@ -133,22 +139,6 @@ typedef struct _mledit_t {
    *
    */
   bool_t close_im_when_blured;
-  /**
-   * @property {bool_t} accept_return
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 
-   * 是否支持 Enter 按钮输入。
-   *
-   */
-  bool_t accept_return;
-  /**
-   * @property {bool_t} accept_tab
-   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 
-   * 是否支持 Tab 按钮输入。
-   *
-   */
-  bool_t accept_tab;
   /*private*/
   bool_t lock_scrollbar_value;
   uint8_t margin;
@@ -158,15 +148,12 @@ typedef struct _mledit_t {
   uint8_t bottom_margin;
 
   bool_t is_key_inputing;
-  bool_t is_activated;
 
   text_edit_t* model;
   uint32_t timer_id;
 
   wstr_t temp;
   wstr_t saved_text;
-  wstr_t last_changing_text;
-  wstr_t last_changed_text;
 } mledit_t;
 
 /**
@@ -176,7 +163,7 @@ typedef struct _mledit_t {
 
 /**
  * @event {value_change_event_t} EVT_VALUE_CHANGED
- * 文本改变事件(编辑完成或设置文本时触发)。
+ * 文本改变事件。
  */
 
 /**
@@ -275,7 +262,7 @@ ret_t mledit_set_max_chars(widget_t* widget, uint32_t max_chars);
  * 设置编辑器的输入提示。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
- * @param {const char*} tips 输入提示。
+ * @param {char*} tips 输入提示。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -298,7 +285,7 @@ ret_t mledit_set_tr_tips(widget_t* widget, const char* tr_tips);
  * 
  * @annotation ["scriptable"]
  * @param {widget_t*} widget widget对象。
- * @param {const char*} keyboard 键盘名称(相应UI资源必须存在)。
+ * @param {char*} keyboard 键盘名称(相应UI资源必须存在)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -324,6 +311,17 @@ ret_t mledit_set_cursor(widget_t* widget, uint32_t cursor);
  * @return {uint32_t} 返回光标位置。
  */
 uint32_t mledit_get_cursor(widget_t* widget);
+
+/**
+ * @method mledit_set_scroll_line
+ * 设置编辑器滚动速度。
+ * @annotation ["scriptable"]
+ * @param {widget_t*} widget widget对象。
+ * @param {uint32_t} scroll_line 滚动行数。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t mledit_set_scroll_line(widget_t* widget, uint32_t scroll_line);
 
 /**
  * @method mledit_scroll_to_offset
@@ -387,26 +385,6 @@ ret_t mledit_set_select(widget_t* widget, uint32_t start, uint32_t end);
 char* mledit_get_selected_text(widget_t* widget);
 
 /**
- * @method mledit_get_current_line_index
- * 获取光标所在视觉行号(一行文本可能分多行显示)。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget widget对象。
- *
- * @return {uint32_t} 返回光标所在行号。
- */
-uint32_t mledit_get_current_line_index(widget_t* widget);
-
-/**
- * @method mledit_get_current_row_index
- * 获取光标所在物理行号。
- * @annotation ["scriptable"]
- * @param {widget_t*} widget widget对象。
- *
- * @return {uint32_t} 返回光标所在行号。
- */
-uint32_t mledit_get_current_row_index(widget_t* widget);
-
-/**
  * @method mledit_insert_text
  * 插入一段文本。
  * @annotation ["scriptable"]
@@ -434,6 +412,7 @@ widget_t* mledit_cast(widget_t* widget);
 #define MLEDIT_PROP_MAX_CHARS "max_chars"
 #define MLEDIT_PROP_WRAP_WORD "wrap_word"
 #define MLEDIT_PROP_OVERWRITE "overwrite"
+#define MLEDIT_PROP_SCROLL_LINE "scroll_line"
 #define MLEDIT(widget) ((mledit_t*)(mledit_cast(WIDGET(widget))))
 
 /*for compatability*/

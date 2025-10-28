@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event manager_default manager_default
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -29,8 +29,20 @@
 
 #ifdef WITH_SOCKET
 
+#ifdef WIN32
+#include "windows.h"
+#include <winsock2.h>
+#include <ws2tcpip.h>
+typedef int socklen_t;
+#else
+#include <unistd.h>
+#include <sys/select.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#endif /*WIN32*/
+
 static ret_t event_source_manager_default_dispatch_fds(event_source_manager_t* manager,
-                                                       uint64_t sleep_time) {
+                                                       uint32_t sleep_time) {
   fd_set fdsr;
   uint32_t i = 0;
   int32_t fd = 0;
@@ -42,8 +54,8 @@ static ret_t event_source_manager_default_dispatch_fds(event_source_manager_t* m
   return_value_if_fail(manager != NULL, 0);
 
   FD_ZERO(&fdsr);
-  tv.tv_sec = sleep_time / 1000000;
-  tv.tv_usec = (sleep_time % 1000000);
+  tv.tv_sec = sleep_time / 1000;
+  tv.tv_usec = (sleep_time % 1000) * 1000;
 
   sources = (event_source_t**)(manager->dispatching_sources.elms);
 
@@ -91,7 +103,7 @@ static ret_t event_source_manager_default_dispatch_fds(event_source_manager_t* m
 }
 #else
 static ret_t event_source_manager_default_dispatch_fds(event_source_manager_t* manager,
-                                                       uint64_t sleep_time) {
+                                                       uint32_t sleep_time) {
   return RET_OK;
 }
 #endif /*WITH_SOCKET*/
@@ -126,13 +138,11 @@ static ret_t event_source_manager_default_dispatch_no_fd(event_source_manager_t*
 }
 
 static ret_t event_source_manager_default_dispatch(event_source_manager_t* manager) {
-  uint64_t sleep_time = event_source_manager_get_wakeup_time(manager);
+  uint32_t sleep_time = event_source_manager_get_wakeup_time(manager);
 
-  ret_t ret = event_source_manager_default_dispatch_fds(manager, sleep_time);
-  /*dispatch_no_fd不会失败，保留dispatch_fds的错误给调用者。*/
-  event_source_manager_default_dispatch_no_fd(manager);
+  event_source_manager_default_dispatch_fds(manager, sleep_time);
 
-  return ret;
+  return event_source_manager_default_dispatch_no_fd(manager);
 }
 
 static ret_t event_source_manager_default_destroy(event_source_manager_t* manager) {
@@ -151,7 +161,6 @@ event_source_manager_t* event_source_manager_default_create(void) {
   event_source_manager_init(manager);
   manager->dispatch = event_source_manager_default_dispatch;
   manager->destroy = event_source_manager_default_destroy;
-  event_source_manager_set_min_sleep_time(manager, TK_DEFAULT_WAIT_TIME);
 
   return manager;
 }

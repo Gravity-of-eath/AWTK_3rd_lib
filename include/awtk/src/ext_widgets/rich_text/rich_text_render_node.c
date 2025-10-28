@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rich_text_render_node
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is dirich_text_render_nodeibuted in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -196,19 +196,16 @@ rich_text_render_node_t* rich_text_render_node_layout(widget_t* widget, rich_tex
         float_t tw = 0;
         float_t cw = 0;
         int32_t start = 0;
-        int32_t height = 0;
         int32_t flexible_w = 0;
         int32_t last_breakable = 0;
         wchar_t* str = iter->u.text.text;
         break_type_t break_type = LINE_BREAK_ALLOW;
         int32_t font_size = iter->u.text.font.size;
 
-        canvas_set_font(c, iter->u.text.font.name, font_size);
-        height = canvas_get_font_height(c);
-
-        if (row_h < height) {
-          row_h = height;
+        if (row_h < font_size) {
+          row_h = font_size;
         }
+        canvas_set_font(c, iter->u.text.font.name, font_size);
 
         for (i = 0; str[i]; i++) {
           cw = canvas_measure_text(c, str + i, 1);
@@ -235,7 +232,7 @@ rich_text_render_node_t* rich_text_render_node_layout(widget_t* widget, rich_tex
               } else if (start == 0 && last_breakable == 0) {
                 // 不是起始，换行,重新计算
                 MOVE_TO_NEXT_ROW();
-                row_h = height;
+                row_h = font_size;
                 --i;
                 continue;
               }
@@ -246,7 +243,7 @@ rich_text_render_node_t* rich_text_render_node_layout(widget_t* widget, rich_tex
 
             new_node->text = str + start;
             new_node->size = i - start;
-            new_node->rect = rect_init(x, y, tw, height);
+            new_node->rect = rect_init(x, y, tw, font_size);
 
             render_node = rich_text_render_node_append(render_node, new_node);
             if (row_first_node == NULL) {
@@ -263,14 +260,14 @@ rich_text_render_node_t* rich_text_render_node_layout(widget_t* widget, rich_tex
             }
 
             MOVE_TO_NEXT_ROW();
-            row_h = height;
+            row_h = font_size;
 
             while (str[i] == '\r' || str[i] == '\n') {
               if (str[i] == '\r' && str[i + 1] == '\n') {
                 ++i;
               }
               MOVE_TO_NEXT_ROW();
-              row_h = height;
+              row_h = font_size;
               ++i;
             }
             start = i;
@@ -295,7 +292,7 @@ rich_text_render_node_t* rich_text_render_node_layout(widget_t* widget, rich_tex
 
           new_node->text = str + start;
           new_node->size = i - start;
-          new_node->rect = rect_init(x, y, tw, height);
+          new_node->rect = rect_init(x, y, tw, font_size);
           x += tw + 1;
           tw = 0;
 

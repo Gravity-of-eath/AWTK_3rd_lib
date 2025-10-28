@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  idle manager
  *
- * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -102,7 +102,7 @@ ret_t idle_remove(uint32_t idle_id);
 /**
  * @method idle_remove_all_by_ctx
  * 根据上下文删除所有对应的idle。
- * @annotation ["static"]
+ * @annotation ["scriptable", "static"]
  * @param {void*} ctx idle回调函数的上下文
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -112,9 +112,8 @@ ret_t idle_remove_all_by_ctx(void* ctx);
 /**
  * @method idle_find
  * 查找指定ID的idle。
- * @param {uint32_t} idle_id idleID。
  *
- * @return {const idle_info_t*} 返回idle的信息。
+ * @return {idle_info_t*} 返回idle的信息。
  */
 const idle_info_t* idle_find(uint32_t idle_id);
 
@@ -146,18 +145,8 @@ ret_t idle_dispatch(void);
  */
 uint32_t idle_count(void);
 
-/**
- * @method idle_exist
- * idle是否存在。
- * @annotation ["static"]
- * @param {idle_func_t} on_idle idle回调函数。
- * @param {void*} ctx idle回调函数的上下文。
- *
- * @return {bool_t} 返回TRUE表示存在，否则表示不存在。
- */
-bool_t idle_exist(idle_func_t on_idle, void* ctx);
-
 /*internal use*/
+bool_t idle_exist(idle_func_t on_idle, void* ctx);
 ret_t idle_remove_all_by_ctx_and_type(uint32_t type, void* ctx);
 uint32_t idle_add_with_type(idle_func_t on_idle, void* ctx, uint32_t type);
 

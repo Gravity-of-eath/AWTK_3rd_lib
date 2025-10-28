@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ubjson writer
  *
- * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -161,18 +161,6 @@ ret_t ubjson_writer_write_uint8(ubjson_writer_t* writer, uint8_t value);
 ret_t ubjson_writer_write_int16(ubjson_writer_t* writer, int16_t value);
 
 /**
- * @method ubjson_writer_write_uint16
- *
- * 写入uint16。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {uint16_t} value 要写入的值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_uint16(ubjson_writer_t* writer, uint16_t value);
-
-/**
  * @method ubjson_writer_write_int32
  *
  * 写入int32。
@@ -185,18 +173,6 @@ ret_t ubjson_writer_write_uint16(ubjson_writer_t* writer, uint16_t value);
 ret_t ubjson_writer_write_int32(ubjson_writer_t* writer, int32_t value);
 
 /**
- * @method ubjson_writer_write_uint32
- *
- * 写入uint32。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {uint32_t} value 要写入的值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_uint32(ubjson_writer_t* writer, uint32_t value);
-
-/**
  * @method ubjson_writer_write_int64
  *
  * 写入int64。
@@ -207,30 +183,6 @@ ret_t ubjson_writer_write_uint32(ubjson_writer_t* writer, uint32_t value);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t ubjson_writer_write_int64(ubjson_writer_t* writer, int64_t value);
-
-/**
- * @method ubjson_writer_write_uint64
- *
- * 写入uint64。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {uint64_t} value 要写入的值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_uint64(ubjson_writer_t* writer, uint64_t value);
-
-/**
- * @method ubjson_writer_write_pointer
- *
- * 写入地址。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {void*} value 要写入的地址。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_pointer(ubjson_writer_t* writer, void* value);
 
 /**
  * @method ubjson_writer_write_float32
@@ -294,31 +246,6 @@ ret_t ubjson_writer_write_str(ubjson_writer_t* writer, const char* value);
 ret_t ubjson_writer_write_str_len(ubjson_writer_t* writer, const char* value, uint32_t len);
 
 /**
- * @method ubjson_writer_write_wstr
- *
- * 写入wstr。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const wchar_t*} value 要写入的字符串。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_wstr(ubjson_writer_t* writer, const wchar_t* value);
-
-/**
- * @method ubjson_writer_write_wstr_len
- *
- * 写入wstr。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const wchar_t*} value 要写入的字符串。
- * @param {uint32_t} len 字符串的长度。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_wstr_len(ubjson_writer_t* writer, const wchar_t* value, uint32_t len);
-
-/**
  * @method ubjson_writer_write_object
  *
  * 写入obj。
@@ -341,20 +268,6 @@ ret_t ubjson_writer_write_object(ubjson_writer_t* writer, tk_object_t* obj);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t ubjson_writer_write_array_begin(ubjson_writer_t* writer);
-
-/**
- * @method ubjson_writer_write_kv_array_begin
- *
- * 写key和数组的开始。
- *
- * > 即："key": [
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_array_begin(ubjson_writer_t* writer, const char* key);
 
 /**
  * @method ubjson_writer_write_array_end
@@ -449,51 +362,6 @@ ret_t ubjson_writer_write_kv_object(ubjson_writer_t* writer, const char* key, tk
 ret_t ubjson_writer_write_kv_int(ubjson_writer_t* writer, const char* key, int32_t value);
 
 /**
- * @method ubjson_writer_write_kv_int8
- *
- * 写入key和int的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {int8_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_int8(ubjson_writer_t* writer, const char* key, int8_t value);
-
-/**
- * @method ubjson_writer_write_kv_int16
- *
- * 写入key和int的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {int16_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_int16(ubjson_writer_t* writer, const char* key, int16_t value);
-
-/**
- * @method ubjson_writer_write_kv_int32
- *
- * 写入key和int的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {int32_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_int32(ubjson_writer_t* writer, const char* key, int32_t value);
-
-/**
  * @method ubjson_writer_write_kv_int64
  *
  * 写入key和int64_t的值。
@@ -507,80 +375,6 @@ ret_t ubjson_writer_write_kv_int32(ubjson_writer_t* writer, const char* key, int
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t ubjson_writer_write_kv_int64(ubjson_writer_t* writer, const char* key, int64_t value);
-
-/**
- * @method ubjson_writer_write_kv_uint8
- *
- * 写入key和int的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {uint8_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_uint8(ubjson_writer_t* writer, const char* key, uint8_t value);
-
-/**
- * @method ubjson_writer_write_kv_uint16
- *
- * 写入key和int的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {uint16_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_uint16(ubjson_writer_t* writer, const char* key, uint16_t value);
-
-/**
- * @method ubjson_writer_write_kv_uint32
- *
- * 写入key和int的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {uint32_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_uint32(ubjson_writer_t* writer, const char* key, uint32_t value);
-
-/**
- * @method ubjson_writer_write_kv_uint64
- *
- * 写入key和int64_t的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {uint64_t} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_uint64(ubjson_writer_t* writer, const char* key, uint64_t value);
-
-/**
- * @method ubjson_writer_write_kv_pointer
- *
- * 写入key和uint64_t的地址值。
- *
- * > 即："key": value (其中 value 为 uint64_t 地址整型，需要强转为指针才可以使用。)
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {void*} value 值。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_pointer(ubjson_writer_t* writer, const char* key, void* value);
 
 /**
  * @method ubjson_writer_write_kv_float
@@ -660,37 +454,6 @@ ret_t ubjson_writer_write_kv_str_len(ubjson_writer_t* writer, const char* key, c
                                      uint32_t len);
 
 /**
- * @method ubjson_writer_write_kv_wstr
- *
- * 写入key和wstr的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {const wchar_t*} value 字符串。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_wstr(ubjson_writer_t* writer, const char* key, const wchar_t* value);
-
-/**
- * @method ubjson_writer_write_kv_wstr_len
- *
- * 写入key和wstr的值。
- *
- * > 即："key": value
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {const char*} key 键名。
- * @param {const wchar_t*} value 字符串。
- * @param {uint32_t} len 字符串的长度。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
- */
-ret_t ubjson_writer_write_kv_wstr_len(ubjson_writer_t* writer, const char* key,
-                                      const wchar_t* value, uint32_t len);
-/**
  * @method ubjson_writer_write_kv_value
  *
  * 写入key和value_t的值。
@@ -699,96 +462,11 @@ ret_t ubjson_writer_write_kv_wstr_len(ubjson_writer_t* writer, const char* key,
  *
  * @param {ubjson_writer_t*} writer writer对象。
  * @param {const char*} key 键名。
- * @param {const value_t*} value 值。
+ * @param {value_t*} value 值。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t ubjson_writer_write_kv_value(ubjson_writer_t* writer, const char* key, const value_t* value);
-
-
-/**
- * @method ubjson_writer_write_array_uint8
- * 写入 uint8 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {uint8_t*}         data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_uint8(ubjson_writer_t* writer, uint8_t* data, uint32_t count);
-
-/**
- * @method ubjson_writer_write_array_int8
- * 写入 int8 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {int8_t*}          data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_int8(ubjson_writer_t* writer, int8_t* data, uint32_t count);
-
-/**
- * @method ubjson_writer_write_array_int16
- * 写入 int16 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {int16_t*}         data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_int16(ubjson_writer_t* writer, int16_t* data, uint32_t count);
-
-/**
- * @method ubjson_writer_write_array_int32
- * 写入 int32 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {int32_t*}         data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_int32(ubjson_writer_t* writer, int32_t* data, uint32_t count);
-
-/**
- * @method ubjson_writer_write_array_int64
- * 写入 int64 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {int64_t*}         data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_int64(ubjson_writer_t* writer, int64_t* data, uint32_t count);
-
-/**
- * @method ubjson_writer_write_array_float32
- * 写入 float32 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {float*}         data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_float32(ubjson_writer_t* writer, float* data, uint32_t count);
-
-/**
- * @method ubjson_writer_write_array_float64
- * 写入 float64 数组。
- *
- * @param {ubjson_writer_t*} writer writer对象。
- * @param {double*}         data   数组。
- * @param {uint32_t}         count  数组元素计数。
- *
- * @return {ret_t} 返回 ret_t 值
- */
-ret_t ubjson_writer_write_array_float64(ubjson_writer_t* writer, double* data, uint32_t count);
+ret_t ubjson_writer_write_kv_value(ubjson_writer_t* writer, const char* key, value_t* value);
 
 END_C_DECLS
 

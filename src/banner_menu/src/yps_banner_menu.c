@@ -284,7 +284,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
       {
         yps_banner_menu->layout_manager->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                    yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
-        if (yps_banner_menu->listener->on_scroll)
+        if (yps_banner_menu->listener != NULL && yps_banner_menu->listener->on_scroll != NULL)
         {
           yps_banner_menu->listener->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
@@ -299,7 +299,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
         yps_banner_menu->progress = 1.0f;
         yps_banner_menu->layout_manager->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                    yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
-        if (yps_banner_menu->listener->on_scroll)
+        if (yps_banner_menu->listener != NULL && yps_banner_menu->listener->on_scroll != NULL)
         {
           yps_banner_menu->listener->on_scroll(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                yps_banner_menu->focus_index, yps_banner_menu->target_index, yps_banner_menu->progress);
@@ -311,7 +311,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
         yps_banner_menu->focus_index = yps_banner_menu->target_index;
         yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                    yps_banner_menu->focus_index, temp_index);
-        if (yps_banner_menu->listener->on_layout)
+        if (yps_banner_menu->listener != NULL && yps_banner_menu->listener->on_layout != NULL)
         {
           yps_banner_menu->listener->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                yps_banner_menu->focus_index, temp_index);

@@ -388,7 +388,7 @@ ret_t yps_banner_menu_set_animtor_duration(widget_t *widget, int32_t animtor_dur
   return RET_OK;
 }
 
-ret_t yps_banner_menu_set_focus_index(widget_t *widget, float_t focus_index)
+ret_t yps_banner_menu_set_focus_index(widget_t *widget, int32_t focus_index)
 {
   yps_banner_menu_t *yps_banner_menu = YPS_BANNER_MENU(widget);
   return_value_if_fail(yps_banner_menu != NULL, RET_BAD_PARAMS);

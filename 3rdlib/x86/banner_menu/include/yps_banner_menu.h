@@ -169,7 +169,7 @@ ret_t yps_banner_menu_set_animtor_duration(widget_t *widget, int32_t animtor_dur
 
 ret_t yps_banner_menu_set_scale_ratio(widget_t *widget, float_t scale_ratio);
 
-ret_t yps_banner_menu_set_focus_index(widget_t *widget, float_t focus_index);
+ret_t yps_banner_menu_set_focus_index(widget_t *widget, int32_t focus_index);
 
 int32_t yps_banner_menu_get_focus_index(widget_t *widget);
 

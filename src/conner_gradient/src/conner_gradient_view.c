@@ -39,184 +39,184 @@ static inline float polar_lut_get_distance(const polar_lut_t *lut, int32_t rel_x
     return lut->distance_table[index];
 }
 
-#ifdef __ARM_NEON__
-#include <arm_neon.h>
+// #ifdef __ARM_NEON__
+// #include <arm_neon.h>
 
-/* NEON优化的弧形渐变绘制 */
-static ret_t draw_arc_gradient_neon(canvas_t *c, int32_t cx, int32_t cy,
-                                    int32_t radius, float start_angle, float end_angle,
-                                    bool_t ant_clock, arc_gradient_renderer_t *renderer,
-                                    float full_ratio)
-{
-    return_value_if_fail(c != NULL && renderer != NULL && renderer->lut != NULL, RET_BAD_PARAMS);
+// /* NEON优化的弧形渐变绘制 */
+// static ret_t draw_arc_gradient_neon(canvas_t *c, int32_t cx, int32_t cy,
+//                                     int32_t radius, float start_angle, float end_angle,
+//                                     bool_t ant_clock, arc_gradient_renderer_t *renderer,
+//                                     float full_ratio)
+// {
+//     return_value_if_fail(c != NULL && renderer != NULL && renderer->lut != NULL, RET_BAD_PARAMS);
     
-    polar_lut_t *lut = renderer->lut;
+//     polar_lut_t *lut = renderer->lut;
     
-    // 确保角度在合理范围内
-    while (start_angle < 0) start_angle += 2 * M_PI;
-    while (end_angle < 0) end_angle += 2 * M_PI;
-    while (start_angle >= 2 * M_PI) start_angle -= 2 * M_PI;
-    while (end_angle >= 2 * M_PI) end_angle -= 2 * M_PI;
+//     // 确保角度在合理范围内
+//     while (start_angle < 0) start_angle += 2 * M_PI;
+//     while (end_angle < 0) end_angle += 2 * M_PI;
+//     while (start_angle >= 2 * M_PI) start_angle -= 2 * M_PI;
+//     while (end_angle >= 2 * M_PI) end_angle -= 2 * M_PI;
     
-    // 处理逆时针情况
-    float angle_range = 0;
-    if (ant_clock) {
-        if (start_angle <= end_angle) {
-            angle_range = (2 * M_PI - end_angle) + start_angle;
-        } else {
-            angle_range = start_angle - end_angle;
-        }
-    } else {
-        if (end_angle <= start_angle) {
-            angle_range = (2 * M_PI - start_angle) + end_angle;
-        } else {
-            angle_range = end_angle - start_angle;
-        }
-    }
+//     // 处理逆时针情况
+//     float angle_range = 0;
+//     if (ant_clock) {
+//         if (start_angle <= end_angle) {
+//             angle_range = (2 * M_PI - end_angle) + start_angle;
+//         } else {
+//             angle_range = start_angle - end_angle;
+//         }
+//     } else {
+//         if (end_angle <= start_angle) {
+//             angle_range = (2 * M_PI - start_angle) + end_angle;
+//         } else {
+//             angle_range = end_angle - start_angle;
+//         }
+//     }
     
-    // 计算内圆半径（用于绘制弧环）
-    int32_t inner_radius = (int32_t)(radius * (1.0f - full_ratio));
-    float32x4_t inner_radius_vec = vdupq_n_f32((float)inner_radius);
-    float32x4_t radius_vec = vdupq_n_f32((float)radius);
+//     // 计算内圆半径（用于绘制弧环）
+//     int32_t inner_radius = (int32_t)(radius * (1.0f - full_ratio));
+//     float32x4_t inner_radius_vec = vdupq_n_f32((float)inner_radius);
+//     float32x4_t radius_vec = vdupq_n_f32((float)radius);
     
-    // 使用NEON优化处理4个像素
-    for (int32_t rel_y = -radius; rel_y <= radius; rel_y++)
-    {
-        for (int32_t rel_x = -radius; rel_x <= radius; rel_x += 4)
-        {
-            // 创建4个x坐标
-            int32x4_t x_vec = {rel_x, rel_x+1, rel_x+2, rel_x+3};
-            int32x4_t y_vec = {rel_y, rel_y, rel_y, rel_y};
+//     // 使用NEON优化处理4个像素
+//     for (int32_t rel_y = -radius; rel_y <= radius; rel_y++)
+//     {
+//         for (int32_t rel_x = -radius; rel_x <= radius; rel_x += 4)
+//         {
+//             // 创建4个x坐标
+//             int32x4_t x_vec = {rel_x, rel_x+1, rel_x+2, rel_x+3};
+//             int32x4_t y_vec = {rel_y, rel_y, rel_y, rel_y};
             
-            // 计算绝对坐标
-            int32x4_t abs_x_vec = vaddq_s32(x_vec, vdupq_n_s32(lut->center_x));
-            int32x4_t abs_y_vec = vaddq_s32(y_vec, vdupq_n_s32(lut->center_y));
+//             // 计算绝对坐标
+//             int32x4_t abs_x_vec = vaddq_s32(x_vec, vdupq_n_s32(lut->center_x));
+//             int32x4_t abs_y_vec = vaddq_s32(y_vec, vdupq_n_s32(lut->center_y));
             
-            // 边界检查
-            uint32x4_t x_valid = vandq_u32(
-                vcgeq_s32(abs_x_vec, vdupq_n_s32(0)),
-                vcltq_s32(abs_x_vec, vdupq_n_s32(lut->width))
-            );
-            uint32x4_t y_valid = vandq_u32(
-                vcgeq_s32(abs_y_vec, vdupq_n_s32(0)),
-                vcltq_s32(abs_y_vec, vdupq_n_s32(lut->height))
-            );
-            uint32x4_t valid_mask = vandq_u32(x_valid, y_valid);
+//             // 边界检查
+//             uint32x4_t x_valid = vandq_u32(
+//                 vcgeq_s32(abs_x_vec, vdupq_n_s32(0)),
+//                 vcltq_s32(abs_x_vec, vdupq_n_s32(lut->width))
+//             );
+//             uint32x4_t y_valid = vandq_u32(
+//                 vcgeq_s32(abs_y_vec, vdupq_n_s32(0)),
+//                 vcltq_s32(abs_y_vec, vdupq_n_s32(lut->height))
+//             );
+//             uint32x4_t valid_mask = vandq_u32(x_valid, y_valid);
             
-            // 计算索引
-            uint32x4_t width_vec = vdupq_n_u32(lut->width);
-            uint32x4_t index_vec = vmlaq_u32(
-                vmulq_u32(vcvtq_u32_s32(abs_y_vec), width_vec),
-                vcvtq_u32_s32(abs_x_vec),
-                vdupq_n_u32(1)
-            );
+//             // 计算索引
+//             uint32x4_t width_vec = vdupq_n_u32(lut->width);
+//             uint32x4_t index_vec = vmlaq_u32(
+//                 vmulq_u32(vcvtq_u32_s32(abs_y_vec), width_vec),
+//                 vcvtq_u32_s32(abs_x_vec),
+//                 vdupq_n_u32(1)
+//             );
             
-            // 获取距离和角度
-            float32x4_t distance_vec, angle_vec;
-            for (int i = 0; i < 4; i++) {
-                if (vgetq_lane_u32(valid_mask, i)) {
-                    uint32_t idx = vgetq_lane_u32(index_vec, i);
-                    ((float*)&distance_vec)[i] = lut->distance_table[idx];
-                    ((float*)&angle_vec)[i] = lut->angle_table[idx];
-                } else {
-                    // 越界时回退到实时计算
-                    float x = (float)vgetq_lane_s32(x_vec, i);
-                    float y = (float)vgetq_lane_s32(y_vec, i);
-                    ((float*)&distance_vec)[i] = sqrtf(x * x + y * y);
-                    ((float*)&angle_vec)[i] = atan2f(y, x);
-                }
-            }
+//             // 获取距离和角度
+//             float32x4_t distance_vec, angle_vec;
+//             for (int i = 0; i < 4; i++) {
+//                 if (vgetq_lane_u32(valid_mask, i)) {
+//                     uint32_t idx = vgetq_lane_u32(index_vec, i);
+//                     ((float*)&distance_vec)[i] = lut->distance_table[idx];
+//                     ((float*)&angle_vec)[i] = lut->angle_table[idx];
+//                 } else {
+//                     // 越界时回退到实时计算
+//                     float x = (float)vgetq_lane_s32(x_vec, i);
+//                     float y = (float)vgetq_lane_s32(y_vec, i);
+//                     ((float*)&distance_vec)[i] = sqrtf(x * x + y * y);
+//                     ((float*)&angle_vec)[i] = atan2f(y, x);
+//                 }
+//             }
             
-            // 检查是否在圆环范围内
-            uint32x4_t in_outer_circle = vcleq_f32(distance_vec, radius_vec);
-            uint32x4_t in_inner_circle = vcgeq_f32(distance_vec, inner_radius_vec);
-            uint32x4_t in_ring = vandq_u32(in_outer_circle, in_inner_circle);
+//             // 检查是否在圆环范围内
+//             uint32x4_t in_outer_circle = vcleq_f32(distance_vec, radius_vec);
+//             uint32x4_t in_inner_circle = vcgeq_f32(distance_vec, inner_radius_vec);
+//             uint32x4_t in_ring = vandq_u32(in_outer_circle, in_inner_circle);
             
-            // 处理每个像素
-            for (int i = 0; i < 4; i++) {
-                if (vgetq_lane_u32(in_ring, i) && 
-                    (rel_x + i) <= radius) {
-                    float distance = vgetq_lane_f32(distance_vec, i);
-                    float angle = vgetq_lane_f32(angle_vec, i);
+//             // 处理每个像素
+//             for (int i = 0; i < 4; i++) {
+//                 if (vgetq_lane_u32(in_ring, i) && 
+//                     (rel_x + i) <= radius) {
+//                     float distance = vgetq_lane_f32(distance_vec, i);
+//                     float angle = vgetq_lane_f32(angle_vec, i);
                     
-                    // 将角度归一化到 [0, 2π)
-                    if (angle < 0)
-                        angle += 2 * M_PI;
+//                     // 将角度归一化到 [0, 2π)
+//                     if (angle < 0)
+//                         angle += 2 * M_PI;
                     
-                    // 注意：AWTK坐标系统中Y轴向下，所以角度需要调整
-                    // 将角度转换为符合AWTK坐标系统的角度
-                    // atan2返回的角度是以X轴正方向为0度，逆时针为正
-                    // 在AWTK中，我们希望0度在正上方（Y轴负方向）
-                    float adjusted_angle = angle - M_PI_2; // 减去90度，使0度指向正上方
-                    if (adjusted_angle < 0) adjusted_angle += 2 * M_PI;
+//                     // 注意：AWTK坐标系统中Y轴向下，所以角度需要调整
+//                     // 将角度转换为符合AWTK坐标系统的角度
+//                     // atan2返回的角度是以X轴正方向为0度，逆时针为正
+//                     // 在AWTK中，我们希望0度在正上方（Y轴负方向）
+//                     float adjusted_angle = angle - M_PI_2; // 减去90度，使0度指向正上方
+//                     if (adjusted_angle < 0) adjusted_angle += 2 * M_PI;
                     
-                    // 处理角度范围检查
-                    bool_t in_arc = FALSE;
-                    if (ant_clock) {
-                        // 逆时针方向
-                        if (start_angle <= end_angle) {
-                            in_arc = (adjusted_angle >= start_angle && adjusted_angle <= end_angle);
-                        } else {
-                            in_arc = (adjusted_angle >= start_angle || adjusted_angle <= end_angle);
-                        }
-                    } else {
-                        // 顺时针方向
-                        if (start_angle <= end_angle) {
-                            in_arc = (adjusted_angle >= start_angle && adjusted_angle <= end_angle);
-                        } else {
-                            in_arc = (adjusted_angle >= start_angle || adjusted_angle <= end_angle);
-                        }
-                    }
+//                     // 处理角度范围检查
+//                     bool_t in_arc = FALSE;
+//                     if (ant_clock) {
+//                         // 逆时针方向
+//                         if (start_angle <= end_angle) {
+//                             in_arc = (adjusted_angle >= start_angle && adjusted_angle <= end_angle);
+//                         } else {
+//                             in_arc = (adjusted_angle >= start_angle || adjusted_angle <= end_angle);
+//                         }
+//                     } else {
+//                         // 顺时针方向
+//                         if (start_angle <= end_angle) {
+//                             in_arc = (adjusted_angle >= start_angle && adjusted_angle <= end_angle);
+//                         } else {
+//                             in_arc = (adjusted_angle >= start_angle || adjusted_angle <= end_angle);
+//                         }
+//                     }
 
-                    if (in_arc) {
-                        // 计算在弧形中的位置比例
-                        float position_ratio = 0;
-                        if (ant_clock) {
-                            if (start_angle <= end_angle) {
-                                if (adjusted_angle >= start_angle && adjusted_angle <= end_angle) {
-                                    position_ratio = (adjusted_angle - start_angle) / angle_range;
-                                }
-                            } else {
-                                if (adjusted_angle >= start_angle) {
-                                    position_ratio = (adjusted_angle - start_angle) / angle_range;
-                                } else if (adjusted_angle <= end_angle) {
-                                    position_ratio = ((2 * M_PI - start_angle) + adjusted_angle) / angle_range;
-                                }
-                            }
-                        } else {
-                            if (start_angle <= end_angle) {
-                                if (adjusted_angle >= start_angle && adjusted_angle <= end_angle) {
-                                    position_ratio = (adjusted_angle - start_angle) / angle_range;
-                                }
-                            } else {
-                                if (adjusted_angle >= start_angle) {
-                                    position_ratio = (adjusted_angle - start_angle) / angle_range;
-                                } else if (adjusted_angle <= end_angle) {
-                                    position_ratio = ((2 * M_PI - start_angle) + adjusted_angle) / angle_range;
-                                }
-                            }
-                        }
+//                     if (in_arc) {
+//                         // 计算在弧形中的位置比例
+//                         float position_ratio = 0;
+//                         if (ant_clock) {
+//                             if (start_angle <= end_angle) {
+//                                 if (adjusted_angle >= start_angle && adjusted_angle <= end_angle) {
+//                                     position_ratio = (adjusted_angle - start_angle) / angle_range;
+//                                 }
+//                             } else {
+//                                 if (adjusted_angle >= start_angle) {
+//                                     position_ratio = (adjusted_angle - start_angle) / angle_range;
+//                                 } else if (adjusted_angle <= end_angle) {
+//                                     position_ratio = ((2 * M_PI - start_angle) + adjusted_angle) / angle_range;
+//                                 }
+//                             }
+//                         } else {
+//                             if (start_angle <= end_angle) {
+//                                 if (adjusted_angle >= start_angle && adjusted_angle <= end_angle) {
+//                                     position_ratio = (adjusted_angle - start_angle) / angle_range;
+//                                 }
+//                             } else {
+//                                 if (adjusted_angle >= start_angle) {
+//                                     position_ratio = (adjusted_angle - start_angle) / angle_range;
+//                                 } else if (adjusted_angle <= end_angle) {
+//                                     position_ratio = ((2 * M_PI - start_angle) + adjusted_angle) / angle_range;
+//                                 }
+//                             }
+//                         }
                         
-                        // 确保比例在[0,1]范围内
-                        if (position_ratio < 0.0f) position_ratio = 0.0f;
-                        if (position_ratio > 1.0f) position_ratio = 1.0f;
+//                         // 确保比例在[0,1]范围内
+//                         if (position_ratio < 0.0f) position_ratio = 0.0f;
+//                         if (position_ratio > 1.0f) position_ratio = 1.0f;
                         
-                        // 查找预计算的颜色
-                        uint32_t angle_index = (uint32_t)(position_ratio * (renderer->color_table_size - 1));
-                        color_t pixel_color = renderer->color_table[angle_index];
+//                         // 查找预计算的颜色
+//                         uint32_t angle_index = (uint32_t)(position_ratio * (renderer->color_table_size - 1));
+//                         color_t pixel_color = renderer->color_table[angle_index];
 
-                        // 绘制像素
-                        canvas_set_fill_color(c, pixel_color);
-                        canvas_fill_rect(c, cx + rel_x + i, cy + rel_y, 1, 1);
-                    }
-                }
-            }
-        }
-    }
+//                         // 绘制像素
+//                         canvas_set_fill_color(c, pixel_color);
+//                         canvas_fill_rect(c, cx + rel_x + i, cy + rel_y, 1, 1);
+//                     }
+//                 }
+//             }
+//         }
+//     }
 
-    return RET_OK;
-}
-#endif // __ARM_NEON__
+//     return RET_OK;
+// }
+// #endif // __ARM_NEON__
 
 /* 颜色插值 */
 static color_t color_interpolate(color_t c1, color_t c2, float ratio)
@@ -487,10 +487,10 @@ static ret_t conner_gradient_view_on_paint_self(widget_t *widget, canvas_t *c)
     /* 根据平台选择合适的绘制函数 */
     ret_t ret = RET_NOT_IMPL;
     
-#ifdef __ARM_NEON__
-    ret = draw_arc_gradient_neon(c, cx, cy, radius, start_angle, end_angle, 
-                                 view->ant_clock, &view->arc_gradient_renderer, view->full_ratio);
-#endif
+// #ifdef __ARM_NEON__
+//     ret = draw_arc_gradient_neon(c, cx, cy, radius, start_angle, end_angle, 
+//                                  view->ant_clock, &view->arc_gradient_renderer, view->full_ratio);
+// #endif
     
     // 如果没有NEON优化或NEON优化失败，则使用普通版本
     if (ret == RET_NOT_IMPL) {

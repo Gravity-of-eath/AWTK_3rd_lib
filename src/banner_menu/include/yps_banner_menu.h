@@ -130,6 +130,8 @@ typedef struct _yps_banner_menu_t
 
   layout_manager *listener;
 
+  int32_t animat_timer_id;
+
 } yps_banner_menu_t;
 
 /**

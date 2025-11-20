@@ -47,11 +47,11 @@ static void print_node_info(rect_t *node, const char *prefix)
     return;
 
   logPrint("print_node_info %s: xywh=(%d, %d, %d, %d)\n",
-         prefix,
-         node->x,
-         node->y,
-         node->w,
-         node->h);
+           prefix,
+           node->x,
+           node->y,
+           node->w,
+           node->h);
 }
 
 static void init_children_data(yps_banner_menu_t *parent)
@@ -95,8 +95,8 @@ static void init_children_data(yps_banner_menu_t *parent)
   root_node->user_data = yps_banner_menu;
 
   logPrint("根节点: %s [%d,%d,%d,%d]\n",
-         root_node->name ? root_node->name : "Root",
-         root_rect.x, root_rect.y, root_rect.w, root_rect.h);
+           root_node->name ? root_node->name : "Root",
+           root_rect.x, root_rect.y, root_rect.w, root_rect.h);
 
   /* 递归构建整个树 */
   init_child_recursive(&(parent->widget), root_node, 1);
@@ -251,9 +251,9 @@ static void def_on_scroll_vertical(yps_banner_menu_t *parent, widget_t **childre
 
   logPrint("progress:%.2f, direction:%d\n", progress, parent->next_or_prev);
   logPrint("losing: %d->%d at y=%d, next: %d->%d at y=%d\n",
-         losing_h, r_l->h, r_l->y, next_h, r_n->h, r_n->y);
+           losing_h, r_l->h, r_l->y, next_h, r_n->h, r_n->y);
   logPrint("gap: %.1f (losing_bottom=%.1f, next_top=%.1f)\n",
-         gap, losing_bottom, next_top);
+           gap, losing_bottom, next_top);
   logPrint("center_y: %.0f\n", center_y);
 
   // 清理内存
@@ -273,6 +273,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
   if (yps_banner_menu == NULL)
   {
     logPrint("ERROR on_anim_function yps_banner_menu==NULL!!!");
+    yps_banner_menu->animat_timer_id = TK_INVALID_ID;
     return RET_REMOVE;
   }
 
@@ -321,6 +322,7 @@ static ret_t on_anim_function(const timer_info_t *timer)
                                                yps_banner_menu->focus_index, temp_index);
         }
       }
+      yps_banner_menu->animat_timer_id = TK_INVALID_ID;
       return RET_REMOVE;
     }
   }
@@ -348,7 +350,7 @@ static void focus_change(yps_banner_menu_t *yps_banner_menu, int32_t index, bool
       yps_banner_menu->step_progress = 1;
     }
     yps_banner_menu->target_index = index;
-    timer_add(on_anim_function, yps_banner_menu, frame_time);
+    yps_banner_menu->animat_timer_id = timer_add(on_anim_function, yps_banner_menu, frame_time);
     logPrint("yps_banner_menu_focus_next 3 anim= %d  step_progress=%d\n", anim, yps_banner_menu->step_progress);
   }
   else
@@ -519,6 +521,11 @@ static ret_t yps_banner_menu_set_prop(widget_t *widget, const char *name, const 
 static ret_t yps_banner_menu_on_destroy(widget_t *widget)
 {
   yps_banner_menu_t *yps_banner_menu = YPS_BANNER_MENU(widget);
+  if (yps_banner_menu->animat_timer_id != TK_INVALID_ID)
+  {
+    timer_remove(yps_banner_menu->animat_timer_id);
+    yps_banner_menu->animat_timer_id = TK_INVALID_ID;
+  }
   return_value_if_fail(widget != NULL && yps_banner_menu != NULL, RET_BAD_PARAMS);
   TKMEM_FREE(yps_banner_menu->childrens);
 
@@ -587,6 +594,7 @@ widget_t *yps_banner_menu_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t 
   yps_banner_menu->layout_manager = &def_manager_vertical;
   yps_banner_menu->scale_ratio = 0.3f;
   yps_banner_menu->font_scale_ratio = 1.0f;
+  yps_banner_menu->animat_timer_id = TK_INVALID_ID;
   return widget;
 }
 

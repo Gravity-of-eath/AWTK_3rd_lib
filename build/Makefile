@@ -221,6 +221,19 @@ shadow_label/fast:
 	$(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/build
 .PHONY : shadow_label/fast
 
+#=============================================================================
+# Target rules for targets named yps_gauge
+
+# Build rule for target.
+yps_gauge: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 yps_gauge
+.PHONY : yps_gauge
+
+# fast build rule for target.
+yps_gauge/fast:
+	$(MAKE) -f yps_gauge/CMakeFiles/yps_gauge.dir/build.make yps_gauge/CMakeFiles/yps_gauge.dir/build
+.PHONY : yps_gauge/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -238,6 +251,7 @@ help:
 	@echo "... blur_view"
 	@echo "... conner_gradient"
 	@echo "... shadow_label"
+	@echo "... yps_gauge"
 .PHONY : help
 
 

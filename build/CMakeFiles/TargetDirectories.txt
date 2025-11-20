@@ -39,3 +39,10 @@
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/rebuild_cache.dir
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/edit_cache.dir
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/CMakeFiles/shadow_label.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/install/strip.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/install/local.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/install.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/list_install_components.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/rebuild_cache.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/edit_cache.dir
+/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/CMakeFiles/yps_gauge.dir

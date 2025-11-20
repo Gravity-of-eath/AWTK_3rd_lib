@@ -60,28 +60,28 @@ include shadow_label/CMakeFiles/shadow_label.dir/flags.make
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: shadow_label/CMakeFiles/shadow_label.dir/flags.make
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/shadow_label.dir/src/shadow_label.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/shadow_label.dir/src/shadow_label.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c
 
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/shadow_label.dir/src/shadow_label.c.i"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c > CMakeFiles/shadow_label.dir/src/shadow_label.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c > CMakeFiles/shadow_label.dir/src/shadow_label.c.i
 
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/shadow_label.dir/src/shadow_label.c.s"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c -o CMakeFiles/shadow_label.dir/src/shadow_label.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label.c -o CMakeFiles/shadow_label.dir/src/shadow_label.c.s
 
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: shadow_label/CMakeFiles/shadow_label.dir/flags.make
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c
 
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/shadow_label.dir/src/shadow_label_register.c.i"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c > CMakeFiles/shadow_label.dir/src/shadow_label_register.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c > CMakeFiles/shadow_label.dir/src/shadow_label_register.c.i
 
 shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/shadow_label.dir/src/shadow_label_register.c.s"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c -o CMakeFiles/shadow_label.dir/src/shadow_label_register.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/src/shadow_label_register.c -o CMakeFiles/shadow_label.dir/src/shadow_label_register.c.s
 
 # Object files for target shadow_label
 shadow_label_OBJECTS = \
@@ -94,7 +94,7 @@ shadow_label_EXTERNAL_OBJECTS =
 shadow_label/libshadow_label.so: shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label.c.o
 shadow_label/libshadow_label.so: shadow_label/CMakeFiles/shadow_label.dir/src/shadow_label_register.c.o
 shadow_label/libshadow_label.so: shadow_label/CMakeFiles/shadow_label.dir/build.make
-shadow_label/libshadow_label.so: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/../lib/x86/libawtk.so
+shadow_label/libshadow_label.so: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/../lib/t113/libawtk.so
 shadow_label/libshadow_label.so: shadow_label/CMakeFiles/shadow_label.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C shared library libshadow_label.so"
 	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/shadow_label.dir/link.txt --verbose=$(VERBOSE)

@@ -44,6 +44,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/blur_view/cmake_install.cmake")
   include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient/cmake_install.cmake")
   include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/shadow_label/cmake_install.cmake")
+  include("/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/yps_gauge/cmake_install.cmake")
 
 endif()
 

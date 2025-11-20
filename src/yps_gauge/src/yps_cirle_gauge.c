@@ -45,21 +45,29 @@ static ret_t load_pre_rotated_bitmaps(yps_cirle_gauge_t *yps_cirle_gauge)
             for (int i = yps_cirle_gauge->num_pre_rotated_bitmaps; i >= 0; i--)
             {
                 bitmap_t *src = &original_bitmap;
-                canvas_t *canvas = canvas_offline_create(src->w, src->h, src->format);
+                float angle_rad = (i + 180) * M_PI / 180.0f;
+                float sin_val = fabs(sin(angle_rad));
+                float cos_val = fabs(cos(angle_rad));
+                // 旋转后的新尺寸
+                int new_width = (int)(src->w * cos_val + src->h * sin_val);
+                int new_height = (int)(src->w * sin_val + src->h * cos_val);
+                // 创建足够大的画布来容纳旋转后的图像
+                canvas_t *canvas = canvas_offline_create(new_width, new_height, src->format);
                 vgcanvas_t *vg = canvas_get_vgcanvas(canvas);
                 vgcanvas_save(vg);
-                printf("rotate_bitmap :line %d Rotating bitmap by %d degrees\n", __LINE__, i);
-                // 设置旋转中心并旋转
-                float center_x = src->w / 2.0f;
-                float center_y = src->h / 2.0f;
-                printf("rotate_bitmap :line %d Rotating bitmap by %d degrees\n", __LINE__, i);
+                // 设置新的旋转中心（在新画布的中心）
+                float center_x = new_width / 2.0f;
+                float center_y = new_height / 2.0f;
+                // 计算源图像在新画布中的位置，使其居中
+                float draw_x = (new_width - src->w) / 2.0f;
+                float draw_y = (new_height - src->h) / 2.0f;
+                // 应用变换
                 vgcanvas_translate(vg, center_x, center_y);
-                vgcanvas_rotate(vg, (i + 180) * M_PI / 180.0f);
+                vgcanvas_rotate(vg, angle_rad);
                 vgcanvas_translate(vg, -center_x, -center_y);
-                printf("rotate_bitmap :line %d Rotating bitmap by %d degrees\n", __LINE__, i);
-                // 绘制图像
-                vgcanvas_draw_image(vg, src, 0, 0, src->w, src->h, 0, 0, src->w, src->h);
-                printf("rotate_bitmap :line %d Rotating bitmap by %d degrees\n", __LINE__, i);
+                printf("rotate_bitmap :degrees %d New canvas size: %dx%d\n", i, new_width, new_height);
+                // 绘制图像到新画布的中心位置
+                vgcanvas_draw_image(vg, src, 0, 0, src->w, src->h, draw_x, draw_y, src->w, src->h);
                 vgcanvas_restore(vg);
                 yps_cirle_gauge->pre_rotated_bitmaps[yps_cirle_gauge->num_pre_rotated_bitmaps - i] = canvas_offline_get_bitmap(canvas);
                 //  canvas_offline_destroy(canvas);
@@ -265,6 +273,16 @@ ret_t yps_cirle_gauge_set_pointer_offset_y(widget_t *widget, int32_t pointer_off
     return RET_OK;
 }
 
+ret_t yps_cirle_gauge_set_pointer_offset_angle(widget_t *widget, int32_t pointer_offset_angle)
+{
+    yps_cirle_gauge_t *yps_cirle_gauge = YPS_CIRLE_GAUGE(widget);
+    return_value_if_fail(yps_cirle_gauge != NULL, RET_BAD_PARAMS);
+    yps_cirle_gauge->pointer_offset_angle = pointer_offset_angle;
+    return RET_OK;
+}
+
+
+
 static ret_t yps_cirle_gauge_get_prop(widget_t *widget, const char *name, value_t *v)
 {
     yps_cirle_gauge_t *yps_cirle_gauge = YPS_CIRLE_GAUGE(widget);
@@ -357,6 +375,11 @@ static ret_t yps_cirle_gauge_get_prop(widget_t *widget, const char *name, value_
     else if (tk_str_eq(YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_Y, name))
     {
         value_set_int(v, yps_cirle_gauge->pointer_offset_y);
+        return RET_OK;
+    }
+    else if (tk_str_eq(YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_ANGLE, name))
+    {
+        value_set_int(v, yps_cirle_gauge->pointer_offset_angle);
         return RET_OK;
     }
 
@@ -467,6 +490,13 @@ static ret_t yps_cirle_gauge_set_prop(widget_t *widget, const char *name, const 
         yps_cirle_gauge_set_pointer_offset_y(widget, value_int32(v));
         return RET_OK;
     }
+    else if (tk_str_eq(YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_ANGLE, name))
+    {
+        yps_cirle_gauge_set_pointer_offset_angle(widget, value_int32(v));
+        return RET_OK;
+    }
+
+
 
     return RET_NOT_FOUND;
 }
@@ -503,7 +533,12 @@ static ret_t yps_cirle_gauge_on_destroy(widget_t *widget)
 
 static ret_t yps_cirle_gauge_on_paint_self(widget_t *widget, canvas_t *c)
 {
+    
     yps_cirle_gauge_t *yps_cirle_gauge = YPS_CIRLE_GAUGE(widget);
+     int32_t angle_index = round(yps_cirle_gauge->angle) * -1;
+            // if (yps_cirle_gauge->last_degge_index != angle_index)
+            // {
+    yps_cirle_gauge->last_degge_index = angle_index;
 
     vgcanvas_t *vg = canvas_get_vgcanvas(c);
 
@@ -553,28 +588,29 @@ static ret_t yps_cirle_gauge_on_paint_self(widget_t *widget, canvas_t *c)
             // 获取当前角度对应的预旋转BMP
 
             // int angle_index = (int)fmod(fmod(yps_cirle_gauge->angle, 360.0f) + 360.0f, 360.0f); // 确保在0-359范围内
-            int32_t angle_index = round(yps_cirle_gauge->angle) * -1;
-            if (yps_cirle_gauge->pre_rotated_bitmaps_loaded &&
-                angle_index >= 0 && angle_index < yps_cirle_gauge->num_pre_rotated_bitmaps)
-            {
-                bitmap_t *rotated_bitmap = yps_cirle_gauge->pre_rotated_bitmaps[angle_index];
-                float rotation = (yps_cirle_gauge->angle + 180.0f) * M_PI / 180.0f;
-                int32_t rr = (int32_t)(yps_cirle_gauge->r1 + yps_cirle_gauge->r2) / 2.0f;
-                // vgcanvas_save(vg);
-                canvas_save(c);
-                // vgcanvas_translate(vg, c->ox, c->oy);
-                canvas_translate(vg, c->ox, c->oy);
-                // vgcanvas_translate(vg, anchor_x, anchor_y); // 平移到控件中心
-                int32_t xx = anchor_x - (rr * sin(rotation)) - rotated_bitmap->w / 2;
-                int32_t yy =  anchor_y + (rr * cos(rotation)) - rotated_bitmap->h / 2;
-                // vgcanvas_draw_image(vg, rotated_bitmap, 0, 0, rotated_bitmap->w, rotated_bitmap->h,
-                //                     xx, yy,
-                //                     rotated_bitmap->w, rotated_bitmap->h);
-                canvas_draw_image_ex2(c, rotated_bitmap, IMAGE_DRAW_ICON, rect_create(00, 00, rotated_bitmap->w, rotated_bitmap->h),rect_create(xx, yy, rotated_bitmap->w, rotated_bitmap->h));
-                // printf("Drawing pointer at angle 3333 index: %d anchor_x=%d anchor_y=%d rotation=%f  xx=%d yy=%d  angle=%f\n", angle_index, anchor_x, anchor_y, rotation, xx, yy, (yps_cirle_gauge->angle + 180.0f));
-                // vgcanvas_restore(vg);
-                canvas_restore(c);
-            }
+           
+                if (yps_cirle_gauge->pre_rotated_bitmaps_loaded &&
+                    angle_index >= 0 && angle_index < yps_cirle_gauge->num_pre_rotated_bitmaps)
+                {
+                    bitmap_t *rotated_bitmap = yps_cirle_gauge->pre_rotated_bitmaps[angle_index];
+                    float rotation = (yps_cirle_gauge->angle + 180.0f+yps_cirle_gauge->pointer_offset_angle) * M_PI / 180.0f;
+                    int32_t rr = (int32_t)(yps_cirle_gauge->r1 + yps_cirle_gauge->r2) / 2.0f;
+                    // vgcanvas_save(vg);
+                    canvas_save(c);
+                    // vgcanvas_translate(vg, c->ox, c->oy);
+                    canvas_translate(vg, c->ox, c->oy);
+                    // vgcanvas_translate(vg, anchor_x, anchor_y); // 平移到控件中心
+                    int32_t xx = anchor_x - (rr * sin(rotation)) - rotated_bitmap->w / 2;
+                    int32_t yy = anchor_y + (rr * cos(rotation)) - rotated_bitmap->h / 2;
+                    // vgcanvas_draw_image(vg, rotated_bitmap, 0, 0, rotated_bitmap->w, rotated_bitmap->h,
+                    //                     xx, yy,
+                    //                     rotated_bitmap->w, rotated_bitmap->h);
+                    canvas_draw_image_ex2(c, rotated_bitmap, IMAGE_DRAW_ICON, rect_create(00, 00, rotated_bitmap->w, rotated_bitmap->h), rect_create(xx, yy, rotated_bitmap->w, rotated_bitmap->h));
+                    printf("Drawing pointer at angle 3333 index: %d anchor_x=%d anchor_y=%d rotation=%f  xx=%d yy=%d  angle=%f\n", angle_index, anchor_x, anchor_y, rotation, xx, yy, (yps_cirle_gauge->angle + 180.0f));
+                    // vgcanvas_restore(vg);
+                    canvas_restore(c);
+                }
+           
         }
     }
 
@@ -599,6 +635,10 @@ static ret_t yps_cirle_gauge_on_paint_self(widget_t *widget, canvas_t *c)
     //     vgcanvas_stroke(vg);
     //     vgcanvas_restore(vg);
     // }
+//  }else{
+//                 printf("Drawing pointer at angle repet index: %d \n", angle_index  );
+//                 return RET_OK;
+//             }
     return RET_OK;
 }
 
@@ -782,90 +822,80 @@ static ret_t yps_cirle_gauge_invalidate(widget_t *widget, const rect_t *r)
     // 计算指针区域的脏矩形
     if (tk_strlen(yps_cirle_gauge->pointer_image) > 0)
     {
-        // 获取指针图片尺寸
-        bitmap_t pointer_bmp;
-        if (RET_OK == widget_load_image(widget, yps_cirle_gauge->pointer_image, &pointer_bmp))
+        // 确保预旋转位图已经加载
+        if (!yps_cirle_gauge->pre_rotated_bitmaps_loaded)
         {
-            float_t w = pointer_bmp.w;
-            float_t h = pointer_bmp.h;
-
-            // 计算指针旋转后的边界矩形
-            float rotation = yps_cirle_gauge->angle * M_PI / 180.0;
-            float last_rotation = yps_cirle_gauge->last_angle * M_PI / 180.0;
-
-            // 计算指针图片的四个角点（相对于锚点）
-            float corners[8];
-            // 左上角
-            corners[0] = -w / 2;
-            +yps_cirle_gauge->pointer_offset_x;
-            corners[1] = -h / 2 + yps_cirle_gauge->pointer_offset_y;
-            // 右上角
-            corners[2] = w / 2 + yps_cirle_gauge->pointer_offset_x;
-            corners[3] = -h / 2 + yps_cirle_gauge->pointer_offset_y;
-            // 右下角
-            corners[4] = w / 2 + yps_cirle_gauge->pointer_offset_x;
-            corners[5] = h / 2 + yps_cirle_gauge->pointer_offset_y;
-            // 左下角
-            corners[6] = -w / 2 + yps_cirle_gauge->pointer_offset_x;
-            corners[7] = h / 2 + yps_cirle_gauge->pointer_offset_y;
-
-            // 计算旋转后的坐标
-            float rotated_corners[8];
-            float last_rotated_corners[8];
-
-            for (int i = 0; i < 8; i += 2)
-            {
-                // 当前角度旋转后的坐标
-                rotated_corners[i] = corners[i] * cos(rotation) - corners[i + 1] * sin(rotation) + anchor_x;
-                rotated_corners[i + 1] = corners[i] * sin(rotation) + corners[i + 1] * cos(rotation) + anchor_y;
-
-                // 上一次角度旋转后的坐标
-                last_rotated_corners[i] = corners[i] * cos(last_rotation) - corners[i + 1] * sin(last_rotation) + anchor_x;
-                last_rotated_corners[i + 1] = corners[i] * sin(last_rotation) + corners[i + 1] * cos(last_rotation) + anchor_y;
-            }
-
-            // 找出两个位置的最小和最大x,y坐标
-            float ptr_min_x = rotated_corners[0];
-            float ptr_min_y = rotated_corners[1];
-            float ptr_max_x = rotated_corners[0];
-            float ptr_max_y = rotated_corners[1];
-
-            for (int i = 0; i < 8; i += 2)
-            {
-                // 当前位置
-                if (rotated_corners[i] < ptr_min_x)
-                    ptr_min_x = rotated_corners[i];
-                if (rotated_corners[i] > ptr_max_x)
-                    ptr_max_x = rotated_corners[i];
-                if (rotated_corners[i + 1] < ptr_min_y)
-                    ptr_min_y = rotated_corners[i + 1];
-                if (rotated_corners[i + 1] > ptr_max_y)
-                    ptr_max_y = rotated_corners[i + 1];
-
-                // 上一次位置
-                if (last_rotated_corners[i] < ptr_min_x)
-                    ptr_min_x = last_rotated_corners[i];
-                if (last_rotated_corners[i] > ptr_max_x)
-                    ptr_max_x = last_rotated_corners[i];
-                if (last_rotated_corners[i + 1] < ptr_min_y)
-                    ptr_min_y = last_rotated_corners[i + 1];
-                if (last_rotated_corners[i + 1] > ptr_max_y)
-                    ptr_max_y = last_rotated_corners[i + 1];
-            }
-
-            // 设置指针脏矩形
-            yps_cirle_gauge->pointer_dirty_rect.x = ptr_min_x;
-            yps_cirle_gauge->pointer_dirty_rect.y = ptr_min_y;
-            yps_cirle_gauge->pointer_dirty_rect.w = ptr_max_x - ptr_min_x;
-            yps_cirle_gauge->pointer_dirty_rect.h = ptr_max_y - ptr_min_y;
+            load_pre_rotated_bitmaps(yps_cirle_gauge);
         }
-        else
+        
+        // 参考绘制函数中的角度计算方式
+        int32_t rr = (int32_t)(yps_cirle_gauge->r1 + yps_cirle_gauge->r2) / 2.0f;
+        
+        // 计算当前角度和上一次角度对应的预旋转BMP索引
+        int32_t current_angle_index = round(yps_cirle_gauge->angle) * -1;
+        int32_t last_angle_index =yps_cirle_gauge->last_degge_index;
+        
+        // 初始化脏矩形为无效值
+        rect_t current_ptr_rect = {0, 0, 0, 0};
+        rect_t last_ptr_rect = {0, 0, 0, 0};
+        
+        // 计算当前角度对应的指针位置和脏矩形
+        if (yps_cirle_gauge->pre_rotated_bitmaps_loaded &&
+            current_angle_index >= 0 && current_angle_index < yps_cirle_gauge->num_pre_rotated_bitmaps)
         {
-            // 如果无法加载图片，设置一个默认的指针脏矩形
-            yps_cirle_gauge->pointer_dirty_rect.x = anchor_x - 5;
-            yps_cirle_gauge->pointer_dirty_rect.y = anchor_y - r1 - 5;
-            yps_cirle_gauge->pointer_dirty_rect.w = 10;
-            yps_cirle_gauge->pointer_dirty_rect.h = r1 + 10;
+            bitmap_t *rotated_bitmap = yps_cirle_gauge->pre_rotated_bitmaps[current_angle_index];
+            float rotation = (yps_cirle_gauge->angle + 180.0f + yps_cirle_gauge->pointer_offset_angle) * M_PI / 180.0f;
+            
+            // 计算中心点位置（半圆轨迹上的点）
+            int32_t center_x = anchor_x - (rr * sin(rotation));
+            int32_t center_y = anchor_y + (rr * cos(rotation));
+            
+            // 计算指针图片的绘制位置
+            int32_t xx = center_x - rotated_bitmap->w/2;
+            int32_t yy = center_y - rotated_bitmap->h / 2;
+            
+            // 设置当前指针的矩形
+            current_ptr_rect.x = xx;
+            current_ptr_rect.y = yy;
+            current_ptr_rect.w = rotated_bitmap->w;
+            current_ptr_rect.h = rotated_bitmap->h;
+        }
+        
+        // 计算上一次角度对应的指针位置和脏矩形
+        if (yps_cirle_gauge->pre_rotated_bitmaps_loaded &&
+            last_angle_index >= 0 && last_angle_index < yps_cirle_gauge->num_pre_rotated_bitmaps)
+        {
+            bitmap_t *rotated_bitmap = yps_cirle_gauge->pre_rotated_bitmaps[last_angle_index];
+            float rotation = (yps_cirle_gauge->last_angle  + 180.0f + yps_cirle_gauge->pointer_offset_angle) * M_PI / 180.0f;
+            
+            // 计算中心点位置（半圆轨迹上的点）
+            int32_t center_x = anchor_x - (rr * sin(rotation));
+            int32_t center_y = anchor_y + (rr * cos(rotation));
+            
+            // 计算指针图片的绘制位置
+            int32_t xx = center_x - rotated_bitmap->w/2;
+            int32_t yy = center_y - rotated_bitmap->h / 2;
+            
+            // 设置上一次指针的矩形
+            last_ptr_rect.x = xx;
+            last_ptr_rect.y = yy;
+            last_ptr_rect.w = rotated_bitmap->w;
+            last_ptr_rect.h = rotated_bitmap->h;
+        }
+        printf("current_ptr_rect (%d, %d, %d, %d), last_ptr_rect (%d, %d, %d, %d)\n",
+               current_ptr_rect.x, current_ptr_rect.y, current_ptr_rect.w, current_ptr_rect.h,
+               last_ptr_rect.x, last_ptr_rect.y, last_ptr_rect.w, last_ptr_rect.h);
+        
+        // 合并当前和上一次的指针矩形作为脏矩形
+        yps_cirle_gauge->pointer_dirty_rect = merge_rects(current_ptr_rect, last_ptr_rect);
+        
+        // 如果合并后的矩形无效，使用默认值
+        if (yps_cirle_gauge->pointer_dirty_rect.w == 0 || yps_cirle_gauge->pointer_dirty_rect.h == 0)
+        {
+            yps_cirle_gauge->pointer_dirty_rect.x = anchor_x - 50;
+            yps_cirle_gauge->pointer_dirty_rect.y = anchor_y - 50;
+            yps_cirle_gauge->pointer_dirty_rect.w = 100;
+            yps_cirle_gauge->pointer_dirty_rect.h = 100;
         }
     }
     else
@@ -877,11 +907,17 @@ static ret_t yps_cirle_gauge_invalidate(widget_t *widget, const rect_t *r)
         yps_cirle_gauge->pointer_dirty_rect.h = r1 + 20;
     }
 
+
     // 合并两个脏矩形
     rect_t total_dirty_rect = merge_rects(yps_cirle_gauge->dirty_rect, yps_cirle_gauge->pointer_dirty_rect);
 
     total_dirty_rect.x += widget->x;
     total_dirty_rect.y += widget->y;
+    // int32_t off=2;
+    // total_dirty_rect.x-=off;
+    // total_dirty_rect.y-=off;
+    // total_dirty_rect.w+=off*2;
+    // total_dirty_rect.h+=off*2;
 
     // 使用合并后的脏矩形进行重绘
     return widget_invalidate_force(widget->parent, &total_dirty_rect);
@@ -949,6 +985,7 @@ const char *s_yps_cirle_gauge_properties[] = {
     YPS_CIRLE_GAUGE_PROP_POINTER_IMAGE2,
     YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_X,
     YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_Y,
+    YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_ANGLE,
     NULL};
 
 TK_DECL_VTABLE(yps_cirle_gauge) = {.size = sizeof(yps_cirle_gauge_t),
@@ -992,6 +1029,8 @@ widget_t *yps_cirle_gauge_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t 
     yps_cirle_gauge->value = yps_cirle_gauge->min_value;
     yps_cirle_gauge->pointer_offset_x = 0;
     yps_cirle_gauge->pointer_offset_y = 0;
+    yps_cirle_gauge->pointer_offset_angle = 0;
+    
 
     // 初始化预旋转位图相关变量
     yps_cirle_gauge->pre_rotated_bitmaps = NULL;

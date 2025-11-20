@@ -175,6 +175,9 @@ typedef struct _yps_cirle_gauge_t {
    */
   int32_t pointer_offset_y;
 
+  
+  int32_t pointer_offset_angle;
+
   /**
    * @property {bitmap_t*} pre_rotated_bitmaps
    * 预旋转的指针位图数组
@@ -194,6 +197,9 @@ typedef struct _yps_cirle_gauge_t {
   bool_t pre_rotated_bitmaps_loaded;
 
   point_t* positions;
+ 
+
+  int32_t last_degge_index;
 
 } yps_cirle_gauge_t;
 
@@ -415,6 +421,9 @@ ret_t yps_cirle_gauge_set_pointer_offset_y(widget_t* widget, int32_t pointer_off
 #define YPS_CIRLE_GAUGE_PROP_POINTER_IMAGE2 "pointer_image2"
 #define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_X "pointer_offset_x"
 #define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_Y "pointer_offset_y"
+#define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_ANGLE "pointer_offset_angle"
+
+
 
 #define WIDGET_TYPE_YPS_CIRLE_GAUGE "yps_cirle_gauge"
 

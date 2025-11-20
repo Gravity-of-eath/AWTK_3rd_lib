@@ -1,12 +1,15 @@
-The target system is: Linux -  - x86
+The target system is: Linux -  - arm
 The host system is: Linux - 5.15.0-139-generic - x86_64
 Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
-Compiler: /usr/bin/gcc 
+Compiler: /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc 
 Build flags: 
 Id flags:  
 
 The output was:
 0
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
 
 
 Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "a.out"
@@ -14,12 +17,15 @@ Compilation of the C compiler identification source "CMakeCCompilerId.c" produce
 The C compiler identification is GNU, found in "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/3.16.3/CompilerIdC/a.out"
 
 Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
-Compiler: /usr/bin/g++ 
+Compiler: /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++ 
 Build flags: 
 Id flags:  
 
 The output was:
 0
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
 
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
@@ -29,13 +35,16 @@ The CXX compiler identification is GNU, found in "/mnt/a57a7843-7ae2-415a-9125-4
 Determining if the C compiler works passed with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_a2548/fast && /usr/bin/make -f CMakeFiles/cmTC_a2548.dir/build.make CMakeFiles/cmTC_a2548.dir/build
+Run Build Command(s):/usr/bin/make cmTC_c75e8/fast && /usr/bin/make -f CMakeFiles/cmTC_c75e8.dir/build.make CMakeFiles/cmTC_c75e8.dir/build
 make[1]: 进入目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
-Building C object CMakeFiles/cmTC_a2548.dir/testCCompiler.c.o
-/usr/bin/gcc    -o CMakeFiles/cmTC_a2548.dir/testCCompiler.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_a2548
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a2548.dir/link.txt --verbose=1
-/usr/bin/gcc      CMakeFiles/cmTC_a2548.dir/testCCompiler.c.o  -o cmTC_a2548 
+Building C object CMakeFiles/cmTC_c75e8.dir/testCCompiler.c.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc    -o CMakeFiles/cmTC_c75e8.dir/testCCompiler.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCCompiler.c
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+Linking C executable cmTC_c75e8
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c75e8.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc      CMakeFiles/cmTC_c75e8.dir/testCCompiler.c.o  -o cmTC_c75e8 
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
 make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
 
 
@@ -43,62 +52,59 @@ make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_ec47a/fast && /usr/bin/make -f CMakeFiles/cmTC_ec47a.dir/build.make CMakeFiles/cmTC_ec47a.dir/build
+Run Build Command(s):/usr/bin/make cmTC_8bc39/fast && /usr/bin/make -f CMakeFiles/cmTC_8bc39.dir/build.make CMakeFiles/cmTC_8bc39.dir/build
 make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o
-/usr/bin/gcc   -v -o CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c
-Using built-in specs.
-COLLECT_GCC=/usr/bin/gcc
-OFFLOAD_TARGET_NAMES=nvptx-none:hsa
-OFFLOAD_TARGET_DEFAULT=1
-Target: x86_64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Building C object CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc   -v -o CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/9/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccnYrm2c.s
-GNU C17 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
-	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
-
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1 -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o -version -o /tmp/cc6YtMkb.s
+GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
-ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
-ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"
 #include "..." search starts here:
 #include <...> search starts here:
- /usr/lib/gcc/x86_64-linux-gnu/9/include
- /usr/local/include
- /usr/include/x86_64-linux-gnu
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include
  /usr/include
 End of search list.
-GNU C17 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
-	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
-
+GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-Compiler executable checksum: 01da938ff5dc2163489aa33cb3b747a7
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
- as -v --64 -o CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o /tmp/ccnYrm2c.s
-GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34
-COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
-LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64'
-Linking C executable cmTC_ec47a
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ec47a.dir/link.txt --verbose=1
-/usr/bin/gcc     -v CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o  -o cmTC_ec47a 
-Using built-in specs.
-COLLECT_GCC=/usr/bin/gcc
-COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
-OFFLOAD_TARGET_NAMES=nvptx-none:hsa
-OFFLOAD_TARGET_DEFAULT=1
-Target: x86_64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Compiler executable checksum: ad58ac5faab723d2a5cd747ed592ecc2
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o /tmp/cc6YtMkb.s
+GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+Linking C executable cmTC_8bc39
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8bc39.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc     -v CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o  -o cmTC_8bc39 
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin
+COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
-COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
-LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec47a' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/cc59WgQH.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_ec47a /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec47a' '-mtune=generic' '-march=x86-64'
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_8bc39' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc39OnSR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_8bc39 /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_8bc39' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
 make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
 
 
@@ -106,148 +112,128 @@ make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/A
 Parsed C implicit include dir info from above output: rv=done
   found start of include info
   found start of implicit include info
-    add: [/usr/lib/gcc/x86_64-linux-gnu/9/include]
-    add: [/usr/local/include]
-    add: [/usr/include/x86_64-linux-gnu]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
     add: [/usr/include]
   end of search list found
-  collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/9/include] ==> [/usr/lib/gcc/x86_64-linux-gnu/9/include]
-  collapse include dir [/usr/local/include] ==> [/usr/local/include]
-  collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
   collapse include dir [/usr/include] ==> [/usr/include]
-  implicit include dirs: [/usr/lib/gcc/x86_64-linux-gnu/9/include;/usr/local/include;/usr/include/x86_64-linux-gnu;/usr/include]
+  implicit include dirs: [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include;/usr/include]
 
 
 Parsed C implicit link information from above output:
-  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  link line regex: [^( *|.*[/\])(arm-openwrt-linux-muslgnueabi-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_ec47a/fast && /usr/bin/make -f CMakeFiles/cmTC_ec47a.dir/build.make CMakeFiles/cmTC_ec47a.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_8bc39/fast && /usr/bin/make -f CMakeFiles/cmTC_8bc39.dir/build.make CMakeFiles/cmTC_8bc39.dir/build]
   ignore line: [make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building C object CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/usr/bin/gcc   -v -o CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/usr/bin/gcc]
-  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
-  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
-  ignore line: [Target: x86_64-linux-gnu]
-  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Building C object CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc   -v -o CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o   -c /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/cc1 -quiet -v -imultiarch x86_64-linux-gnu /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccnYrm2c.s]
-  ignore line: [GNU C17 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
-  ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
-  ignore line: []
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1 -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c -quiet -dumpbase CMakeCCompilerABI.c -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o -version -o /tmp/cc6YtMkb.s]
+  ignore line: [GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"]
-  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"]
-  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"]
   ignore line: [#include "..." search starts here:]
   ignore line: [#include <...> search starts here:]
-  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/include]
-  ignore line: [ /usr/local/include]
-  ignore line: [ /usr/include/x86_64-linux-gnu]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
   ignore line: [ /usr/include]
   ignore line: [End of search list.]
-  ignore line: [GNU C17 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
-  ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
-  ignore line: []
+  ignore line: [GNU C11 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [Compiler executable checksum: 01da938ff5dc2163489aa33cb3b747a7]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [ as -v --64 -o CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o /tmp/ccnYrm2c.s]
-  ignore line: [GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34]
-  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
-  ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o' '-c' '-mtune=generic' '-march=x86-64']
-  ignore line: [Linking C executable cmTC_ec47a]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ec47a.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/gcc     -v CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o  -o cmTC_ec47a ]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/usr/bin/gcc]
-  ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper]
-  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
-  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
-  ignore line: [Target: x86_64-linux-gnu]
-  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Compiler executable checksum: ad58ac5faab723d2a5cd747ed592ecc2]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o /tmp/cc6YtMkb.s]
+  ignore line: [GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o' '-c' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [Linking C executable cmTC_8bc39]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8bc39.dir/link.txt --verbose=1]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc     -v CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o  -o cmTC_8bc39 ]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-gcc.bin]
+  ignore line: [COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
-  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
-  ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_ec47a' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/cc59WgQH.res -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lgcc_s --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_ec47a /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o -lgcc --push-state --as-needed -lgcc_s --pop-state -lc -lgcc --push-state --as-needed -lgcc_s --pop-state /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o]
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/collect2] ==> ignore
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [arm-openwrt-linux-muslgnueabi-gcc.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_8bc39' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  link line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/cc39OnSR.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_8bc39 /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o]
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2] ==> ignore
     arg [-plugin] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so] ==> ignore
-    arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/cc59WgQH.res] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/cc39OnSR.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
-    arg [--build-id] ==> ignore
     arg [--eh-frame-hdr] ==> ignore
-    arg [-m] ==> ignore
-    arg [elf_x86_64] ==> ignore
-    arg [--hash-style=gnu] ==> ignore
-    arg [--as-needed] ==> ignore
     arg [-dynamic-linker] ==> ignore
-    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
-    arg [-pie] ==> ignore
-    arg [-znow] ==> ignore
-    arg [-zrelro] ==> ignore
+    arg [/lib/ld-musl-armhf.so.1] ==> ignore
+    arg [-X] ==> ignore
+    arg [-m] ==> ignore
+    arg [armelf_linux_eabi] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_ec47a] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o] ==> ignore
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9]
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu]
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib]
-    arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
-    arg [-L/lib/../lib] ==> dir [/lib/../lib]
-    arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
-    arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..]
-    arg [CMakeFiles/cmTC_ec47a.dir/CMakeCCompilerABI.c.o] ==> ignore
-    arg [-lgcc] ==> lib [gcc]
-    arg [--push-state] ==> ignore
-    arg [--as-needed] ==> ignore
+    arg [cmTC_8bc39] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib] ==> dir [/usr/lib]
+    arg [-rpath-link] ==> ignore
+    arg [/usr/lib] ==> ignore
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib]
+    arg [CMakeFiles/cmTC_8bc39.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [-lssp_nonshared] ==> lib [ssp_nonshared]
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [--pop-state] ==> ignore
     arg [-lc] ==> lib [c]
-    arg [-lgcc] ==> lib [gcc]
-    arg [--push-state] ==> ignore
-    arg [--as-needed] ==> ignore
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [--pop-state] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o] ==> ignore
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9] ==> [/usr/lib/gcc/x86_64-linux-gnu/9]
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> [/usr/lib]
-  collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
-  collapse library dir [/lib/../lib] ==> [/lib]
-  collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
-  collapse library dir [/usr/lib/../lib] ==> [/usr/lib]
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> [/usr/lib]
-  implicit libs: [gcc;gcc_s;c;gcc;gcc_s]
-  implicit dirs: [/usr/lib/gcc/x86_64-linux-gnu/9;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib]
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o] ==> ignore
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc] ==> [/develop/toolchain_t113_musl/lib/gcc]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
+  implicit libs: [ssp_nonshared;gcc_s;c;gcc_s]
+  implicit dirs: [/usr/lib;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1;/develop/toolchain_t113_musl/lib/gcc;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
   implicit fwks: []
 
 
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_d8a04/fast && /usr/bin/make -f CMakeFiles/cmTC_d8a04.dir/build.make CMakeFiles/cmTC_d8a04.dir/build
+Run Build Command(s):/usr/bin/make cmTC_32b89/fast && /usr/bin/make -f CMakeFiles/cmTC_32b89.dir/build.make CMakeFiles/cmTC_32b89.dir/build
 make[1]: 进入目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
-Building CXX object CMakeFiles/cmTC_d8a04.dir/testCXXCompiler.cxx.o
-/usr/bin/g++     -o CMakeFiles/cmTC_d8a04.dir/testCXXCompiler.cxx.o -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_d8a04
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d8a04.dir/link.txt --verbose=1
-/usr/bin/g++       CMakeFiles/cmTC_d8a04.dir/testCXXCompiler.cxx.o  -o cmTC_d8a04 
+Building CXX object CMakeFiles/cmTC_32b89.dir/testCXXCompiler.cxx.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++     -o CMakeFiles/cmTC_32b89.dir/testCXXCompiler.cxx.o -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+Linking CXX executable cmTC_32b89
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_32b89.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++       CMakeFiles/cmTC_32b89.dir/testCXXCompiler.cxx.o  -o cmTC_32b89 
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
 make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp”
 
 
@@ -255,66 +241,65 @@ make[1]: 离开目录“/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_fc968/fast && /usr/bin/make -f CMakeFiles/cmTC_fc968.dir/build.make CMakeFiles/cmTC_fc968.dir/build
+Run Build Command(s):/usr/bin/make cmTC_76702/fast && /usr/bin/make -f CMakeFiles/cmTC_76702.dir/build.make CMakeFiles/cmTC_76702.dir/build
 make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o
-/usr/bin/g++    -v -o CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp
-Using built-in specs.
-COLLECT_GCC=/usr/bin/g++
-OFFLOAD_TARGET_NAMES=nvptx-none:hsa
-OFFLOAD_TARGET_DEFAULT=1
-Target: x86_64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Building CXX object CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++    -v -o CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccom7zHa.s
-GNU C++14 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
-	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
-
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1plus -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -D_GNU_SOURCE -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/cceuLP91.s
+GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"
-ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
-ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"
-ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"
+ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"
 #include "..." search starts here:
 #include <...> search starts here:
- /usr/include/c++/9
- /usr/include/x86_64-linux-gnu/c++/9
- /usr/include/c++/9/backward
- /usr/lib/gcc/x86_64-linux-gnu/9/include
- /usr/local/include
- /usr/include/x86_64-linux-gnu
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include
  /usr/include
 End of search list.
-GNU C++14 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)
-	compiled by GNU C version 9.4.0, GMP version 6.2.0, MPFR version 4.0.2, MPC version 1.1.0, isl version isl-0.22.1-GMP
-
+GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)
+	compiled by GNU C version 4.8.4, GMP version 6.1.0, MPFR version 3.1.3, MPC version 1.0.3, isl version none
 GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-Compiler executable checksum: 3d1eba838554fa2348dba760e4770469
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- as -v --64 -o CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccom7zHa.s
-GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34
-COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
-LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
-Linking CXX executable cmTC_fc968
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc968.dir/link.txt --verbose=1
-/usr/bin/g++      -v CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_fc968 
-Using built-in specs.
-COLLECT_GCC=/usr/bin/g++
-COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper
-OFFLOAD_TARGET_NAMES=nvptx-none:hsa
-OFFLOAD_TARGET_DEFAULT=1
-Target: x86_64-linux-gnu
-Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c,ada,c++,go,brig,d,fortran,objc,obj-c++,gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr,hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu
+Compiler executable checksum: b8c1b2a25e9418fe973b249bbd3aff1b
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o /tmp/cceuLP91.s
+GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+Linking CXX executable cmTC_76702
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_76702.dir/link.txt --verbose=1
+/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++      -v CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_76702 
+Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs
+COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin
+COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper
+Target: arm-openwrt-linux-muslgnueabi
+Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host
 Thread model: posix
-gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) 
-COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/
-LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc968' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
- /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWjuiYE.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_fc968 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o
-COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc968' '-shared-libgcc' '-mtune=generic' '-march=x86-64'
+gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) 
+COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/
+LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_76702' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
+ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccS4DhbW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_76702 /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o
+COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_76702' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu'
 make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp'
 
 
@@ -322,141 +307,126 @@ make[1]: Leaving directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/A
 Parsed CXX implicit include dir info from above output: rv=done
   found start of include info
   found start of implicit include info
-    add: [/usr/include/c++/9]
-    add: [/usr/include/x86_64-linux-gnu/c++/9]
-    add: [/usr/include/c++/9/backward]
-    add: [/usr/lib/gcc/x86_64-linux-gnu/9/include]
-    add: [/usr/local/include]
-    add: [/usr/include/x86_64-linux-gnu]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+    add: [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
     add: [/usr/include]
   end of search list found
-  collapse include dir [/usr/include/c++/9] ==> [/usr/include/c++/9]
-  collapse include dir [/usr/include/x86_64-linux-gnu/c++/9] ==> [/usr/include/x86_64-linux-gnu/c++/9]
-  collapse include dir [/usr/include/c++/9/backward] ==> [/usr/include/c++/9/backward]
-  collapse include dir [/usr/lib/gcc/x86_64-linux-gnu/9/include] ==> [/usr/lib/gcc/x86_64-linux-gnu/9/include]
-  collapse include dir [/usr/local/include] ==> [/usr/local/include]
-  collapse include dir [/usr/include/x86_64-linux-gnu] ==> [/usr/include/x86_64-linux-gnu]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include]
+  collapse include dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
   collapse include dir [/usr/include] ==> [/usr/include]
-  implicit include dirs: [/usr/include/c++/9;/usr/include/x86_64-linux-gnu/c++/9;/usr/include/c++/9/backward;/usr/lib/gcc/x86_64-linux-gnu/9/include;/usr/local/include;/usr/include/x86_64-linux-gnu;/usr/include]
+  implicit include dirs: [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/sys-include;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/include;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include;/usr/include]
 
 
 Parsed CXX implicit link information from above output:
-  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  link line regex: [^( *|.*[/\])(arm-openwrt-linux-muslgnueabi-ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command(s):/usr/bin/make cmTC_fc968/fast && /usr/bin/make -f CMakeFiles/cmTC_fc968.dir/build.make CMakeFiles/cmTC_fc968.dir/build]
+  ignore line: [Run Build Command(s):/usr/bin/make cmTC_76702/fast && /usr/bin/make -f CMakeFiles/cmTC_76702.dir/build.make CMakeFiles/cmTC_76702.dir/build]
   ignore line: [make[1]: Entering directory '/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles/CMakeTmp']
-  ignore line: [Building CXX object CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/usr/bin/g++    -v -o CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/usr/bin/g++]
-  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
-  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
-  ignore line: [Target: x86_64-linux-gnu]
-  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Building CXX object CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++    -v -o CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o -c /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/cc1plus -quiet -v -imultiarch x86_64-linux-gnu -D_GNU_SOURCE /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mtune=generic -march=x86-64 -auxbase-strip CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o -version -fasynchronous-unwind-tables -fstack-protector-strong -Wformat -Wformat-security -fstack-clash-protection -fcf-protection -o /tmp/ccom7zHa.s]
-  ignore line: [GNU C++14 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
-  ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
-  ignore line: []
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/cc1plus -quiet -v -iprefix /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/ -D_GNU_SOURCE -idirafter /usr/include /usr/share/cmake-3.16/Modules/CMakeCXXCompilerABI.cpp -quiet -dumpbase CMakeCXXCompilerABI.cpp -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -mtls-dialect=gnu -auxbase-strip CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o -version -o /tmp/cceuLP91.s]
+  ignore line: [GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [ignoring duplicate directory "/usr/include/x86_64-linux-gnu/c++/9"]
-  ignore line: [ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"]
-  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/include-fixed"]
-  ignore line: [ignoring nonexistent directory "/usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include"]
+  ignore line: [ignoring duplicate directory "/develop/toolchain_t113_musl/bin/../lib/gcc/../../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include"]
   ignore line: [#include "..." search starts here:]
   ignore line: [#include <...> search starts here:]
-  ignore line: [ /usr/include/c++/9]
-  ignore line: [ /usr/include/x86_64-linux-gnu/c++/9]
-  ignore line: [ /usr/include/c++/9/backward]
-  ignore line: [ /usr/lib/gcc/x86_64-linux-gnu/9/include]
-  ignore line: [ /usr/local/include]
-  ignore line: [ /usr/include/x86_64-linux-gnu]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/arm-openwrt-linux-muslgnueabi]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include/c++/6.4.1/backward]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/sys-include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/include]
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/include]
   ignore line: [ /usr/include]
   ignore line: [End of search list.]
-  ignore line: [GNU C++14 (Ubuntu 9.4.0-1ubuntu1~20.04.2) version 9.4.0 (x86_64-linux-gnu)]
-  ignore line: [	compiled by GNU C version 9.4.0  GMP version 6.2.0  MPFR version 4.0.2  MPC version 1.1.0  isl version isl-0.22.1-GMP]
-  ignore line: []
+  ignore line: [GNU C++14 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) version 6.4.1 (arm-openwrt-linux-muslgnueabi)]
+  ignore line: [	compiled by GNU C version 4.8.4  GMP version 6.1.0  MPFR version 3.1.3  MPC version 1.0.3  isl version none]
   ignore line: [GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072]
-  ignore line: [Compiler executable checksum: 3d1eba838554fa2348dba760e4770469]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [ as -v --64 -o CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o /tmp/ccom7zHa.s]
-  ignore line: [GNU assembler version 2.34 (x86_64-linux-gnu) using BFD version (GNU Binutils for Ubuntu) 2.34]
-  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
-  ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  ignore line: [Linking CXX executable cmTC_fc968]
-  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc968.dir/link.txt --verbose=1]
-  ignore line: [/usr/bin/g++      -v CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_fc968 ]
-  ignore line: [Using built-in specs.]
-  ignore line: [COLLECT_GCC=/usr/bin/g++]
-  ignore line: [COLLECT_LTO_WRAPPER=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper]
-  ignore line: [OFFLOAD_TARGET_NAMES=nvptx-none:hsa]
-  ignore line: [OFFLOAD_TARGET_DEFAULT=1]
-  ignore line: [Target: x86_64-linux-gnu]
-  ignore line: [Configured with: ../src/configure -v --with-pkgversion='Ubuntu 9.4.0-1ubuntu1~20.04.2' --with-bugurl=file:///usr/share/doc/gcc-9/README.Bugs --enable-languages=c ada c++ go brig d fortran objc obj-c++ gm2 --prefix=/usr --with-gcc-major-version-only --program-suffix=-9 --program-prefix=x86_64-linux-gnu- --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-vtable-verify --enable-plugin --enable-default-pie --with-system-zlib --with-target-system-zlib=auto --enable-objc-gc=auto --enable-multiarch --disable-werror --with-arch-32=i686 --with-abi=m64 --with-multilib-list=m32 m64 mx32 --enable-multilib --with-tune=generic --enable-offload-targets=nvptx-none=/build/gcc-9-9QDOt0/gcc-9-9.4.0/debian/tmp-nvptx/usr hsa --without-cuda-driver --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu]
+  ignore line: [Compiler executable checksum: b8c1b2a25e9418fe973b249bbd3aff1b]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [ /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/as -v -mcpu=cortex-a7 -mfloat-abi=hard -mfpu=neon -meabi=5 -o CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o /tmp/cceuLP91.s]
+  ignore line: [GNU assembler version 2.27 (arm-openwrt-linux-muslgnueabi) using BFD version (GNU Binutils) 2.27]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o' '-c' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  ignore line: [Linking CXX executable cmTC_76702]
+  ignore line: [/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_76702.dir/link.txt --verbose=1]
+  ignore line: [/develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-g++      -v CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_76702 ]
+  ignore line: [Reading specs from /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/specs]
+  ignore line: [COLLECT_GCC=arm-openwrt-linux-muslgnueabi-g++.bin]
+  ignore line: [COLLECT_LTO_WRAPPER=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper]
+  ignore line: [Target: arm-openwrt-linux-muslgnueabi]
+  ignore line: [Configured with: /home/xuqiang/workspace/tina-old/out/v853-perf1/compile_dir/toolchain/gcc-linaro-6.4-2017.11/configure --with-bugurl=https://dev.openwrt.org/ --with-pkgversion='OpenWrt/Linaro GCC 6.4-2017.11 2017-11' --prefix=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-openwrt-linux-muslgnueabi --with-gnu-ld --enable-target-optspace --enable-libgomp --disable-libmudflap --disable-multilib --disable-nls --without-isl --without-cloog --with-host-libstdcxx=-lstdc++ --with-gmp=/home/xuqiang/workspace/tina-old/out/host --with-mpfr=/home/xuqiang/workspace/tina-old/out/host --with-mpc=/home/xuqiang/workspace/tina-old/out/host --disable-decimal-float --with-diagnostics-color=auto-if-env --disable-libssp --enable-__cxa_atexit --with-cpu=cortex-a7 --with-fpu=neon --with-float=hard --with-headers=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/include --disable-libsanitizer --enable-languages=c,c++ --enable-shared --enable-threads --with-slibdir=/home/xuqiang/workspace/tina-old/out/v853-perf1/staging_dir/toolchain/lib --enable-lto --with-libelf=/home/xuqiang/workspace/tina-old/out/host]
   ignore line: [Thread model: posix]
-  ignore line: [gcc version 9.4.0 (Ubuntu 9.4.0-1ubuntu1~20.04.2) ]
-  ignore line: [COMPILER_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/]
-  ignore line: [LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/9/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib/:/lib/x86_64-linux-gnu/:/lib/../lib/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib/:/usr/lib/gcc/x86_64-linux-gnu/9/../../../:/lib/:/usr/lib/]
-  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_fc968' '-shared-libgcc' '-mtune=generic' '-march=x86-64']
-  link line: [ /usr/lib/gcc/x86_64-linux-gnu/9/collect2 -plugin /usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so -plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper -plugin-opt=-fresolution=/tmp/ccWjuiYE.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lgcc --build-id --eh-frame-hdr -m elf_x86_64 --hash-style=gnu --as-needed -dynamic-linker /lib64/ld-linux-x86-64.so.2 -pie -z now -z relro -o cmTC_fc968 /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o -L/usr/lib/gcc/x86_64-linux-gnu/9 -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib -L/lib/x86_64-linux-gnu -L/lib/../lib -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib -L/usr/lib/gcc/x86_64-linux-gnu/9/../../.. CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o]
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/collect2] ==> ignore
+  ignore line: [gcc version 6.4.1 (OpenWrt/Linaro GCC 6.4-2017.11 2017-11) ]
+  ignore line: [COMPILER_PATH=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../libexec/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/bin/]
+  ignore line: [LIBRARY_PATH=/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/:/develop/toolchain_t113_musl/bin/../lib/gcc/:/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/]
+  ignore line: [arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [arm-openwrt-linux-muslgnueabi-g++.bin: warning: environment variable 'STAGING_DIR' not defined]
+  ignore line: [COLLECT_GCC_OPTIONS='-v' '-o' 'cmTC_76702' '-shared-libgcc' '-mcpu=cortex-a7' '-mfloat-abi=hard' '-mfpu=neon' '-mtls-dialect=gnu']
+  link line: [ /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2 -plugin /develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so -plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper -plugin-opt=-fresolution=/tmp/ccS4DhbW.res -plugin-opt=-pass-through=-lgcc_s -plugin-opt=-pass-through=-lc -plugin-opt=-pass-through=-lgcc_s --eh-frame-hdr -dynamic-linker /lib/ld-musl-armhf.so.1 -X -m armelf_linux_eabi -o cmTC_76702 /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o -L /usr/lib -rpath-link /usr/lib -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1 -L/develop/toolchain_t113_musl/bin/../lib/gcc -L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o -lstdc++ -lm -lssp_nonshared -lgcc_s -lc -lgcc_s /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o /develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o]
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/collect2] ==> ignore
     arg [-plugin] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/liblto_plugin.so] ==> ignore
-    arg [-plugin-opt=/usr/lib/gcc/x86_64-linux-gnu/9/lto-wrapper] ==> ignore
-    arg [-plugin-opt=-fresolution=/tmp/ccWjuiYE.res] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/liblto_plugin.so] ==> ignore
+    arg [-plugin-opt=/develop/toolchain_t113_musl/bin/../libexec/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/lto-wrapper] ==> ignore
+    arg [-plugin-opt=-fresolution=/tmp/ccS4DhbW.res] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
     arg [-plugin-opt=-pass-through=-lc] ==> ignore
     arg [-plugin-opt=-pass-through=-lgcc_s] ==> ignore
-    arg [-plugin-opt=-pass-through=-lgcc] ==> ignore
-    arg [--build-id] ==> ignore
     arg [--eh-frame-hdr] ==> ignore
-    arg [-m] ==> ignore
-    arg [elf_x86_64] ==> ignore
-    arg [--hash-style=gnu] ==> ignore
-    arg [--as-needed] ==> ignore
     arg [-dynamic-linker] ==> ignore
-    arg [/lib64/ld-linux-x86-64.so.2] ==> ignore
-    arg [-pie] ==> ignore
-    arg [-znow] ==> ignore
-    arg [-zrelro] ==> ignore
+    arg [/lib/ld-musl-armhf.so.1] ==> ignore
+    arg [-X] ==> ignore
+    arg [-m] ==> ignore
+    arg [armelf_linux_eabi] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_fc968] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crti.o] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o] ==> ignore
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9]
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu]
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib]
-    arg [-L/lib/x86_64-linux-gnu] ==> dir [/lib/x86_64-linux-gnu]
-    arg [-L/lib/../lib] ==> dir [/lib/../lib]
-    arg [-L/usr/lib/x86_64-linux-gnu] ==> dir [/usr/lib/x86_64-linux-gnu]
-    arg [-L/usr/lib/../lib] ==> dir [/usr/lib/../lib]
-    arg [-L/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..]
-    arg [CMakeFiles/cmTC_fc968.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [cmTC_76702] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crt1.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crti.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtbegin.o] ==> ignore
+    arg [-L/usr/lib] ==> dir [/usr/lib]
+    arg [-rpath-link] ==> ignore
+    arg [/usr/lib] ==> ignore
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc]
+    arg [-L/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib]
+    arg [CMakeFiles/cmTC_76702.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lstdc++] ==> lib [stdc++]
     arg [-lm] ==> lib [m]
+    arg [-lssp_nonshared] ==> lib [ssp_nonshared]
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [-lgcc] ==> lib [gcc]
     arg [-lc] ==> lib [c]
     arg [-lgcc_s] ==> lib [gcc_s]
-    arg [-lgcc] ==> lib [gcc]
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o] ==> ignore
-    arg [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/crtn.o] ==> ignore
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9] ==> [/usr/lib/gcc/x86_64-linux-gnu/9]
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib] ==> [/usr/lib]
-  collapse library dir [/lib/x86_64-linux-gnu] ==> [/lib/x86_64-linux-gnu]
-  collapse library dir [/lib/../lib] ==> [/lib]
-  collapse library dir [/usr/lib/x86_64-linux-gnu] ==> [/usr/lib/x86_64-linux-gnu]
-  collapse library dir [/usr/lib/../lib] ==> [/usr/lib]
-  collapse library dir [/usr/lib/gcc/x86_64-linux-gnu/9/../../..] ==> [/usr/lib]
-  implicit libs: [stdc++;m;gcc_s;gcc;c;gcc_s;gcc]
-  implicit dirs: [/usr/lib/gcc/x86_64-linux-gnu/9;/usr/lib/x86_64-linux-gnu;/usr/lib;/lib/x86_64-linux-gnu;/lib]
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/crtend.o] ==> ignore
+    arg [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib/crtn.o] ==> ignore
+  collapse library dir [/usr/lib] ==> [/usr/lib]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1] ==> [/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc] ==> [/develop/toolchain_t113_musl/lib/gcc]
+  collapse library dir [/develop/toolchain_t113_musl/bin/../lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1/../../../../arm-openwrt-linux-muslgnueabi/lib] ==> [/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
+  implicit libs: [stdc++;m;ssp_nonshared;gcc_s;c;gcc_s]
+  implicit dirs: [/usr/lib;/develop/toolchain_t113_musl/lib/gcc/arm-openwrt-linux-muslgnueabi/6.4.1;/develop/toolchain_t113_musl/lib/gcc;/develop/toolchain_t113_musl/arm-openwrt-linux-muslgnueabi/lib]
   implicit fwks: []
 
 

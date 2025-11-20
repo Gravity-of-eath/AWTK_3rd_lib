@@ -539,8 +539,6 @@ math.h
 -
 stdio.h
 -
-arm_neon.h
--
 
 /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c
 conner_gradient_view_register.h

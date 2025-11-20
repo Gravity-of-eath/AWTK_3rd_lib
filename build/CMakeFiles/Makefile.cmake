@@ -16,7 +16,8 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/CMakeLists.txt"
   "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/line_chart/CMakeLists.txt"
   "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/shadow_label/CMakeLists.txt"
-  "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/x86.cmake"
+  "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/yps_gauge/CMakeLists.txt"
+  "/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/t113.cmake"
   "/usr/share/cmake-3.16/Modules/CMakeCCompiler.cmake.in"
   "/usr/share/cmake-3.16/Modules/CMakeCCompilerABI.c"
   "/usr/share/cmake-3.16/Modules/CMakeCInformation.cmake"
@@ -123,6 +124,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "blur_view/CMakeFiles/CMakeDirectoryInformation.cmake"
   "conner_gradient/CMakeFiles/CMakeDirectoryInformation.cmake"
   "shadow_label/CMakeFiles/CMakeDirectoryInformation.cmake"
+  "yps_gauge/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -132,4 +134,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "blur_view/CMakeFiles/blur_view.dir/DependInfo.cmake"
   "conner_gradient/CMakeFiles/conner_gradient.dir/DependInfo.cmake"
   "shadow_label/CMakeFiles/shadow_label.dir/DependInfo.cmake"
+  "yps_gauge/CMakeFiles/yps_gauge.dir/DependInfo.cmake"
   )

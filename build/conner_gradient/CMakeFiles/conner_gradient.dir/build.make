@@ -60,28 +60,28 @@ include conner_gradient/CMakeFiles/conner_gradient.dir/flags.make
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.o: conner_gradient/CMakeFiles/conner_gradient.dir/flags.make
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.o"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c
 
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.i"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c > CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c > CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.i
 
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.s"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view.c -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.s
 
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.o: conner_gradient/CMakeFiles/conner_gradient.dir/flags.make
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.o: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.o"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.o   -c /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c
 
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.i"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c > CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.i
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c > CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.i
 
 conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.s"
-	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.s
+	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && /develop/toolchain_t113_musl/bin/arm-openwrt-linux-muslgnueabi-gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/conner_gradient/src/conner_gradient_view_register.c -o CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.s
 
 # Object files for target conner_gradient
 conner_gradient_OBJECTS = \
@@ -94,7 +94,7 @@ conner_gradient_EXTERNAL_OBJECTS =
 conner_gradient/libconner_gradient.so: conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view.c.o
 conner_gradient/libconner_gradient.so: conner_gradient/CMakeFiles/conner_gradient.dir/src/conner_gradient_view_register.c.o
 conner_gradient/libconner_gradient.so: conner_gradient/CMakeFiles/conner_gradient.dir/build.make
-conner_gradient/libconner_gradient.so: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/../lib/x86/libawtk.so
+conner_gradient/libconner_gradient.so: /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/src/../lib/t113/libawtk.so
 conner_gradient/libconner_gradient.so: conner_gradient/CMakeFiles/conner_gradient.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C shared library libconner_gradient.so"
 	cd /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/conner_gradient && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/conner_gradient.dir/link.txt --verbose=$(VERBOSE)

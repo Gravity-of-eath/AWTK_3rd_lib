@@ -58,6 +58,7 @@ all: banner_menu/all
 all: blur_view/all
 all: conner_gradient/all
 all: shadow_label/all
+all: yps_gauge/all
 
 .PHONY : all
 
@@ -67,6 +68,7 @@ preinstall: banner_menu/preinstall
 preinstall: blur_view/preinstall
 preinstall: conner_gradient/preinstall
 preinstall: shadow_label/preinstall
+preinstall: yps_gauge/preinstall
 
 .PHONY : preinstall
 
@@ -76,6 +78,7 @@ clean: banner_menu/clean
 clean: blur_view/clean
 clean: conner_gradient/clean
 clean: shadow_label/clean
+clean: yps_gauge/clean
 
 .PHONY : clean
 
@@ -168,6 +171,24 @@ shadow_label/preinstall:
 shadow_label/clean: shadow_label/CMakeFiles/shadow_label.dir/clean
 
 .PHONY : shadow_label/clean
+
+#=============================================================================
+# Directory level rules for directory yps_gauge
+
+# Recursive "all" directory target.
+yps_gauge/all: yps_gauge/CMakeFiles/yps_gauge.dir/all
+
+.PHONY : yps_gauge/all
+
+# Recursive "preinstall" directory target.
+yps_gauge/preinstall:
+
+.PHONY : yps_gauge/preinstall
+
+# Recursive "clean" directory target.
+yps_gauge/clean: yps_gauge/CMakeFiles/yps_gauge.dir/clean
+
+.PHONY : yps_gauge/clean
 
 #=============================================================================
 # Target rules for target line_chart/CMakeFiles/line_chart.dir
@@ -303,6 +324,33 @@ shadow_label: shadow_label/CMakeFiles/shadow_label.dir/rule
 shadow_label/CMakeFiles/shadow_label.dir/clean:
 	$(MAKE) -f shadow_label/CMakeFiles/shadow_label.dir/build.make shadow_label/CMakeFiles/shadow_label.dir/clean
 .PHONY : shadow_label/CMakeFiles/shadow_label.dir/clean
+
+#=============================================================================
+# Target rules for target yps_gauge/CMakeFiles/yps_gauge.dir
+
+# All Build rule for target.
+yps_gauge/CMakeFiles/yps_gauge.dir/all:
+	$(MAKE) -f yps_gauge/CMakeFiles/yps_gauge.dir/build.make yps_gauge/CMakeFiles/yps_gauge.dir/depend
+	$(MAKE) -f yps_gauge/CMakeFiles/yps_gauge.dir/build.make yps_gauge/CMakeFiles/yps_gauge.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles --progress-num=20,21,22 "Built target yps_gauge"
+.PHONY : yps_gauge/CMakeFiles/yps_gauge.dir/all
+
+# Build rule for subdir invocation for target.
+yps_gauge/CMakeFiles/yps_gauge.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 3
+	$(MAKE) -f CMakeFiles/Makefile2 yps_gauge/CMakeFiles/yps_gauge.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/Projects/Awtk_3rd_library/build/CMakeFiles 0
+.PHONY : yps_gauge/CMakeFiles/yps_gauge.dir/rule
+
+# Convenience name for target.
+yps_gauge: yps_gauge/CMakeFiles/yps_gauge.dir/rule
+
+.PHONY : yps_gauge
+
+# clean rule for target.
+yps_gauge/CMakeFiles/yps_gauge.dir/clean:
+	$(MAKE) -f yps_gauge/CMakeFiles/yps_gauge.dir/build.make yps_gauge/CMakeFiles/yps_gauge.dir/clean
+.PHONY : yps_gauge/CMakeFiles/yps_gauge.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

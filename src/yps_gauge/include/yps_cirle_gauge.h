@@ -201,6 +201,14 @@ typedef struct _yps_cirle_gauge_t {
 
   int32_t last_degge_index;
 
+  int32_t pointer_bmp_mode;
+
+  bitmap_t pre_bitmap;
+  
+  int32_t count_of_line;
+
+  int32_t width_of_step;
+
 } yps_cirle_gauge_t;
 
 /**
@@ -422,6 +430,8 @@ ret_t yps_cirle_gauge_set_pointer_offset_y(widget_t* widget, int32_t pointer_off
 #define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_X "pointer_offset_x"
 #define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_Y "pointer_offset_y"
 #define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_ANGLE "pointer_offset_angle"
+#define YPS_CIRLE_GAUGE_PROP_COUNT_OF_LINE "count_of_line"
+#define YPS_CIRLE_GAUGE_PROP_POINTER_BMP_MODE "pointer_bmp_mode"
 
 
 

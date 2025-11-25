@@ -563,12 +563,24 @@ static ret_t yps_cirle_gauge_on_destroy(widget_t *widget)
     tk_free(yps_cirle_gauge->image2);
     tk_free(yps_cirle_gauge->pointer_image);
     tk_free(yps_cirle_gauge->pointer_image2);
-    bitmap_destroy(&(yps_cirle_gauge->pre_bitmap));
-    for (int i = yps_cirle_gauge->num_pre_rotated_bitmaps; i >= 0; i--)
+    if (yps_cirle_gauge->pointer_bmp_mode == 0)
     {
-        bitmap_destroy(yps_cirle_gauge->pre_rotated_bitmaps[i]);
+        for (int i = yps_cirle_gauge->num_pre_rotated_bitmaps; i >= 0; i--)
+        {
+            if (yps_cirle_gauge->pre_rotated_bitmaps[i] != NULL)
+            {
+                bitmap_destroy(yps_cirle_gauge->pre_rotated_bitmaps[i]);
+            }
+        }
+        if (yps_cirle_gauge->pre_rotated_bitmaps != NULL)
+        {
+            tk_free(yps_cirle_gauge->pre_rotated_bitmaps);
+        }
     }
-    tk_free(yps_cirle_gauge->pre_rotated_bitmaps);
+    else
+    {
+        bitmap_destroy(&(yps_cirle_gauge->pre_bitmap));
+    }
     yps_cirle_gauge->image1 = NULL;
     yps_cirle_gauge->image2 = NULL;
     yps_cirle_gauge->pointer_image = NULL;

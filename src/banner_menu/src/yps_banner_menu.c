@@ -153,6 +153,7 @@ static void def_on_layout_vertical(yps_banner_menu_t *parent, widget_t **childre
       rect_t *r = rect_scale_center(&(parent->child_info->children[i]->rect), parent->scale_ratio);
       scale_widget_group(childrens[i], parent->child_info->children[i], parent->scale_ratio);
       childrens[i]->visible = FALSE;
+      tk_free(r);
     }
   }
 }
@@ -257,8 +258,8 @@ static void def_on_scroll_vertical(yps_banner_menu_t *parent, widget_t **childre
   logPrint("center_y: %.0f\n", center_y);
 
   // 清理内存
-  free(r_l);
-  free(r_n);
+  tk_free(r_l);
+  tk_free(r_n);
 }
 
 static layout_manager def_manager_vertical = {
@@ -529,6 +530,7 @@ static ret_t yps_banner_menu_on_destroy(widget_t *widget)
   return_value_if_fail(widget != NULL && yps_banner_menu != NULL, RET_BAD_PARAMS);
   TKMEM_FREE(yps_banner_menu->childrens);
 
+  ui_tree_node_free(yps_banner_menu->child_info);
   return RET_OK;
 }
 

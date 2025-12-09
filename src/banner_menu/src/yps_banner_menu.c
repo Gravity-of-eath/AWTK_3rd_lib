@@ -26,9 +26,29 @@
 #include "widget_animators/widget_animator_prop.h"
 // #include "bllLog.h"
 #include "stdio.h"
+// #define DEBUG
+
 static void logPrint(const char *__restrict __fmt, ...)
 {
-  // printf(__fmt);
+#ifdef DEBUG
+  // 获取当前时间
+  time_t now = time(NULL);
+  struct tm *tm_info = localtime(&now);
+
+  // 打印时间戳
+  char time_buf[20];
+  strftime(time_buf, sizeof(time_buf), "%Y-%m-%d %H:%M:%S", tm_info);
+  printf("[%s] ", time_buf);
+
+  // 处理可变参数
+  va_list args;
+  va_start(args, __fmt);
+  vprintf(__fmt, args);
+  va_end(args);
+
+  // 添加换行
+  printf("\n");
+#endif
 }
 
 rect_t *rect_scale_center(rect_t *r, float_t scale)
@@ -557,9 +577,7 @@ static ret_t yps_banner_menu_on_event(widget_t *widget, event_t *e)
       yps_banner_menu->layout_manager->on_layout(yps_banner_menu, yps_banner_menu->childrens, yps_banner_menu->children_count,
                                                  yps_banner_menu->focus_index, yps_banner_menu->focus_index);
     }
-#ifdef DEBUG
     logPrint("yps_banner_menu yps_banner_menu_on_event !\n");
-#endif
   }
 
   return RET_OK;

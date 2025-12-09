@@ -1,4 +1,5 @@
 #include "ui_tree_node.h"
+#include "base/style.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -484,12 +485,12 @@ void init_child_recursive(widget_t *parent, ui_tree_node *parent_node, int32_t l
     if (!parent || !parent_node)
         return;
 
-    printf("%*s初始化层级 %d: %s\n", level * 2, "", level,
-           parent_node->name ? parent_node->name : "unnamed");
+    // printf("%*s初始化层级 %d: %s\n", level * 2, "", level,
+    //        parent_node->name ? parent_node->name : "unnamed");
 
     /* 获取直接子控件数量 */
     int32_t direct_children = widget_count_children(parent);
-    printf("%*s  直接子控件数量: %d\n", level * 2, "", direct_children);
+    // printf("%*s  直接子控件数量: %d\n", level * 2, "", direct_children);
 
     if (direct_children <= 0)
     {
@@ -522,7 +523,10 @@ void init_child_recursive(widget_t *parent, ui_tree_node *parent_node, int32_t l
         if (tk_str_eq(widget_get_type(child_widget), WIDGET_TYPE_LABEL) ||
             tk_str_eq(widget_get_type(child_widget), "shadow_label"))
         {
-            child_node->text_size = widget_get_prop_int(child_widget, "style:normal:font_size", 16);
+            style_t *style = child_widget->astyle;
+            return_if_fail(style != NULL);
+            int32_t font_size = style_get_int(style, STYLE_ID_FONT_SIZE, 24);
+            child_node->text_size = font_size;
         }
 
         if (child_node)
@@ -534,17 +538,17 @@ void init_child_recursive(widget_t *parent, ui_tree_node *parent_node, int32_t l
             parent_node->children[parent_node->child_count++] = child_node;
             child_node->parent = parent_node;
 
-            printf("%*s  └── 子节点 %d: %s [%d,%d,%d,%d]\n",
-                   level * 2, "", child_index,
-                   child_widget->name ? child_widget->name : "unnamed",
-                   child_rect.x, child_rect.y, child_rect.w, child_rect.w);
+            // printf("%*s  └── 子节点 %d: %s [%d,%d,%d,%d]\n",
+            //        level * 2, "", child_index,
+            //        child_widget->name ? child_widget->name : "unnamed",
+            //        child_rect.x, child_rect.y, child_rect.w, child_rect.w);
 
             /* 递归初始化子节点的子节点 */
             init_child_recursive(child_widget, child_node, level + 1);
         }
     }
 
-    printf("%*s  └── 成功添加 %d/%d 个子节点\n", level * 2, "", direct_children, direct_children);
+    printf("%*s   成功添加 %d/%d 个子节点\n", level * 2, "", direct_children, direct_children);
 }
 
 /* 从根widget创建完整的UI树 */
@@ -553,7 +557,7 @@ ui_tree_node *ui_tree_node_create_from_widget_tree(widget_t *root_widget)
     if (!root_widget)
         return NULL;
 
-    printf("开始构建UI树...\n");
+    // printf("开始构建UI树...\n");
 
     /* 创建根节点 */
     rect_t root_rect = {

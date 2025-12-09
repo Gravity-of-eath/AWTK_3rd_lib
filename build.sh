@@ -16,7 +16,7 @@ export PLATFORM="${PLATFROM}"
 echo "config:  ${tool_prefix}---${PLATFORM}"
 
 
-export AWTK_INCLUDE=$(pwd)/include/awtk/src
+export AWTK_INCLUDE=$(pwd)/include/$PLATFROM/awtk/src
 cmake -DCMAKE_TOOLCHAIN_FILE=${tool_prefix} -S src -B build -DPLATFORM=${PLATFORM} -DAWTK_INCLUDE=${AWTK_INCLUDE}
 
 cmake --build build

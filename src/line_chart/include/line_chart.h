@@ -138,6 +138,11 @@ typedef struct _line_chart_t
 
   float_t guide_line_percent;
 
+  /***
+   * 最大值 用于快速获取最大值
+   */
+  float_t max_value;
+
 } line_chart_t;
 
 /**

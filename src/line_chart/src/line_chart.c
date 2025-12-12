@@ -75,6 +75,24 @@ ret_t line_chart_set_max_point(widget_t *widget, int32_t max_point)
   return RET_OK;
 }
 
+ret_t line_chart_set_min_value_limit(widget_t *widget, float_t value)
+{
+  line_chart_t *line_chart = LINE_CHART(widget);
+  return_value_if_fail(line_chart != NULL, RET_BAD_PARAMS);
+  line_chart->min_value_limit = value;
+  return RET_OK;
+}
+
+ret_t line_chart_set_max_value_limit(widget_t *widget, float_t value)
+{
+  line_chart_t *line_chart = LINE_CHART(widget);
+  return_value_if_fail(line_chart != NULL, RET_BAD_PARAMS);
+  line_chart->max_value_limit = value;
+  return RET_OK;
+}
+
+
+
 ret_t line_chart_set_divide_value(widget_t *widget, float_t divide_value)
 {
   line_chart_t *line_chart = LINE_CHART(widget);
@@ -139,6 +157,16 @@ static ret_t line_chart_get_prop(widget_t *widget, const char *name, value_t *v)
     value_set_int32(v, line_chart->max_point);
     return RET_OK;
   }
+  else if (tk_str_eq(LINE_CHART_PROP_MIN_VALUE_LIMIT, name))
+  {
+    value_set_float(v, line_chart->min_value_limit);
+    return RET_OK;
+  }
+  else if (tk_str_eq(LINE_CHART_PROP_MAX_VALUE_LIMIT, name))
+  {
+    value_set_float(v, line_chart->max_value_limit);
+    return RET_OK;
+  }
   else if (tk_str_eq(LINE_CHART_PROP_DIVIDE_VALUE, name))
   {
     value_set_float(v, line_chart->divide_value);
@@ -201,6 +229,16 @@ static ret_t line_chart_set_prop(widget_t *widget, const char *name, const value
   else if (tk_str_eq(LINE_CHART_PROP_MAX_POINT, name))
   {
     line_chart_set_max_point(widget, value_int32(v));
+    return RET_OK;
+  }
+  else if (tk_str_eq(LINE_CHART_PROP_MIN_VALUE_LIMIT, name))
+  {
+    line_chart_set_min_value_limit(widget, value_float(v));
+    return RET_OK;
+  }
+  else if (tk_str_eq(LINE_CHART_PROP_MAX_VALUE_LIMIT, name))
+  {
+    line_chart_set_max_value_limit(widget, value_float(v));
     return RET_OK;
   }
   else if (tk_str_eq(LINE_CHART_PROP_DIVIDE_VALUE, name))
@@ -398,6 +436,127 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
   canvas_offline_destroy(oc);
 }
 
+static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas_t *wvgc)
+{
+  if (float_queue_empty(line_chart->queue))
+  {
+    printf("error  draw_chart_line float_queue_size=%d\n", float_queue_size(line_chart->queue));
+    return;
+  }
+
+  canvas_t *oc = canvas_offline_create(line_chart->widget.w, line_chart->widget.h, BITMAP_FMT_RGBA8888);
+  vgcanvas_t *vgc = canvas_get_vgcanvas(oc);
+  vgcanvas_set_line_width(vgc, line_chart->line_width);
+  if (line_chart->DEBUG)
+  {
+
+    vgcanvas_set_stroke_color_str(vgc, "#0000FFFF");
+    vgcanvas_rect(vgc, 0, 0, line_chart->widget.w, line_chart->widget.h);
+    vgcanvas_stroke(vgc);
+  }
+  color_t fgColor = color_parse(line_chart->fg_color);
+  vgcanvas_set_stroke_color(vgc, fgColor);
+  vgcanvas_set_line_cap(vgc, "round");
+  float_t min = line_chart->min_value_limit;
+  float_t max = line_chart->max_value_limit;
+  float_t step = line_chart->widget.w / (line_chart->max_point * 1.0f);
+  
+  // printf("line_chart -->> max=%f  min =%f\n", max, min);
+  float_t scale_guild = max - min;
+
+  float_t value = float_queue_at(line_chart->queue, 0);
+  if(value > max) {
+    value = max;
+  }else if(value < min) {
+    value = min;
+  }
+  float_t ratio = (value - min) * 1.0f / scale_guild * 1.0f;
+  int32_t useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
+  int32_t y = (ratio * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
+  vgcanvas_begin_path(vgc);
+  vgcanvas_move_to(vgc, 0, y);
+  int32_t secd_percent_widget = line_chart->secd_percent * line_chart->widget.w;
+  for (int32_t i = 1; i < float_queue_size(line_chart->queue); i++)
+  {
+    value = float_queue_at(line_chart->queue, i);
+    if(value > max) {
+      value = max;
+    }else if(value < min) {
+      value = min;
+    }
+    int32_t x = step * i;
+    ratio = (value - min) * 1.0f / scale_guild * 1.0f;
+    useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
+    y = ((1.0f - ratio) * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
+
+    if (x > secd_percent_widget && x - step < secd_percent_widget)
+    {
+      vgcanvas_line_to(vgc, secd_percent_widget, y);
+      vgcanvas_stroke(vgc);
+      vgcanvas_set_stroke_color_str(vgc, line_chart->secd_color);
+
+      vgcanvas_begin_path(vgc);
+      vgcanvas_move_to(vgc, secd_percent_widget, y);
+      // vgcanvas_line_to(vgc, x, y);
+      // continue;
+      // printf("secd_percent_widget = %d x=%d\n", secd_percent_widget, x);
+    }
+    vgcanvas_line_to(vgc, x, y);
+
+    // printf("line_chart -->>i=%d useable_h = %d value =%f ratio =%f x=%d  y =%d\n", i, useable_h, value, ratio, x, y);
+  }
+  vgcanvas_stroke(vgc);
+  // printf("line_chart->secd_color =%s\n", line_chart->secd_color);
+
+  bitmap_t *bmp = canvas_offline_get_bitmap(oc);
+  uint8_t *src_data = bitmap_lock_buffer_for_write(bmp);
+
+  // color_t fgColor = color_parse(line_chart->fg_color);
+  int32_t old_color = color_get_color(&fgColor);
+  // printf("fgColor  =%d str=%s\n", old_color, line_chart->fg_color);
+  uint8_t old_a = (old_color >> 24) & 0xFF;
+  uint8_t old_b = (old_color >> 16) & 0xFF;
+  uint8_t old_g = (old_color >> 8) & 0xFF;
+  uint8_t old_r = old_color & 0xFF;
+
+  // printf("fgColor   rgb= %d-%d-%d \n", old_r, old_g, old_b);
+  color_t secdColor = color_parse(line_chart->secd_color);
+  int32_t new_color = color_get_color(&secdColor);
+  // 解包新颜色（RGBA）
+  uint8_t new_a = (new_color >> 24) & 0xFF;
+  uint8_t new_b = (new_color >> 16) & 0xFF;
+  uint8_t new_g = (new_color >> 8) & 0xFF;
+  uint8_t new_r = new_color & 0xFF;
+
+  // 每行字节数（RGBA8888格式）
+  int32_t stride = line_chart->widget.w * 4;
+  int32_t start_row = line_chart->divide_value > 1 ? line_chart->divide_value : (line_chart->divide_value * line_chart->widget.h);
+  // 从指定行开始处理
+  for (int32_t y = start_row; y < line_chart->widget.h; y++)
+  {
+    uint8_t *row_start = src_data + y * stride;
+
+    for (int32_t x = 0; x < line_chart->widget.w; x++)
+    {
+      uint8_t *pixel = row_start + x * 4;
+
+      // printf("XX pixel=%d-%d-%d  old= %d-%d-%d \n", pixel[0], pixel[1], pixel[2], old_r, old_g, old_b);
+      // 如果像素不透明（alpha != 0），则修改颜色
+      if (old_r == pixel[0] && old_g == pixel[1] && old_b == pixel[2])
+      {
+        pixel[0] = new_r; // R
+        pixel[1] = new_g; // G
+        pixel[2] = new_b; // B
+        // pixel[3] = old_a; // A
+      }
+    }
+  }
+
+  vgcanvas_draw_image(wvgc, bmp, 0, 0, bmp->w, bmp->h, 0, 0, line_chart->widget.w, line_chart->widget.h);
+  // printf("canvas_draw_image bmp->w=%d, bmp->h=%d  line_chart->widget.w=%d, line_chart->widget.h=%d \n", bmp->w, bmp->h, line_chart->widget.w, line_chart->widget.h);
+  canvas_offline_destroy(oc);
+}
+
 static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
 {
   line_chart_t *line_chart = LINE_CHART(widget);
@@ -408,7 +567,12 @@ static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
   vgcanvas_translate(vgc, c->ox, c->oy);
   vgcanvas_set_antialias(vgc, TRUE);
   draw_guide_line(line_chart, vgc);
-  draw_chart_line(line_chart, vgc);
+  if(line_chart->max_value_limit > line_chart->min_value_limit) {
+    draw_chart_line_with_values_limit(line_chart, vgc);
+  }
+  else {
+    draw_chart_line(line_chart, vgc);
+  }
   vgcanvas_restore(vgc);
   widget_invalidate(widget, NULL);
   return RET_OK;
@@ -473,6 +637,8 @@ const char *s_line_chart_properties[] = {
     LINE_CHART_PROP_SECD_COLOR,
     LINE_CHART_PROP_MODE,
     LINE_CHART_PROP_MAX_POINT,
+    LINE_CHART_PROP_MIN_VALUE_LIMIT,
+    LINE_CHART_PROP_MAX_VALUE_LIMIT,
     LINE_CHART_PROP_DIVIDE_VALUE,
     LINE_CHART_PROP_ALIGN,
     LINE_CHART_PROP_LINE_WIDTH,
@@ -514,7 +680,8 @@ widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)
   line_chart->guide_line_offset = 0.1f;
   line_chart->guide_line_percent = 1.0f;
   line_chart->secd_percent = 1.0f;
-
+  line_chart->min_value_limit = 0;
+  line_chart->max_value_limit = 0;
   return widget;
 }
 

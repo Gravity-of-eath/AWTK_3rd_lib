@@ -87,6 +87,22 @@ typedef struct _line_chart_t
   int32_t max_point;
 
   /**
+   * @property {float_t} min_value_limit
+   * @annotation 最小值限制
+   * 默认值为0:                              表示在绘制时动态确定最大最小值
+   * 当min_value_limit < max_value_limit时: 表示指定范围[min_value_limit,max_value_limit]
+   */
+  float_t min_value_limit;
+
+    /**
+   * @property {float_t} max_value_limit
+   * @annotation 最大值限制
+   * 默认值为0:                              表示在绘制时动态确定最大最小值
+   * 当min_value_limit < max_value_limit时: 表示指定范围[min_value_limit,max_value_limit]
+   */
+  float_t max_value_limit;
+
+  /**
    * @property {float_t} divide_value
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 。阈值，fg_color与secd_color的分解比例（高度）
@@ -215,6 +231,27 @@ ret_t line_chart_set_mode(widget_t *widget, int32_t mode);
 ret_t line_chart_set_max_point(widget_t *widget, int32_t max_point);
 
 /**
+ * @method line_chart_set_min_value_limit
+ * 设置 。
+ * @annotation ["scriptable"]
+ * @param {widget_t*} widget widget对象。
+ * @param {float_t} value 。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t line_chart_set_min_value_limit(widget_t *widget, float_t value);
+/**
+ * @method line_chart_set_max_value_limit
+ * 设置 。
+ * @annotation ["scriptable"]
+ * @param {widget_t*} widget widget对象。
+ * @param {float_t} value 。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t line_chart_set_max_value_limit(widget_t *widget, float_t value);
+
+/**
  * @method line_chart_set_divide_value
  * 设置 。
  * @annotation ["scriptable"]
@@ -245,6 +282,8 @@ ret_t line_chart_add_point(widget_t *widget, float_t point);
 #define LINE_CHART_PROP_GUIDE_LINE_COLOR "guide_line_color"
 #define LINE_CHART_PROP_MODE "mode"
 #define LINE_CHART_PROP_MAX_POINT "max_point"
+#define LINE_CHART_PROP_MIN_VALUE_LIMIT "min_value_limit"
+#define LINE_CHART_PROP_MAX_VALUE_LIMIT "max_value_limit"
 #define LINE_CHART_PROP_DIVIDE_VALUE "divide_value"
 #define LINE_CHART_PROP_ALIGN "align"
 #define LINE_CHART_PROP_LINE_WIDTH "line_width"

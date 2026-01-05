@@ -56,12 +56,41 @@ ret_t line_chart_set_guide_line_color(widget_t *widget, const char *guide_line_c
   return RET_OK;
 }
 
+static ret_t demo_data_emiter(const timer_info_t *timer)
+{
+  line_chart_t *line_chart = LINE_CHART(timer->ctx);
+  return_value_if_fail(line_chart != NULL, RET_BAD_PARAMS);
+  if (line_chart == NULL || line_chart->mode != DEMO_MODE)
+  {
+    return RET_STOP;
+  }
+
+  float_t value = (float_t)(rand() % 100);
+  // printf("demo_data_emiter value=%.1f  name=%s\n", value, line_chart->widget.name);
+  line_chart_add_point(line_chart, value);
+  return RET_REPEAT;
+}
+
 ret_t line_chart_set_mode(widget_t *widget, int32_t mode)
 {
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(line_chart != NULL, RET_BAD_PARAMS);
 
   line_chart->mode = mode;
+  if (line_chart->mode == DEMO_MODE)
+  {
+    printf("line_chart_set_mode DEMO_MODE\n");
+    line_chart->demo_timer_id = timer_add(demo_data_emiter, widget, 100);
+  }
+  else
+  {
+    if (line_chart->demo_timer_id != TK_INVALID_ID)
+    {
+      printf("line_chart_set_mode remove demo timer %d\n", line_chart->demo_timer_id);
+      timer_remove(line_chart->demo_timer_id);
+      line_chart->demo_timer_id = TK_INVALID_ID;
+    }
+  }
 
   return RET_OK;
 }
@@ -90,8 +119,6 @@ ret_t line_chart_set_max_value_limit(widget_t *widget, float_t value)
   line_chart->max_value_limit = value;
   return RET_OK;
 }
-
-
 
 ret_t line_chart_set_divide_value(widget_t *widget, float_t divide_value)
 {
@@ -125,10 +152,17 @@ ret_t line_chart_set_line_width(widget_t *widget, int32_t line_width)
 
 ret_t line_chart_add_point(widget_t *widget, float_t point)
 {
-  // printf("line_chart_add_point value=%.1f\n", point);
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(line_chart != NULL, RET_BAD_PARAMS);
+  if (line_chart->mutex)
+  {
+    tk_mutex_lock(line_chart->mutex);
+  }
   float_queue_push_n(line_chart->queue, &point, 1);
+  if (line_chart->mutex)
+  {
+    tk_mutex_unlock(line_chart->mutex);
+  }
   return RET_OK;
 }
 
@@ -284,13 +318,17 @@ static ret_t line_chart_on_destroy(widget_t *widget)
 {
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(widget != NULL && line_chart != NULL, RET_BAD_PARAMS);
-
+  line_chart_set_mode(widget, 0);
   TKMEM_FREE(line_chart->fg_color);
   TKMEM_FREE(line_chart->secd_color);
   TKMEM_FREE(line_chart->guide_line_color);
   float_queue_free(line_chart->queue);
   TKMEM_FREE(line_chart->queue);
-
+  if (line_chart->mutex)
+  {
+    tk_mutex_destroy(line_chart->mutex);
+    line_chart->mutex = NULL;
+  }
   return RET_OK;
 }
 
@@ -318,13 +356,17 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
 {
   if (float_queue_empty(line_chart->queue))
   {
-    printf("error  draw_chart_line float_queue_size=%d\n", float_queue_size(line_chart->queue));
+    // printf("error  draw_chart_line float_queue_size=%d\n", float_queue_size(line_chart->queue));
     return;
   }
 
   canvas_t *oc = canvas_offline_create(line_chart->widget.w, line_chart->widget.h, BITMAP_FMT_RGBA8888);
   vgcanvas_t *vgc = canvas_get_vgcanvas(oc);
+  canvas_offline_begin_draw(oc);
+  vgcanvas_clear_rect(vgc, 0, 0, line_chart->widget.w, line_chart->widget.h, color_init(255, 255, 255, 0));
+
   vgcanvas_set_line_width(vgc, line_chart->line_width);
+
   if (line_chart->DEBUG)
   {
 
@@ -332,8 +374,8 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
     vgcanvas_rect(vgc, 0, 0, line_chart->widget.w, line_chart->widget.h);
     vgcanvas_stroke(vgc);
   }
-  color_t fgColor = color_parse(line_chart->fg_color);
-  vgcanvas_set_stroke_color(vgc, fgColor);
+  // color_t fgColor = color_parse(line_chart->fg_color);
+  // vgcanvas_set_stroke_color(vgc, fgColor);
   vgcanvas_set_line_cap(vgc, "round");
   float_t min = float_queue_at(line_chart->queue, 0);
   float_t max = float_queue_at(line_chart->queue, 0);
@@ -357,80 +399,43 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
   float_t ratio = (value - min) * 1.0f / scale_guild * 1.0f;
   int32_t useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
   int32_t y = (ratio * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
-  vgcanvas_begin_path(vgc);
-  vgcanvas_move_to(vgc, 0, y);
+
+  int32_t last_x = 0;
+  int32_t last_y = y;
   int32_t secd_percent_widget = line_chart->secd_percent * line_chart->widget.w;
-  for (int32_t i = 1; i < float_queue_size(line_chart->queue); i++)
+  int32_t v_divide = line_chart->divide_value > 1 ? line_chart->divide_value : (line_chart->divide_value * line_chart->widget.h);
+
+  for (int32_t i = 0; i < float_queue_size(line_chart->queue); i++)
   {
     value = float_queue_at(line_chart->queue, i);
-    int32_t x = step * i;
+    int32_t x = step * (i + 1);
     ratio = (value - min) * 1.0f / scale_guild * 1.0f;
     useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
     y = ((1.0f - ratio) * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
-
-    if (x > secd_percent_widget && x - step < secd_percent_widget)
-    {
-      vgcanvas_line_to(vgc, secd_percent_widget, y);
-      vgcanvas_stroke(vgc);
-      vgcanvas_set_stroke_color_str(vgc, line_chart->secd_color);
-
-      vgcanvas_begin_path(vgc);
-      vgcanvas_move_to(vgc, secd_percent_widget, y);
-      // vgcanvas_line_to(vgc, x, y);
-      // continue;
-      // printf("secd_percent_widget = %d x=%d\n", secd_percent_widget, x);
-    }
+    // draw up of divide pattern
+    vgcanvas_set_stroke_color_str(vgc, line_chart->fg_color);
+    vgcanvas_clip_rect(vgc, 0, 0, line_chart->widget.w, v_divide);
+    vgcanvas_begin_path(vgc);
+    vgcanvas_move_to(vgc, last_x, last_y);
     vgcanvas_line_to(vgc, x, y);
+    // vgcanvas_close_path(vgc);
+    vgcanvas_stroke(vgc);
+    // printf("line_chart -->> i=%d secd_percent_widget = %d last_x =%d  x=%d  y =%d\n", i, secd_percent_widget, last_x, x, y);
 
+    // draw down of divide pattern
+    vgcanvas_set_stroke_color_str(vgc, line_chart->secd_color);
+    vgcanvas_clip_rect(vgc, 0, v_divide, line_chart->widget.w, line_chart->widget.h - v_divide);
+    vgcanvas_begin_path(vgc);
+    vgcanvas_move_to(vgc, last_x, last_y);
+    vgcanvas_line_to(vgc, x, y);
+    // vgcanvas_close_path(vgc);
+    vgcanvas_stroke(vgc);
+    last_x = x;
+    last_y = y;
     // printf("line_chart -->>i=%d useable_h = %d value =%f ratio =%f x=%d  y =%d\n", i, useable_h, value, ratio, x, y);
   }
-  vgcanvas_stroke(vgc);
-  // printf("line_chart->secd_color =%s\n", line_chart->secd_color);
-
+  canvas_offline_end_draw(oc);
   bitmap_t *bmp = canvas_offline_get_bitmap(oc);
-  uint8_t *src_data = bitmap_lock_buffer_for_write(bmp);
-
-  // color_t fgColor = color_parse(line_chart->fg_color);
-  int32_t old_color = color_get_color(&fgColor);
-  // printf("fgColor  =%d str=%s\n", old_color, line_chart->fg_color);
-  uint8_t old_a = (old_color >> 24) & 0xFF;
-  uint8_t old_b = (old_color >> 16) & 0xFF;
-  uint8_t old_g = (old_color >> 8) & 0xFF;
-  uint8_t old_r = old_color & 0xFF;
-
-  // printf("fgColor   rgb= %d-%d-%d \n", old_r, old_g, old_b);
-  color_t secdColor = color_parse(line_chart->secd_color);
-  int32_t new_color = color_get_color(&secdColor);
-  // 解包新颜色（RGBA）
-  uint8_t new_a = (new_color >> 24) & 0xFF;
-  uint8_t new_b = (new_color >> 16) & 0xFF;
-  uint8_t new_g = (new_color >> 8) & 0xFF;
-  uint8_t new_r = new_color & 0xFF;
-
-  // 每行字节数（RGBA8888格式）
-  int32_t stride = line_chart->widget.w * 4;
-  int32_t start_row = line_chart->divide_value > 1 ? line_chart->divide_value : (line_chart->divide_value * line_chart->widget.h);
-  // 从指定行开始处理
-  for (int32_t y = start_row; y < line_chart->widget.h; y++)
-  {
-    uint8_t *row_start = src_data + y * stride;
-
-    for (int32_t x = 0; x < line_chart->widget.w; x++)
-    {
-      uint8_t *pixel = row_start + x * 4;
-
-      // printf("XX pixel=%d-%d-%d  old= %d-%d-%d \n", pixel[0], pixel[1], pixel[2], old_r, old_g, old_b);
-      // 如果像素不透明（alpha != 0），则修改颜色
-      if (old_r == pixel[0] && old_g == pixel[1] && old_b == pixel[2])
-      {
-        pixel[0] = new_r; // R
-        pixel[1] = new_g; // G
-        pixel[2] = new_b; // B
-        // pixel[3] = old_a; // A
-      }
-    }
-  }
-
   vgcanvas_draw_image(wvgc, bmp, 0, 0, bmp->w, bmp->h, 0, 0, line_chart->widget.w, line_chart->widget.h);
   // printf("canvas_draw_image bmp->w=%d, bmp->h=%d  line_chart->widget.w=%d, line_chart->widget.h=%d \n", bmp->w, bmp->h, line_chart->widget.w, line_chart->widget.h);
   canvas_offline_destroy(oc);
@@ -440,7 +445,7 @@ static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas
 {
   if (float_queue_empty(line_chart->queue))
   {
-    printf("error  draw_chart_line float_queue_size=%d\n", float_queue_size(line_chart->queue));
+    // printf("error  draw_chart_line float_queue_size=%d\n", float_queue_size(line_chart->queue));
     return;
   }
 
@@ -460,14 +465,17 @@ static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas
   float_t min = line_chart->min_value_limit;
   float_t max = line_chart->max_value_limit;
   float_t step = line_chart->widget.w / (line_chart->max_point * 1.0f);
-  
+
   // printf("line_chart -->> max=%f  min =%f\n", max, min);
   float_t scale_guild = max - min;
 
   float_t value = float_queue_at(line_chart->queue, 0);
-  if(value > max) {
+  if (value > max)
+  {
     value = max;
-  }else if(value < min) {
+  }
+  else if (value < min)
+  {
     value = min;
   }
   float_t ratio = (value - min) * 1.0f / scale_guild * 1.0f;
@@ -479,9 +487,12 @@ static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas
   for (int32_t i = 1; i < float_queue_size(line_chart->queue); i++)
   {
     value = float_queue_at(line_chart->queue, i);
-    if(value > max) {
+    if (value > max)
+    {
       value = max;
-    }else if(value < min) {
+    }
+    else if (value < min)
+    {
       value = min;
     }
     int32_t x = step * i;
@@ -508,6 +519,7 @@ static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas
   vgcanvas_stroke(vgc);
   // printf("line_chart->secd_color =%s\n", line_chart->secd_color);
 
+  canvas_offline_flush_bitmap(oc);
   bitmap_t *bmp = canvas_offline_get_bitmap(oc);
   uint8_t *src_data = bitmap_lock_buffer_for_write(bmp);
 
@@ -567,12 +579,23 @@ static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
   vgcanvas_translate(vgc, c->ox, c->oy);
   vgcanvas_set_antialias(vgc, TRUE);
   draw_guide_line(line_chart, vgc);
-  if(line_chart->max_value_limit > line_chart->min_value_limit) {
+  if (line_chart->mutex)
+  {
+    tk_mutex_lock(line_chart->mutex);
+  }
+  if (line_chart->max_value_limit > line_chart->min_value_limit)
+  {
     draw_chart_line_with_values_limit(line_chart, vgc);
   }
-  else {
+  else
+  {
     draw_chart_line(line_chart, vgc);
   }
+  if (line_chart->mutex)
+  {
+    tk_mutex_unlock(line_chart->mutex);
+  }
+
   vgcanvas_restore(vgc);
   widget_invalidate(widget, NULL);
   return RET_OK;
@@ -670,6 +693,8 @@ widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)
   line_chart->secd_color = tk_strdup("#999999FF");
   line_chart->guide_line_color = tk_strdup("#333333FF");
 
+  line_chart->DEBUG = FALSE;
+  line_chart->demo_timer_id = TK_INVALID_ID;
   line_chart->mode = 0;
   line_chart->max_point = 20;
   line_chart->divide_value = 0.5;
@@ -682,6 +707,7 @@ widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)
   line_chart->secd_percent = 1.0f;
   line_chart->min_value_limit = 0;
   line_chart->max_value_limit = 0;
+  line_chart->mutex = tk_mutex_create();
   return widget;
 }
 

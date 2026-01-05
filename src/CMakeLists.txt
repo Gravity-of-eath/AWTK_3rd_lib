@@ -16,4 +16,4 @@ add_subdirectory(conner_gradient)
 add_subdirectory(shadow_label)
 add_subdirectory(yps_gauge)
 add_subdirectory(auto_scale_view)
-
+add_subdirectory(yps_gl_view)

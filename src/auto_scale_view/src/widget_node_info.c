@@ -485,12 +485,12 @@ void init_child_recursive1(widget_t *parent, widget_node_info *parent_node, int3
     if (!parent || !parent_node)
         return;
 
-    printf("%*s初始化层级 %d: %s\n", level * 2, "", level,
-           parent_node->name ? parent_node->name : "unnamed");
+    // printf("%*s初始化层级 %d: %s\n", level * 2, "", level,
+    //        parent_node->name ? parent_node->name : "unnamed");
 
     /* 获取直接子控件数量 */
     int32_t direct_children = widget_count_children(parent);
-    printf("%*s  直接子控件数量: %d\n", level * 2, "", direct_children);
+    // printf("%*s  直接子控件数量: %d\n", level * 2, "", direct_children);
 
     if (direct_children <= 0)
     {
@@ -538,17 +538,17 @@ void init_child_recursive1(widget_t *parent, widget_node_info *parent_node, int3
             parent_node->children[parent_node->child_count++] = child_node;
             child_node->parent = parent_node;
 
-            printf("%*s  └── 子节点 %d: %s [%d,%d,%d,%d]\n",
-                   level * 2, "", child_index,
-                   child_widget->name ? child_widget->name : "unnamed",
-                   child_rect.x, child_rect.y, child_rect.w, child_rect.w);
+            // printf("%*s  └── 子节点 %d: %s [%d,%d,%d,%d]\n",
+            //        level * 2, "", child_index,
+            //        child_widget->name ? child_widget->name : "unnamed",
+            //        child_rect.x, child_rect.y, child_rect.w, child_rect.w);
 
             /* 递归初始化子节点的子节点 */
             init_child_recursive1(child_widget, child_node, level + 1);
         }
     }
 
-    printf("%*s   成功添加 %d/%d 个子节点\n", level * 2, "", direct_children, direct_children);
+    // printf("%*s   成功添加 %d/%d 个子节点\n", level * 2, "", direct_children, direct_children);
 }
 
 /* 从根widget创建完整的UI树 */

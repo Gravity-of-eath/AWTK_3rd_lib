@@ -81,6 +81,7 @@ static ret_t load_pre_rotated_bitmaps(yps_cirle_gauge_t *yps_cirle_gauge)
         else
         {
             printf("load_pre_rotated_bitmaps start : %s  yps_cirle_gauge->count_of_line=%d\n", yps_cirle_gauge->pointer_image, yps_cirle_gauge->count_of_line);
+            // yps_cirle_gauge->pre_bitmap.format = BITMAP_FMT_RGBA8888;
             ret_t re = widget_load_image(WIDGET(yps_cirle_gauge), yps_cirle_gauge->pointer_image, &(yps_cirle_gauge->pre_bitmap));
             printf("load_pre_rotated_bitmaps re : %d \n", re);
             if (re == RET_OK)
@@ -291,6 +292,15 @@ ret_t yps_cirle_gauge_set_pointer_offset_y(widget_t *widget, int32_t pointer_off
     yps_cirle_gauge_t *yps_cirle_gauge = YPS_CIRLE_GAUGE(widget);
     return_value_if_fail(yps_cirle_gauge != NULL, RET_BAD_PARAMS);
     yps_cirle_gauge->pointer_offset_y = pointer_offset_y;
+    return RET_OK;
+}
+
+ret_t yps_cirle_gauge_set_draw_scale(widget_t *widget, float_t draw_scale)
+{
+    yps_cirle_gauge_t *yps_cirle_gauge = YPS_CIRLE_GAUGE(widget);
+    return_value_if_fail(yps_cirle_gauge != NULL, RET_BAD_PARAMS);
+    yps_cirle_gauge->draw_scale = draw_scale;
+    printf("yps_cirle_gauge_set_draw_scale:%02f\n", yps_cirle_gauge->draw_scale);
     return RET_OK;
 }
 
@@ -550,7 +560,10 @@ static ret_t yps_cirle_gauge_set_prop(widget_t *widget, const char *name, const 
         yps_cirle_gauge_set_pointer_bmp_mode(widget, value_int32(v));
         return RET_OK;
     }
-
+    else if (tk_str_eq(YPS_CIRLE_GAUGE_PROP_DRAW_SCALE, name))
+    {
+        yps_cirle_gauge_set_draw_scale(widget, value_float(v));
+    }
     return RET_NOT_FOUND;
 }
 
@@ -681,12 +694,15 @@ static ret_t yps_cirle_gauge_on_paint_self(widget_t *widget, canvas_t *c)
         }
         else
         {
-            int32_t xx = anchor_x - (rr * sin(rotation)) - yps_cirle_gauge->width_of_step / 2;
-            int32_t yy = anchor_y + (rr * cos(rotation)) - yps_cirle_gauge->width_of_step / 2;
-            int32_t src_x = (angle_index % yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step;
-            int32_t src_y = (angle_index / yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step;
-            canvas_draw_image_ex2(c, &(yps_cirle_gauge->pre_bitmap), IMAGE_DRAW_ICON, rect_create(src_x, src_y, yps_cirle_gauge->width_of_step, yps_cirle_gauge->width_of_step), rect_create(xx, yy, yps_cirle_gauge->width_of_step, yps_cirle_gauge->width_of_step));
-            // printf("Drawing pointer at angle pointer_bmp_mode index: %d src_x=%d src_y=%d rotation=%f  xx=%d yy=%d  angle=%f\n", angle_index, src_x, src_y, rotation, xx, yy, (yps_cirle_gauge->angle + 180.0f));
+            int32_t xx = anchor_x - (rr * sin(rotation)) - yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale / 2;
+            int32_t yy = anchor_y + (rr * cos(rotation)) - yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale / 2;
+            int32_t src_x = (angle_index % yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale;
+            int32_t src_y = (angle_index / yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale;
+            canvas_draw_image_ex2(c, &(yps_cirle_gauge->pre_bitmap), IMAGE_DRAW_SCALE,
+                                  rect_create(src_x, src_y, yps_cirle_gauge->width_of_step, yps_cirle_gauge->width_of_step),
+                                  rect_create(xx, yy, yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale, yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale));
+            // printf("Drawing pointer at angle pointer_bmp_mode index: %d src_x=%d src_y=%d rotation=%f  xx=%d yy=%d  angle=%f  yps_cirle_gauge->draw_scale=%f\n", 
+            //     angle_index, src_x, src_y, rotation, xx, yy, (yps_cirle_gauge->angle + 180.0f), yps_cirle_gauge->draw_scale);
             return RET_OK;
         }
         canvas_restore(c);
@@ -1153,6 +1169,7 @@ widget_t *yps_cirle_gauge_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t 
     yps_cirle_gauge->pre_rotated_bitmaps_loaded = FALSE;
     yps_cirle_gauge->pointer_bmp_mode = 1;
     yps_cirle_gauge->count_of_line = 14;
+    yps_cirle_gauge->draw_scale = 1;
 
     return widget;
 }

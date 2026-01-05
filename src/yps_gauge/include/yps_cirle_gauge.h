@@ -209,6 +209,8 @@ typedef struct _yps_cirle_gauge_t {
 
   int32_t width_of_step;
 
+  float_t draw_scale;
+
 } yps_cirle_gauge_t;
 
 /**
@@ -412,6 +414,9 @@ ret_t yps_cirle_gauge_set_pointer_offset_x(widget_t* widget, int32_t pointer_off
 ret_t yps_cirle_gauge_set_pointer_offset_y(widget_t* widget, int32_t pointer_offset_y);
 
 
+ret_t yps_cirle_gauge_set_draw_scale(widget_t* widget, float_t draw_scale);
+
+
 #define YPS_CIRLE_GAUGE_PROP_ANGLE "angle"
 #define YPS_CIRLE_GAUGE_PROP_MIN_ANGLE "min_angle"
 #define YPS_CIRLE_GAUGE_PROP_MAX_ANGLE "max_angle"
@@ -432,6 +437,8 @@ ret_t yps_cirle_gauge_set_pointer_offset_y(widget_t* widget, int32_t pointer_off
 #define YPS_CIRLE_GAUGE_PROP_POINTER_OFFSET_ANGLE "pointer_offset_angle"
 #define YPS_CIRLE_GAUGE_PROP_COUNT_OF_LINE "count_of_line"
 #define YPS_CIRLE_GAUGE_PROP_POINTER_BMP_MODE "pointer_bmp_mode"
+#define YPS_CIRLE_GAUGE_PROP_DRAW_SCALE "draw_scale"
+
 
 
 

@@ -186,6 +186,7 @@ ret_t yps_banner_menu_focus_prev(widget_t *widget);
 #define YPS_BANNER_MENU_PROP_SCALE_RATIO "scale_ratio"
 #define YPS_BANNER_MENU_PROP_FOCUS_INDEX "focus_index"
 #define YPS_BANNER_MENU_PROP_REFRESH "refresh"
+#define YPS_BANNER_MENU_PROP_ON_ANIMATION "on_animation"
 
 #define WIDGET_TYPE_YPS_BANNER_MENU "yps_banner_menu"
 

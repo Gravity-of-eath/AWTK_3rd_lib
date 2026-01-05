@@ -505,6 +505,11 @@ static ret_t yps_banner_menu_get_prop(widget_t *widget, const char *name, value_
     value_set_float(v, yps_banner_menu->scale_ratio);
     return RET_OK;
   }
+  else if (tk_str_eq(YPS_BANNER_MENU_PROP_ON_ANIMATION, name))
+  {
+    value_set_bool(v, yps_banner_menu->on_animation);
+    return RET_OK;
+  }
 
   return RET_NOT_FOUND;
 }

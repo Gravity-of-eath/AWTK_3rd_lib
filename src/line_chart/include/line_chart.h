@@ -24,6 +24,7 @@
 
 #include "base/widget.h"
 #include "float_queue.h"
+#include "tkc/mutex.h"
 
 BEGIN_C_DECLS
 /**
@@ -49,6 +50,8 @@ BEGIN_C_DECLS
  * </line_chart>
  * ```
  */
+
+#define DEMO_MODE 1
 typedef struct _line_chart_t
 {
   widget_t widget;
@@ -66,7 +69,7 @@ typedef struct _line_chart_t
    * 。与fg_color相反 即折线值底于阈值（divide_value）部分的颜色
    */
   char *secd_color;
-  
+
   /**
    * 引导线的颜色 即背景三条线（中间是虚线）的颜色
    */
@@ -94,7 +97,7 @@ typedef struct _line_chart_t
    */
   float_t min_value_limit;
 
-    /**
+  /**
    * @property {float_t} max_value_limit
    * @annotation 最大值限制
    * 默认值为0:                              表示在绘制时动态确定最大最小值
@@ -109,9 +112,8 @@ typedef struct _line_chart_t
    */
   float_t divide_value;
 
-
   /***
-   * 
+   *
    * 私有变量不要访问
    */
   FloatQueue *queue;
@@ -142,14 +144,14 @@ typedef struct _line_chart_t
   bool_t DEBUG;
 
   /***
-   * 
+   *
    * fg_color在X 方向上可用的比例（用于动画）
    */
   float_t secd_percent;
 
   /***
    * 背景参考线占总控件宽度的比率（用于动画）
-   * 
+   *
    */
 
   float_t guide_line_percent;
@@ -158,6 +160,11 @@ typedef struct _line_chart_t
    * 最大值 用于快速获取最大值
    */
   float_t max_value;
+
+  //私有变量不要访问
+  uint32_t demo_timer_id;
+
+  tk_mutex_t* mutex;  // 添加互斥锁
 
 } line_chart_t;
 

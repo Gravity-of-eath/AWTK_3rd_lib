@@ -696,12 +696,12 @@ static ret_t yps_cirle_gauge_on_paint_self(widget_t *widget, canvas_t *c)
         {
             int32_t xx = anchor_x - (rr * sin(rotation)) - yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale / 2;
             int32_t yy = anchor_y + (rr * cos(rotation)) - yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale / 2;
-            int32_t src_x = (angle_index % yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale;
-            int32_t src_y = (angle_index / yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale;
+            int32_t src_x = (angle_index % yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step;
+            int32_t src_y = (angle_index / yps_cirle_gauge->count_of_line) * yps_cirle_gauge->width_of_step;
             canvas_draw_image_ex2(c, &(yps_cirle_gauge->pre_bitmap), IMAGE_DRAW_SCALE,
                                   rect_create(src_x, src_y, yps_cirle_gauge->width_of_step, yps_cirle_gauge->width_of_step),
                                   rect_create(xx, yy, yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale, yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale));
-            // printf("Drawing pointer at angle pointer_bmp_mode index: %d src_x=%d src_y=%d rotation=%f  xx=%d yy=%d  angle=%f  yps_cirle_gauge->draw_scale=%f\n", 
+            // printf("Drawing pointer at angle pointer_bmp_mode index: %d src_x=%d src_y=%d rotation=%f  xx=%d yy=%d  angle=%f  yps_cirle_gauge->draw_scale=%f\n",
             //     angle_index, src_x, src_y, rotation, xx, yy, (yps_cirle_gauge->angle + 180.0f), yps_cirle_gauge->draw_scale);
             return RET_OK;
         }
@@ -1004,14 +1004,14 @@ static ret_t yps_cirle_gauge_invalidate(widget_t *widget, const rect_t *r)
             center_y = anchor_y + (rr * cos(rotation));
 
             // 计算指针图片的绘制位置
-            xx = center_x - yps_cirle_gauge->width_of_step / 2;
-            yy = center_y - yps_cirle_gauge->width_of_step / 2;
+            xx = center_x - yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale / 2;
+            yy = center_y - yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale / 2;
 
             // 设置上一次指针的矩形
             last_ptr_rect.x = xx;
             last_ptr_rect.y = yy;
-            last_ptr_rect.w = yps_cirle_gauge->width_of_step;
-            last_ptr_rect.h = yps_cirle_gauge->width_of_step;
+            last_ptr_rect.w = yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale;
+            last_ptr_rect.h = yps_cirle_gauge->width_of_step * yps_cirle_gauge->draw_scale;
         }
         // printf("current_ptr_rect (%d, %d, %d, %d), last_ptr_rect (%d, %d, %d, %d)\n",
         //        current_ptr_rect.x, current_ptr_rect.y, current_ptr_rect.w, current_ptr_rect.h,

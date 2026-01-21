@@ -398,8 +398,7 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
   float_t value = float_queue_at(line_chart->queue, 0);
   float_t ratio = (value - min) * 1.0f / scale_guild * 1.0f;
   int32_t useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
-  int32_t y = (ratio * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
-
+  int32_t y = ((1.0f - ratio) * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
   int32_t last_x = 0;
   int32_t last_y = y;
   int32_t secd_percent_widget = line_chart->secd_percent * line_chart->widget.w;
@@ -480,7 +479,7 @@ static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas
   }
   float_t ratio = (value - min) * 1.0f / scale_guild * 1.0f;
   int32_t useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
-  int32_t y = (ratio * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
+  int32_t y = ((1.0f - ratio) * useable_h) + (line_chart->widget.h * line_chart->guide_line_offset / 2);
   vgcanvas_begin_path(vgc);
   vgcanvas_move_to(vgc, 0, y);
   int32_t secd_percent_widget = line_chart->secd_percent * line_chart->widget.w;

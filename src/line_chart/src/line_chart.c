@@ -25,6 +25,7 @@
 #include "tkc/color_parser.h"
 #include "base/canvas_offline.h"
 #include "stdio.h"
+#include <math.h>
 
 ret_t line_chart_set_fg_color(widget_t *widget, const char *fg_color)
 {
@@ -624,6 +625,19 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
     }
     
     vgcanvas_stroke(vgc);
+    
+    // 绘制 queue 中所有点的位置，用白色实心圆表示
+    vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
+    float point_radius = line_chart->line_width; // 圆的半径
+    for (int32_t i = 0; i < queue_size; i++)
+    {
+      float x = x_coords[i];
+      float y = y_coords[i];
+      // 绘制实心圆
+      vgcanvas_begin_path(vgc);
+      vgcanvas_ellipse(vgc, x, y, line_chart->line_width, line_chart->line_width);
+      vgcanvas_fill(vgc);
+    }
     
     free(x_coords);
     free(y_coords);

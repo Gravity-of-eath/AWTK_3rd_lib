@@ -52,6 +52,10 @@ BEGIN_C_DECLS
  */
 
 #define DEMO_MODE 1
+
+#define DRAW_TYPE_LINE 0    //折线
+#define DRAW_TYPE_SPLINE_CURVE 1  //Catmull-Rom 样条曲线
+
 typedef struct _line_chart_t
 {
   widget_t widget;
@@ -89,6 +93,12 @@ typedef struct _line_chart_t
    */
   int32_t max_point;
 
+  /**
+   * @property {int32_t} draw_type
+   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
+   * 。线条的绘制类型     0:折线 1:Catmull-Rom 样条曲线
+   */
+  int32_t draw_type;
   /**
    * @property {float_t} min_value_limit
    * @annotation 最小值限制
@@ -238,6 +248,17 @@ ret_t line_chart_set_mode(widget_t *widget, int32_t mode);
 ret_t line_chart_set_max_point(widget_t *widget, int32_t max_point);
 
 /**
+ * @method line_chart_set_draw_type
+ * 设置 。
+ * @annotation ["scriptable"]
+ * @param {widget_t*} widget widget对象。
+ * @param {int32_t} draw_type 。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t line_chart_set_draw_type(widget_t *widget, int32_t draw_type);
+
+/**
  * @method line_chart_set_min_value_limit
  * 设置 。
  * @annotation ["scriptable"]
@@ -289,6 +310,7 @@ ret_t line_chart_add_point(widget_t *widget, float_t point);
 #define LINE_CHART_PROP_GUIDE_LINE_COLOR "guide_line_color"
 #define LINE_CHART_PROP_MODE "mode"
 #define LINE_CHART_PROP_MAX_POINT "max_point"
+#define LINE_CHART_PROP_DRAW_TYPE "draw_type"
 #define LINE_CHART_PROP_MIN_VALUE_LIMIT "min_value_limit"
 #define LINE_CHART_PROP_MAX_VALUE_LIMIT "max_value_limit"
 #define LINE_CHART_PROP_DIVIDE_VALUE "divide_value"

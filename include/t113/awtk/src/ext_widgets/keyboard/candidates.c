@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  candidates
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,6 +28,9 @@
 #include "base/system_info.h"
 #include "base/widget_vtable.h"
 
+#define CANDIDATES_DEFAULT_VISIBLE_NUM 64
+
+static ret_t candidates_init(widget_t* widget);
 static ret_t candidates_on_im_candidates_event(void* ctx, event_t* e);
 
 static ret_t candidates_on_button_focused(void* ctx, event_t* e) {
@@ -48,6 +51,7 @@ static ret_t candidates_on_button_focused(void* ctx, event_t* e) {
 
 static ret_t candidates_on_button_click(void* ctx, event_t* e) {
   char str[32];
+  widget_t* focus = NULL;
   widget_t* widget = WIDGET(ctx);
   widget_t* button = WIDGET(e->target);
   widget_t* keyboard = widget_get_window(widget);
@@ -68,8 +72,14 @@ static ret_t candidates_on_button_click(void* ctx, event_t* e) {
           if (suggest_words->words_nr > 0) {
             widget_set_focused(widget_get_child(button->parent, 0), TRUE);
             candidates->is_suggest = TRUE;
+          } else {
+            focus = widget_get_focused_widget(keyboard);
+            widget_focus_down(focus);
           }
           log_debug("suggest_words->words:%s\n", suggest_words->words);
+        } else {
+          focus = widget_get_focused_widget(keyboard);
+          widget_focus_down(focus);
         }
       }
       /* After commit text, if candidates is hidden we need to blur it and reset key_target! */
@@ -119,6 +129,7 @@ static ret_t candidates_ensure_children(widget_t* widget, uint32_t nr) {
     candidates_create_button(widget);
   }
 
+  return_value_if_fail(widget->children != NULL, RET_OOM);
   return_value_if_fail(widget->children->size == nr, RET_OOM);
 
   return RET_OK;
@@ -131,14 +142,18 @@ static uint32_t candidates_calc_child_width(canvas_t* c, widget_t* widget) {
 }
 
 static ret_t candidates_relayout_children(widget_t* widget) {
+  glyph_t g = {0};
   uint32_t i = 0;
   xy_t margin = 2;
   uint32_t nr = 0;
   wh_t child_w = 0;
+  uint32_t spacer = 0;
   xy_t child_x = margin;
   xy_t child_y = margin;
   widget_t* iter = NULL;
+  uint32_t truly_num = 0;
   widget_t* focused = NULL;
+  uint32_t average_child_w = 0;
   wh_t child_h = widget->h - margin * 2;
   candidates_t* candidates = CANDIDATES(widget);
   widget_t** children = (widget_t**)(widget->children->elms);
@@ -150,10 +165,39 @@ static ret_t candidates_relayout_children(widget_t* widget) {
 
   nr = candidates->candidates_nr;
   canvas_set_font(c, font, font_size);
+  truly_num = nr;
+  if (candidates->visible_num > 1 && nr >= 1 && c->font != NULL) {
+    average_child_w = 0;
+    for (i = 0; i < nr; ++i) {
+      font_get_glyph(c->font, *(children[i]->text.str), font_size, &g);
+      if (g.data == NULL) {
+        truly_num--;
+        continue;
+      }
+      average_child_w += (candidates_calc_child_width(c, children[i]) + child_margin * 2);
+    }
+    average_child_w = tk_roundi((float_t)average_child_w / truly_num);
+    spacer = tk_roundi(((float_t)widget->w / (float_t)candidates->visible_num));
+    if (spacer < (average_child_w + margin)) {
+      spacer = 0;
+    } else {
+      spacer = spacer - average_child_w - margin;
+    }
+  } else if (candidates->visible_num == 1 && nr >= 1) {
+    child_w = candidates_calc_child_width(c, children[0]) + child_margin * 2;
+    if (widget->w >= child_w) {
+      spacer = widget->w - child_w - margin;
+    }
+  }
+
   for (i = 0; i < nr; i++) {
     iter = children[i];
     child_w = candidates_calc_child_width(c, iter) + child_margin * 2;
-    if (iter->text.size) {
+    if (c->font != NULL) {
+      font_get_glyph(c->font, *(iter->text.str), font_size, &g);
+    }
+    if ((c->font != NULL && iter->text.size && g.data != NULL) ||
+        (c->font == NULL && iter->text.size)) {
       widget_set_enable(iter, TRUE);
       widget_set_visible(iter, TRUE, FALSE);
     } else {
@@ -161,6 +205,15 @@ static ret_t candidates_relayout_children(widget_t* widget) {
       widget_set_enable(iter, FALSE);
       widget_set_visible(iter, FALSE, FALSE);
     }
+
+    if (c->font != NULL && g.data == NULL) {
+      continue;
+    }
+
+    if (candidates->visible_num > 1 && iter->text.size == 1 && average_child_w > 0) {
+      child_w += (average_child_w - child_w);
+    }
+    child_w += spacer;
     widget_move_resize(iter, child_x, child_y, child_w, child_h);
     child_x += child_w + margin;
 
@@ -283,11 +336,16 @@ static ret_t candidates_get_prop(widget_t* widget, const char* name, value_t* v)
   } else if (tk_str_eq(name, CANDIDATES_PROP_BUTTON_STYLE)) {
     value_set_str(v, candidates->button_style);
     return RET_OK;
-  } else if (candidates->hscrollable != NULL) {
-    return hscrollable_get_prop(candidates->hscrollable, name, v);
   } else if (tk_str_eq(name, WIDGET_PROP_ENABLE_PREVIEW)) {
     value_set_bool(v, candidates->enable_preview);
     return RET_OK;
+  } else if (tk_str_eq(name, CANDIDATES_PROP_VISIBLE_NUM)) {
+    value_set_uint32(v, candidates->visible_num);
+    return RET_OK;
+  }
+
+  if (candidates->hscrollable != NULL) {
+    return hscrollable_get_prop(candidates->hscrollable, name, v);
   } else {
     return RET_NOT_FOUND;
   }
@@ -308,7 +366,10 @@ static ret_t candidates_set_prop(widget_t* widget, const char* name, const value
   } else if (tk_str_eq(name, WIDGET_PROP_ENABLE_PREVIEW)) {
     candidates->enable_preview = value_bool(v);
     return RET_OK;
+  } else if (tk_str_eq(name, CANDIDATES_PROP_VISIBLE_NUM)) {
+    return candidates_set_visible_num(widget, value_uint32(v));
   }
+
   if (candidates->hscrollable != NULL) {
     return hscrollable_set_prop(candidates->hscrollable, name, v);
   } else {
@@ -365,7 +426,8 @@ static ret_t candidates_on_keyup(widget_t* widget, key_event_t* e) {
         }
       }
     } else if (e->key == TK_KEY_LEFT || e->key == TK_KEY_RIGHT) {
-      if (nr > 2) {
+      keyboard_type_t keyboard_type = system_info()->keyboard_type;
+      if (nr > 2 && keyboard_type != KEYBOARD_3KEYS && keyboard_type != KEYBOARD_5KEYS) {
         candidates_move_focus(widget, e->key == TK_KEY_RIGHT);
         ret = RET_STOP;
       }
@@ -399,6 +461,7 @@ TK_DECL_VTABLE(candidates) = {.size = sizeof(candidates_t),
                               .clone_properties = s_candidates_properties,
                               .persistent_properties = s_candidates_properties,
                               .create = candidates_create,
+                              .init = candidates_init,
                               .on_event = candidates_on_event,
                               .on_paint_self = candidates_on_paint_self,
                               .on_paint_children = candidates_on_paint_children,
@@ -428,16 +491,22 @@ static ret_t candidates_on_im_candidates_event(void* ctx, event_t* e) {
   return RET_OK;
 }
 
-widget_t* candidates_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
-  widget_t* widget = widget_create(parent, TK_REF_VTABLE(candidates), x, y, w, h);
+static ret_t candidates_init(widget_t* widget) {
   candidates_t* candidates = CANDIDATES(widget);
-  return_value_if_fail(candidates != NULL, NULL);
+  return_value_if_fail(candidates != NULL, RET_BAD_PARAMS);
 
   candidates->select_by_num = TRUE;
   candidates->hscrollable = hscrollable_create(widget);
+  candidates->visible_num = CANDIDATES_DEFAULT_VISIBLE_NUM;
   hscrollable_set_always_scrollable(candidates->hscrollable, TRUE);
 
   ENSURE(candidates->hscrollable != NULL);
+  return RET_OK;
+}
+
+widget_t* candidates_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
+  widget_t* widget = widget_create(parent, TK_REF_VTABLE(candidates), x, y, w, h);
+  return_value_if_fail(candidates_init(widget) == RET_OK, NULL);
 
   return widget;
 }
@@ -471,6 +540,16 @@ ret_t candidates_set_auto_hide(widget_t* widget, bool_t auto_hide) {
   return_value_if_fail(candidates != NULL, RET_BAD_PARAMS);
 
   candidates->auto_hide = auto_hide;
+
+  return RET_OK;
+}
+
+ret_t candidates_set_visible_num(widget_t* widget, uint32_t visible_num) {
+  candidates_t* candidates = CANDIDATES(widget);
+  return_value_if_fail(candidates != NULL, RET_BAD_PARAMS);
+
+  candidates->visible_num = visible_num;
+  widget_invalidate(widget, NULL);
 
   return RET_OK;
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  color_tile
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -60,14 +60,14 @@ typedef struct _color_tile_t {
   widget_t widget;
 
   /**
-   * @property {const char*} bg_color
+   * @property {char*} bg_color
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 背景颜色。
    */
   char bg_color[TK_COLOR_HEX_LEN + 1];
 
   /**
-   * @property {const char*} border_color
+   * @property {char*} border_color
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 边框颜色。
    */

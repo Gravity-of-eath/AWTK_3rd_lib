@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  array functions for fscript
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  */
 
@@ -641,8 +641,8 @@ const fscript_array_vtable_t* fscript_array_get_fscript_array_vt(tk_object_t* ob
   const fscript_array_vtable_t* vt = NULL;
   return_value_if_fail(obj != NULL, NULL);
 
-  vt = tk_object_get_prop_pointer(obj, FSCRIPT_ARRAY_PROP_VTABEL_NAME);
-  if (vt != NULL && !tk_str_eq(vt->type, FSCRIPT_ARRAY_PROP_VTABEL_TYPE_STRING)) {
+  vt = tk_object_get_prop_pointer(obj, FSCRIPT_ARRAY_PROP_VTABLE_NAME);
+  if (vt != NULL && !tk_str_eq(vt->type, FSCRIPT_ARRAY_PROP_VTABLE_TYPE_STRING)) {
     vt = NULL;
   }
 

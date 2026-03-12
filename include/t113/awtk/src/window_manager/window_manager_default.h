@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window manager
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -40,6 +40,8 @@ typedef struct _window_manager_default_t {
   bool_t animating;
   bool_t ready_animator;
   bool_t ignore_user_input;
+  bool_t is_animator_paint_system_bar_top;
+  bool_t is_animator_paint_system_bar_bottom;
   window_animator_t* animator;
 
   fps_t fps;
@@ -52,7 +54,6 @@ typedef struct _window_manager_default_t {
   char cursor[TK_NAME_LEN + 1];
   rect_t r_cursor;
 
-  input_device_status_t input_device_status;
   uint32_t screen_saver_timer_id;
   uint32_t screen_saver_time;
 
@@ -68,6 +69,7 @@ typedef struct _window_manager_default_t {
   int32_t lcd_w;
   int32_t lcd_h;
 
+  bool_t keep_all_pressed_keys;
 } window_manager_default_t;
 
 /**
@@ -76,13 +78,16 @@ typedef struct _window_manager_default_t {
  * 创建窗口管理器。
  * @annotation ["constructor"]
  *
- * @return {window_manager_t*} 返回窗口管理器对象。
+ * @return {widget_t*} 返回窗口管理器对象。
  */
 widget_t* window_manager_create(void);
 
 #define WINDOW_MANAGER_DEFAULT(widget) ((window_manager_default_t*)(widget))
 
+/* private */
 ret_t window_manager_paint_system_bar(widget_t* widget, canvas_t* c);
+ret_t window_manager_paint_system_bar_top(widget_t* widget, canvas_t* c);
+ret_t window_manager_paint_system_bar_bottom(widget_t* widget, canvas_t* c);
 
 END_C_DECLS
 

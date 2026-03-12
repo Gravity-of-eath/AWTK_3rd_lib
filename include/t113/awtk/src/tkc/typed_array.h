@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dynamic typed_array.
  *
- * Copyright (c) 2021 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2021 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,11 +35,11 @@ BEGIN_C_DECLS
  *
  * ```c
  * value_t v;
- * typed_array_t* typed_array = typed_array_create(VALUE_TYPE_INT, 10);
+ * typed_array_t* a = typed_array_create(VALUE_TYPE_INT, 10);
  * typed_array_push(a, value_set_int(&v, 123));
  * typed_array_push(a, value_set_int(&v, 234));
  * ...
- * typed_array_destroy(typed_array);
+ * typed_array_destroy(a);
  * ```
  *
  */
@@ -92,7 +92,7 @@ typed_array_t* typed_array_create(value_type_t type, uint32_t capacity);
  * @method typed_array_extend
  * 扩展typed_array到指定容量。
  *
- * @param {value_type_t} type 元素的类型。
+ * @param {typed_array_t*} typed_array 元素的类型。
  * @param {uint32_t} capacity 数组的容量(元素个数)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -146,8 +146,9 @@ ret_t typed_array_remove(typed_array_t* typed_array, uint32_t index);
  * @method typed_array_pop
  * 弹出最后一个元素。
  * @param {typed_array_t*} typed_array 数组对象。
+ * @param {value_t*} v 弹出的元素。
  *
- * @return {void*} 成功返回最后一个元素，失败返回NULL。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t typed_array_pop(typed_array_t* typed_array, value_t* v);
 

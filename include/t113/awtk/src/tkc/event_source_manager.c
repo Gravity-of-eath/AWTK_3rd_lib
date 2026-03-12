@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event manager manager
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -58,12 +58,13 @@ static ret_t event_source_manager_prepare(event_source_manager_t* manager) {
 }
 
 ret_t event_source_manager_dispatch(event_source_manager_t* manager) {
+  ret_t ret = RET_FAIL;
   return_value_if_fail(event_source_manager_prepare(manager) == RET_OK, RET_BAD_PARAMS);
 
-  manager->dispatch(manager);
+  ret = manager->dispatch(manager);
   darray_clear(&(manager->dispatching_sources));
 
-  return RET_OK;
+  return ret;
 }
 
 ret_t event_source_manager_add(event_source_manager_t* manager, event_source_t* source) {
@@ -105,12 +106,12 @@ ret_t event_source_manager_destroy(event_source_manager_t* manager) {
   return manager->destroy(manager);
 }
 
-uint32_t event_source_manager_get_wakeup_time(event_source_manager_t* manager) {
+uint64_t event_source_manager_get_wakeup_time(event_source_manager_t* manager) {
   uint32_t i = 0;
   uint32_t t = 0;
   uint32_t n = 0;
   event_source_t* iter = NULL;
-  uint32_t wakeup_time = 0xffff;
+  uint64_t wakeup_time = 0xffff;
   event_source_t** sources = NULL;
   return_value_if_fail(manager != NULL, 0);
 
@@ -125,9 +126,25 @@ uint32_t event_source_manager_get_wakeup_time(event_source_manager_t* manager) {
         wakeup_time = t;
       }
     }
+
+    wakeup_time = wakeup_time * 1000;
   } else {
-    wakeup_time = TK_DEFAULT_WAIT_TIME;
+    wakeup_time = manager->min_sleep_time;
   }
 
-  return tk_min(TK_DEFAULT_WAIT_TIME, wakeup_time);
+  return tk_min(manager->min_sleep_time, wakeup_time);
+}
+
+ret_t event_source_manager_set_min_sleep_time_us(event_source_manager_t* manager,
+                                                 uint32_t sleep_time) {
+  return_value_if_fail(manager != NULL, RET_BAD_PARAMS);
+
+  manager->min_sleep_time = sleep_time;
+
+  return RET_OK;
+}
+
+ret_t event_source_manager_set_min_sleep_time(event_source_manager_t* manager,
+                                              uint32_t sleep_time) {
+  return event_source_manager_set_min_sleep_time_us(manager, sleep_time * 1000);
 }

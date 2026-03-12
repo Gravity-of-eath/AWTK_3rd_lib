@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ui_loader interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -40,16 +40,16 @@ widget_t* ui_loader_load_widget(const char* name) {
 widget_t* ui_loader_load_widget_with_parent(const char* name, widget_t* parent) {
   widget_t* root = NULL;
   char rname[128] = {0};
-  char applet_name[TK_NAME_LEN + 1] = {0};
-  const asset_info_t* ui = NULL;
   ui_builder_t* builder = NULL;
-  ui_loader_t* loader = default_ui_loader();
+  const asset_info_t* ui = NULL;
+  char applet_name[MAX_PATH + 1] = {0};
   assets_manager_t* am = assets_manager();
+  ui_loader_t* loader = default_ui_loader();
   if (strncmp(name, STR_SCHEMA_FILE, strlen(STR_SCHEMA_FILE)) != 0 &&
       assets_managers_is_applet_assets_supported()) {
     const char* p = strchr(name, '.');
     if (p != NULL) {
-      tk_strncpy_s(applet_name, sizeof(applet_name) - 1, name, p - name);
+      tk_strncpy_s(applet_name, sizeof(applet_name), name, p - name);
       am = assets_managers_ref(applet_name);
       name = p + 1;
     }

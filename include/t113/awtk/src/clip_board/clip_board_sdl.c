@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  clip_board on SDL
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -97,6 +97,7 @@ clip_board_t* clip_board_sdl_create(void) {
   clip_board_sdl_t* cl = TKMEM_ZALLOC(clip_board_sdl_t);
   return_value_if_fail(cl != NULL, NULL);
 
+  str_init(&cl->str, 0);
   cl->clip_board.vt = &s_clip_board_sdl_vtable;
 
   return (clip_board_t*)cl;

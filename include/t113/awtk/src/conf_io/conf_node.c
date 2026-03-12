@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  conf node
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +21,9 @@
 
 #include "tkc/mem.h"
 #include "tkc/utils.h"
+#include "tkc/object_array.h"
 #include "conf_io/conf_node.h"
+#include "conf_node_obj.inc"
 
 static ret_t conf_node_destroy(conf_doc_t* doc, conf_node_t* node);
 
@@ -55,6 +57,7 @@ conf_doc_t* conf_doc_create(uint32_t prealloc_nodes_nr) {
     doc->prealloc_nodes = TKMEM_ALLOC(size);
     if (doc->prealloc_nodes == NULL) {
       TKMEM_FREE(doc);
+      return NULL;
     } else {
       memset(doc->prealloc_nodes, 0x00, size);
       doc->prealloc_nodes_nr = prealloc_nodes_nr;
@@ -133,6 +136,7 @@ static conf_node_t* conf_doc_dup_node_impl(conf_doc_t* doc, conf_node_t* node,
   return_value_if_fail(new_node != NULL, NULL);
 
   new_node->value_type = node->value_type;
+  new_node->node_type = node->node_type;
   if (node->value_type == CONF_NODE_VALUE_NODE) {
     conf_node_t* iter = conf_node_get_first_child(node);
     while (iter != NULL) {
@@ -183,8 +187,38 @@ ret_t conf_doc_set_node_prop(conf_doc_t* doc, conf_node_t* node, const char* nam
   }
 }
 
+static conf_node_obj_t* conf_doc_obj_array_find(conf_doc_t* doc, conf_node_t* node) {
+  conf_node_obj_t* ret = NULL;
+  uint32_t i = 0;
+  return_value_if_fail(doc != NULL && node != NULL, NULL);
+  return_value_if_fail(OBJECT_ARRAY(doc->obj_array) != NULL, NULL);
+
+  for (i = 0; i < OBJECT_ARRAY(doc->obj_array)->size; i++) {
+    value_t iter;
+    if (RET_OK == object_array_get(doc->obj_array, i, &iter)) {
+      conf_node_obj_t* iter_obj = CONF_NODE_OBJ(value_object(&iter));
+      assert(iter_obj != NULL);
+      if (iter_obj->node == node && iter_obj->doc == doc) {
+        ret = iter_obj;
+        break;
+      }
+    }
+  }
+  return ret;
+}
+
 ret_t conf_doc_destroy_node(conf_doc_t* doc, conf_node_t* node) {
   return_value_if_fail(doc != NULL && node != NULL, RET_BAD_PARAMS);
+
+  if (doc->use_extend_type) {
+    conf_node_obj_t* obj = conf_doc_obj_array_find(doc, node);
+    if (obj != NULL) {
+      value_t tmp;
+      obj->doc = NULL;
+      obj->node = NULL;
+      object_array_remove_value(doc->obj_array, value_set_object(&tmp, TK_OBJECT(obj)));
+    }
+  }
 
   if (!node->is_small_name) {
     TKMEM_FREE(node->name.str);
@@ -192,6 +226,10 @@ ret_t conf_doc_destroy_node(conf_doc_t* doc, conf_node_t* node) {
 
   if (node->value_type == CONF_NODE_VALUE_STRING) {
     TKMEM_FREE(node->value.str);
+  } else if (node->value_type == CONF_NODE_VALUE_WSTRING) {
+    TKMEM_FREE(node->value.wstr);
+  } else if (node->value_type == CONF_NODE_VALUE_BINARY) {
+    TKMEM_FREE(node->value.binary_data.data);
   }
 
   memset(node, 0x00, sizeof(*node));
@@ -419,16 +457,23 @@ conf_node_t* conf_node_find_child_by_index(conf_node_t* node, int32_t index) {
   conf_node_t* first_child = conf_node_get_first_child(node);
   return_value_if_fail(node != NULL, NULL);
 
+  if (first_child == NULL) {
+    return NULL;
+  }
+
   return conf_node_find_sibling_by_index(first_child, index);
 }
 
 ret_t conf_doc_destroy(conf_doc_t* doc) {
   return_value_if_fail(doc != NULL, RET_BAD_PARAMS);
 
-  conf_node_destroy(doc, doc->root);
-  doc->root = NULL;
+  if (doc->root != NULL) {
+    conf_node_destroy(doc, doc->root);
+    doc->root = NULL;
+  }
   tokenizer_deinit(&(doc->tokenizer));
   TKMEM_FREE(doc->prealloc_nodes);
+  TK_OBJECT_UNREF(doc->obj_array);
 
   TKMEM_FREE(doc);
 
@@ -440,7 +485,36 @@ ret_t conf_node_set_value(conf_node_t* node, const value_t* v) {
   return_value_if_fail(node->value_type != CONF_NODE_VALUE_NODE, RET_BAD_PARAMS);
 
   if (node->value_type == CONF_NODE_VALUE_STRING) {
+    if (v->type == VALUE_TYPE_STRING) {
+      const char* p = value_str(v);
+      if (node->value.str == p && p != NULL) {
+        return RET_OK;
+      }
+    }
     TKMEM_FREE(node->value.str);
+  } else if (node->value_type == CONF_NODE_VALUE_SMALL_STR) {
+    if (v->type == VALUE_TYPE_STRING) {
+      const char* p = value_str(v);
+      if (node->value.small_str == p && p != NULL) {
+        return RET_OK;
+      }
+    }
+  } else if (node->value_type == CONF_NODE_VALUE_WSTRING) {
+    if (v->type == VALUE_TYPE_WSTRING) {
+      const wchar_t* p = value_wstr(v);
+      if (node->value.wstr == p && p != NULL) {
+        return RET_OK;
+      }
+    }
+    TKMEM_FREE(node->value.wstr);
+  } else if (node->value_type == CONF_NODE_VALUE_BINARY) {
+    if (v->type == VALUE_TYPE_BINARY) {
+      if (node->value.binary_data.data == v->value.binary_data.data &&
+          node->value.binary_data.size == v->value.binary_data.size) {
+        return RET_OK;
+      }
+    }
+    TKMEM_FREE(node->value.binary_data.data);
   }
 
   switch (v->type) {
@@ -489,6 +563,11 @@ ret_t conf_node_set_value(conf_node_t* node, const value_t* v) {
       node->value.u64 = value_uint64(v);
       break;
     }
+    case VALUE_TYPE_POINTER: {
+      node->value_type = CONF_NODE_VALUE_POINTER;
+      node->value.u64 = tk_pointer_to_long(value_pointer(v));
+      break;
+    }
     case VALUE_TYPE_FLOAT:
     case VALUE_TYPE_FLOAT32: {
       node->value_type = CONF_NODE_VALUE_FLOAT32;
@@ -516,6 +595,32 @@ ret_t conf_node_set_value(conf_node_t* node, const value_t* v) {
         }
       }
       break;
+    }
+    case VALUE_TYPE_WSTRING: {
+      const wchar_t* str = value_wstr(v);
+      node->value_type = CONF_NODE_VALUE_WSTRING;
+      if (str == NULL) {
+        node->value.wstr = NULL;
+      } else {
+        node->value.wstr = tk_wstrdup(str);
+        return_value_if_fail(node->value.wstr != NULL, RET_OOM);
+      }
+      break;
+    }
+    case VALUE_TYPE_BINARY: {
+      binary_data_t* bdata = value_binary_data(v);
+      node->value_type = CONF_NODE_VALUE_BINARY;
+      if (bdata == NULL) {
+        node->value.binary_data.data = NULL;
+        node->value.binary_data.size = 0;
+      } else {
+        node->value.binary_data.data = tk_memdup(bdata->data, bdata->size);
+        return_value_if_fail(node->value.binary_data.data != NULL, RET_OOM);
+        node->value.binary_data.size = bdata->size;
+      }
+
+      node->node_type = CONF_NODE_ARRAY_UINT8;
+      return RET_OK;
     }
     default: {
       return RET_NOT_IMPL;
@@ -566,9 +671,12 @@ ret_t conf_node_get_value(conf_node_t* node, value_t* v) {
       value_set_uint64(v, node->value.u64);
       break;
     }
+    case CONF_NODE_VALUE_POINTER: {
+      value_set_pointer(v, tk_pointer_from_long(node->value.u64));
+      break;
+    }
     case CONF_NODE_VALUE_FLOAT32: {
       value_set_float32(v, node->value.f32);
-
       break;
     }
     case CONF_NODE_VALUE_DOUBLE: {
@@ -579,8 +687,16 @@ ret_t conf_node_get_value(conf_node_t* node, value_t* v) {
       value_set_str(v, node->value.str);
       break;
     }
+    case CONF_NODE_VALUE_WSTRING: {
+      value_set_wstr(v, node->value.wstr);
+      break;
+    }
     case CONF_NODE_VALUE_SMALL_STR: {
       value_set_str(v, node->value.small_str);
+      break;
+    }
+    case CONF_NODE_VALUE_BINARY: {
+      value_set_binary_data(v, node->value.binary_data.data, node->value.binary_data.size);
       break;
     }
     default: {
@@ -589,6 +705,60 @@ ret_t conf_node_get_value(conf_node_t* node, value_t* v) {
   }
 
   return RET_OK;
+}
+
+int32_t conf_node_get_value_int32(conf_node_t* node, int32_t defval) {
+  value_t v;
+  if (conf_node_get_value(node, &v) == RET_OK) {
+    return value_int32(&v);
+  } else {
+    return defval;
+  }
+}
+
+uint32_t conf_node_get_value_uint32(conf_node_t* node, uint32_t defval) {
+  value_t v;
+  if (conf_node_get_value(node, &v) == RET_OK) {
+    return value_uint32(&v);
+  } else {
+    return defval;
+  }
+}
+
+float conf_node_get_value_float(conf_node_t* node, float defval) {
+  value_t v;
+  if (conf_node_get_value(node, &v) == RET_OK) {
+    return value_float(&v);
+  } else {
+    return defval;
+  }
+}
+
+double conf_node_get_value_double(conf_node_t* node, double defval) {
+  value_t v;
+  if (conf_node_get_value(node, &v) == RET_OK) {
+    return value_double(&v);
+  } else {
+    return defval;
+  }
+}
+
+bool_t conf_node_get_value_bool(conf_node_t* node, bool_t defval) {
+  value_t v;
+  if (conf_node_get_value(node, &v) == RET_OK) {
+    return value_bool(&v);
+  } else {
+    return defval;
+  }
+}
+
+const char* conf_node_get_value_str(conf_node_t* node, const char* defval) {
+  value_t v;
+  if (conf_node_get_value(node, &v) == RET_OK) {
+    return value_str(&v);
+  } else {
+    return defval;
+  }
 }
 
 static tokenizer_t* conf_doc_get_tokenizer(conf_doc_t* doc, const char* path) {
@@ -677,27 +847,109 @@ conf_node_t* conf_doc_find_node(conf_doc_t* doc, conf_node_t* node, const char* 
   return NULL;
 }
 
-ret_t conf_doc_set(conf_doc_t* doc, const char* path, const value_t* v) {
-  conf_node_t* node = NULL;
+typedef struct _conf_doc_set_extend_type_object_prop_ctx_t {
+  conf_doc_t* doc;
+  const char* path;
+} conf_doc_set_extend_type_object_prop_ctx_t;
+
+static ret_t conf_doc_set_extend_type_object_prop(void* ctx, const void* data) {
+  ret_t ret = RET_OK;
+  conf_doc_set_extend_type_object_prop_ctx_t* actx = ctx;
+  const named_value_t* nv = (const named_value_t*)data;
+  str_t path;
+  str_init(&path, TK_NAME_LEN + 1);
+  str_append(&path, actx->path);
+  str_append(&path, actx->doc->tokenizer.separtor);
+  str_append(&path, nv->name);
+
+  ret = conf_doc_set(actx->doc, path.str, &nv->value);
+
+  str_reset(&path);
+  return ret;
+}
+
+static ret_t conf_doc_set_extend_type(conf_doc_t* doc, conf_node_t* node, const char* path,
+                                      const value_t* v) {
+  ret_t ret = RET_NOT_IMPL;
+  return_value_if_fail(doc != NULL && node != NULL && path != NULL && v != NULL, RET_BAD_PARAMS);
+
+  if (v->type == VALUE_TYPE_OBJECT) {
+    tk_object_t* obj = value_object(v);
+    if (tk_object_is_collection(obj)) {
+      node->node_type = CONF_NODE_ARRAY;
+    } else {
+      node->node_type = CONF_NODE_OBJECT;
+    }
+    node->value_type = CONF_NODE_VALUE_NODE;
+
+    conf_doc_set_extend_type_object_prop_ctx_t ctx = {.doc = doc, .path = path};
+    ret = tk_object_foreach_prop(obj, conf_doc_set_extend_type_object_prop, &ctx);
+  }
+
+  return ret;
+}
+
+ret_t conf_doc_set_ex(conf_doc_t* doc, conf_node_t* node, const char* path, const value_t* v) {
   return_value_if_fail(doc != NULL && path != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (doc->root == NULL) {
     doc->root = conf_doc_create_node(doc, CONF_NODE_ROOT_NAME);
   }
 
-  node = conf_doc_get_node(doc, path, TRUE);
+  node = conf_doc_find_node(doc, node, path, TRUE);
 
   if (node != NULL) {
-    return conf_node_set_value(node, v);
+    ret_t ret = conf_node_set_value(node, v);
+    if (RET_NOT_IMPL == ret && doc->use_extend_type) {
+      ret = conf_doc_set_extend_type(doc, node, path, v);
+    }
+    return ret;
   } else {
     return RET_OOM;
   }
+}
+
+ret_t conf_doc_set(conf_doc_t* doc, const char* path, const value_t* v) {
+  return_value_if_fail(doc != NULL && path != NULL && v != NULL, RET_BAD_PARAMS);
+
+  return conf_doc_set_ex(doc, doc->root, path, v);
 }
 
 ret_t conf_doc_get(conf_doc_t* doc, const char* path, value_t* v) {
   return_value_if_fail(doc != NULL && path != NULL && v != NULL, RET_BAD_PARAMS);
 
   return conf_doc_get_ex(doc, doc->root, path, v);
+}
+
+ret_t conf_doc_get_value_extend_type(conf_doc_t* doc, conf_node_t* node, value_t* v) {
+  return_value_if_fail(doc != NULL && node != NULL && v != NULL, RET_BAD_PARAMS);
+
+  switch (node->value_type) {
+    case CONF_NODE_VALUE_NODE: {
+      switch (node->node_type) {
+        case CONF_NODE_OBJECT:
+        case CONF_NODE_ARRAY: {
+          tk_object_t* obj = TK_OBJECT(conf_doc_obj_array_find(doc, node));
+          if (obj == NULL) {
+            value_t tmp;
+            obj = conf_node_obj_create(doc, node);
+            object_array_push(doc->obj_array, value_set_object(&tmp, obj));
+            tk_object_unref(obj);
+          }
+          value_set_object(v, obj);
+        } break;
+        default: {
+          return RET_NOT_IMPL;
+        }
+      }
+      break;
+    }
+    default: {
+      return RET_NOT_IMPL;
+    }
+  }
+
+  return RET_OK;
 }
 
 ret_t conf_doc_get_ex(conf_doc_t* doc, conf_node_t* node, const char* path, value_t* v) {
@@ -708,7 +960,11 @@ ret_t conf_doc_get_ex(conf_doc_t* doc, conf_node_t* node, const char* path, valu
   if (node != NULL) {
     const char* special = strchr(path, '#');
     if (special == NULL) {
-      return conf_node_get_value(node, v);
+      ret_t ret = conf_node_get_value(node, v);
+      if (RET_NOT_IMPL == ret && doc->use_extend_type) {
+        ret = conf_doc_get_value_extend_type(doc, node, v);
+      }
+      return ret;
     } else if (tk_str_eq(special, CONF_SPECIAL_ATTR_NAME)) {
       value_set_str(v, conf_node_get_name(node));
       return RET_OK;
@@ -926,4 +1182,209 @@ ret_t conf_doc_set_float(conf_doc_t* doc, const char* path, float v) {
 ret_t conf_doc_set_str(conf_doc_t* doc, const char* path, const char* v) {
   value_t vv;
   return conf_doc_set(doc, path, value_set_str(&vv, v));
+}
+
+ret_t conf_doc_use_extend_type(conf_doc_t* doc, bool_t use) {
+  ret_t ret = RET_OK;
+  return_value_if_fail(doc != NULL, RET_BAD_PARAMS);
+
+  if (doc->use_extend_type != use) {
+    doc->use_extend_type = use;
+    if (use) {
+      doc->obj_array = object_array_create();
+    } else {
+      TK_OBJECT_UNREF(doc->obj_array);
+    }
+  }
+
+  return ret;
+}
+
+ret_t conf_node_get_child_value(conf_node_t* node, const char* name, value_t* v) {
+  conf_node_t* child = conf_node_find_child(node, name);
+  return_value_if_fail(v != NULL, RET_BAD_PARAMS);
+
+  if (child == NULL) {
+    value_set_int(v, 0);
+    return RET_NOT_FOUND;
+  }
+
+  return conf_node_get_value(child, v);
+}
+
+ret_t conf_node_get_child_value_by_index(conf_node_t* node, uint32_t index, value_t* v) {
+  conf_node_t* child = conf_node_find_child_by_index(node, index);
+  return_value_if_fail(child != NULL && v != NULL, RET_BAD_PARAMS);
+
+  return conf_node_get_value(child, v);
+}
+
+int32_t conf_node_get_child_value_int32(conf_node_t* node, const char* name, int32_t defval) {
+  value_t v;
+  return_value_if_fail(node != NULL && name != NULL, defval);
+
+  if (conf_node_get_child_value(node, name, &v) == RET_OK) {
+    return value_int32(&v);
+  } else {
+    return defval;
+  }
+}
+
+uint32_t conf_node_get_child_value_uint32(conf_node_t* node, const char* name, uint32_t defval) {
+  value_t v;
+  return_value_if_fail(node != NULL && name != NULL, defval);
+
+  if (conf_node_get_child_value(node, name, &v) == RET_OK) {
+    return value_uint32(&v);
+  } else {
+    return defval;
+  }
+}
+
+float conf_node_get_child_value_float(conf_node_t* node, const char* name, float defval) {
+  value_t v;
+  return_value_if_fail(node != NULL && name != NULL, defval);
+
+  if (conf_node_get_child_value(node, name, &v) == RET_OK) {
+    return value_float32(&v);
+  } else {
+    return defval;
+  }
+}
+
+double conf_node_get_child_value_double(conf_node_t* node, const char* name, double defval) {
+  value_t v;
+  return_value_if_fail(node != NULL && name != NULL, defval);
+
+  if (conf_node_get_child_value(node, name, &v) == RET_OK) {
+    return value_double(&v);
+  } else {
+    return defval;
+  }
+}
+
+bool_t conf_node_get_child_value_bool(conf_node_t* node, const char* name, bool_t defval) {
+  value_t v;
+  return_value_if_fail(node != NULL && name != NULL, defval);
+
+  if (conf_node_get_child_value(node, name, &v) == RET_OK) {
+    return value_bool(&v);
+  } else {
+    return defval;
+  }
+}
+
+const char* conf_node_get_child_value_str(conf_node_t* node, const char* name, const char* defval) {
+  value_t v;
+  return_value_if_fail(node != NULL && name != NULL, defval);
+
+  if (conf_node_get_child_value(node, name, &v) == RET_OK) {
+    return value_str(&v);
+  } else {
+    return defval;
+  }
+}
+
+static ret_t conf_node_foreach_sibling(const char* root, conf_node_t* iter,
+                                       conf_doc_on_visit_t on_visit, void* ctx) {
+  value_t v;
+  bool_t is_array;
+  int32_t index = 0;
+  char path[MAX_PATH + 1];
+
+  if (iter == NULL) {
+    return RET_OK;
+  }
+
+  is_array = iter->parent->node_type == CONF_NODE_ARRAY;
+  if (root == NULL) {
+    root = "";
+  }
+
+  while (iter != NULL) {
+    if (is_array) {
+      tk_snprintf(path, MAX_PATH, "%s[%d]", root, index);
+      index++;
+    } else {
+      tk_snprintf(path, MAX_PATH, "%s%s", root, conf_node_get_name(iter));
+    }
+
+    if (iter->node_type == CONF_NODE_SIMPLE) {
+      return_value_if_fail(conf_node_get_value(iter, &v) == RET_OK, RET_BAD_PARAMS);
+
+      on_visit(ctx, path, &v);
+    } else {
+      tk_str_append(path, MAX_PATH, ".");
+      conf_node_foreach_sibling(path, conf_node_get_first_child(iter), on_visit, ctx);
+    }
+
+    iter = iter->next;
+  }
+  return RET_OK;
+}
+
+ret_t conf_doc_foreach(conf_doc_t* doc, conf_doc_on_visit_t on_visit, void* ctx) {
+  return_value_if_fail(doc && on_visit, RET_BAD_PARAMS);
+  return conf_node_foreach_sibling(NULL, conf_node_get_first_child(doc->root), on_visit, ctx);
+}
+
+static ret_t conf_doc_save_str(const char* p, str_t* str, char comment_char) {
+  return_value_if_fail(p != NULL, RET_BAD_PARAMS);
+
+  while (*p) {
+    char c = str_escape_char(*p);
+    if (c != *p || *p == comment_char || *p == '\\' || *p == '\n') {
+      return_value_if_fail(str_append_char(str, '\\') == RET_OK, RET_OOM);
+    }
+    return_value_if_fail(str_append_char(str, c) == RET_OK, RET_OOM);
+    p++;
+  }
+
+  return RET_OK;
+}
+
+ret_t conf_node_save_value(str_t* str, const value_t* v, char comment_char) {
+  char buff[64] = {0};
+  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
+
+  switch (v->type) {
+    case VALUE_TYPE_STRING: {
+      const char* p = value_str(v);
+      return_value_if_fail(p != NULL, RET_BAD_PARAMS);
+      return conf_doc_save_str(p, str, comment_char);
+    }
+    case VALUE_TYPE_WSTRING: {
+      str_t s;
+      ret_t ret = RET_OK;
+
+      str_init(&s, 0);
+      str_from_wstr(&s, value_wstr(v));
+      ret = conf_doc_save_str(s.str, str, comment_char);
+      str_reset(&s);
+      return ret;
+    }
+    case VALUE_TYPE_FLOAT32: {
+      tk_snprintf(buff, sizeof(buff) - 1, "%f", value_float32(v));
+      break;
+    }
+    case VALUE_TYPE_FLOAT:
+    case VALUE_TYPE_DOUBLE: {
+      tk_snprintf(buff, sizeof(buff) - 1, "%lf", value_double(v));
+      break;
+    }
+    case VALUE_TYPE_INT64: {
+      tk_snprintf(buff, sizeof(buff) - 1, "%lld", value_int64(v));
+      break;
+    }
+    case VALUE_TYPE_UINT64: {
+      tk_snprintf(buff, sizeof(buff) - 1, "%llu", value_uint64(v));
+      break;
+    }
+    default: {
+      tk_snprintf(buff, sizeof(buff) - 1, "%d", value_int(v));
+      break;
+    }
+  }
+
+  return str_append(str, buff);
 }

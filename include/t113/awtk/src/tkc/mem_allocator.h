@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mem_allocator
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -61,7 +61,7 @@ struct _mem_allocator_t {
  *
  * @param {mem_allocator_t*} allocator allocator对象。
  * @param {uint32_t} size 内存的大小。
- * @param {const char*}  分配内存的函数(用于调试)。
+ * @param {const char*} func 分配内存的函数(用于调试)。
  * @param {uint32_t} line 分配内存的行数(用于调试)。
  *
  * @return {void*} 成功返回内存块的地址，失败返回NULL。
@@ -82,7 +82,7 @@ static inline void* mem_allocator_alloc(mem_allocator_t* allocator, uint32_t siz
  * @param {mem_allocator_t*} allocator allocator对象。
  * @param {void*} ptr 原来内存的地址。
  * @param {uint32_t} size 内存的大小。
- * @param {const char*} 分配内存的函数(用于调试)。
+ * @param {const char*} func 分配内存的函数(用于调试)。
  * @param {uint32_t} line 分配内存的行数(用于调试)。
  *
  * @return {void*} 成功返回内存块的地址，失败返回NULL。
@@ -103,7 +103,7 @@ static inline void* mem_allocator_realloc(mem_allocator_t* allocator, void* ptr,
  * @param {mem_allocator_t*} allocator allocator对象。
  * @param {void*} ptr 内存的地址。
  *
- * @return {void*} 成功返回内存块的地址，失败返回NULL。
+ * @return {void} 无。
  */
 static inline void mem_allocator_free(mem_allocator_t* allocator, void* ptr) {
   return_if_fail(allocator != NULL && allocator->vt != NULL && allocator->vt->free != NULL);
@@ -144,6 +144,22 @@ static inline ret_t mem_allocator_destroy(mem_allocator_t* allocator) {
 }
 
 #define MEM_ALLOCATOR(allocator) ((mem_allocator_t*)(allocator))
+
+#define MEM_ALLOCATOR_ALLOC(allocator, size) \
+  mem_allocator_alloc(MEM_ALLOCATOR(allocator), size, __FUNCTION__, __LINE__)
+
+#define MEM_ALLOCATOR_REALLOC(allocator, ptr, size) \
+  mem_allocator_realloc(MEM_ALLOCATOR(allocator), ptr, size, __FUNCTION__, __LINE__)
+
+#ifdef WITH_CPPCHECK
+#define MEM_ALLOCATOR_FREE(allocator, ptr) mem_allocator_free(MEM_ALLOCATOR(allocator), ptr)
+#else
+#define MEM_ALLOCATOR_FREE(allocator, ptr)             \
+  do {                                                 \
+    mem_allocator_free(MEM_ALLOCATOR(allocator), ptr); \
+    ptr = NULL;                                        \
+  } while (0)
+#endif /*WITH_CPPCHECK*/
 
 END_C_DECLS
 

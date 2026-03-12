@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  hardware 2d
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * this program is distributed in the hope that it will be useful,
  * but without any warranty; without even the implied warranty of
@@ -73,7 +73,7 @@ ret_t g2d_copy_image(bitmap_t* fb, bitmap_t* img, const rect_t* src, xy_t dx, xy
 ret_t g2d_rotate_image(bitmap_t* fb, bitmap_t* img, const rect_t* src, lcd_orientation_t o);
 
 /**
- * @method image_rotate_ex
+ * @method g2d_rotate_image_ex
  * @export none
  * 把图片指定的区域进行旋转。
  * @param {bitmap_t*} dst 目标图片对象。
@@ -114,13 +114,29 @@ ret_t g2d_blend_image(bitmap_t* fb, bitmap_t* img, const rect_t* dst, const rect
  * @param {bitmap_t*} src 源图片对象。
  * @param {const rectf_t*} dst_r 目的区域。（坐标原点为旋转后的坐标系原点，并非是 dst 的左上角）
  * @param {const rectf_t*} src_r 源区域。
- * @param {uint8_t} global_alpha 全局alpha。
+ * @param {uint8_t} alpha 全局alpha。
  * @param {lcd_orientation_t} o 旋转角度(一般支持90度即可，旋转方向为逆时针)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败，返回失败则上层用软件实现。
  */
 ret_t g2d_blend_image_rotate(bitmap_t* dst, bitmap_t* src, const rectf_t* dst_r,
                              const rectf_t* src_r, uint8_t alpha, lcd_orientation_t o);
+
+/**
+ * @method tk_g2d_init
+ * @export none
+ * 初始化g2d模块。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t tk_g2d_init(void);
+
+/**
+ * @method tk_g2d_deinit
+ * @export none
+ * 反初始化g2d模块。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t tk_g2d_deinit(void);
 
 END_C_DECLS
 

@@ -353,22 +353,33 @@ static ret_t line_chart_on_destroy(widget_t *widget)
 
 static void draw_guide_line(line_chart_t *line_chart, vgcanvas_t *vgc)
 {
-
-  vgcanvas_set_stroke_color(vgc, color_parse(line_chart->guide_line_color));
+  // 使用 vgcanvas_set_stroke_color_str 代替 color_parse，避免颜色解析问题
+  vgcanvas_set_stroke_color_str(vgc, line_chart->guide_line_color);
+  vgcanvas_set_line_width(vgc, 1);
   int32_t width_dest = line_chart->guide_line_percent * line_chart->widget.w;
+
+  // 第一条横线（顶部）
+  vgcanvas_begin_path(vgc);
   vgcanvas_move_to(vgc, 0, line_chart->widget.h * line_chart->guide_line_offset);
   vgcanvas_line_to(vgc, width_dest, line_chart->widget.h * line_chart->guide_line_offset);
+  vgcanvas_stroke(vgc);
 
+  // 第二条横线（底部）
+  vgcanvas_begin_path(vgc);
   vgcanvas_move_to(vgc, 0, line_chart->widget.h * (1 - line_chart->guide_line_offset));
   vgcanvas_line_to(vgc, width_dest, line_chart->widget.h * (1 - line_chart->guide_line_offset));
+  vgcanvas_stroke(vgc);
+
+  // 中间的虚线
   float_t x = 0;
   for (x = 0; x < width_dest; x += 5)
   {
+    vgcanvas_begin_path(vgc);
     vgcanvas_move_to(vgc, x, line_chart->widget.h * 0.5f);
     x += 5;
     vgcanvas_line_to(vgc, x, line_chart->widget.h * 0.5f);
+    vgcanvas_stroke(vgc);
   }
-  vgcanvas_stroke(vgc);
 }
 
 static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
@@ -461,96 +472,43 @@ static void draw_chart_line(line_chart_t *line_chart, vgcanvas_t *wvgc)
 
 static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
 {
+  printf("line_chart draw_chart_spline_curve()\n");
   if (float_queue_empty(line_chart->queue))
   {
-    // printf("error  draw_chart_line float_queue_size=%d\n", float_queue_size(line_chart->queue));
     return;
   }
 
-  canvas_t *oc = canvas_offline_create(line_chart->widget.w, line_chart->widget.h, BITMAP_FMT_RGBA8888);
-  vgcanvas_t *vgc = canvas_get_vgcanvas(oc);
-  canvas_offline_begin_draw(oc);
-  vgcanvas_clear_rect(vgc, 0, 0, line_chart->widget.w, line_chart->widget.h, color_init(255, 255, 255, 0));
+  // 不使用离线画布，直接在主画布上绘制曲线
+  vgcanvas_t *vgc = wvgc;
 
   vgcanvas_set_line_width(vgc, line_chart->line_width);
-
-  if (line_chart->DEBUG)
-  {
-
-    vgcanvas_set_stroke_color_str(vgc, "#0000FFFF");
-    vgcanvas_rect(vgc, 0, 0, line_chart->widget.w, line_chart->widget.h);
-    vgcanvas_stroke(vgc);
-  }
-  // color_t fgColor = color_parse(line_chart->fg_color);
-  // vgcanvas_set_stroke_color(vgc, fgColor);
   vgcanvas_set_line_cap(vgc, "round");
+
+  // 计算数据范围
   float_t min = float_queue_at(line_chart->queue, 0);
   float_t max = float_queue_at(line_chart->queue, 0);
   float_t step = line_chart->widget.w / (line_chart->max_point * 1.0f);
-  for (int32_t i = 1; i < float_queue_size(line_chart->queue); i++)
+  int32_t queue_size = float_queue_size(line_chart->queue);
+
+  for (int32_t i = 1; i < queue_size; i++)
   {
     float_t value = float_queue_at(line_chart->queue, i);
-    if (value < min)
-    {
-      min = value;
-    }
-    if (value > max)
-    {
-      max = value;
-    }
+    if (value < min) min = value;
+    if (value > max) max = value;
   }
 
-  
-
-
-  // printf("line_chart -->> max=%f  min =%f\n", max, min);
   float_t scale_guild = max - min;
+  if (scale_guild == 0) {
+    return;  // 所有数据点相同，无法绘制
+  }
+
   int32_t useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
   int32_t offset_y = line_chart->widget.h * line_chart->guide_line_offset / 2;
-  
-  // 绘制参考线
-  // 1. 在 value 为 0 的位置，画一条白色横实线
-  if (scale_guild > 0) // 避免除零错误
-  {
-    float_t zero_ratio = (0 - min) / scale_guild;
-    if (zero_ratio >= 0 && zero_ratio <= 1) // 确保 0 值在 min 和 max 范围内
-    {
-      int32_t zero_y = ((1.0f - zero_ratio) * useable_h) + offset_y;
-      vgcanvas_set_stroke_color_str(vgc, "#CCCCCCFF");
-      vgcanvas_set_line_width(vgc, 1);
-      vgcanvas_begin_path(vgc);
-      vgcanvas_move_to(vgc, 0, zero_y);
-      vgcanvas_line_to(vgc, line_chart->widget.w, zero_y);
-      vgcanvas_stroke(vgc);
-    }
-  }
-  
-  // 2. 在 min 和 max 的位置，各画一条灰色横虚线
-  // 绘制 min 位置的虚线
-  int32_t min_y = useable_h + offset_y;
-  vgcanvas_set_stroke_color_str(vgc, "#606060FF");
-  vgcanvas_set_line_width(vgc, 1);
-  // 设置虚线样式（假设支持虚线）
-  // 如果 vgcanvas 支持虚线设置
-  vgcanvas_begin_path(vgc);
-  vgcanvas_move_to(vgc, 0, min_y);
-  vgcanvas_line_to(vgc, line_chart->widget.w, min_y);
-  vgcanvas_stroke(vgc);
-  
-  // 绘制 max 位置的虚线
-  int32_t max_y = offset_y;
-  vgcanvas_begin_path(vgc);
-  vgcanvas_move_to(vgc, 0, max_y);
-  vgcanvas_line_to(vgc, line_chart->widget.w, max_y);
-  vgcanvas_stroke(vgc);
-  
-  vgcanvas_set_line_width(vgc, line_chart->line_width);
 
   // 计算所有数据点的画布坐标
-  int32_t queue_size = float_queue_size(line_chart->queue);
   float *x_coords = (float *)malloc(queue_size * sizeof(float));
   float *y_coords = (float *)malloc(queue_size * sizeof(float));
-  
+
   if (x_coords && y_coords)
   {
     for (int32_t i = 0; i < queue_size; i++)
@@ -560,20 +518,20 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
       x_coords[i] = step * i;
       y_coords[i] = ((1.0f - ratio) * useable_h) + offset_y;
     }
-    
+
+    // 开始绘制曲线
     vgcanvas_begin_path(vgc);
     vgcanvas_move_to(vgc, x_coords[0], y_coords[0]);
     vgcanvas_set_stroke_color_str(vgc, line_chart->fg_color);
-    
-    // 使用画布坐标计算 Catmull-Rom 曲线
-    int segments = 10; // 增加线段数量以获得更平滑的曲线
-    
+
+    // 使用 Catmull-Rom 曲线
+    int segments = 10;
+
     for (int32_t i = 0; i < queue_size - 1; i++)
     {
-      // 为每个线段计算控制点
       float x0, x1, x2, x3;
       float y0, y1, y2, y3;
-      
+
       // 处理边界情况
       if (i == 0)
       {
@@ -588,8 +546,8 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
       }
       else if (i == queue_size - 2)
       {
-        x0 = (i - 1 >= 0) ? x_coords[i - 1] : x_coords[i];
-        y0 = (i - 1 >= 0) ? y_coords[i - 1] : y_coords[i];
+        x0 = x_coords[i - 1];
+        y0 = y_coords[i - 1];
         x1 = x_coords[i];
         y1 = y_coords[i];
         x2 = x_coords[i + 1];
@@ -608,8 +566,8 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
         x3 = x_coords[i + 2];
         y3 = y_coords[i + 2];
       }
-      
-      // 生成线段
+
+      // 生成平滑曲线段
       for (int j = 1; j <= segments; j++)
       {
         float t = (float)j / segments;
@@ -623,32 +581,21 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
         vgcanvas_line_to(vgc, segment_x, segment_y);
       }
     }
-    
+
     vgcanvas_stroke(vgc);
-    
-    // 绘制 queue 中所有点的位置，用白色实心圆表示
+
+    // 绘制数据点的白色小圆点（半径为2）
     vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
-    float point_radius = line_chart->line_width; // 圆的半径
     for (int32_t i = 0; i < queue_size; i++)
     {
-      float x = x_coords[i];
-      float y = y_coords[i];
-      // 绘制实心圆
       vgcanvas_begin_path(vgc);
-      vgcanvas_ellipse(vgc, x, y, line_chart->line_width, line_chart->line_width);
+      vgcanvas_arc(vgc, x_coords[i], y_coords[i], 2, 0, M_PI * 2, FALSE);
       vgcanvas_fill(vgc);
     }
-    
+
     free(x_coords);
     free(y_coords);
   }
-  
-  canvas_offline_end_draw(oc);
-  bitmap_t *bmp = canvas_offline_get_bitmap(oc);
-  vgcanvas_draw_image(wvgc, bmp, 0, 0, bmp->w, bmp->h, 0, 0, line_chart->widget.w, line_chart->widget.h);
-  // printf("canvas_draw_image bmp->w=%d, bmp->h=%d  line_chart->widget.w=%d, line_chart->widget.h=%d \n", bmp->w, bmp->h, line_chart->widget.w, line_chart->widget.h);
-  canvas_offline_destroy(oc);
-  // widget_invalidate(&line_chart->widget, NULL);
 }
 
 static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas_t *wvgc)
@@ -788,7 +735,8 @@ static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
   vgcanvas_save(vgc);
   vgcanvas_translate(vgc, c->ox, c->oy);
   vgcanvas_set_antialias(vgc, TRUE);
-  draw_guide_line(line_chart, vgc);
+
+  // 先绘制曲线（使用离线画布），再绘制参考线，避免参考线被覆盖
   if (line_chart->mutex)
   {
     tk_mutex_lock(line_chart->mutex);
@@ -808,15 +756,18 @@ static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
     else {
       printf("line_chart_on_paint_self error draw_type=%d\n", line_chart->draw_type);
     }
-    
+
   }
   if (line_chart->mutex)
   {
     tk_mutex_unlock(line_chart->mutex);
   }
 
+  // 最后绘制参考线，确保在最上层显示
+  draw_guide_line(line_chart, vgc);
+
   vgcanvas_restore(vgc);
-  widget_invalidate(widget, NULL);
+  // widget_invalidate(widget, NULL);
   return RET_OK;
 }
 
@@ -905,9 +856,18 @@ TK_DECL_VTABLE(line_chart) = {.size = sizeof(line_chart_t),
 
 widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)
 {
+  printf("line_chart_create()  1111111   parent:%s \n", parent->name);
   widget_t *widget = widget_create(parent, TK_REF_VTABLE(line_chart), x, y, w, h);
+  if(widget == NULL) {
+    printf("line_chart_create()  eeeeeee   widget == NULL\n");
+  }else {
+    printf("line_chart_create()  ddddddd   widget: %s\n", widget->name);
+  }
+  printf("line_chart_create()  2222222\n");
   line_chart_t *line_chart = LINE_CHART(widget);
   return_value_if_fail(line_chart != NULL, NULL);
+
+  printf("line_chart_create()  2222222   addr  %p\n",line_chart);
 
   line_chart->fg_color = tk_strdup("#5555FFFF");
   line_chart->secd_color = tk_strdup("#999999FF");
@@ -929,6 +889,8 @@ widget_t *line_chart_create(widget_t *parent, xy_t x, xy_t y, wh_t w, wh_t h)
   line_chart->min_value_limit = 0;
   line_chart->max_value_limit = 0;
   line_chart->mutex = tk_mutex_create();
+  
+  printf("line_chart_create()  3333333\n");
   return widget;
 }
 

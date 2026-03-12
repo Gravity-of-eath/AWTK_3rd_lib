@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  popup
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,6 +28,7 @@
 #include "base/widget.h"
 #include "base/layout.h"
 #include "widgets/popup.h"
+#include "base/widget_vtable.h"
 #include "base/image_manager.h"
 #include "base/window_manager.h"
 
@@ -68,13 +69,21 @@ static ret_t popup_set_prop(widget_t* widget, const char* name, const value_t* v
 }
 
 static ret_t popup_idle_window_close(const idle_info_t* idle) {
+  bool_t find_kb = FALSE;
   widget_t* widget = WIDGET(idle->ctx);
   widget_t* win = widget->parent;
   return_value_if_fail(win && widget != NULL, RET_REMOVE);
 
   widget_ungrab(win, widget);
+  WIDGET_FOR_EACH_CHILD_BEGIN_R(win, iter, i)
+  if (iter->visible && widget_is_keyboard(iter)) {
+    find_kb = TRUE;
+  } else if (iter == widget) {
+    break;
+  }
+  WIDGET_FOR_EACH_CHILD_END();
 
-  if (window_manager_is_animating(win)) {
+  if (window_manager_is_animating(win) && (!widget_has_highlighter(widget) || !find_kb)) {
     window_close_force(widget);
   } else {
     window_close(widget);
@@ -132,7 +141,26 @@ static ret_t popup_on_event(widget_t* widget, event_t* e) {
           widget_add_idle(widget, popup_idle_window_close);
         }
       }
+      break;
+    }
+    case EVT_CONTEXT_MENU: {
+      if (window_base->stage != WINDOW_STAGE_CLOSED) {
+        bool_t close_window = FALSE;
+        pointer_event_t* evt = (pointer_event_t*)e;
 
+        if (popup->close_when_click) {
+          close_window = TRUE;
+        } else if (popup->close_when_click_outside) {
+          rect_t r = rect_init(widget->x, widget->y, widget->w, widget->h);
+          if (!rect_contains(&r, evt->x, evt->y)) {
+            close_window = TRUE;
+          }
+        }
+
+        if (close_window) {
+          widget_add_idle(widget, popup_idle_window_close);
+        }
+      }
       break;
     }
     default:
@@ -161,7 +189,7 @@ static const char* const s_popup_properties[] = {WIDGET_PROP_CLOSE_WHEN_CLICK,
 
 static ret_t popup_on_copy(widget_t* widget, widget_t* other) {
   window_base_on_copy(widget, other);
-  return widget_copy_props(widget, other, s_popup_properties);
+  return widget_on_copy_recursive(widget, other);
 }
 
 TK_DECL_VTABLE(popup) = {.size = sizeof(popup_t),

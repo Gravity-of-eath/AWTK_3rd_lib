@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  action_queue
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,7 +39,7 @@ typedef struct _action_queue_t {
  * @annotation ["constructor"]
  * 创建action_queue对象。
  *
- * @param {uint32_t} capacity action的容量。
+ * @param {uint16_t} capacity action的容量。
  *
  * @return {action_queue_t*} action_queue对象。
  */

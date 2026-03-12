@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  reference count object
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,7 +23,10 @@
 #include "tkc/utils.h"
 #include "tkc/event.h"
 #include "tkc/object.h"
+#ifndef WITHOUT_FSCRIPT
 #include "tkc/fscript.h"
+#endif /*WITHOUT_FSCRIPT*/
+
 #include "tkc/named_value.h"
 
 ret_t tk_object_set_name(tk_object_t* obj, const char* name) {
@@ -290,9 +293,8 @@ ret_t tk_object_set_prop_pointer_ex(tk_object_t* obj, const char* name, void* va
                                     tk_destroy_t destroy) {
   value_t v;
   ret_t ret = RET_OK;
-  value_set_pointer_ex(&v, value, destroy);
-
-  ret = tk_object_set_prop(obj, name, &v);
+  value_set_int(&v, 0);
+  ret = tk_object_set_prop(obj, name, value_set_pointer_ex(&v, value, destroy));
   value_reset(&v);
 
   return ret;
@@ -300,9 +302,8 @@ ret_t tk_object_set_prop_pointer_ex(tk_object_t* obj, const char* name, void* va
 
 ret_t tk_object_set_prop_object(tk_object_t* obj, const char* name, tk_object_t* value) {
   value_t v;
-  value_set_object(&v, value);
 
-  return tk_object_set_prop(obj, name, &v);
+  return tk_object_set_prop(obj, name, value_set_object(&v, value));
 }
 
 ret_t tk_object_set_prop_int(tk_object_t* obj, const char* name, int32_t value) {
@@ -343,6 +344,10 @@ ret_t tk_object_remove_prop(tk_object_t* obj, const char* name) {
     ret = obj->vt->remove_prop(obj, name);
   }
 
+  if (RET_OK == ret) {
+    tk_object_notify_changed(obj);
+  }
+
   return ret;
 }
 
@@ -361,16 +366,29 @@ ret_t tk_object_foreach_prop(tk_object_t* obj, tk_visit_t on_prop, void* ctx) {
   return ret;
 }
 
-int tk_object_compare(tk_object_t* obj, tk_object_t* other) {
+int32_t tk_object_compare(tk_object_t* obj, tk_object_t* other) {
   int32_t ret = -1;
   return_value_if_fail(obj != NULL && obj->vt != NULL && obj->ref_count >= 0, -1);
   return_value_if_fail(other != NULL && other->vt != NULL && other->ref_count >= 0, -1);
 
-  if (obj->vt->compare != NULL) {
-    ret = obj->vt->compare(obj, other);
+  ret = pointer_compare(obj, other);
+
+  if (ret != 0) {
+    if (obj->vt->compare != NULL) {
+      ret = obj->vt->compare(obj, other);
+    }
   }
 
   return ret;
+}
+
+int32_t tk_object_compare_name_without_nullptr(tk_object_t* obj, tk_object_t* other) {
+  return_value_if_fail(obj != NULL && other != NULL, -1);
+  if (obj->name == NULL && other->name == NULL) {
+    return pointer_compare(obj, other);
+  } else {
+    return tk_str_cmp(obj->name, other->name);
+  }
 }
 
 bool_t tk_object_can_exec(tk_object_t* obj, const char* name, const char* args) {
@@ -392,10 +410,21 @@ bool_t tk_object_can_exec(tk_object_t* obj, const char* name, const char* args) 
 }
 
 ret_t tk_object_exec(tk_object_t* obj, const char* name, const char* args) {
+  ret_t ret = RET_OK;
+  value_t result;
+  value_set_int(&result, 0);
+  ret = tk_object_exec_ex(obj, name, args, &result);
+  value_reset(&result);
+  return ret;
+}
+
+ret_t tk_object_exec_ex(tk_object_t* obj, const char* name, const char* args, value_t* result) {
   cmd_exec_event_t e;
   event_t* evt = NULL;
+  bool_t not_found = TRUE;
   ret_t ret = RET_NOT_IMPL;
   return_value_if_fail(name != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(result != NULL, RET_BAD_PARAMS);
   return_value_if_fail(obj != NULL && obj->vt != NULL && obj->ref_count >= 0, RET_BAD_PARAMS);
 
   if (emitter_dispatch(EMITTER(obj), cmd_exec_event_init(&e, EVT_CMD_WILL_EXEC, name, args)) !=
@@ -403,8 +432,16 @@ ret_t tk_object_exec(tk_object_t* obj, const char* name, const char* args) {
     return RET_FAIL;
   }
 
-  if (obj->vt->exec != NULL) {
-    ret = obj->vt->exec(obj, name, args);
+  if (obj->vt->exec_ex != NULL) {
+    ret = obj->vt->exec_ex(obj, name, args, result);
+    not_found = (RET_NOT_FOUND == ret || RET_NOT_IMPL == ret);
+  }
+
+  if (not_found) {
+    if (obj->vt->exec != NULL) {
+      ret = obj->vt->exec(obj, name, args);
+    }
+    value_set_int(result, ret);
   }
 
   evt = cmd_exec_event_init(&e, EVT_CMD_EXECED, name, args);
@@ -461,11 +498,26 @@ static ret_t on_copy_on_prop(void* ctx, const void* data) {
   return RET_OK;
 }
 
-ret_t tk_object_copy_props(tk_object_t* obj, tk_object_t* src, bool_t overwrite) {
+static inline ret_t tk_object_copy_props_default(tk_object_t* obj, tk_object_t* src,
+                                                 bool_t overwrite) {
   copy_ctx_t ctx = {overwrite, obj};
-  return_value_if_fail(obj != NULL && src != NULL, RET_BAD_PARAMS);
-
   return tk_object_foreach_prop(src, on_copy_on_prop, &ctx);
+}
+
+ret_t tk_object_copy_props(tk_object_t* obj, tk_object_t* src, bool_t overwrite) {
+  ret_t ret = RET_NOT_IMPL;
+  return_value_if_fail(obj != NULL && src != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(obj->vt != NULL, RET_BAD_PARAMS);
+
+  if (obj->vt->copy_props != NULL) {
+    ret = obj->vt->copy_props(obj, src, overwrite);
+  }
+
+  if (RET_NOT_IMPL == ret) {
+    ret = tk_object_copy_props_default(obj, src, overwrite);
+  }
+
+  return ret;
 }
 
 #ifndef WITHOUT_FSCRIPT
@@ -824,6 +876,101 @@ uint64_t tk_object_get_prop_uint64(tk_object_t* obj, const char* name, uint64_t 
   }
 }
 
+ret_t tk_object_clear_props(tk_object_t* obj) {
+  ret_t ret = RET_NOT_IMPL;
+  return_value_if_fail(obj != NULL && obj->vt != NULL, RET_BAD_PARAMS);
+
+  if (obj->vt->clear_props != NULL) {
+    ret = obj->vt->clear_props(obj);
+  }
+
+  if (RET_OK == ret) {
+    tk_object_notify_changed(obj);
+  }
+
+  return ret;
+}
+
+typedef struct _find_prop_default_ctx_t {
+  tk_compare_t cmp;
+  const void* data;
+  value_t* value;
+} find_prop_default_ctx_t;
+
+static ret_t tk_object_find_prop_default_on_visit(void* ctx, const void* data) {
+  const named_value_t* nv = (const named_value_t*)data;
+  find_prop_default_ctx_t* actx = (find_prop_default_ctx_t*)(ctx);
+  if (0 == actx->cmp(data, actx->data)) {
+    actx->value = (value_t*)&nv->value;
+    return RET_FOUND;
+  }
+  return RET_OK;
+}
+
+static value_t* tk_object_find_prop_default(tk_object_t* obj, tk_compare_t cmp, const void* data) {
+  find_prop_default_ctx_t actx;
+  actx.cmp = cmp;
+  actx.data = data;
+  actx.value = NULL;
+  if (RET_FOUND == tk_object_foreach_prop(obj, tk_object_find_prop_default_on_visit, &actx)) {
+    return actx.value;
+  }
+  return NULL;
+}
+
+value_t* tk_object_find_prop(tk_object_t* obj, tk_compare_t cmp, const void* data) {
+  value_t* ret = NULL;
+  return_value_if_fail(obj != NULL && obj->vt != NULL, NULL);
+  return_value_if_fail(cmp != NULL, NULL);
+
+  if (obj->vt->find_prop != NULL) {
+    ret = obj->vt->find_prop(obj, cmp, data);
+  } else {
+    ret = tk_object_find_prop_default(obj, cmp, data);
+  }
+
+  return ret;
+}
+
+typedef struct _find_props_default_ctx_t {
+  tk_compare_t cmp;
+  const void* data;
+  darray_t* matched;
+} find_props_default_ctx_t;
+
+static ret_t tk_object_find_props_default_on_visit(void* ctx, const void* data) {
+  const named_value_t* nv = (const named_value_t*)data;
+  find_props_default_ctx_t* actx = (find_props_default_ctx_t*)(ctx);
+  if (0 == actx->cmp(data, actx->data)) {
+    return darray_push(actx->matched, (value_t*)&nv->value);
+  }
+  return RET_OK;
+}
+
+static ret_t tk_object_find_props_default(tk_object_t* obj, tk_compare_t cmp, const void* data,
+                                          darray_t* matched) {
+  find_props_default_ctx_t actx;
+  actx.cmp = cmp;
+  actx.data = data;
+  actx.matched = matched;
+  return tk_object_foreach_prop(obj, tk_object_find_props_default_on_visit, &actx);
+}
+
+ret_t tk_object_find_props(tk_object_t* obj, tk_compare_t cmp, const void* data,
+                           darray_t* matched) {
+  ret_t ret = RET_OK;
+  return_value_if_fail(obj != NULL && obj->vt != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(cmp != NULL && matched != NULL, RET_BAD_PARAMS);
+
+  if (obj->vt->find_props != NULL) {
+    ret = obj->vt->find_props(obj, cmp, data, matched);
+  } else {
+    ret = tk_object_find_props_default(obj, cmp, data, matched);
+  }
+
+  return ret;
+}
+
 tk_object_t* tk_object_get_child_object(tk_object_t* obj, const char* path,
                                         const char** next_path) {
   return_value_if_fail(obj != NULL && path != NULL && next_path != NULL, NULL);
@@ -853,11 +1000,13 @@ typedef struct _json_info_t {
   str_t* json;
   uint32_t indent;
   uint32_t level;
-  bool_t oneline;
   uint32_t index;
+  bool_t oneline : 1;
+  bool_t is_array : 1;
 } json_info_t;
 
 static ret_t to_json(void* ctx, const void* data) {
+  char buff[64] = {0};
   json_info_t* info = (json_info_t*)ctx;
   named_value_t* nv = (named_value_t*)data;
   str_t* s = info->json;
@@ -865,11 +1014,11 @@ static ret_t to_json(void* ctx, const void* data) {
   bool_t oneline = info->oneline;
 
   if (info->index > 0) {
-    str_append(s, ",");
+    str_append_char(s, ',');
   }
 
   if (!oneline) {
-    str_append(s, "\n");
+    str_append_char(s, '\n');
   }
 
   info->index++;
@@ -878,8 +1027,10 @@ static ret_t to_json(void* ctx, const void* data) {
     str_append_n_chars(s, ' ', info->indent * info->level);
   }
 
-  str_append_json_str(s, nv->name);
-  str_append(s, ": ");
+  if (!info->is_array) {
+    str_append_json_str(s, nv->name);
+    str_append(s, ": ");
+  }
 
   switch (v->type) {
     case VALUE_TYPE_STRING: {
@@ -890,8 +1041,22 @@ static ret_t to_json(void* ctx, const void* data) {
       tk_object_to_json(value_object(v), s, info->indent + 1, info->level, oneline);
       break;
     }
+    case VALUE_TYPE_INT8:
+    case VALUE_TYPE_BOOL:
+    case VALUE_TYPE_INT16:
+    case VALUE_TYPE_INT32:
+    case VALUE_TYPE_INT64:
+    case VALUE_TYPE_UINT8:
+    case VALUE_TYPE_UINT16:
+    case VALUE_TYPE_UINT32:
+    case VALUE_TYPE_UINT64:
+    case VALUE_TYPE_FLOAT:
+    case VALUE_TYPE_FLOAT32:
+    case VALUE_TYPE_DOUBLE: {
+      str_append(s, value_str_ex(v, buff, sizeof(buff)));
+      break;
+    }
     default: {
-      char buff[64] = {0};
       str_append_json_str(s, value_str_ex(v, buff, sizeof(buff)));
       break;
     }
@@ -902,24 +1067,50 @@ static ret_t to_json(void* ctx, const void* data) {
 
 ret_t tk_object_to_json(tk_object_t* obj, str_t* json, uint32_t indent, uint32_t level,
                         bool_t oneline) {
-  json_info_t info = {json, indent, level, oneline, 0};
+  bool_t is_array = FALSE;
+  json_info_t info = {
+      .json = json,
+      .indent = indent,
+      .level = level,
+      .oneline = oneline,
+      .index = 0,
+  };
   return_value_if_fail(obj != NULL && json != NULL, RET_BAD_PARAMS);
 
   if (!oneline) {
     str_append_n_chars(json, ' ', indent * level);
   }
 
-  str_append(json, "{");
+  is_array = tk_object_is_collection(obj);
+  info.is_array = is_array;
+  str_append_char(json, is_array ? '[' : '{');
   info.level++;
   tk_object_foreach_prop(obj, to_json, &info);
-  if (!oneline) {
-    str_append(json, "\n");
-  }
 
   if (!oneline) {
+    str_append_char(json, '\n');
     str_append_n_chars(json, ' ', indent * level);
   }
-  str_append(json, "}");
+  str_append_char(json, is_array ? ']' : '}');
 
   return RET_OK;
+}
+
+ret_t tk_object_set_prop_str_with_format(tk_object_t* obj, const char* name, const char* format,
+                                         ...) {
+  char str[256] = {0};
+  return_value_if_fail(obj != NULL && name != NULL && format != NULL, RET_BAD_PARAMS);
+
+  va_list args;
+  va_start(args, format);
+  tk_vsnprintf(str, sizeof(str) - 1, format, args);
+  va_end(args);
+
+  return tk_object_set_prop_str(obj, name, str);
+}
+
+bool_t tk_object_is_instance_of(tk_object_t* obj, const char* type) {
+  return_value_if_fail(obj != NULL && obj->vt != NULL, FALSE);
+
+  return tk_str_eq(obj->vt->type, type);
 }

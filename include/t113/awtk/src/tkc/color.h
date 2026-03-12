@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  color structs.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -100,8 +100,8 @@ color_t color_init(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
  *
  * @annotation ["constructor", "scriptable", "gc"]
  * @param {uint8_t} r 红色通道。
- * @param {uint8_t} b 蓝色通道。
  * @param {uint8_t} g 绿色通道。
+ * @param {uint8_t} b 蓝色通道。
  * @param {uint8_t} a alpha通道。
  *
  * @return {color_t*} color对象。
@@ -228,20 +228,20 @@ ret_t color_destroy(color_t* c);
 /**
  * @method color_hex_str
  * 获取16进制格式表示的颜色
- * @param {color_t*} c color对象。
+ * @param {color_t} c color对象。
  * @param {char*} str 内存。
  *
- * @return {char*} 获取16进制字符串表示的颜色。
+ * @return {const char*} 获取16进制字符串表示的颜色。
  */
 const char* color_hex_str(color_t c, char str[TK_COLOR_HEX_LEN + 1]);
 
 /**
  * @method color_rgba_str
  * 获取rgba格式表示的颜色
- * @param {color_t*} c color对象。
+ * @param {color_t} c color对象。
  * @param {char*} str 内存。
  *
- * @return {char*} 获取rgba格式表示的颜色。
+ * @return {const char*} 获取rgba格式表示的颜色。
  */
 const char* color_rgba_str(color_t c, char str[TK_COLOR_RGBA_LEN + 1]);
 

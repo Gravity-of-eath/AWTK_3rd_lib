@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ubjson reader
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,6 +23,7 @@
 #define TK_UBJSON_READER_H
 
 #include "tkc/str.h"
+#include "tkc/wstr.h"
 #include "ubjson/ubjson_const.h"
 
 BEGIN_C_DECLS
@@ -35,7 +36,9 @@ typedef ret_t (*ubjson_read_callback_t)(void* ctx, void* data, uint32_t size);
 struct _ubjson_reader_t {
   void* ctx;
   str_t str;
+  wstr_t wstr;
   ubjson_read_callback_t read;
+  uint8_t optimized_type;
 };
 
 ubjson_reader_t* ubjson_reader_init(ubjson_reader_t* reader, ubjson_read_callback_t read,

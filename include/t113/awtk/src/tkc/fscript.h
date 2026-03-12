@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  a simple functional script language
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  */
 
@@ -127,6 +127,12 @@ typedef ret_t (*fscript_func_t)(fscript_t* fscript, fscript_args_t* args, value_
  */
 struct _fscript_t {
   /**
+   * @property {char*} name
+   * @annotation ["readable"]
+   * 脚本名称(用于调试信息)。
+   */
+  char* name;
+  /**
    * @property {str_t} str
    * @annotation ["readable"]
    * C语言实现函数可以使用这个变量，可以有效避免内存分配。
@@ -157,7 +163,7 @@ struct _fscript_t {
    */
   int32_t error_row;
   /**
-   * @property {int32_t} error_row
+   * @property {int32_t} error_col
    * @annotation ["readable"]
    * 运行时错误的列号。
    */
@@ -179,7 +185,9 @@ struct _fscript_t {
   bool_t returned;
   bool_t rerun;
   uint8_t loop_count;
-
+  tk_object_life_t obj_life;
+  /*预解析的临时变量*/
+  darray_t* symbols;
   /*函数局部变量和参数*/
   darray_t* locals;
   /*脚本定义的函数*/
@@ -214,6 +222,18 @@ fscript_t* fscript_create(tk_object_t* obj, const char* script);
 fscript_t* fscript_create_ex(tk_object_t* obj, const char* script, bool_t keep_func_name);
 
 /**
+ * @method fscript_create_ex2
+ * 创建引擎对象，并解析代码。
+ * @param {tk_object_t*} obj 脚本执行上下文。
+ * @param {const char*} script 脚本代码。
+ * @param {bool_t} keep_func_name 是否在func_call结构后保存函数名。
+ * @param {tk_object_life_t} obj_life 如何管理obj的生命周期。
+ *
+ * @return {fscript_t*} 返回fscript对象。
+ */
+fscript_t* fscript_create_ex2(tk_object_t* obj, const char* script, bool_t keep_func_name, tk_object_life_t obj_life);
+
+/**
  * @method fscript_init
  * 初始化引擎对象，并解析代码。
  * @param {fscript_t*} fscript 初始化 fscript 对象。
@@ -226,6 +246,15 @@ fscript_t* fscript_create_ex(tk_object_t* obj, const char* script, bool_t keep_f
  */
 fscript_t* fscript_init(fscript_t* fscript, tk_object_t* obj, const char* script,
                         const char* first_call_name, bool_t keep_func_name);
+
+/**
+ * @method fscript_set_name
+ * 设置脚本名称。
+ * @param {fscript_t*} fscript 脚本引擎对象。
+ * @param {const char*} name 脚本名称。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t fscript_set_name(fscript_t* fscript, const char* name);
 
 /**
  * @method fscript_syntax_check
@@ -293,7 +322,7 @@ ret_t fscript_set_on_error(fscript_t* fscript, fscript_on_error_t on_error, void
  * @method fscript_set_print_func
  * 设置打印日志的函数。
  * @param {fscript_t*} fscript 脚本引擎对象。
- * @param {fscript_func_t} print_func 打印日志的函数。
+ * @param {fscript_func_t} print 打印日志的函数。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -359,11 +388,51 @@ ret_t fscript_set_global_object(tk_object_t* obj);
  * @method fscript_register_func
  * 注册全局自定义函数。
  * @param {const char*} name 函数名(无需加函数前缀)。
- * @param {fscript_func_t*} func 函数指针。
+ * @param {fscript_func_t} func 函数指针。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t fscript_register_func(const char* name, fscript_func_t func);
+
+/**
+ * @method fscript_register_event
+ * 注册自定义事件。
+ * @param {const char*} name 事件名。
+ * @param {uint32_t} etype 事件的值。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t fscript_register_event(const char* name, uint32_t etype);
+
+/**
+ * @method fscript_register_const_value
+ * 注册常量。
+ * @param {const char*} name 常量名。
+ * @param {const value_t*} value 数据。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t fscript_register_const_value(const char* name, const value_t* value);
+
+/**
+ * @method fscript_register_const_int
+ * 注册整数常量。
+ * @param {const char*} name 常量名。
+ * @param {int} value 数据。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t fscript_register_const_int(const char* name, int value);
+
+/**
+ * @method fscript_register_const_double
+ * 注册浮点数常量。
+ * @param {const char*} name 常量名。
+ * @param {double} value 数据。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t fscript_register_const_double(const char* name, double value);
 
 /**
  * @method fscript_register_funcs
@@ -421,7 +490,7 @@ struct _fscript_func_call_t {
    */
   uint16_t row;
   /**
-   * @property {uint16_t} row
+   * @property {uint16_t} col
    * @annotation ["readable"]
    * 对应源代码列号。
    */
@@ -441,11 +510,13 @@ struct _fscript_func_call_t {
 #define STR_FSCRIPT_FUNCTION_PREFIX "function."
 
 /*用于扩展函数里检查参数*/
-#define FSCRIPT_FUNC_CHECK(predicate, code)                                          \
-  if (!(predicate)) {                                                                \
-    fscript_set_error(fscript, code, __FUNCTION__, "" #predicate " not satisfied."); \
-    return code;                                                                     \
-  }
+#define FSCRIPT_FUNC_CHECK(predicate, code)                                            \
+  do {                                                                                 \
+    if (!(predicate)) {                                                                \
+      fscript_set_error(fscript, code, __FUNCTION__, "" #predicate " not satisfied."); \
+      return code;                                                                     \
+    }                                                                                  \
+  } while (0)
 
 #define FSCRIPT_STR_GLOBAL_PREFIX "global."
 #define FSCRIPT_GLOBAL_PREFIX_LEN 7
@@ -532,6 +603,15 @@ ret_t fscript_ensure_locals(fscript_t* fscript);
 fscript_func_t fscript_find_func(fscript_t* fscript, const char* name, uint32_t size);
 
 /**
+ * @method fscript_find_event
+ * 查找事件。
+ * @param {const char*} name 事件名。
+ *
+ * @return {uint32_t} 返回事件的值。
+ */
+uint32_t fscript_find_event(const char* name);
+
+/**
  * @method fscript_get_code_id
  * 获取code_id。
  * @param {const char*} str 代码。
@@ -567,6 +647,8 @@ typedef struct _fscript_function_def_t {
    */
   fscript_func_call_t* body;
 } fscript_function_def_t;
+
+#define FSCRIPT_CONSTS_PREFIX "fconsts."
 
 END_C_DECLS
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  网格。
  *
- * Copyright (c) 2022 - 2022 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -152,6 +152,7 @@ ret_t grid_set_columns_definition(widget_t* widget, const char* columns_definiti
 
   if (grid->columns_definition != NULL) {
     grid_parse_columns_definition(widget, grid->columns_definition);
+    widget_layout_children(widget);
   }
 
   return RET_OK;
@@ -288,10 +289,6 @@ static ret_t grid_on_layout_children_impl(widget_t* widget) {
   log_if_fail(h <= row_height);
 
   widget_move_resize_ex(iter, x, y, w, h, FALSE);
-  if (iter->self_layout) {
-    rect_t area = rect_init(x, y, w, h);
-    self_layouter_layout(iter->self_layout, iter, &area);
-  }
   widget_layout_children(iter);
 
   if ((col + 1) == cols) {
@@ -306,6 +303,7 @@ static ret_t grid_on_layout_children_impl(widget_t* widget) {
 
 static ret_t grid_on_layout_children(widget_t* widget) {
   grid_t* grid = GRID(widget);
+  ENSURE(grid);
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
 
   if (widget->children_layout != NULL) {
@@ -358,6 +356,7 @@ static ret_t grid_draw_grid(widget_t* widget, canvas_t* c) {
 
 static ret_t grid_on_paint_border(widget_t* widget, canvas_t* c) {
   grid_t* grid = GRID(widget);
+  ENSURE(grid);
 
   if (grid->show_grid && widget->astyle != NULL) {
     rect_t r = rect_init(0, 0, widget->w, widget->h);
@@ -409,12 +408,24 @@ static ret_t grid_on_paint_background(widget_t* widget, canvas_t* c) {
   return RET_OK;
 }
 
+static ret_t grid_init(widget_t* widget) {
+  grid_t* grid = GRID(widget);
+  return_value_if_fail(grid != NULL, RET_BAD_PARAMS);
+
+  grid->rows = 3;
+  grid->show_grid = FALSE;
+  grid->columns_definition = NULL;
+  darray_init(&(grid->cols_definition), 5, (tk_destroy_t)column_definition_destroy, NULL);
+  return RET_OK;
+}
+
 TK_DECL_VTABLE(grid) = {.size = sizeof(grid_t),
                         .type = WIDGET_TYPE_GRID,
                         .clone_properties = s_grid_properties,
                         .persistent_properties = s_grid_properties,
                         .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                         .create = grid_create,
+                        .init = grid_init,
                         .on_paint_self = grid_on_paint_self,
                         .set_prop = grid_set_prop,
                         .get_prop = grid_get_prop,
@@ -426,14 +437,7 @@ TK_DECL_VTABLE(grid) = {.size = sizeof(grid_t),
 
 widget_t* grid_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(grid), x, y, w, h);
-  grid_t* grid = GRID(widget);
-  return_value_if_fail(grid != NULL, NULL);
-
-  grid->rows = 3;
-  grid->show_grid = FALSE;
-  grid->columns_definition = NULL;
-  darray_init(&(grid->cols_definition), 5, (tk_destroy_t)column_definition_destroy, NULL);
-
+  return_value_if_fail(grid_init(widget) == RET_OK, NULL);
   return widget;
 }
 

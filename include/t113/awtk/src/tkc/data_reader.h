@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  data_reader
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -92,6 +92,16 @@ ret_t data_reader_destroy(data_reader_t* reader);
  * @return {void*} 返回全部数据，调用者需要调用TKMEM_FREE释放返回值。
  */
 void* data_reader_read_all(const char* url, uint32_t* size);
+
+/**
+ * @method data_reader_can_read
+ * 查询 url 中是否有数据。
+ *
+ * @param {const char*} url URL。
+ *
+ * @return {bool_t} 返回 bool_t 值。
+ */
+bool_t data_reader_can_read(const char* url);
 
 #define DATA_READER(reader) ((data_reader_t*)(reader))
 

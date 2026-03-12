@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  cond
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -54,14 +54,14 @@ ret_t tk_cond_wait(tk_cond_t* cond, tk_mutex_t* mutex);
 
 /**
  * @method tk_cond_wait_timeout
- * 等待指定时间。
+ * 等待指定时间(毫秒)。
  * @param {tk_cond_t*}    cond cond对象。
  * @param {tk_mutex_t*}    mutex mutex对象。
- * @param {uint32_t*}  timeout_ms 最长等待时间。
+ * @param {uint32_t}  timeout 最长等待时间(毫秒)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t tk_cond_wait_timeout(tk_cond_t* cond, tk_mutex_t* mutex, uint32_t ms);
+ret_t tk_cond_wait_timeout(tk_cond_t* cond, tk_mutex_t* mutex, uint32_t timeout);
 
 /**
  * @method tk_cond_signal

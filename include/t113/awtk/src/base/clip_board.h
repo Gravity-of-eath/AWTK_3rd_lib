@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  clip_board interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -78,7 +78,7 @@ struct _clip_board_t {
  * @alias clip_board_instance
  * @annotation ["constructor"]
  *
- * @return {ret_t} 返回缺省剪切板对象。
+ * @return {clip_board_t*} 返回缺省剪切板对象。
  */
 clip_board_t* clip_board(void);
 
@@ -118,7 +118,7 @@ ret_t clip_board_set_data(clip_board_t* cl, clip_board_data_type_t type, const v
  * 从剪切板中获取数据。
  * @param {clip_board_t*} cl 剪切板对象。
  * @param {clip_board_data_type_t*} type 返回数据类型(可为NULL)。
- * @param {void**} data 返回数据(可为NULL)。
+ * @param {const void**} data 返回数据(可为NULL)。
  * @param {uint32_t*} size 返回数据长度(可为NULL)。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。

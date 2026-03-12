@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event structs
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -169,4 +169,42 @@ event_t* cmd_exec_event_init(cmd_exec_event_t* event, uint32_t type, const char*
 uint32_t event_get_type(event_t* event) {
   return_value_if_fail(event != NULL, EVT_NONE);
   return event->type;
+}
+
+value_change_event_t* value_change_event_cast(event_t* event) {
+  return_value_if_fail(event != NULL, NULL);
+  return_value_if_fail(event->type >= EVT_VALUE_WILL_CHANGE && event->type <= EVT_VALUE_CHANGING,
+                       NULL);
+  return_value_if_fail(event->size == sizeof(value_change_event_t), NULL);
+
+  return (value_change_event_t*)event;
+}
+
+event_t* value_change_event_init(value_change_event_t* event, uint32_t type, void* target) {
+  return_value_if_fail(event != NULL, NULL);
+  memset(event, 0x00, sizeof(*event));
+  event->e = event_init(type, target);
+  event->e.size = sizeof(*event);
+
+  return (event_t*)event;
+}
+
+log_message_event_t* log_message_event_cast(event_t* event) {
+  return_value_if_fail(event != NULL, NULL);
+  return_value_if_fail(event->type == EVT_LOG_MESSAGE, NULL);
+  return_value_if_fail(event->size == sizeof(log_message_event_t), NULL);
+
+  return (log_message_event_t*)event;
+}
+
+event_t* log_message_event_init(log_message_event_t* event, tk_log_level_t level,
+                                const char* message) {
+  return_value_if_fail(event != NULL, NULL);
+  memset(event, 0x00, sizeof(*event));
+  event->e = event_init(EVT_LOG_MESSAGE, NULL);
+  event->e.size = sizeof(*event);
+  event->level = level;
+  event->message = message;
+
+  return (event_t*)event;
 }

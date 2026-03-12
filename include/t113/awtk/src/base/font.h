@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  font interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -132,8 +132,9 @@ glyph_t* glyph_create(void);
 
 /**
  * @method glyph_clone
- * @annotation ["constructor"]
  * 克隆glyph对象。
+ * @annotation ["constructor"]
+ * @param {glyph_t*} g glyph对象。
  *
  * @return {glyph_t*} glyph对象。
  */
@@ -143,7 +144,7 @@ glyph_t* glyph_clone(glyph_t* g);
  * @method glyph_destroy
  * 销毁glyph对象。
  * @annotation ["deconstructor"]
- * @param {glyph_t*} glyph glyph对象。
+ * @param {glyph_t*} g glyph对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -153,6 +154,9 @@ typedef struct _font_vmetrics_t {
   int16_t ascent;
   int16_t descent;
   int32_t line_gap;
+  uint16_t units_per_em;
+  int16_t font_ascender;
+  int16_t font_descender;
 } font_vmetrics_t;
 
 typedef font_vmetrics_t (*font_get_vmetrics_t)(font_t* f, font_size_t font_size);
@@ -175,6 +179,8 @@ struct _font_t {
   font_shrink_cache_t shrink_cache;
   font_destroy_t destroy;
   const char* desc;
+
+  font_manager_t* fm;
 };
 
 /**
@@ -195,7 +201,7 @@ font_vmetrics_t font_get_vmetrics(font_t* font, font_size_t font_size);
  * @param {const char*} font_name 字体名称。
  * @param {font_size_t} font_size 字体大小。
  *
- * @return {int32_t} 返回TRUE表示成功，FALSE表示失败。
+ * @return {bool_t} 返回TRUE表示成功，FALSE表示失败。
  */
 bool_t font_match(font_t* font, const char* font_name, font_size_t font_size);
 

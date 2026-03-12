@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  data reader factory
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -100,15 +100,7 @@ data_reader_t* data_reader_factory_create_reader(data_reader_factory_t* factory,
 
   iter = darray_find(&(factory->creators), (void*)protocol);
   if (iter != NULL) {
-    p = strstr(url, "://");
-
-    if (p == NULL) {
-      p = url;
-    } else {
-      p += 3;
-    }
-
-    return iter->create(p);
+    return iter->create(url);
   }
 
   return NULL;

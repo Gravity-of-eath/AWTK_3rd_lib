@@ -1,9 +1,9 @@
-/**
+﻿/**
  * File:   wstr.c
  * Author: AWTK Develop Team
  * Brief:  width char
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -24,155 +24,15 @@
 #include "tkc/wstr.h"
 #include "tkc/utils.h"
 
-const wchar_t* wcs_chr(const wchar_t* s, wchar_t c) {
-  const wchar_t* p = s;
-  return_value_if_fail(s != NULL, NULL);
+ret_t wstr_extend(wstr_t* str, uint32_t capacity) {
+  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
 
-  while (*p && *p != c) p++;
-
-  return *p ? p : NULL;
-}
-
-wchar_t* wcs_ncpy(wchar_t* s1, const wchar_t* s2, uint32_t n) {
-  wchar_t* d = s1;
-  const wchar_t* s = s2;
-  return_value_if_fail(s1 != NULL && s2 != NULL, NULL);
-
-  while (*s && n-- > 0) {
-    *d++ = *s++;
-  }
-  *d = '\0';
-
-  return s1;
-}
-
-wchar_t* wcs_cpy(wchar_t* s1, const wchar_t* s2) {
-  wchar_t* d = s1;
-  const wchar_t* s = s2;
-  return_value_if_fail(s1 != NULL && s2 != NULL, NULL);
-
-  while (*s) {
-    *d++ = *s++;
-  }
-  *d = '\0';
-
-  return s1;
-}
-
-int wcs_ncmp(const wchar_t *s1, const wchar_t *s2, uint32_t n) {
-  wchar_t c1 = L'\0';
-  wchar_t c2 = L'\0';
-  return_value_if_fail(s1 != NULL && s2 != NULL, -1);
-
-  if (n >= 4) {
-    size_t n4 = n >> 2;
-    do {
-      c1 = *s1++;
-      c2 = *s2++;
-      if (c1 == L'\0' || c1 != c2) {
-        return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
-      }
-      c1 = *s1++;
-      c2 = *s2++;
-      if (c1 == L'\0' || c1 != c2) {
-        return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
-      }
-      c1 = *s1++;
-      c2 = *s2++;
-      if (c1 == L'\0' || c1 != c2) {
-        return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
-      }
-      c1 = *s1++;
-      c2 = *s2++;
-      if (c1 == L'\0' || c1 != c2) {
-        return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
-      }
-    } while (--n4 > 0);
-    n &= 3;
-  }
-
-  while (n > 0) {
-    c1 = *s1++;
-    c2 = *s2++;
-    if (c1 == L'\0' || c1 != c2) {
-      return c1 > c2 ? 1 : (c1 < c2 ? -1 : 0);
-    }
-    n--;
-  }
-
-  return 0;
-}
-
-int wcs_cmp(const wchar_t* s1, const wchar_t* s2) {
-  uint32_t i = 0;
-  return_value_if_fail(s1 != NULL && s2 != NULL, -1);
-
-  for (i = 0; s1[i] && s2[i]; i++) {
-    int ret = s1[i] - s2[i];
-    if (ret) {
-      return ret;
-    }
-  }
-
-  return s1[i] - s2[i];
-}
-
-wchar_t* wcs_dup(const wchar_t* s) {
-  wchar_t* s1 = TKMEM_ZALLOCN(wchar_t, wcslen(s) + 1);
-
-  return wcs_cpy(s1, s);
-}
-
-size_t wcs_len(const wchar_t* s) {
-  size_t size = 0;
-  const wchar_t* p = s;
-  return_value_if_fail(s != NULL, 0);
-
-  while (*p++) {
-    size++;
-  }
-
-  return size;
-}
-
-#ifdef WITH_WCSXXX
-size_t wcslen(const wchar_t* s) {
-  return wcs_len(s);
-}
-
-int wcsncmp(const wchar_t* s1, const wchar_t* s2, size_t n) {
-  return wcs_ncmp(s1, s2, n);
-}
-
-int wcscmp(const wchar_t* s1, const wchar_t* s2) {
-  return wcs_cmp(s1, s2);
-}
-
-wchar_t* wcscpy(wchar_t* s1, const wchar_t* s2) {
-  return wcs_cpy(s1, s2);
-}
-
-wchar_t* wcsncpy(wchar_t* s1, const wchar_t* s2, uint32_t n) {
-  return wcs_ncpy(s1, s2, n);
-}
-
-wchar_t* wcschr(const wchar_t* s, wchar_t c) {
-  return (wchar_t*)wcs_chr(s, c);
-}
-
-wchar_t* wcsdup(const wchar_t* s) {
-  return wcs_dup(s);
-}
-
-int iswspace(wchar_t ch) {
-  return ch == ' ';
-}
-
-#endif /*WITH_WCSXXX*/
-
-static ret_t wstr_extend(wstr_t* str, uint32_t capacity) {
   if (capacity <= str->capacity) {
     return RET_OK;
+  }
+
+  if (!str->extendable) {
+    return RET_FAIL;
   }
 
   if (capacity > 0) {
@@ -187,12 +47,54 @@ static ret_t wstr_extend(wstr_t* str, uint32_t capacity) {
   return RET_OK;
 }
 
+ret_t wstr_shrink(wstr_t* str, uint32_t size) {
+  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
+
+  if (size < str->size) {
+    str->size = size;
+    str->str[size] = 0;
+  }
+
+  return RET_OK;
+}
+
+wstr_t* wstr_create(uint32_t capacity) {
+  wstr_t* str = TKMEM_ZALLOC(wstr_t);
+  return_value_if_fail(str != NULL, NULL);
+
+  return wstr_init(str, capacity);
+}
+
+ret_t wstr_destroy(wstr_t* str) {
+  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
+
+  wstr_reset(str);
+  TKMEM_FREE(str);
+
+  return RET_OK;
+}
+
 wstr_t* wstr_init(wstr_t* str, uint32_t capacity) {
   return_value_if_fail(str != NULL, NULL);
 
   memset(str, 0x00, sizeof(wstr_t));
+  str->extendable = TRUE;
 
   return wstr_extend(str, capacity) == RET_OK ? str : NULL;
+}
+
+wstr_t* wstr_attach(wstr_t* str, wchar_t* buff, uint32_t capacity) {
+  return_value_if_fail(str != NULL && buff != NULL && capacity > 0, NULL);
+
+  memset(str, 0x00, sizeof(str_t));
+  memset(buff, 0x00, capacity * sizeof(wchar_t));
+
+  str->str = buff;
+  str->size = 0;
+  str->capacity = capacity;
+  str->extendable = FALSE;
+
+  return str;
 }
 
 ret_t wstr_set(wstr_t* str, const wchar_t* text) {
@@ -255,6 +157,20 @@ ret_t wstr_set_utf8(wstr_t* str, const char* text) {
   return RET_OK;
 }
 
+ret_t wstr_append_utf8(wstr_t* str, const char* text) {
+  return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(wstr_extend(str, str->size + strlen(text) + 2) == RET_OK, RET_OOM);
+
+  if (tk_utf8_to_utf16(text, str->str + str->size, str->capacity - str->size - 1) == NULL) {
+    log_warn("wstr_append_utf8 fail, please ensure the parameters are UTF-8 encoded!\n");
+    return RET_BAD_PARAMS;
+  }
+
+  str->size = wcslen(str->str);
+
+  return RET_OK;
+}
+
 ret_t wstr_get_utf8(wstr_t* str, char* text, uint32_t size) {
   return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
   tk_utf8_from_utf16(str->str, text, size);
@@ -304,6 +220,14 @@ ret_t wstr_insert(wstr_t* str, uint32_t offset, const wchar_t* text, uint32_t nr
   return RET_OK;
 }
 
+ret_t wstr_modify_wchar(wstr_t* str, uint32_t pos, wchar_t c) {
+  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(str->size > pos, RET_BAD_PARAMS);
+
+  str->str[pos] = c;
+  return RET_OK;
+}
+
 ret_t wstr_append_with_len(wstr_t* str, const wchar_t* text, uint32_t size) {
   return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
 
@@ -331,6 +255,10 @@ ret_t wstr_push(wstr_t* str, const wchar_t c) {
   return RET_OK;
 }
 
+ret_t wstr_append_int(wstr_t* str, int32_t value) {
+  return wstr_push_int(str, "%d", value);
+}
+
 ret_t wstr_push_int(wstr_t* str, const char* format, int32_t value) {
   char buff[TK_NUM_MAX_LEN + 1];
   wchar_t s[TK_NUM_MAX_LEN + 1];
@@ -351,6 +279,22 @@ ret_t wstr_pop(wstr_t* str) {
   str->str[str->size] = '\0';
 
   return RET_OK;
+}
+
+bool_t wstr_eq(wstr_t* str, const wchar_t* text) {
+  if ((str == NULL && text == NULL) || (str != NULL && str->str == NULL && text == NULL)) {
+    return TRUE;
+  }
+
+  if (str == NULL || text == NULL || str->str == NULL) {
+    return FALSE;
+  }
+
+  if (str->str[0] != text[0]) {
+    return FALSE;
+  }
+
+  return wcscmp(str->str, text) == 0;
 }
 
 bool_t wstr_equal(wstr_t* str, wstr_t* other) {
@@ -378,6 +322,13 @@ ret_t wstr_from_int(wstr_t* str, int32_t v) {
   return_value_if_fail(str != NULL, RET_BAD_PARAMS);
 
   return wstr_set_utf8(str, tk_itoa(buff, sizeof(buff), v));
+}
+
+ret_t wstr_from_int64(wstr_t* str, int64_t v) {
+  char buff[TK_NUM_MAX_LEN + 1];
+  return_value_if_fail(str != NULL, RET_BAD_PARAMS);
+
+  return wstr_set_utf8(str, tk_lltoa(buff, sizeof(buff), v));
 }
 
 ret_t wstr_from_float(wstr_t* str, double v) {
@@ -411,6 +362,22 @@ ret_t wstr_to_int(wstr_t* str, int32_t* v) {
     memcpy(wbuff, str->str, size);
     tk_utf8_from_utf16_ex(wbuff, ARRAY_SIZE(wbuff), buff, ARRAY_SIZE(buff));
     *v = tk_atoi(buff);
+  } else {
+    *v = 0;
+  }
+
+  return RET_OK;
+}
+
+ret_t wstr_to_int64(wstr_t* str, int64_t* v) {
+  return_value_if_fail(str != NULL && v != NULL, RET_BAD_PARAMS);
+  if (str->size > 0) {
+    char buff[TK_NUM_MAX_LEN * 2 + 1] = {0};
+    wchar_t wbuff[TK_NUM_MAX_LEN * 2] = {0};
+    uint32_t size = tk_min(str->size, TK_NUM_MAX_LEN * 2) * sizeof(wchar_t);
+    memcpy(wbuff, str->str, size);
+    tk_utf8_from_utf16_ex(wbuff, ARRAY_SIZE(wbuff), buff, ARRAY_SIZE(buff));
+    *v = tk_atol(buff);
   } else {
     *v = 0;
   }
@@ -461,7 +428,7 @@ static uint32_t wstr_fraction_nr(wstr_t* str) {
   wchar_t* p = NULL;
   return_value_if_fail(str != NULL && str->str != NULL, 0);
 
-  p = wcschr(str->str, '.');
+  p = (wchar_t*)wcschr(str->str, '.');
   if (p != NULL) {
     nr = wcslen(p + 1);
   }
@@ -499,7 +466,7 @@ ret_t wstr_to_fix(wstr_t* str, uint32_t fraction_nr) {
   wchar_t* p = NULL;
   return_value_if_fail(str != NULL && str->str != NULL, RET_BAD_PARAMS);
 
-  p = wcschr(str->str, '.');
+  p = (wchar_t*)wcschr(str->str, '.');
   if (p) {
     p++;
     uint32_t nr = wcslen(p);
@@ -528,8 +495,13 @@ ret_t wstr_add_float(wstr_t* str, double delta) {
 
 ret_t wstr_reset(wstr_t* str) {
   return_value_if_fail(str != NULL, RET_OK);
-  TKMEM_FREE(str->str);
-  memset(str, 0x00, sizeof(wstr_t));
+
+  if (str->extendable) {
+    TKMEM_FREE(str->str);
+  }
+  str->str = NULL;
+  str->size = 0;
+  str->capacity = 0;
 
   return RET_OK;
 }
@@ -573,4 +545,26 @@ uint32_t wstr_count_char(wstr_t* str, wchar_t c) {
   }
 
   return n;
+}
+
+ret_t wstr_append_more(wstr_t* str, const wchar_t* text, ...) {
+  va_list va;
+  const wchar_t* p = NULL;
+  return_value_if_fail(str != NULL && text != NULL, RET_BAD_PARAMS);
+
+  return_value_if_fail(wstr_append(str, text) == RET_OK, RET_OOM);
+
+  va_start(va, text);
+  do {
+    p = va_arg(va, wchar_t*);
+    if (p != NULL) {
+      return_value_if_fail(wstr_append(str, p) == RET_OK, RET_OOM);
+    } else {
+      break;
+    }
+  } while (p != NULL);
+
+  va_end(va);
+
+  return RET_OK;
 }

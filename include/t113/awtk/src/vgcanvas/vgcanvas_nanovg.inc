@@ -8,8 +8,10 @@
 #include "base/font_manager.h"
 #include "base/assets_manager.h"
 #include "base/vgcanvas_asset_manager.h"
+#include "base/lcd_orientation_helper.h"
 
 static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img);
+static ret_t vgcanvas_nanovg_image_orientation_matrix(NVGcontext* vg, bitmap_t* img);
 
 static ret_t vgcanvas_nanovg_destroy(vgcanvas_t* vgcanvas);
 static ret_t vgcanvas_nanovg_end_frame(vgcanvas_t* vgcanvas);
@@ -33,7 +35,7 @@ static ret_t vgcanvas_nanovg_on_asset_events(void* ctx, event_t* e) {
     if (e->type == EVT_ASSET_MANAGER_CLEAR_CACHE) {
       vgcanvas_asset_manager_remove_font(vgcanvas_asset_manager(), ctx, NULL);
     } else if (e->type == EVT_ASSET_MANAGER_UNLOAD_ASSET) {
-      vgcanvas_asset_manager_remove_font(vgcanvas_asset_manager(), ctx, info->name);
+      vgcanvas_asset_manager_remove_font(vgcanvas_asset_manager(), ctx, asset_info_get_name(info));
     }
   }
 
@@ -243,11 +245,23 @@ static ret_t vgcanvas_nanovg_close_path(vgcanvas_t* vgcanvas) {
   return RET_OK;
 }
 
-static ret_t vgcanvas_nanovg_path_winding(vgcanvas_t* vgcanvas, bool_t dir) {
+static ret_t vgcanvas_nanovg_set_fill_mode(vgcanvas_t* vgcanvas, vgcanvas_fill_mode_t fill_mode) {
   NVGcontext* vg = ((vgcanvas_nanovg_t*)vgcanvas)->vg;
 
-  nvgPathWinding(vg, dir);
-
+  switch (fill_mode) {
+  case VGCANVAS_FILL_MODE_ALL_FILL:
+    nvgFillMode(vg, NVG_FILLMODE_All);
+    break;
+  case VGCANVAS_FILL_MODE_NON_ZERO:
+    nvgFillMode(vg, NVG_FILLMODE_NONZERO);
+    break;
+  case VGCANVAS_FILL_MODE_EVEN_ODD:
+    nvgFillMode(vg, NVG_FILLMODE_EVENODD);
+    break;
+  default:
+    nvgFillMode(vg, NVG_FILLMODE_All);
+    break;
+  }
   return RET_OK;
 }
 
@@ -280,7 +294,9 @@ static bool_t vgcanvas_nanovg_is_rectf_in_clip_rect(vgcanvas_t* vgcanvas, float_
 }
 
 
-const rectf_t* vgcanvas_nanovg_get_clip_rect(vgcanvas_t* vgcanvas) {
+static const rectf_t* vgcanvas_nanovg_get_clip_rect(vgcanvas_t* vgcanvas) {
+  NVGcontext* vg = ((vgcanvas_nanovg_t*)vgcanvas)->vg;
+  nvgGetCurrScissor(vg, &vgcanvas->clip_rect.x, &vgcanvas->clip_rect.y, &vgcanvas->clip_rect.w, &vgcanvas->clip_rect.h);
   return &(vgcanvas->clip_rect);
 }
 
@@ -301,15 +317,17 @@ static ret_t vgcanvas_nanovg_stroke(vgcanvas_t* vgcanvas) {
 }
 
 static ret_t vgcanvas_nanovg_paint(vgcanvas_t* vgcanvas, bool_t stroke, bitmap_t* img) {
-  int iw = img->w;
-  int ih = img->h;
   NVGpaint imgPaint;
+  int iw = bitmap_get_physical_width(img);
+  int ih = bitmap_get_physical_height(img);
   NVGcontext* vg = ((vgcanvas_nanovg_t*)vgcanvas)->vg;
   vgcanvas_nanovg_t* canvas = (vgcanvas_nanovg_t*)vgcanvas;
   int id = vgcanvas_nanovg_ensure_image(canvas, img);
   return_value_if_fail(id >= 0, RET_BAD_PARAMS);
 
   imgPaint = nvgImagePattern(vg, 0, 0, iw, ih, 0, id, 1);
+  nvgSave(vg);
+  vgcanvas_nanovg_image_orientation_matrix(vg, img);
 
   if (stroke) {
     nvgStrokePaint(vg, imgPaint);
@@ -319,7 +337,7 @@ static ret_t vgcanvas_nanovg_paint(vgcanvas_t* vgcanvas, bool_t stroke, bitmap_t
     nvgClosePath(vg);
     nvgFill(vg);
   }
-
+  nvgRestore(vg);
   return RET_OK;
 }
 
@@ -332,14 +350,14 @@ static ret_t vgcanvas_nanovg_set_font_size(vgcanvas_t* vgcanvas, float_t size) {
 
 static ret_t vgcanvas_nanovg_set_font(vgcanvas_t* vgcanvas, const char* name) {
   int font_id = 0;
-  ret_t reuslt = RET_FAIL;
+  ret_t result = RET_FAIL;
   NVGcontext* vg = ((vgcanvas_nanovg_t*)vgcanvas)->vg;
   vgcanvas_nanovg_t* canvas = (vgcanvas_nanovg_t*)vgcanvas;
   return_value_if_fail(name && *name, RET_BAD_PARAMS);
 
-  font_id = tk_pointer_to_int(vgcanvas_asset_manager_get_font_ctx(vgcanvas_asset_manager(), vgcanvas, name, &reuslt));
+  font_id = tk_pointer_to_int(vgcanvas_asset_manager_get_font_ctx(vgcanvas_asset_manager(), vgcanvas, name, &result));
 
-  if (reuslt != RET_OK) {
+  if (result != RET_OK) {
     assets_manager_t* am = vgcanvas->assets_manager ? vgcanvas->assets_manager : assets_manager();
     const asset_info_t* r = assets_manager_ref(am, ASSET_TYPE_FONT, name);
 
@@ -458,14 +476,34 @@ static ret_t vgcanvas_nanovg_get_text_metrics(vgcanvas_t* vgcanvas, float_t* asc
 #define vgcanvas_nanovg_get_text_metrics NULL
 #endif /*WITH_NANOVG_GPU*/
 
+// 快速旋转会让 bitmap 旋转，通过变换矩阵来把旋转后的 bitmap 旋转回来正常未旋转的状态。
+static ret_t vgcanvas_nanovg_image_orientation_matrix(NVGcontext* vg, bitmap_t* img) {
+  if (img->orientation == LCD_ORIENTATION_90 || img->orientation == LCD_ORIENTATION_270) {
+    float_t anchor_x = img->w / 2.0f;
+    float_t anchor_y = img->h / 2.0f;
+    nvgTranslate(vg, anchor_x, anchor_y);
+		nvgRotate(vg, TK_D2R((float_t)(img->orientation)));
+		nvgTranslate(vg, -anchor_y, -anchor_x);
+  } else if (img->orientation == LCD_ORIENTATION_180) {
+    float_t anchor_x = img->w / 2.0f;
+    float_t anchor_y = img->h / 2.0f;
+		nvgTranslate(vg, anchor_x, anchor_y);
+		nvgRotate(vg, TK_D2R(180.0f));
+		nvgTranslate(vg, -anchor_x, -anchor_y);
+  }
+  return RET_OK;
+}
+
 static ret_t vgcanvas_nanovg_draw_image(vgcanvas_t* vgcanvas, bitmap_t* img, float_t sx, float_t sy,
                                         float_t sw, float_t sh, float_t dx, float_t dy, float_t dw,
                                         float_t dh) {
-  int iw = img->w;
-  int ih = img->h;
+  rectf_t r_src;
   NVGpaint imgPaint;
   float scaleX = (float)dw / sw;
   float scaleY = (float)dh / sh;
+  rectf_t src_r = {sx, sy, sw, sh};
+  int iw = bitmap_get_physical_width(img);
+  int ih = bitmap_get_physical_height(img);
   vgcanvas_nanovg_t* canvas = (vgcanvas_nanovg_t*)vgcanvas;
   NVGcontext* vg = ((vgcanvas_nanovg_t*)vgcanvas)->vg;
 
@@ -478,7 +516,9 @@ static ret_t vgcanvas_nanovg_draw_image(vgcanvas_t* vgcanvas, bitmap_t* img, flo
   nvgBeginPath(vg);
   nvgTranslate(vg, dx - (sx * scaleX), dy - (sy * scaleY));
   nvgScale(vg, scaleX, scaleY);
-  nvgRect(vg, sx, sy, sw, sh);
+  vgcanvas_nanovg_image_orientation_matrix(vg, img);
+  r_src = lcd_orientation_rectf_rotate_by_anticlockwise(&src_r, img->orientation, img->w, img->h);
+  nvgRect(vg, r_src.x, r_src.y, r_src.w, r_src.h);
   nvgFillPaint(vg, imgPaint);
   nvgClosePath(vg);
   nvgFill(vg);
@@ -673,7 +713,7 @@ static const vgcanvas_vtable_t vt = {
     .get_clip_rect = vgcanvas_nanovg_get_clip_rect,
     .is_rectf_in_clip_rect = vgcanvas_nanovg_is_rectf_in_clip_rect,
     .intersect_clip_rect = vgcanvas_nanovg_intersect_clip_rect,
-    .path_winding = vgcanvas_nanovg_path_winding,
+    .set_fill_mode = vgcanvas_nanovg_set_fill_mode,
     .fill = vgcanvas_nanovg_fill,
     .stroke = vgcanvas_nanovg_stroke,
     .paint = vgcanvas_nanovg_paint,

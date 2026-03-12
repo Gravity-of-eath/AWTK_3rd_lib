@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mutex base on freertos
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,11 +19,10 @@
  *
  */
 
-#include "FreeRTOS.h"
-#include "semphr.h"
-
 #include "tkc/mem.h"
 #include "tkc/mutex.h"
+
+#include "freertos_headers.h"
 
 struct _tk_mutex_t {
   SemaphoreHandle_t mutex;

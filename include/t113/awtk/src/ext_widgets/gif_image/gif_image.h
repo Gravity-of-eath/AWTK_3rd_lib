@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  gif_image
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,7 +34,7 @@ BEGIN_C_DECLS
  * GIF图片控件。
  *
  * > 注意：GIF图片的尺寸大于控件大小时会自动缩小图片，但一般的嵌入式系统的硬件加速都不支持图片缩放，
- * 所以缩放图片会导致性能明显下降。如果性能不满意时，请确认一下GIF图片的尺寸是否小余控件大小。
+ * 所以缩放图片会导致性能明显下降。如果性能不满意时，请确认一下GIF图片的尺寸是否小于控件大小。
  *
  * gif\_image\_t是[image\_base\_t](image_base_t.md)的子类控件，image\_base\_t的函数均适用于gif\_image\_t控件。
  *
@@ -99,6 +99,7 @@ typedef struct _gif_image_t {
   uint32_t index;
   uint32_t delay;
   uint32_t timer_id;
+  uint32_t loop_done;
 } gif_image_t;
 
 /**
@@ -127,7 +128,7 @@ ret_t gif_image_play(widget_t* widget);
 
 /**
  * @method gif_image_stop
- * 停止(并重置index为-1)。
+ * 停止(并重置index为0)。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget gif_image对象。
  *

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  asset manager
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,6 +19,7 @@
  *
  */
 
+#include "tkc/fs.h"
 #include "tkc/mem.h"
 #include "tkc/path.h"
 #include "tkc/utils.h"
@@ -36,7 +37,7 @@ static int asset_cache_cmp_type(const void* a, const void* b) {
   const asset_info_t* aa = (const asset_info_t*)a;
   const asset_info_t* bb = (const asset_info_t*)b;
 
-  if (aa->is_in_rom) {
+  if (asset_info_is_in_rom(aa)) {
     return -1;
   }
 
@@ -47,12 +48,12 @@ static int asset_cache_cmp_type_and_name(const void* a, const void* b) {
   const asset_info_t* aa = (const asset_info_t*)a;
   const asset_info_t* bb = (const asset_info_t*)b;
 
-  if (aa->is_in_rom) {
+  if (asset_info_is_in_rom(aa)) {
     return -1;
   }
 
   if (aa->type == bb->type) {
-    return tk_str_cmp(aa->name, bb->name);
+    return tk_str_cmp(asset_info_get_name(aa), asset_info_get_name(bb));
   } else {
     return aa->type - bb->type;
   }
@@ -73,6 +74,10 @@ static locale_info_t* assets_manager_get_locale_info(assets_manager_t* am) {
   return am->locale_info != NULL ? am->locale_info : locale_info();
 }
 
+static system_info_t* assets_manager_get_system_info(assets_manager_t* am) {
+  return system_info();
+}
+
 #if defined(AWTK_WEB)
 static asset_info_t* assets_manager_load_impl(assets_manager_t* am, asset_type_t type,
                                               uint16_t subtype, const char* name) {
@@ -84,19 +89,13 @@ static asset_info_t* assets_manager_load_impl(assets_manager_t* am, asset_type_t
   info->type = type;
   info->subtype = subtype;
   info->refcount = 1;
-  info->is_in_rom = FALSE;
-  strncpy(info->name, name, TK_NAME_LEN);
+  asset_info_set_is_in_rom(info, FALSE);
+  strncpy(info->name.small_name, name, TK_NAME_LEN);
 
   return info;
 }
 #else
 #include "tkc/fs.h"
-
-static system_info_t* assets_manager_get_system_info(assets_manager_t* am) {
-  return_value_if_fail(am != NULL, NULL);
-
-  return am->system_info != NULL ? am->system_info : system_info();
-}
 
 const char* assets_manager_get_res_root(assets_manager_t* am) {
   return_value_if_fail(am != NULL, NULL);
@@ -172,9 +171,13 @@ static ret_t build_asset_filename_default(char* path, uint32_t size, const char*
 
 static const char* device_pixel_ratio_to_str(float_t dpr) {
   const char* ratio = "x1";
-  if (dpr >= 3) {
+  int32_t idpr = tk_roundi(dpr);
+
+  if (idpr >= 4) {
+    ratio = "x4";
+  } else if (idpr >= 3) {
     ratio = "x3";
-  } else if (dpr >= 2) {
+  } else if (idpr >= 2) {
     ratio = "x2";
   }
 
@@ -516,7 +519,10 @@ static asset_info_t* assets_manager_load_impl(assets_manager_t* am, asset_type_t
   }
 
   if (strncmp(name, STR_SCHEMA_FILE, strlen(STR_SCHEMA_FILE)) == 0) {
-    info = assets_manager_load_file(am, type, name + strlen(STR_SCHEMA_FILE));
+    const char* path = name + strlen(STR_SCHEMA_FILE);
+    const char* extname = strrchr(path, '.');
+    subtype = subtype_from_extname(extname);
+    info = load_asset_from_file(type, subtype, path, name);
     /* 保持和 assets_manager_load_asset 函数内部中的调用 assets_manager_add 的逻辑一样 */
     if (info != NULL && assets_manager_is_save_assets_list(type)) {
       assets_manager_add(am, info);
@@ -547,9 +553,12 @@ asset_info_t* assets_manager_load_ex(assets_manager_t* am, asset_type_t type, ui
   return_value_if_fail(am != NULL && name != NULL, NULL);
 
   if (am->custom_load_asset != NULL) {
-    return am->custom_load_asset(am->custom_load_asset_ctx, type, subtype, name);
+    info = am->custom_load_asset(am->custom_load_asset_ctx, type, subtype, name);
   }
-  info = assets_manager_load_impl(am, type, subtype, name);
+
+  if (info == NULL) {
+    info = assets_manager_load_impl(am, type, subtype, name);
+  }
 
   if (info == NULL && am->fallback_load_asset != NULL) {
     info = am->fallback_load_asset(am->fallback_load_asset_ctx, type, subtype, name);
@@ -601,9 +610,7 @@ ret_t assets_manager_set_res_root(assets_manager_t* am, const char* res_root) {
 ret_t assets_manager_clear_all(assets_manager_t* am) {
   return_value_if_fail(am != NULL, RET_BAD_PARAMS);
 
-  assets_manager_clear_cache(am, ASSET_TYPE_UI);
-  assets_manager_clear_cache(am, ASSET_TYPE_STYLE);
-  assets_manager_clear_cache(am, ASSET_TYPE_FONT);
+  assets_manager_clear_all_cache(am);
 
   return darray_clear(&(am->assets));
 }
@@ -613,13 +620,19 @@ const char* assets_manager_get_theme_name(assets_manager_t* am) {
   return am->theme;
 }
 
+ret_t assets_manager_clear_all_cache(assets_manager_t* am) {
+  assets_manager_clear_cache(am, ASSET_TYPE_UI);
+  assets_manager_clear_cache(am, ASSET_TYPE_STYLE);
+  assets_manager_clear_cache(am, ASSET_TYPE_FONT);
+
+  return RET_OK;
+}
+
 ret_t assets_manager_set_theme(assets_manager_t* am, const char* theme) {
   return_value_if_fail(am != NULL, RET_BAD_PARAMS);
 
   am->theme = tk_str_copy(am->theme, theme);
-  assets_manager_clear_cache(am, ASSET_TYPE_UI);
-  assets_manager_clear_cache(am, ASSET_TYPE_STYLE);
-  assets_manager_clear_cache(am, ASSET_TYPE_FONT);
+  assets_manager_clear_all_cache(am);
 
   return RET_OK;
 }
@@ -637,9 +650,7 @@ ret_t assets_manager_set_system_info(assets_manager_t* am, system_info_t* system
 ret_t assets_manager_set_locale_info(assets_manager_t* am, locale_info_t* locale_info) {
   return_value_if_fail(am != NULL, RET_BAD_PARAMS);
 
-  if (locale_info != NULL) {
-    am->locale_info = locale_info;
-  }
+  am->locale_info = locale_info;
 
   return RET_OK;
 }
@@ -648,7 +659,7 @@ ret_t assets_manager_add(assets_manager_t* am, const void* info) {
   const asset_info_t* r = (const asset_info_t*)info;
   return_value_if_fail(am != NULL && info != NULL, RET_BAD_PARAMS);
 #if LOAD_ASSET_WITH_MMAP
-  if (r->is_in_rom) {
+  if (asset_info_is_in_rom(r)) {
     // 不支持添加非 mmap 资源的外部资源。
     assert(!" mmap model not supported assets this is in rom ");
   }
@@ -671,18 +682,15 @@ ret_t assets_manager_add_data(assets_manager_t* am, const char* name, uint16_t t
 const asset_info_t* assets_manager_find_in_cache(assets_manager_t* am, asset_type_t type,
                                                  uint16_t subtype, const char* name) {
   uint32_t i = 0;
-  const char* assets_name = NULL;
   const asset_info_t* iter = NULL;
   const asset_info_t** all = NULL;
   return_value_if_fail(am != NULL && name != NULL, NULL);
-
-  assets_name = asset_info_get_formatted_name(name);
 
   all = (const asset_info_t**)(am->assets.elms);
 
   for (i = 0; i < am->assets.size; i++) {
     iter = all[i];
-    if (type == iter->type && strcmp(assets_name, iter->name) == 0 &&
+    if (type == iter->type && strcmp(name, asset_info_get_name(iter)) == 0 &&
         (subtype == 0 || (subtype != 0 && subtype == iter->subtype))) {
       return iter;
     }
@@ -696,7 +704,31 @@ static const asset_info_t* assets_manager_ref_impl(assets_manager_t* am, asset_t
   const asset_info_t* info = assets_manager_find_in_cache(am, type, subtype, name);
 
   if (info == NULL) {
-    info = assets_manager_load_ex(am, type, subtype, name);
+    if (type == ASSET_TYPE_FONT) {
+      char name_ex[TK_NAME_LEN * 2 + 1] = {0};
+      system_info_t* sinfo = assets_manager_get_system_info(am);
+      const char* lang = tk_object_get_prop_str(TK_OBJECT(sinfo), SYSTEM_INFO_PROP_LANGUAGE);
+      const char* country = tk_object_get_prop_str(TK_OBJECT(sinfo), SYSTEM_INFO_PROP_COUNTRY);
+
+      tk_snprintf(name_ex, sizeof(name_ex) - 1, "%s_%s_%s", name, lang, country);
+      log_debug("try font load %s\n", name_ex);
+      info = assets_manager_load_ex(am, type, subtype, name_ex);
+      if (info == NULL) {
+        tk_snprintf(name_ex, sizeof(name_ex) - 1, "%s_%s", name, lang);
+        log_debug("try font load %s\n", name_ex);
+        info = assets_manager_load_ex(am, type, subtype, name_ex);
+      }
+
+      if (info == NULL) {
+        info = assets_manager_load_ex(am, type, subtype, name);
+      }
+
+      if (info != NULL) {
+        log_debug("load asset %s\n", asset_info_get_name(info));
+      }
+    } else {
+      info = assets_manager_load_ex(am, type, subtype, name);
+    }
   } else {
     asset_info_ref((asset_info_t*)info);
   }
@@ -766,6 +798,9 @@ ret_t assets_manager_unref(assets_manager_t* am, const asset_info_t* info) {
 
   if (info->refcount == 1) {
     assets_manager_dispatch_event(am, EVT_ASSET_MANAGER_UNLOAD_ASSET, (asset_info_t*)info);
+    if (darray_remove_ex(&(am->assets), asset_cache_cmp_type_and_name, (void*)info) == RET_OK) {
+      return RET_OK;
+    }
   }
 
   return asset_info_unref((asset_info_t*)info);
@@ -783,7 +818,7 @@ ret_t assets_manager_clear_cache_ex(assets_manager_t* am, asset_type_t type, con
   }
 
   info.type = type;
-  tk_strncpy_s(info.name, sizeof(info.name), name, strlen(name));
+  asset_info_set_name(&info, name, FALSE);
 
   size = am->assets.size;
   ret = darray_remove_all(&(am->assets), asset_cache_cmp_type_and_name, &info);
@@ -818,6 +853,28 @@ ret_t assets_manager_preload(assets_manager_t* am, asset_type_t type, const char
   asset_info_t* info = assets_manager_load(am, type, name);
   return_value_if_fail(info != NULL, RET_FAIL);
   assets_manager_unref(am, info);
+
+  return RET_OK;
+}
+
+static const char* asset_type_to_str(asset_type_t type) {
+  const char* str = "unknown";
+  const key_type_value_t* v = asset_type_find_by_value((uint32_t)type);
+  if (v != NULL) {
+    str = v->name;
+  }
+  return str;
+}
+
+ret_t assets_manager_dump(assets_manager_t* am, str_t* result) {
+  uint32_t i = 0;
+  return_value_if_fail(am != NULL && result != NULL, RET_BAD_PARAMS);
+
+  for (i = 0; i < am->assets.size; i++) {
+    asset_info_t* info = (asset_info_t*)darray_get(&(am->assets), i);
+    str_append_format(result, 1024, "%s: type=%s size=%u\n", asset_info_get_name(info),
+                      asset_type_to_str(info->type), info->size);
+  }
 
   return RET_OK;
 }
@@ -887,16 +944,56 @@ ret_t assets_manager_set_loader(assets_manager_t* am, asset_loader_t* loader) {
   return RET_OK;
 }
 
-static const char* s_applet_res_root = NULL;
+static darray_t* s_applet_res_roots = NULL;
 
 ret_t assets_managers_set_applet_res_root(const char* res_root) {
-  s_applet_res_root = res_root;
+  return_value_if_fail(res_root != NULL, RET_BAD_PARAMS);
+  return assets_managers_add_applet_res_root(res_root);
+}
 
+ret_t assets_managers_add_applet_res_root(const char* res_root) {
+  char* iter = NULL;
+  ret_t ret = RET_OK;
+  return_value_if_fail(res_root != NULL, RET_BAD_PARAMS);
+
+  if (s_applet_res_roots == NULL) {
+    s_applet_res_roots = darray_create(5, default_destroy, (tk_compare_t)tk_str_cmp);
+  }
+
+  iter = tk_strdup(res_root);
+  ret = darray_push_unique(s_applet_res_roots, iter);
+  if (ret != RET_OK) {
+    TKMEM_FREE(iter);
+  }
+
+  return ret;
+}
+
+ret_t assets_managers_remove_applet_res_root(const char* res_root) {
+  ret_t ret = RET_NOT_FOUND;
+  return_value_if_fail(res_root != NULL, RET_BAD_PARAMS);
+
+  if (s_applet_res_roots != NULL) {
+    ret = darray_remove(s_applet_res_roots, (void*)res_root);
+    if (s_applet_res_roots->size == 0) {
+      darray_destroy(s_applet_res_roots);
+      s_applet_res_roots = NULL;
+    }
+  }
+
+  return ret;
+}
+
+ret_t assets_managers_clear_applet_res_roots(void) {
+  if (s_applet_res_roots != NULL) {
+    darray_destroy(s_applet_res_roots);
+    s_applet_res_roots = NULL;
+  }
   return RET_OK;
 }
 
 bool_t assets_managers_is_applet_assets_supported(void) {
-  return s_applet_res_root != NULL;
+  return s_applet_res_roots != NULL && s_applet_res_roots->size > 0;
 }
 
 static darray_t* s_assets_managers = NULL;
@@ -912,7 +1009,7 @@ static int assets_manager_cmp_by_name(assets_manager_t* am, const char* name) {
 static asset_info_t* assets_manager_load_asset_fallback_default(assets_manager_t* am,
                                                                 asset_type_t type, uint16_t subtype,
                                                                 const char* name) {
-  return assets_manager_load_ex(assets_manager(), type, subtype, name);
+  return (asset_info_t*)assets_manager_ref_ex(assets_manager(), type, subtype, name);
 }
 
 assets_manager_t* assets_managers_ref(const char* name) {
@@ -927,20 +1024,50 @@ assets_manager_t* assets_managers_ref(const char* name) {
 
   am = (assets_manager_t*)darray_find(s_assets_managers, (void*)name);
   if (am == NULL) {
+    uint32_t i = 0;
+    const char* iter = NULL;
     char res_root[MAX_PATH + 1] = {0};
     am = assets_manager_create(5);
     return_value_if_fail(am != NULL, NULL);
-    am->name = tk_strdup(name);
-    path_build(res_root, MAX_PATH, s_applet_res_root, name, NULL);
 
+    if (s_applet_res_roots != NULL) {
+      for (i = 0; i < s_applet_res_roots->size; i++) {
+        iter = (const char*)darray_get(s_applet_res_roots, i);
+        path_build(res_root, MAX_PATH, iter, name, NULL);
+        if (fs_dir_exist(os_fs(), res_root)) {
+          break;
+        }
+      }
+    }
+    am->name = tk_strdup(name);
     darray_push(s_assets_managers, am);
     assets_manager_set_res_root(am, res_root);
-    assets_manager_set_fallback_load_asset(am, assets_manager_load_asset_fallback_default, NULL);
+    assets_manager_set_fallback_load_asset(
+        am, (assets_manager_load_asset_t)assets_manager_load_asset_fallback_default, NULL);
+
+    assets_manager_t* g_am = assets_manager();
+    if (g_am != NULL && g_am->theme != NULL) {
+      am->theme = tk_str_copy(am->theme, g_am->theme);
+    }
   } else {
     am->refcount++;
   }
 
   return am;
+}
+
+ret_t assets_managers_clear_cache(asset_type_t type) {
+  assets_manager_clear_cache(assets_manager(), type);
+
+  if (s_assets_managers != NULL) {
+    uint32_t i = 0;
+    for (i = 0; i < s_assets_managers->size; i++) {
+      assets_manager_t* am = (assets_manager_t*)darray_get(s_assets_managers, i);
+      assets_manager_clear_cache(am, type);
+    }
+  }
+
+  return RET_OK;
 }
 
 ret_t assets_managers_unref(assets_manager_t* am) {
@@ -949,7 +1076,7 @@ ret_t assets_managers_unref(assets_manager_t* am) {
 
   assert(am->refcount > 0);
   if (am->refcount == 1) {
-    darray_remove(s_assets_managers, am);
+    darray_remove(s_assets_managers, am->name);
     if (s_assets_managers->size == 0) {
       darray_destroy(s_assets_managers);
       s_assets_managers = NULL;

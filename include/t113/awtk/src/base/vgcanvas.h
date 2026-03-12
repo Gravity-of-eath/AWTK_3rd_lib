@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  vector graphics canvas interface.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,10 +39,36 @@ typedef struct _framebuffer_object_t {
   bool_t init;
   int online_fbo;
   int offline_fbo;
+  float online_w;
+  float online_h;
   /* 脱离默认的 OpenGL 绘图方法，使用用户自定义的绘图方法，例如用户自定义的着色器等等 */
   bool_t custom_draw_model;
   rect_t online_dirty_rect;
 } framebuffer_object_t;
+
+/**
+ * @enum vgcanvas_fill_mode_t
+ * @annotation ["scriptable"]
+ * @prefix VGCANVAS_FILL_MODE_
+ * 填充规则。
+ */
+typedef enum _vgcanvas_fill_mode_t {
+  /**
+   * @const VGCANVAS_FILL_MODE_ALL_FILL
+   * 全部填充。（部分vg渲染引擎可能不支持，会退化为非零规则填充）
+   */
+  VGCANVAS_FILL_MODE_ALL_FILL = 0,
+  /**
+   * @const VGCANVAS_FILL_MODE_NON_ZERO
+   * 非零规则填充。
+   */
+  VGCANVAS_FILL_MODE_NON_ZERO,
+  /**
+   * @const VGCANVAS_FILL_MODE_EVEN_ODD
+   * 奇偶规则填充。
+   */
+  VGCANVAS_FILL_MODE_EVEN_ODD,
+} vgcanvas_fill_mode_t;
 
 struct _vgcanvas_t;
 typedef struct _vgcanvas_t vgcanvas_t;
@@ -74,7 +100,7 @@ typedef ret_t (*vgcanvas_rounded_rect_t)(vgcanvas_t* vg, float_t x, float_t y, f
                                          float_t r);
 typedef ret_t (*vgcanvas_ellipse_t)(vgcanvas_t* vg, float_t x, float_t y, float_t rx, float_t ry);
 typedef ret_t (*vgcanvas_close_path_t)(vgcanvas_t* vg);
-typedef ret_t (*vgcanvas_path_winding_t)(vgcanvas_t* vg, bool_t dir);
+typedef ret_t (*vgcanvas_set_fill_mode_t)(vgcanvas_t* vg, vgcanvas_fill_mode_t fill_mode);
 
 typedef ret_t (*vgcanvas_rotate_t)(vgcanvas_t* vg, float_t rad);
 typedef ret_t (*vgcanvas_scale_t)(vgcanvas_t* vg, float_t x, float_t y);
@@ -178,7 +204,7 @@ typedef struct _vgcanvas_vtable_t {
   vgcanvas_ellipse_t ellipse;
   vgcanvas_rounded_rect_t rounded_rect;
   vgcanvas_close_path_t close_path;
-  vgcanvas_path_winding_t path_winding;
+  vgcanvas_set_fill_mode_t set_fill_mode;
 
   vgcanvas_scale_t scale;
   vgcanvas_rotate_t rotate;
@@ -286,13 +312,13 @@ typedef struct _vgcanvas_vtable_t {
  */
 struct _vgcanvas_t {
   /**
-   * @property {wh_t} w
+   * @property {uint32_t} w
    * @annotation ["readable", "scriptable"]
    * canvas的宽度
    */
   uint32_t w;
   /**
-   * @property {wh_t} h
+   * @property {uint32_t} h
    * @annotation ["readable", "scriptable"]
    * canvas的高度
    */
@@ -361,7 +387,7 @@ struct _vgcanvas_t {
    */
   float_t font_size;
   /**
-   * @property {const char*} text_align
+   * @property {char*} text_align
    * @annotation ["readable", "scriptable"]
    * 文本对齐方式。
    *
@@ -369,7 +395,7 @@ struct _vgcanvas_t {
    */
   char* text_align;
   /**
-   * @property {const char*} text_baseline
+   * @property {char*} text_baseline
    * @annotation ["readable", "scriptable"]
    * 文本基线。
    *
@@ -391,21 +417,23 @@ struct _vgcanvas_t {
   color_t stroke_color;
 
   /**
-   * @property {uint32_t*} buff;
+   * @property {uint32_t*} buff
    * @annotation ["private"]
    * frame buffer
    */
   uint32_t* buff;
 
   /**
-   * @property {bitmap_format_t} format;
+   * @property {bitmap_format_t} format
    * @annotation ["private"]
    * frame buffer format
    */
   bitmap_format_t format;
+  /* private */
   rectf_t clip_rect;
   rect_t dirty_rect;
   const vgcanvas_vtable_t* vt;
+  canvas_t* c;
   assets_manager_t* assets_manager;
   /*确保begin_frame/end_frame配对使用*/
   uint32_t began_frame;
@@ -503,7 +531,7 @@ ret_t vgcanvas_begin_frame(vgcanvas_t* vg, const dirty_rects_t* dirty_rects);
  * @param {float_t} y y坐标。
  * @param {float_t} w 宽度。
  * @param {float_t} h 高度。
- * @param {color_t} c 颜色。
+ * @param {color_t} color 颜色。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -605,8 +633,8 @@ ret_t vgcanvas_arc_to(vgcanvas_t* vg, float_t x1, float_t y1, float_t x2, float_
  * @param {float_t} x 原点x坐标。
  * @param {float_t} y 原点y坐标。
  * @param {float_t} r 半径。
- * @param {float_t} start_angle 起始角度。
- * @param {float_t} end_angle 结束角度。
+ * @param {float_t} start_angle 起始角度（单位：弧度）。
+ * @param {float_t} end_angle 结束角度（单位：弧度）。
  * @param {bool_t} ccw 是否逆时针。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -686,19 +714,20 @@ ret_t vgcanvas_ellipse(vgcanvas_t* vg, float_t x, float_t y, float_t rx, float_t
  */
 ret_t vgcanvas_close_path(vgcanvas_t* vg);
 
+// 该函数已经被移除，用户可以改用 vgcanvas_fill_mode 函数来实现设置填充规则
+// ret_t vgcanvas_path_winding(vgcanvas_t* vg, bool_t dir);
+
 /**
- * @method vgcanvas_path_winding
- * 设置路径填充实心与否。
- *
- * >CCW(1)为实心，CW(2)为镂空，设置其他则默认根据非零环绕规则判断(nonzero)。
+ * @method vgcanvas_set_fill_mode
+ * 设置填充规则。
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {bool_t} dir 填充方法。
+ * @param {vgcanvas_fill_mode_t} fill_mode 填充规则。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t vgcanvas_path_winding(vgcanvas_t* vg, bool_t dir);
+ret_t vgcanvas_set_fill_mode(vgcanvas_t* vg, vgcanvas_fill_mode_t fill_mode);
 
 /**
  * @method vgcanvas_rotate
@@ -706,7 +735,7 @@ ret_t vgcanvas_path_winding(vgcanvas_t* vg, bool_t dir);
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {float_t} rad 角度
+ * @param {float_t} rad 旋转角度(单位：弧度)
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -787,7 +816,19 @@ ret_t vgcanvas_clip_path(vgcanvas_t* vg);
 /**
  * @method vgcanvas_clip_rect
  * 矩形裁剪。
- *
+ * 备注：
+ * 1. 在绘图的时候脏矩形和裁剪区是一样的。
+ * 2. 该函数是不合并裁剪区的，所有可能出现裁剪区被扩大导致绘图在脏矩形以外的情况，导致残影的情况。
+ * 3. 该函数不支持旋转后调用，会导致裁剪区异常。
+ * ........
+ *   rect_t r;
+ *   rect_t r_save;
+ *   r = rectf_init(c->ox, c->oy, widget->w, widget->h); 
+ *   r_save = *vgcanvas_get_clip_rect(vg);
+ *   r = rectf_intersect(&r, &r_save);
+ *   vgcanvas_clip_rect(vg, (float_t)r.x, (float_t)r.y, (float_t)r.w, (float_t)r.h);
+ * ........
+ * 
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
  * @param {float_t} x x坐标。
@@ -828,9 +869,11 @@ bool_t vgcanvas_is_rectf_in_clip_rect(vgcanvas_t* vg, float_t left, float_t top,
 /**
  * @method vgcanvas_intersect_clip_rect
  * 设置一个与前一个裁剪区做交集的矩形裁剪区。
- * 如果下面这种情况，则不能直接调用 rect_intersect 函数来做矩形交集和 vgcanvas_clip_rect 函数设置裁剪区，而采用本函数做交集。
- * 由于缩放和旋转以及平移会导致 vg 的坐标系和上一个裁剪区的坐标系不同，
- * 导致直接使用做交集的话，裁剪区会出错。
+ * 备注：
+ * 1. 如果下面这种情况，则不能直接调用 rect_intersect 函数来做矩形交集和 vgcanvas_clip_rect 函数设置裁剪区，而采用本函数做交集。
+ *    由于缩放和旋转以及平移会导致 vg 的坐标系和上一个裁剪区的坐标系不同，
+ *    导致直接使用做交集的话，裁剪区会出错。
+ * 2. 该函数不支持旋转后调用，会导致裁剪区异常。
  * 
  * ```
  * vgcanvas_clip_rect(vg, old_r.x, old_r.y, old_r.w, old_r.h);
@@ -895,7 +938,7 @@ ret_t vgcanvas_paint(vgcanvas_t* vg, bool_t stroke, bitmap_t* img);
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} font 字体名称。
+ * @param {const char*} font 字体名称。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -907,7 +950,7 @@ ret_t vgcanvas_set_font(vgcanvas_t* vg, const char* font);
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {float_t} font 字体大小。
+ * @param {float_t} size 字体大小。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -919,7 +962,7 @@ ret_t vgcanvas_set_font_size(vgcanvas_t* vg, float_t size);
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} value 取值：left|center|right，必须为常量字符串。
+ * @param {const char*} value 取值：left|center|right，必须为常量字符串。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -931,7 +974,7 @@ ret_t vgcanvas_set_text_align(vgcanvas_t* vg, const char* value);
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} value 取值：top|middle|bottom，必须为常量字符串。
+ * @param {const char*} value 取值：top|middle|bottom，必须为常量字符串。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -957,7 +1000,7 @@ ret_t vgcanvas_get_text_metrics(vgcanvas_t* vg, float_t* ascent, float_t* descen
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} text text
+ * @param {const char*} text text
  * @param {float_t} x x坐标。
  * @param {float_t} y y坐标。
  * @param {float_t} max_width 最大宽度。
@@ -972,7 +1015,7 @@ ret_t vgcanvas_fill_text(vgcanvas_t* vg, const char* text, float_t x, float_t y,
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} text text
+ * @param {const char*} text text
  *
  * @return {float_t} 返回text的宽度。
  */
@@ -985,14 +1028,14 @@ float_t vgcanvas_measure_text(vgcanvas_t* vg, const char* text);
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
  * @param {bitmap_t*} img 图片。
- * @param {float_t} sx sx
- * @param {float_t} sy sy
- * @param {float_t} sw sw
- * @param {float_t} sh sh
- * @param {float_t} dx dx
- * @param {float_t} dy dy
- * @param {float_t} dw dw
- * @param {float_t} dh dh
+ * @param {float_t} sx 原图区域的 x
+ * @param {float_t} sy 原图区域的 y
+ * @param {float_t} sw 原图区域的 w
+ * @param {float_t} sh 原图区域的 h
+ * @param {float_t} dx 绘制区域的 x
+ * @param {float_t} dy 绘制区域的 y
+ * @param {float_t} dw 绘制区域的 w
+ * @param {float_t} dh 绘制区域的 h
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1036,14 +1079,14 @@ ret_t vgcanvas_draw_image_repeat(vgcanvas_t* vg, bitmap_t* img, float_t sx, floa
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
  * @param {bitmap_t*} img 图片。
- * @param {float_t} sx sx
- * @param {float_t} sy sy
- * @param {float_t} sw sw
- * @param {float_t} sh sh
- * @param {float_t} dx dx
- * @param {float_t} dy dy
- * @param {float_t} dw dw
- * @param {float_t} dh dh
+ * @param {float_t} sx 原图区域的 x
+ * @param {float_t} sy 原图区域的 y
+ * @param {float_t} sw 原图区域的 w
+ * @param {float_t} sh 原图区域的 h
+ * @param {float_t} dx 绘制区域的 x
+ * @param {float_t} dy 绘制区域的 y
+ * @param {float_t} dw 绘制区域的 w
+ * @param {float_t} dh 绘制区域的 h
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1115,7 +1158,7 @@ ret_t vgcanvas_set_fill_color_str(vgcanvas_t* vg, const char* color);
  *
  *>目前只有部分backend支持(如cairo)。
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {vg_gradient_t*} gradient gradient对象。
+ * @param {const vg_gradient_t*} gradient gradient对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1127,7 +1170,7 @@ ret_t vgcanvas_set_fill_gradient(vgcanvas_t* vg, const vg_gradient_t* gradient);
  *
  *>目前只有部分backend支持(如cairo)。
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {vg_gradient_t*} gradient gradient对象。
+ * @param {const vg_gradient_t*} gradient gradient对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1185,7 +1228,7 @@ ret_t vgcanvas_set_stroke_color(vgcanvas_t* vg, color_t color);
  * @alias vgcanvas_set_stroke_color
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {const char*} color 颜色。
+ * @param {const char*} str 颜色。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1231,7 +1274,7 @@ ret_t vgcanvas_set_stroke_radial_gradient(vgcanvas_t* vg, float_t cx, float_t cy
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} value 取值：butt|round|square，必须为常量字符串。
+ * @param {const char*} value 取值：butt|round|square，必须为常量字符串。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1243,7 +1286,7 @@ ret_t vgcanvas_set_line_cap(vgcanvas_t* vg, const char* value);
  *
  * @annotation ["scriptable"]
  * @param {vgcanvas_t*} vg vgcanvas对象。
- * @param {char*} value 取值：bevel|round|miter，必须为常量字符串。
+ * @param {const char*} value 取值：bevel|round|miter，必须为常量字符串。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -1324,6 +1367,15 @@ wh_t vgcanvas_get_height(vgcanvas_t* vgcanvas);
 ret_t vgcanvas_clear_cache(vgcanvas_t* vg);
 
 /**
+ * @method vgcanvas_get_canvas
+ * 获取 canvas 对象。
+ * @param {vgcanvas_t*} vg vgcanvas对象。
+ *
+ * @return {canvas_t*} 成功返回 canvas 对象，失败返回 NULL。
+ */
+canvas_t* vgcanvas_get_canvas(vgcanvas_t* vg);
+
+/**
  * @method vgcanvas_destroy
  * 销毁vgcanvas对象。
  * @param {vgcanvas_t*} vg vgcanvas对象。
@@ -1388,8 +1440,26 @@ ret_t vgcanvas_unbind_fbo(vgcanvas_t* vg, framebuffer_object_t* fbo);
  */
 ret_t vgcanvas_fbo_to_bitmap(vgcanvas_t* vg, framebuffer_object_t* fbo, bitmap_t* img,
                              const rect_t* r);
+
+/**
+ * @method vgcanvas_draw_circle
+ * 画圆。
+ * @param {vgcanvas_t*} vg vgcanvas对象。
+ * @param {double} x x坐标。
+ * @param {double} y y坐标。
+ * @param {double} r 半径。
+ * @param {color_t} color 颜色。
+ * @param {bool_t} fill 是否填充。
+ * @param {bool_t} stroke 是否画线。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t vgcanvas_draw_circle(vgcanvas_t* vg, double x, double y, double r, color_t color, bool_t fill,
+                           bool_t stroke);
+
 ret_t fbo_to_img(framebuffer_object_t* fbo, bitmap_t* img);
 ret_t vgcanvas_set_assets_manager(vgcanvas_t* vg, assets_manager_t* assets_manager);
+ret_t vgcanvas_set_canvas(vgcanvas_t* vg, canvas_t* c);
 
 /**
  * @enum vgcanvas_line_cap_t

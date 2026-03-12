@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  text_selector
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -144,6 +144,13 @@ typedef struct _text_selector_t {
   bool_t enable_value_animator;
 
   /**
+   * @property {bool_t} ellipses
+   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
+   * 是否开启缩写，开启后，当文字长度操作控件长度后，自动变为... 
+   */
+  bool_t ellipses;
+
+  /**
    * @property {easing_type_t} mask_easing
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
    * 绘制蒙版的变化趋势。
@@ -233,7 +240,7 @@ int32_t text_selector_count_options(widget_t* widget);
  * @annotation ["scriptable"]
  * @param {widget_t*} widget text_selector对象。
  * @param {int32_t} value 值。
- * @param {char*} text 文本。
+ * @param {const char*} text 文本。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -244,7 +251,7 @@ ret_t text_selector_append_option(widget_t* widget, int32_t value, const char* t
  * 设置选项。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget text_selector对象。
- * @param {char*} options 选项。
+ * @param {const char*} options 选项。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -430,6 +437,17 @@ ret_t text_selector_set_mask_easing(widget_t* widget, easing_type_t mask_easing)
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t text_selector_set_mask_area_scale(widget_t* widget, float_t mask_area_scale);
+
+/**
+ * @method text_selector_set_ellipses
+ * 是否开启缩写，开启后，当文字长度操作控件长度后，自动变为... 
+ * @annotation ["scriptable"]
+ * @param {widget_t*} widget 控件对象。
+ * @param {bool_t}  ellipses 是否开启缩写。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t text_selector_set_ellipses(widget_t* widget, bool_t ellipses);
 
 #define TEXT_SELECTOR_PROP_VISIBLE_NR "visible_nr"
 #define WIDGET_TYPE_TEXT_SELECTOR "text_selector"

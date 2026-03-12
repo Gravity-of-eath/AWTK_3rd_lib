@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap wbuffer to an object.
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,7 +56,7 @@ typedef struct _object_wbuffer_t {
  *
  * @annotation ["constructor"]
  * @param {uint8_t*} data 缓冲区。
- * @param {uint16_t} capacity 缓冲区的容量。
+ * @param {uint32_t} capacity 缓冲区的容量。
  *
  * @return {tk_object_t*} 返回object对象。
  *
@@ -84,7 +84,10 @@ tk_object_t* object_wbuffer_create_extendable(void);
  * @return {object_wbuffer_t*} object_wbuffer对象。
  */
 object_wbuffer_t* object_wbuffer_cast(tk_object_t* obj);
+
 #define OBJECT_WBUFFER(obj) object_wbuffer_cast(obj)
+
+#define OBJECT_WBUFFER_TYPE "object_wbuffer"
 
 END_C_DECLS
 

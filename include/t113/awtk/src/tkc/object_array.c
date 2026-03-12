@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  object array
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -27,11 +27,12 @@
 
 static ret_t object_array_clean_invalid_props(tk_object_t* obj) {
   object_array_t* o = OBJECT_ARRAY(obj);
-  event_t e = event_init(EVT_ITEMS_CHANGED, o);
   return_value_if_fail(o != NULL, RET_BAD_PARAMS);
+
   if (o->size > 0) {
     uint32_t i = 0;
     value_t* dst = o->props;
+    bool_t changed = FALSE;
 
     for (i = 0; i < o->size; i++) {
       value_t* iter = o->props + i;
@@ -41,13 +42,18 @@ static ret_t object_array_clean_invalid_props(tk_object_t* obj) {
           memcpy(dst, iter, sizeof(value_t));
         }
         dst++;
+      } else {
+        changed = TRUE;
       }
     }
 
     o->size = dst - o->props;
-  }
 
-  emitter_dispatch(EMITTER(o), &e);
+    if (changed) {
+      emitter_dispatch_simple_event(EMITTER(o), EVT_ITEMS_CHANGED);
+      tk_object_notify_changed(obj);
+    }
+  }
 
   return RET_OK;
 }
@@ -78,10 +84,6 @@ static ret_t object_array_on_destroy(tk_object_t* obj) {
   TKMEM_FREE(o->props);
 
   return RET_OK;
-}
-
-static int32_t object_array_compare(tk_object_t* obj, tk_object_t* other) {
-  return tk_str_cmp(obj->name, other->name);
 }
 
 static ret_t object_array_extend(tk_object_t* obj) {
@@ -142,7 +144,7 @@ ret_t object_array_push(tk_object_t* obj, const value_t* v) {
 static int32_t object_array_parse_index(const char* name) {
   if (tk_isdigit(*name)) {
     return tk_atoi(name);
-  } else if (*name == '[') {
+  } else if (tk_str_indexable(name)) {
     return tk_atoi(name + 1);
   } else if (tk_str_eq(name, "-1")) {
     return -1;
@@ -239,10 +241,9 @@ ret_t object_array_set(tk_object_t* obj, uint32_t index, const value_t* v) {
 
   if (index < o->size) {
     value_t* iter = o->props + index;
-    value_reset(iter);
-    ret = value_deep_copy(iter, v);
+    ret = value_replace(iter, v, TRUE);
     emitter_dispatch(EMITTER(o), &e);
-  } else if (index == 0xffffffff) {
+  } else if (index == -1) {
     ret = object_array_push(obj, v);
   } else {
     ret = RET_BAD_PARAMS;
@@ -273,10 +274,20 @@ static ret_t object_array_set_prop(tk_object_t* obj, const char* name, const val
 ret_t object_array_get(tk_object_t* obj, uint32_t i, value_t* v) {
   ret_t ret = RET_NOT_FOUND;
   object_array_t* o = OBJECT_ARRAY(obj);
+  value_t* iter = NULL;
   return_value_if_fail(o != NULL, RET_BAD_PARAMS);
 
+  if (o->size == 0) {
+    return RET_NOT_FOUND;
+  }
+
   if (i < o->size) {
-    value_t* iter = o->props + i;
+    iter = o->props + i;
+  } else if (i == -1) {
+    iter = o->props + (o->size - 1);
+  }
+
+  if (iter != NULL) {
     ret = value_copy(v, iter);
   }
 
@@ -347,7 +358,7 @@ static ret_t object_array_foreach_prop(tk_object_t* obj, tk_visit_t on_prop, voi
     nv.name = name;
     for (i = 0; i < o->size; i++) {
       value_t* iter = o->props + i;
-      tk_snprintf(name, TK_NAME_LEN, "%u", i);
+      tk_snprintf(name, TK_NAME_LEN, "%" PRIu32, i);
 
       value_copy(&(nv.value), iter);
       ret = on_prop(ctx, &nv);
@@ -365,25 +376,97 @@ static ret_t object_array_foreach_prop(tk_object_t* obj, tk_visit_t on_prop, voi
   return ret;
 }
 
-static const object_vtable_t s_object_array_vtable = {.type = "object_array",
-                                                      .desc = "object_array",
-                                                      .size = sizeof(object_array_t),
-                                                      .is_collection = TRUE,
-                                                      .on_destroy = object_array_on_destroy,
+static ret_t object_array_copy_props(tk_object_t* obj, tk_object_t* src, bool_t overwrite) {
+  if (!tk_object_is_instance_of(src, OBJECT_ARRAY_TYPE)) {
+    return RET_NOT_IMPL;
+  } else {
+    object_array_t* o = OBJECT_ARRAY(obj);
+    object_array_t* src_array = OBJECT_ARRAY(src);
+    uint32_t i = 0;
+    for (i = 0; i < src_array->size; i++) {
+      value_t* iter = &src_array->props[i];
+      if (i >= o->size) {
+        object_array_push(obj, iter);
+      } else if (overwrite) {
+        object_array_set(obj, i, iter);
+      }
+    }
+  }
+  return RET_OK;
+}
 
-                                                      .compare = object_array_compare,
-                                                      .get_prop = object_array_get_prop,
-                                                      .set_prop = object_array_set_prop,
-                                                      .can_exec = object_array_can_exec,
-                                                      .exec = object_array_exec,
-                                                      .remove_prop = object_array_remove_prop,
-                                                      .foreach_prop = object_array_foreach_prop};
+static ret_t object_array_find_props(tk_object_t* obj, tk_compare_t cmp, const void* data,
+                                     darray_t* matched) {
+  ret_t ret = RET_OK;
+  object_array_t* o = OBJECT_ARRAY(obj);
+  return_value_if_fail(o != NULL, RET_BAD_PARAMS);
+
+  if (o->size > 0) {
+    uint32_t i = 0;
+    named_value_t nv;
+    char name[TK_NAME_LEN + 1];
+    nv.name = name;
+    for (i = 0; i < o->size && RET_OK == ret; i++) {
+      value_t* iter = &o->props[i];
+      tk_snprintf(name, TK_NAME_LEN, "%" PRIu32, i);
+      value_copy(&(nv.value), iter);
+      if (0 == cmp(&nv, data)) {
+        ret = darray_push(matched, iter);
+      }
+    }
+  }
+
+  return ret;
+}
+
+static value_t* object_array_find_prop(tk_object_t* obj, tk_compare_t cmp, const void* ctx) {
+  object_array_t* o = OBJECT_ARRAY(obj);
+  return_value_if_fail(o != NULL, NULL);
+
+  if (o->size > 0) {
+    uint32_t i = 0;
+    named_value_t nv;
+    char name[TK_NAME_LEN + 1];
+    nv.name = name;
+    for (i = 0; i < o->size; i++) {
+      value_t* iter = &o->props[i];
+      tk_snprintf(name, TK_NAME_LEN, "%" PRIu32, i);
+      value_copy(&(nv.value), iter);
+      if (0 == cmp(&nv, ctx)) {
+        return iter;
+      }
+    }
+  }
+
+  return NULL;
+}
+
+static const object_vtable_t s_object_array_vtable = {
+    .type = OBJECT_ARRAY_TYPE,
+    .desc = OBJECT_ARRAY_TYPE,
+    .size = sizeof(object_array_t),
+    .is_collection = TRUE,
+    .on_destroy = object_array_on_destroy,
+    .compare = tk_object_compare_name_without_nullptr,
+    .get_prop = object_array_get_prop,
+    .set_prop = object_array_set_prop,
+    .can_exec = object_array_can_exec,
+    .exec = object_array_exec,
+    .clone = object_array_clone,
+    .remove_prop = object_array_remove_prop,
+    .foreach_prop = object_array_foreach_prop,
+    .clear_props = object_array_clear_props,
+    .copy_props = object_array_copy_props,
+    .find_props = object_array_find_props,
+    .find_prop = object_array_find_prop,
+};
 
 static tk_object_t* object_array_create_with_capacity(uint32_t init_capacity) {
   tk_object_t* obj = tk_object_create(&s_object_array_vtable);
   return_value_if_fail(obj != NULL, NULL);
   if (init_capacity > 0) {
     object_array_t* o = OBJECT_ARRAY(obj);
+    ENSURE(o);
 
     o->props = TKMEM_ZALLOCN(value_t, init_capacity);
     if (o->props != NULL) {
@@ -558,6 +641,7 @@ tk_object_t* object_array_dup(tk_object_t* obj, uint32_t start, uint32_t end) {
 ret_t object_array_remove_value(tk_object_t* obj, value_t* v) {
   uint32_t i = 0;
   object_array_t* o = OBJECT_ARRAY(obj);
+  ENSURE(o);
   return_value_if_fail(obj != NULL && v != NULL, RET_BAD_PARAMS);
 
   for (i = 0; i < o->size; i++) {
@@ -604,6 +688,7 @@ static int value_cmp_as_str_i_r(const void* a, const void* b) {
 
 ret_t object_array_sort(tk_object_t* obj, tk_compare_t cmp) {
   object_array_t* o = OBJECT_ARRAY(obj);
+  ENSURE(o);
   event_t e = event_init(EVT_ITEMS_CHANGED, o);
   return_value_if_fail(obj != NULL && cmp != NULL, RET_BAD_PARAMS);
 

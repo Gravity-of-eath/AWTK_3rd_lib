@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap typed array to an object.
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -166,8 +166,8 @@ static ret_t object_date_time_foreach_prop(tk_object_t* obj, tk_visit_t on_prop,
 }
 
 static const object_vtable_t s_object_date_time_vtable = {
-    .type = "object_date_time",
-    .desc = "object_date_time",
+    .type = OBJECT_DATE_TIME_TYPE,
+    .desc = OBJECT_DATE_TIME_TYPE,
     .size = sizeof(object_date_time_t),
     .is_collection = FALSE,
     .on_destroy = object_date_time_on_destroy,

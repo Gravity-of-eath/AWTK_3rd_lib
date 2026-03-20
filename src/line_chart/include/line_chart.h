@@ -101,7 +101,8 @@ typedef struct _line_chart_t
   int32_t draw_type;
   /**
    * @property {float_t} min_value_limit
-   * @annotation 最小值限制
+   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
+   * 最小值限制
    * 默认值为0:                              表示在绘制时动态确定最大最小值
    * 当min_value_limit < max_value_limit时: 表示指定范围[min_value_limit,max_value_limit]
    */
@@ -109,7 +110,8 @@ typedef struct _line_chart_t
 
   /**
    * @property {float_t} max_value_limit
-   * @annotation 最大值限制
+   * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
+   * 最大值限制
    * 默认值为0:                              表示在绘制时动态确定最大最小值
    * 当min_value_limit < max_value_limit时: 表示指定范围[min_value_limit,max_value_limit]
    */

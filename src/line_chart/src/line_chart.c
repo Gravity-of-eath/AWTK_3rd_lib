@@ -281,16 +281,19 @@ static ret_t line_chart_set_prop(widget_t *widget, const char *name, const value
   }
   else if (tk_str_eq(LINE_CHART_PROP_DRAW_TYPE, name))
   {
+    printf("line_chart_set_prop: draw_type=%d\n", value_int32(v));
     line_chart_set_draw_type(widget, value_int32(v));
     return RET_OK;
   }
   else if (tk_str_eq(LINE_CHART_PROP_MIN_VALUE_LIMIT, name))
   {
+    printf("line_chart_set_prop: min_value_limit=%f\n", value_float(v));
     line_chart_set_min_value_limit(widget, value_float(v));
     return RET_OK;
   }
   else if (tk_str_eq(LINE_CHART_PROP_MAX_VALUE_LIMIT, name))
   {
+    printf("line_chart_set_prop: max_value_limit=%f\n", value_float(v));
     line_chart_set_max_value_limit(widget, value_float(v));
     return RET_OK;
   }
@@ -598,6 +601,7 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
   }
 }
 
+
 static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas_t *wvgc)
 {
   if (float_queue_empty(line_chart->queue))
@@ -726,6 +730,133 @@ static void draw_chart_line_with_values_limit(line_chart_t *line_chart, vgcanvas
   canvas_offline_destroy(oc);
 }
 
+static void draw_chart_spline_curve_with_values_limit(line_chart_t *line_chart, vgcanvas_t *wvgc)
+{
+  printf("line_chart draw_chart_spline_curve_with_values_limit()\n");
+  if (float_queue_empty(line_chart->queue))
+  {
+    return;
+  }
+
+  // 不使用离线画布，直接在主画布上绘制曲线
+  vgcanvas_t *vgc = wvgc;
+
+  vgcanvas_set_line_width(vgc, line_chart->line_width);
+  vgcanvas_set_line_cap(vgc, "round");
+
+  // 计算数据范围
+  float_t min = line_chart->min_value_limit;
+  float_t max = line_chart->max_value_limit;
+  float_t step = line_chart->widget.w / (line_chart->max_point * 1.0f);
+  int32_t queue_size = float_queue_size(line_chart->queue);
+  printf("line_chart -->> max=%f  min=%f\n", max, min);
+
+  float_t scale_guild = max - min;
+  if (scale_guild == 0) {
+    return;  // 所有数据点相同，无法绘制
+  }
+
+  int32_t useable_h = line_chart->widget.h * (1.0f - line_chart->guide_line_offset);
+  int32_t offset_y = line_chart->widget.h * line_chart->guide_line_offset / 2;
+
+  // 计算所有数据点的画布坐标
+  float *x_coords = (float *)malloc(queue_size * sizeof(float));
+  float *y_coords = (float *)malloc(queue_size * sizeof(float));
+
+  if (x_coords && y_coords)
+  {
+    for (int32_t i = 0; i < queue_size; i++)
+    {
+      float_t value = float_queue_at(line_chart->queue, i);
+      if (value > max) {
+        value = max;
+      } else if (value < min) {
+        value = min;
+      }
+      float_t ratio = (value - min) / scale_guild;
+      x_coords[i] = step * i;
+      y_coords[i] = ((1.0f - ratio) * useable_h) + offset_y;
+    }
+
+    // 开始绘制曲线
+    vgcanvas_begin_path(vgc);
+    vgcanvas_move_to(vgc, x_coords[0], y_coords[0]);
+    vgcanvas_set_stroke_color_str(vgc, line_chart->fg_color);
+
+    // 使用 Catmull-Rom 曲线
+    int segments = 10;
+
+    for (int32_t i = 0; i < queue_size - 1; i++)
+    {
+      float x0, x1, x2, x3;
+      float y0, y1, y2, y3;
+
+      // 处理边界情况
+      if (i == 0)
+      {
+        x0 = x_coords[i];
+        y0 = y_coords[i];
+        x1 = x_coords[i];
+        y1 = y_coords[i];
+        x2 = x_coords[i + 1];
+        y2 = y_coords[i + 1];
+        x3 = (i + 2 < queue_size) ? x_coords[i + 2] : x_coords[i + 1];
+        y3 = (i + 2 < queue_size) ? y_coords[i + 2] : y_coords[i + 1];
+      }
+      else if (i == queue_size - 2)
+      {
+        x0 = x_coords[i - 1];
+        y0 = y_coords[i - 1];
+        x1 = x_coords[i];
+        y1 = y_coords[i];
+        x2 = x_coords[i + 1];
+        y2 = y_coords[i + 1];
+        x3 = x_coords[i + 1];
+        y3 = y_coords[i + 1];
+      }
+      else
+      {
+        x0 = x_coords[i - 1];
+        y0 = y_coords[i - 1];
+        x1 = x_coords[i];
+        y1 = y_coords[i];
+        x2 = x_coords[i + 1];
+        y2 = y_coords[i + 1];
+        x3 = x_coords[i + 2];
+        y3 = y_coords[i + 2];
+      }
+
+      // 生成平滑曲线段
+      for (int j = 1; j <= segments; j++)
+      {
+        float t = (float)j / segments;
+        float t2 = t * t;
+        float t3 = t2 * t;
+
+        // Catmull-Rom 公式
+        float segment_x = 0.5f * ((-t3 + 2 * t2 - t) * x0 + (3 * t3 - 5 * t2 + 2) * x1 + (-3 * t3 + 4 * t2 + t) * x2 + (t3 - t2) * x3);
+        float segment_y = 0.5f * ((-t3 + 2 * t2 - t) * y0 + (3 * t3 - 5 * t2 + 2) * y1 + (-3 * t3 + 4 * t2 + t) * y2 + (t3 - t2) * y3);
+
+        vgcanvas_line_to(vgc, segment_x, segment_y);
+      }
+    }
+
+    vgcanvas_stroke(vgc);
+
+    // 绘制数据点的白色小圆点（半径为2）
+    // vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
+    // for (int32_t i = 0; i < queue_size; i++)
+    // {
+    //   vgcanvas_begin_path(vgc);
+    //   vgcanvas_arc(vgc, x_coords[i], y_coords[i], 2, 0, M_PI * 2, FALSE);
+    //   vgcanvas_fill(vgc);
+    // }
+
+    free(x_coords);
+    free(y_coords);
+  }
+}
+
 static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
 {
   line_chart_t *line_chart = LINE_CHART(widget);
@@ -741,9 +872,18 @@ static ret_t line_chart_on_paint_self(widget_t *widget, canvas_t *c)
   {
     tk_mutex_lock(line_chart->mutex);
   }
+  printf("line_chart_on_paint_self  draw_type=%d max_value_limit=%f min_value_limit=%f\n", line_chart->draw_type, line_chart->max_value_limit, line_chart->min_value_limit);
   if (line_chart->max_value_limit > line_chart->min_value_limit)
   {
-    draw_chart_line_with_values_limit(line_chart, vgc);
+    if(line_chart->draw_type == DRAW_TYPE_LINE) {
+      draw_chart_line_with_values_limit(line_chart, vgc);
+    }
+    else if (line_chart->draw_type == DRAW_TYPE_SPLINE_CURVE) {
+      draw_chart_spline_curve_with_values_limit(line_chart, vgc);
+    }
+    else {
+      printf("line_chart_on_paint_self error draw_type=%d with limit\n", line_chart->draw_type);
+    }
   }
   else
   {
@@ -828,6 +968,7 @@ static ret_t on_event_before_children(widget_t *widget, event_t *e)
 const char *s_line_chart_properties[] = {
     LINE_CHART_PROP_FG_COLOR,
     LINE_CHART_PROP_SECD_COLOR,
+    LINE_CHART_PROP_GUIDE_LINE_COLOR,
     LINE_CHART_PROP_MODE,
     LINE_CHART_PROP_MAX_POINT,
     LINE_CHART_PROP_DRAW_TYPE,
@@ -836,6 +977,7 @@ const char *s_line_chart_properties[] = {
     LINE_CHART_PROP_DIVIDE_VALUE,
     LINE_CHART_PROP_ALIGN,
     LINE_CHART_PROP_LINE_WIDTH,
+    LINE_CHART_PROP_GUIDE_LINE_OFFSET,
     LINE_CHART_PROP_SECD_PERCENT,
     LINE_CHART_PROP_GUIDE_LINE_PERCENT,
     LINE_CHART_PROP_DEBUG,

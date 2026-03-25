@@ -118,7 +118,7 @@ static gradient_t* gradient_parse_linear(gradient_t* gradient, tokenizer_t* t) {
   return_value_if_fail(token != NULL, NULL);
 
   gradient_set_type(gradient, GRADIENT_LINEAR);
-  if (isdigit(*token)) {
+  if (tk_isdigit(*token)) {
     if (strstr(token, "deg") != NULL) {
     /*
      * linear-gradient(0deg, blue, green 40%, red);
@@ -329,20 +329,20 @@ ret_t gradient_add_stop(gradient_t* gradient, color_t color, float offset) {
   return RET_OK;
 }
 
-gradient_stop_t* gradient_get_stop(gradient_t* gradient, uint32_t index) {
+const gradient_stop_t* gradient_get_stop(const gradient_t* gradient, uint32_t index) {
   return_value_if_fail(gradient != NULL, NULL);
   return_value_if_fail(gradient->nr > index, NULL);
 
   return gradient->stops + index;
 }
 
-color_t gradient_get_first_color(gradient_t* gradient) {
+color_t gradient_get_first_color(const gradient_t* gradient) {
   return_value_if_fail(gradient != NULL && gradient->nr > 0, color_init(0xff, 0xff, 0xff, 0xff));
 
   return gradient->stops[0].color;
 }
 
-color_t gradient_get_last_color(gradient_t* gradient) {
+color_t gradient_get_last_color(const gradient_t* gradient) {
   return_value_if_fail(gradient != NULL && gradient->nr > 0, color_init(0xff, 0xff, 0xff, 0xff));
 
   return gradient->stops[gradient->nr - 1].color;

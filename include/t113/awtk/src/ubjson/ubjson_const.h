@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ubjson const
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,16 +34,25 @@ typedef enum _ubjson_marker_t {
   UBJSON_MARKER_INT8 = 'i',
   UBJSON_MARKER_UINT8 = 'U',
   UBJSON_MARKER_INT16 = 'I',
+  UBJSON_MARKER_UINT16 = 'u', /*extended feature*/
   UBJSON_MARKER_INT32 = 'l',
+  UBJSON_MARKER_UINT32 = 'm', /*extended feature*/
   UBJSON_MARKER_INT64 = 'L',
+  UBJSON_MARKER_UINT64 = 'M', /*extended feature*/
   UBJSON_MARKER_FLOAT32 = 'd',
   UBJSON_MARKER_FLOAT64 = 'D',
   UBJSON_MARKER_CHAR = 'C',
   UBJSON_MARKER_STRING = 'S',
+  UBJSON_MARKER_WSTRING = 'W', /*extended feature*/
+  UBJSON_MARKER_POINTER = 'P', /*extended feature*/
   UBJSON_MARKER_ARRAY_BEGIN = '[',
   UBJSON_MARKER_ARRAY_END = ']',
   UBJSON_MARKER_OBJECT_BEGIN = '{',
-  UBJSON_MARKER_OBJECT_END = '}'
+  UBJSON_MARKER_OBJECT_END = '}',
+
+  /* container optimized format */
+  UBJSON_MARKER_CONTAINER_TYPE = '$',
+  UBJSON_MARKER_CONTAINER_COUNT = '#',
 } ubjson_marker_t;
 
 END_C_DECLS

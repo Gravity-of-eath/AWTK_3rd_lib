@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input/ouput stream interface
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -51,7 +51,7 @@ struct _tk_iostream_t {
 /**
  * @method tk_iostream_get_istream
  *
- * 获取输入流对象。
+ * 获取输入流对象(不再使用时，无需UNREF返回的对象)。
  *
  * @param {tk_iostream_t*} stream iostream对象。
  *
@@ -63,7 +63,7 @@ tk_istream_t* tk_iostream_get_istream(tk_iostream_t* stream);
 /**
  * @method tk_iostream_get_ostream
  *
- * 获取输出流对象。
+ * 获取输出流对象(不再使用时，无需UNREF返回的对象)。
  *
  * @param {tk_iostream_t*} stream iostream对象。
  *
@@ -131,6 +131,16 @@ int32_t tk_iostream_write(tk_iostream_t* stream, const void* buff, uint32_t max_
  */
 int32_t tk_iostream_write_len(tk_iostream_t* stream, const void* buff, uint32_t max_size,
                               uint32_t timeout_ms);
+
+/**
+ * @method tk_iostream_unref
+ *
+ * 引用计数减1。引用计数为0时，销毁对象。
+ * @param {tk_iostream_t*} stream iostream对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t tk_iostream_unref(tk_iostream_t* stream);
 
 #define TK_IOSTREAM(obj) ((tk_iostream_t*)(obj))
 

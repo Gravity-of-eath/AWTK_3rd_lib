@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  Unicode Bidirectional Algorithm.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -77,7 +77,7 @@ typedef enum _bidi_type_t {
  */
 typedef struct _bidi_t {
   /**
-   * @property {wchar_t*} vis_strx
+   * @property {wchar_t*} vis_str
    * @annotation ["readable"]
    * 用于显示的字符串(存放log2vis的结果)。
    */
@@ -138,7 +138,7 @@ bidi_t* bidi_init(bidi_t* bidi, bool_t alloc_l2v, bool_t alloc_v2l, bidi_type_t 
  * @annotation ["static"]
  * @param {const char*} name 类型名称(取值：rtl,ltr,auto,wrtl,wltr,lro,rlo)。 
  *
- * @return {bidi_t*} 返回bidi对象。
+ * @return {bidi_type_t} 返回bidi对象。
  */
 bidi_type_t bidi_type_from_name(const char* name);
 

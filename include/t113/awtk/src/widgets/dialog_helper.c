@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dialogi helper
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,8 +28,8 @@
 #include "base/window_manager.h"
 #include "dialog_toast.inc"
 
-#define DIALOG_OK_STYLE "default"
-#define DIALOG_CANCEL_STYLE "default"
+#define DIALOG_OK_STYLE "ok"
+#define DIALOG_CANCEL_STYLE "cancel"
 #define DIALOG_INFO_THEME "dialog_info"
 #define DIALOG_WARN_THEME "dialog_warn"
 #define DIALOG_CONFIRM_THEME "dialog_confirm"
@@ -137,13 +137,13 @@ static widget_t* dialog_create_simple_ex(widget_t* parent, xy_t x, xy_t y, wh_t 
 
   widget_set_name(title, DIALOG_CHILD_TITLE);
   widget_set_tr_text(title, stitle);
-  widget_set_self_layout_params(title, "0", "0", "100%", "30");
+  widget_set_self_layout(title, "default(x=0,y=0,w=100%,h=30)");
 
   client = dialog_client_create(widget, 0, 0, 0, 0);
   goto_error_if_fail(client != NULL);
   widget_set_name(client, DIALOG_CHILD_CLIENT);
 
-  widget_set_self_layout_params(client, "0", "bottom", "100%", "-30");
+  widget_set_self_layout(client, "default(x=0,y=bottom,w=100%,h=-30)");
 
   return widget;
 error:
@@ -203,7 +203,7 @@ ret_t dialog_toast(const char* text, uint32_t duration) {
   return_value_if_fail(dialog_toast != NULL, RET_OOM);
 
   ENSURE(dialog_toast_push_message(dialog_toast, text, duration) != NULL);
-  return dialog_toast_model(dialog_toast);
+  return RET_OK;
 }
 
 ret_t dialog_info(const char* title, const char* text) {

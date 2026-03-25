@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  line_number
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -46,6 +46,7 @@ static ret_t line_number_do_paint_self(widget_t* widget, canvas_t* c) {
   uint32_t w = widget->w - 2 * x;
   rect_t r = rect_init(0, 0, 0, 0);
   line_number_t* line_number = LINE_NUMBER(widget);
+  ENSURE(line_number);
   int32_t yoffset = line_number->yoffset;
   int32_t line_height = line_number->line_height;
   style_t* style = widget->astyle;
@@ -54,15 +55,12 @@ static ret_t line_number_do_paint_self(widget_t* widget, canvas_t* c) {
   if (style_is_valid(style)) {
     uint32_t line_index = 0;
     color_t trans = color_init(0, 0, 0, 0);
-    widget_prepare_text_style_ex(widget, c, trans, NULL, TK_DEFAULT_FONT_SIZE, 
-      ALIGN_H_RIGHT, ALIGN_V_TOP);
-    color_t active_bg =
-        style_get_color(style, LINE_NUMBER_STYLE_ACTIVE_LINE_BG_COLOR, trans);
-    color_t highlight_bg =
-        style_get_color(style, LINE_NUMBER_STYLE_HIGHLIGHT_LINE_BG_COLOR, trans);
-    const char* highlight_shape = 
-        style_get_str(style, LINE_NUMBER_STYLE_HIGHLIGHT_LINE_SHAPE,
-        LINE_NUMBER_STYLE_HIGHLIGHT_LINE_SHAPE_CIRCLE);
+    widget_prepare_text_style_ex(widget, c, trans, NULL, TK_DEFAULT_FONT_SIZE, ALIGN_H_RIGHT,
+                                 ALIGN_V_TOP);
+    color_t active_bg = style_get_color(style, LINE_NUMBER_STYLE_ACTIVE_LINE_BG_COLOR, trans);
+    color_t highlight_bg = style_get_color(style, LINE_NUMBER_STYLE_HIGHLIGHT_LINE_BG_COLOR, trans);
+    const char* highlight_shape = style_get_str(style, LINE_NUMBER_STYLE_HIGHLIGHT_LINE_SHAPE,
+                                                LINE_NUMBER_STYLE_HIGHLIGHT_LINE_SHAPE_CIRCLE);
 
     while (1) {
       if (line > 0) {
@@ -89,16 +87,16 @@ static ret_t line_number_do_paint_self(widget_t* widget, canvas_t* c) {
         canvas_set_fill_color(c, highlight_bg);
         if (highlight_shape[0] == 'c') {
           rect_t save_r = r;
-          int32_t size = tk_min(r.w, r.h)/2;
-          int32_t dx = (r.w - size)/2;
-          int32_t dy = (r.h - size)/2;
-          int32_t rr = size/2;
+          int32_t size = tk_min(r.w, r.h) / 2;
+          int32_t dx = (r.w - size) / 2;
+          int32_t dy = (r.h - size) / 2;
+          int32_t rr = size / 2;
 
           r.x += dx;
           r.y += dy;
           r.w = size;
           r.h = size;
-          canvas_fill_rounded_rect(c, &r, &r, &highlight_bg, rr); 
+          canvas_fill_rounded_rect(c, &r, &r, &highlight_bg, rr);
           r = save_r;
         } else {
           canvas_fill_rect(c, r.x, r.y, r.w, r.h);
@@ -212,10 +210,18 @@ static ret_t line_number_set_prop(widget_t* widget, const char* name, const valu
   return RET_NOT_FOUND;
 }
 
+static ret_t line_number_init(widget_t* widget) {
+  line_number_t* line_number = LINE_NUMBER(widget);
+  return_value_if_fail(line_number != NULL, RET_BAD_PARAMS);
+  line_number->active_line = -1;
+  return RET_OK;
+}
+
 TK_DECL_VTABLE(line_number) = {.size = sizeof(line_number_t),
                                .type = WIDGET_TYPE_LINE_NUMBER,
                                .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                .create = line_number_create,
+                               .init = line_number_init,
                                .set_prop = line_number_set_prop,
                                .get_prop = line_number_get_prop,
                                .on_paint_self = line_number_on_paint_self,
@@ -223,10 +229,7 @@ TK_DECL_VTABLE(line_number) = {.size = sizeof(line_number_t),
 
 widget_t* line_number_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(line_number), x, y, w, h);
-  line_number_t* line_number = LINE_NUMBER(widget);
-  return_value_if_fail(line_number != NULL, NULL);
-  line_number->active_line = -1;
-
+  return_value_if_fail(line_number_init(widget) == RET_OK, NULL);
   return widget;
 }
 

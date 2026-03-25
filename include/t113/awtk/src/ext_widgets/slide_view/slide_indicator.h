@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  slide_indicator
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -112,7 +112,7 @@ typedef struct _slide_indicator_t {
   /**
    * @property {uint32_t} max
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 最大值(缺省为100)。
+   * 最大值(缺省为3)。
    */
   uint32_t max;
 
@@ -154,14 +154,14 @@ typedef struct _slide_indicator_t {
   /**
    * @property {char*} anchor_x
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 锚点x坐标。(后面加上px为像素点，不加px为相对百分比坐标0.0f到1.0f)
+   * 锚点x坐标。(后面加上px为像素点，不加px为相对百分取值范围为0.0f到1.0f)
    */
   char* anchor_x;
 
   /**
    * @property {char*} anchor_y
    * @annotation ["set_prop","get_prop","readable","persitent","design","scriptable"]
-   * 锚点y坐标。(后面加上px为像素点，不加px为相对百分比坐标0.0f到1.0f)
+   * 锚点y坐标。(后面加上px为像素点，不加px为相对百分取值范围为0.0f到1.0f)
    */
   char* anchor_y;
 
@@ -181,11 +181,11 @@ typedef struct _slide_indicator_t {
 
   /*private*/
   uint8_t pressed : 1;
-  uint8_t chilren_indicated : 1;
+  uint8_t children_indicated : 1;
   bool_t reset_icon_rect_list;
   bool_t loop;
   bool_t is_value_changing;
-  widget_animator_t* wa_opactiy;
+  widget_animator_t* wa_opacity;
   widget_t* indicated_widget;
   uint64_t last_move_point_time;
   point_t last_move_point;

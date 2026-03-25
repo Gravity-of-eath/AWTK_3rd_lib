@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  rich_text
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -54,6 +54,7 @@ static ret_t rich_text_get_margin(widget_t* widget) {
   int32_t margin = 0;
   int32_t tmp_margin = 0;
   rich_text_t* rich_text = RICH_TEXT(widget);
+  ENSURE(rich_text);
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
   margin = style_get_int(widget->astyle, STYLE_ID_MARGIN, 0);
   tmp_margin = rich_text->margin;
@@ -476,9 +477,9 @@ static ret_t rich_text_on_event(widget_t* widget, event_t* e) {
     case EVT_WHEEL: {
       if (scrollable) {
         wheel_event_t* evt = (wheel_event_t*)e;
-        if (evt->dy > 0) {
+        if (evt->dy < 0) {
           rich_text_down(widget);
-        } else if (evt->dy < 0) {
+        } else if (evt->dy > 0) {
           rich_text_up(widget);
         }
 
@@ -513,12 +514,21 @@ static ret_t rich_text_on_event(widget_t* widget, event_t* e) {
   return ret;
 }
 
+static ret_t rich_text_set_text_form_value(widget_t* widget, const value_t* v) {
+  rich_text_t* rich_text = RICH_TEXT(widget);
+  return_value_if_fail(rich_text != NULL, RET_BAD_PARAMS);
+  wstr_from_value(&(widget->text), v);
+  rich_text->need_reset = TRUE;
+
+  return RET_OK;
+}
+
 static ret_t rich_text_set_prop(widget_t* widget, const char* name, const value_t* v) {
   rich_text_t* rich_text = RICH_TEXT(widget);
   return_value_if_fail(rich_text != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
   if (tk_str_eq(name, WIDGET_PROP_TEXT)) {
-    return rich_text_set_text(widget, value_str(v));
+    return rich_text_set_text_form_value(widget, v);
   } else if (tk_str_eq(name, WIDGET_PROP_LINE_GAP)) {
     rich_text->line_gap = value_int(v);
     rich_text->need_reset = TRUE;
@@ -582,12 +592,21 @@ ret_t rich_text_set_yslidable(widget_t* widget, bool_t yslidable) {
   return RET_OK;
 }
 
+static ret_t rich_text_init(widget_t* widget) {
+  rich_text_t* rich_text = RICH_TEXT(widget);
+  return_value_if_fail(rich_text != NULL, RET_BAD_PARAMS);
+
+  rich_text->yslidable = TRUE;
+  return RET_OK;
+}
+
 static const char* s_rich_text_clone_properties[] = {WIDGET_PROP_MARGIN, WIDGET_PROP_LINE_GAP,
                                                      NULL};
 TK_DECL_VTABLE(rich_text) = {.size = sizeof(rich_text_t),
                              .type = "rich_text",
                              .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                              .create = rich_text_create,
+                             .init = rich_text_init,
                              .clone_properties = s_rich_text_clone_properties,
                              .on_event = rich_text_on_event,
                              .set_prop = rich_text_set_prop,
@@ -597,11 +616,7 @@ TK_DECL_VTABLE(rich_text) = {.size = sizeof(rich_text_t),
 
 widget_t* rich_text_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(rich_text), x, y, w, h);
-  rich_text_t* rich_text = RICH_TEXT(widget);
-  return_value_if_fail(rich_text != NULL, NULL);
-
-  rich_text->yslidable = TRUE;
-
+  return_value_if_fail(rich_text_init(widget) == RET_OK, NULL);
   return widget;
 }
 

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  widget property names
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -330,6 +330,18 @@ BEGIN_C_DECLS
 #define WIDGET_PROP_WORD_WRAP "word_wrap"
 
 /**
+ * @const WIDGET_PROP_ELLIPSES
+ * 是否省略。
+ */
+#define WIDGET_PROP_ELLIPSES "ellipses"
+
+/**
+ * @const WIDGET_PROP_VISIBLE_REVEAL_IN_SCROLL
+ * 可见控件在滚动控件中的可见处理方案。（影响 widget_ensure_visible_in_viewport 函数）
+ */
+#define WIDGET_PROP_VISIBLE_REVEAL_IN_SCROLL "visible_reveal_in_scroll"
+
+/**
  * @const WIDGET_PROP_TEXT
  * 文本。
  */
@@ -346,6 +358,12 @@ BEGIN_C_DECLS
  * style。
  */
 #define WIDGET_PROP_STYLE "style"
+
+/**
+ * @const WIDGET_PROP_STATE
+ * 状态。
+ */
+#define WIDGET_PROP_STATE "state"
 
 /**
  * @const WIDGET_PROP_ENABLE
@@ -554,12 +572,14 @@ BEGIN_C_DECLS
 /**
  * @const WIDGET_PROP_XOFFSET
  * X方向的偏移。（如果控件有继承 get_offset 函数指针的话，一定要和 get_offset 返回值保持一致，否则容易出现问题）
+ * 详情请看 docs/how_to_use_offset_in_custom_widget.md 
  */
 #define WIDGET_PROP_XOFFSET "xoffset"
 
 /**
  * @const WIDGET_PROP_YOFFSET
  * Y方向的偏移。（如果控件有继承 get_offset 函数指针的话，一定要和 get_offset 返回值保持一致，否则容易出现问题）
+ * 详情请看 docs/how_to_use_offset_in_custom_widget.md 
  */
 #define WIDGET_PROP_YOFFSET "yoffset"
 
@@ -577,7 +597,7 @@ BEGIN_C_DECLS
 
 /**
  * @const WIDGET_PROP_AUTO_PLAY
- * 是否自动播放或指定播放的时间。
+ * 是否自动播放或指定播放的时间(毫秒)。
  */
 #define WIDGET_PROP_AUTO_PLAY "auto_play"
 
@@ -751,7 +771,7 @@ BEGIN_C_DECLS
 
 /**
  * @const WIDGET_PROP_LONG_PRESS_TIME
- * 触发长按事件的时间(ms)。
+ * 触发长按事件的时间(毫秒)。
  */
 #define WIDGET_PROP_LONG_PRESS_TIME "long_press_time"
 
@@ -766,6 +786,12 @@ BEGIN_C_DECLS
  * 是否启用预览。
  */
 #define WIDGET_PROP_ENABLE_PREVIEW "enable_preview"
+
+/**
+ * @const WIDGET_PROP_IS_ACCEPT_STATUS
+ * 是否为 accept 状态
+ */
+#define WIDGET_PROP_IS_ACCEPT_STATUS "is_accept_status"
 
 /**
  * @const WIDGET_PROP_CLICK_THROUGH
@@ -1026,6 +1052,31 @@ BEGIN_C_DECLS
 #define WIDGET_PROP_MOVE_FOCUS_RIGHT_KEY "move_focus_right_key"
 
 /**
+ * @const WIDGET_PROP_ACCEPT_BUTTON
+ * 窗口中按下 Enter 默认触发单击 button 控件名字。
+ * 备注：如果控件接管了 Enter 的话，accept_button 控件是不会进入 focused 风格，例如：设置 accept_return 为 true 或者 widget->vt->return_key_to_activate 为 true
+ */
+#define WIDGET_PROP_ACCEPT_BUTTON "accept_button"
+
+/**
+ * @const WIDGET_PROP_CANCEL_BUTTON
+ * 窗口中按下 Esc 默认触发单击 button 控件名字。
+ */
+#define WIDGET_PROP_CANCEL_BUTTON "cancel_button"
+
+/**
+ * @const WIDGET_PROP_ACCEPT_RETRUN
+ * 控件中是否支持 Enter 按钮输入。
+ */
+#define WIDGET_PROP_ACCEPT_RETRUN "accept_return"
+
+/**
+ * @const WIDGET_PROP_ACCEPT_TAB
+ * 控件中是否支持 Tab 按钮输入。
+ */
+#define WIDGET_PROP_ACCEPT_TAB "accept_tab"
+
+/**
  * @const WIDGET_PROP_ROWS
  * 行数。
  */
@@ -1051,7 +1102,7 @@ BEGIN_C_DECLS
 
 /**
  * @const WIDGET_PROP_ANIMATING_TIME
- * 动画时间。
+ * 动画时间(毫秒)。
  */
 #define WIDGET_PROP_ANIMATING_TIME "animating_time"
 
@@ -1063,9 +1114,51 @@ BEGIN_C_DECLS
 
 /**
  * @const WIDGET_PROP_ANIMATE_ANIMATING_TIME
- * 改变控件属性时附带动画的播放时间。
+ * 改变控件属性时附带动画的播放时间(毫秒)。
  */
 #define WIDGET_PROP_ANIMATE_ANIMATING_TIME "animate:animating_time"
+
+/**
+ * @const WIDGET_PROP_DIRTY_RECT
+ * 控件脏矩形区域。
+ */
+#define WIDGET_PROP_DIRTY_RECT "dirty_rect"
+
+/**
+ * @const WIDGET_PROP_SCREEN_SAVER_TIME
+ * 屏幕保护时间(毫秒)。
+ */
+#define WIDGET_PROP_SCREEN_SAVER_TIME "screen_saver_time"
+
+/**
+ * @const WIDGET_PROP_SHOW_FPS
+ * 是否显示FPS。
+ */
+#define WIDGET_PROP_SHOW_FPS "show_fps"
+
+/**
+ * @const WIDGET_PROP_MAX_FPS
+ * 最大FPS。
+ */
+#define WIDGET_PROP_MAX_FPS "max_fps"
+
+/**
+ * @const WIDGET_PROP_VALIDATOR
+ * 数据校验脚本。
+ */
+#define WIDGET_PROP_VALIDATOR "validator"
+
+/**
+ * @const WIDGET_PROP_SYNC_STATE_TO_CHILDREN
+ * 标识是否将当前控件状态同步到子控件中。
+ */
+#define WIDGET_PROP_SYNC_STATE_TO_CHILDREN "sync_state_to_children"
+
+/**
+ * @const WIDGET_PROP_STATE_FROM_PARENT_SYNC
+ * 标识是否接收父控件的状态同步。
+ */
+#define WIDGET_PROP_STATE_FROM_PARENT_SYNC "state_from_parent_sync"
 
 /**
  * @enum widget_type_t
@@ -1706,6 +1799,8 @@ typedef enum _window_closable_t {
 #define STR_PROP_SELF "self"
 #define STR_PROP_PARENT "parent"
 #define STR_PROP_WINDOW "window"
+#define STR_PROP_MAIN_WINDOW "main_window"
+#define STR_PROP_TOP_WINDOW "top_window"
 #define STR_PROP_WINDOW_MANAGER "window_manager"
 #define STR_PROP_MODEL "__model__"
 

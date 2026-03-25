@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  style interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -105,6 +105,13 @@ ret_t style_destroy(style_t* s) {
   return RET_FAIL;
 }
 
+ret_t style_get(style_t* s, const char* state, const char* name, value_t* value) {
+  return_value_if_fail(s != NULL && s->vt != NULL && s->vt->get != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(state != NULL && name != NULL && value != NULL, RET_BAD_PARAMS);
+
+  return s->vt->get(s, state, name, value);
+}
+
 ret_t style_set(style_t* s, const char* state, const char* name, const value_t* value) {
   return_value_if_fail(s != NULL && s->vt != NULL && s->vt->set != NULL, RET_BAD_PARAMS);
   return_value_if_fail(state != NULL && name != NULL && value != NULL, RET_BAD_PARAMS);
@@ -167,25 +174,29 @@ static uint32_t to_border(const char* value) {
 }
 
 static uint32_t to_icon_at(const char* value) {
-  uint32_t icon_at = ICON_AT_AUTO;
-
   if (strstr(value, "cent")) {
-    icon_at = ICON_AT_CENTRE;
-  }
-  if (strstr(value, "left")) {
-    icon_at = ICON_AT_LEFT;
-  }
-  if (strstr(value, "right")) {
-    icon_at = ICON_AT_RIGHT;
-  }
-  if (strstr(value, "top")) {
-    icon_at = ICON_AT_TOP;
-  }
-  if (strstr(value, "bottom")) {
-    icon_at = ICON_AT_BOTTOM;
+    return ICON_AT_CENTRE;
+  } else if (strstr(value, "left_top")) {
+    return ICON_AT_LEFT_TOP;
+  } else if (strstr(value, "left_bottom")) {
+    return ICON_AT_LEFT_BOTTOM;
+  } else if (strstr(value, "right_top")) {
+    return ICON_AT_RIGHT_TOP;
+  } else if (strstr(value, "right_bottom")) {
+    return ICON_AT_RIGHT_BOTTOM;
+  } else if (strstr(value, "left")) {
+    return ICON_AT_LEFT;
+  } else if (strstr(value, "right")) {
+    return ICON_AT_RIGHT;
+  } else if (strstr(value, "top")) {
+    return ICON_AT_TOP;
+  } else if (strstr(value, "bottom")) {
+    return ICON_AT_BOTTOM;
+  } else if (strstr(value, "auto")) {
+    return ICON_AT_AUTO;
   }
 
-  return icon_at;
+  return ICON_AT_LEFT;
 }
 
 ret_t style_normalize_value(const char* name, const char* value, value_t* out) {

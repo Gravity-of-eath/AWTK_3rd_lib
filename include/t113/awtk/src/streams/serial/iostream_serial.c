@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on serial port
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,6 +19,8 @@
  *
  */
 
+#include "tkc/url.h"
+#include "tkc/path.h"
 #include "tkc/mem.h"
 #include "streams/serial/istream_serial.h"
 #include "streams/serial/ostream_serial.h"
@@ -136,12 +138,12 @@ static tk_ostream_t* tk_iostream_serial_get_ostream(tk_iostream_t* stream) {
 
 tk_iostream_t* tk_iostream_serial_create(const char* port) {
   tk_object_t* obj = NULL;
-  serial_handle_t fd = 0;
+  serial_handle_t fd = (serial_handle_t)NULL;
   tk_iostream_serial_t* iostream_serial = NULL;
   return_value_if_fail(port != NULL, NULL);
 
   fd = serial_open(port);
-  return_value_if_fail(fd > 0, NULL);
+  return_value_if_fail(fd != (serial_handle_t)NULL, NULL);
 
   obj = tk_object_create(&s_tk_iostream_serial_vtable);
   iostream_serial = TK_IOSTREAM_SERIAL(obj);
@@ -189,4 +191,10 @@ ret_t tk_iostream_serial_wait_for_data(tk_iostream_t* iostream, uint32_t timeout
   return_value_if_fail(iostream_serial != NULL, RET_BAD_PARAMS);
 
   return serial_wait_for_data(iostream_serial->fd, timeout);
+}
+
+#include "streams/stream_factory.h"
+
+tk_iostream_t* tk_iostream_serial_create_ex(const char* url) {
+  return tk_stream_factory_create_iostream(url);
 }

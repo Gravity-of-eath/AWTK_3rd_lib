@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  thread
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,11 +39,14 @@ typedef enum _tk_thread_priority_t {
   TK_THREAD_PRIORITY_NORMAL = 0x0,
   TK_THREAD_PRIORITY_IDLE,
   TK_THREAD_PRIORITY_LOWEST,
-  TK_THREAD_PRIORITY_BELOW_NORAML,
-  TK_THREAD_PRIORITY_ABOVE_NORAML,
+  TK_THREAD_PRIORITY_BELOW_NORMAL,
+  TK_THREAD_PRIORITY_ABOVE_NORMAL,
   TK_THREAD_PRIORITY_HIGHEST,
   TK_THREAD_PRIORITY_TIME_CRITICAL,
 } tk_thread_priority_t;
+
+#define TK_THREAD_PRIORITY_BELOW_NORAML TK_THREAD_PRIORITY_BELOW_NORMAL
+#define TK_THREAD_PRIORITY_ABOVE_NORAML TK_THREAD_PRIORITY_ABOVE_NORMAL
 
 /**
  * @method tk_thread_create

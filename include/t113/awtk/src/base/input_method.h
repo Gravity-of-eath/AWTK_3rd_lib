@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input method interface.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -128,7 +128,7 @@ typedef enum _input_type_t {
 typedef struct _im_commit_event_t {
   event_t e;
   /**
-   * @property {char*} text
+   * @property {const char*} text
    * @annotation ["readable"]
    * 提交的文本。
    */
@@ -162,7 +162,7 @@ event_t* im_commit_event_init(im_commit_event_t* e, const char* text, bool_t rep
 typedef struct _im_action_button_info_event_t {
   event_t e;
   /**
-   * @property {char*} text
+   * @property {const char*} text
    * @annotation ["readable"]
    * 软键盘上的action按钮显示的文本。
    */
@@ -183,7 +183,7 @@ typedef struct _im_action_button_info_event_t {
 typedef struct _im_candidates_event_t {
   event_t e;
   /**
-   * @property {char*} candidates
+   * @property {const char*} candidates
    * @annotation ["readable"]
    * 可选的文本，多个文本以\0分隔。如：里\0李\0力\0离\0
    */
@@ -245,6 +245,13 @@ struct _input_method_t {
   widget_t* widget;
 
   /**
+   * @property {widget_t*} last_widget
+   * @annotation ["private"]
+   * 上一个的焦点控件。
+   */
+  widget_t* last_widget;
+
+  /**
    * @property {widget_t*} keyboard
    * @annotation ["private"]
    * 当前的软件键盘。
@@ -266,6 +273,13 @@ struct _input_method_t {
   int32_t win_delta_y;
 
   /**
+   * @property {int32_t} last_win_delta_y
+   * @annotation ["private"]
+   * 上一个控件的 win_delta_y 为推移的距离。
+   */
+  int32_t last_win_delta_y;
+
+  /**
    * @property {int32_t} win_old_y
    * @annotation ["private"]
    * 窗口原来的位置。
@@ -273,11 +287,11 @@ struct _input_method_t {
   int32_t win_old_y;
 
   /**
-   * @property {uint32_t} edit_old_h 
+   * @property {uint32_t} mledit_old_h
    * @annotation ["private"]
-   * 保存编辑器原来的高度。
+   * 保存多行编辑器原来的高度。
    */
-  uint32_t edit_old_h;
+  uint32_t mledit_old_h;
 
   /**
    * @property {bool_t} action_button_enable
@@ -377,7 +391,7 @@ ret_t input_method_request(input_method_t* im, widget_t* widget);
  * @method input_method_update_action_button_info
  * 设置软键盘上的action按钮的信息。
  * @param {input_method_t*} im 输入法对象。
- * @param {char*} text 按钮的文本。
+ * @param {const char*} text 按钮的文本。
  * @param {bool_t} enable 按钮的是否可用。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
@@ -459,7 +473,7 @@ ret_t input_method_dispatch_key(input_method_t* im, uint32_t key);
  * 提交按键。
  * @annotation ["scriptable"]
  * @param {input_method_t*} im 输入法对象。
- * @param {const char*} key 键值。
+ * @param {const char*} keys 键值。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -499,7 +513,7 @@ ret_t input_method_dispatch_preedit_abort(input_method_t* im);
  * @method input_method_dispatch_candidates
  * 请求显示候选字。
  * @param {input_method_t*} im 输入法对象。
- * @param {char*} strs 候选字列表。
+ * @param {const char*} strs 候选字列表。
  * @param {uint32_t} nr 候选字个数。
  * @param {int32_t} selected 缺省选中候选字的序数。
  *
@@ -516,7 +530,7 @@ ret_t input_method_dispatch_candidates(input_method_t* im, const char* strs, uin
  * > 从预候选字列表中选择拼音，再查询拼音对应的候选字列表。
  * 
  * @param {input_method_t*} im 输入法对象。
- * @param {char*} strs 候选字列表。
+ * @param {const char*} strs 候选字列表。
  * @param {uint32_t} nr 候选字个数。
  * @param {int32_t} selected 缺省选中候选字的序数。
  *

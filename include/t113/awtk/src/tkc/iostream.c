@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input/ouput stream interface
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,4 +57,8 @@ int32_t tk_iostream_write_len(tk_iostream_t* stream, const void* buff, uint32_t 
   tk_ostream_t* os = tk_iostream_get_ostream(stream);
 
   return tk_ostream_write_len(os, buff, max_size, timeout_ms);
+}
+
+ret_t tk_iostream_unref(tk_iostream_t* stream) {
+  return tk_object_unref(TK_OBJECT(stream));
 }

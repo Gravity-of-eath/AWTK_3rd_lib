@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  generic value type
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,6 +38,15 @@ bool_t value_bool(const value_t* v) {
     case VALUE_TYPE_WSTRING: {
       return tk_watob(v->value.wstr);
     }
+    case VALUE_TYPE_OBJECT: {
+      return (v->value.object != NULL);
+    }
+    case VALUE_TYPE_POINTER: {
+      return (v->value.ptr != NULL);
+    }
+    case VALUE_TYPE_POINTER_REF: {
+      return (v->value.ptr_ref->data != NULL);
+    }
     default: {
       return value_int(v) ? TRUE : FALSE;
     }
@@ -45,7 +54,7 @@ bool_t value_bool(const value_t* v) {
 }
 
 value_t* value_init(value_t* v, uint32_t type) {
-  v->type = type;
+  v->type = (value_type_t)type;
   v->free_handle = FALSE;
 
   return v;
@@ -158,6 +167,8 @@ uint32_t value_uint32(const value_t* v) {
 
   if (v->type == VALUE_TYPE_UINT32) {
     return v->value.u32;
+  } else if (v->type == VALUE_TYPE_STRING) {
+    return (uint32_t)tk_atoul(v->value.str);
   } else {
     return (uint32_t)value_int(v);
   }
@@ -179,6 +190,10 @@ int64_t value_int64(const value_t* v) {
     return v->value.u64;
   } else if (v->type == VALUE_TYPE_STRING) {
     return tk_atol(v->value.str);
+  } else if (v->type == VALUE_TYPE_UINT32) {
+    return (int64_t)value_uint32(v);
+  } else if (v->type == VALUE_TYPE_UINT64) {
+    return (int64_t)value_uint64(v);
   } else {
     return (int64_t)value_int(v);
   }
@@ -433,6 +448,16 @@ value_t* value_set_wstr(value_t* v, const wchar_t* value) {
   return value_init(v, VALUE_TYPE_WSTRING);
 }
 
+value_t* value_dup_wstr(value_t* v, const wchar_t* value) {
+  return_value_if_fail(v != NULL, NULL);
+
+  value_init(v, VALUE_TYPE_WSTRING);
+  v->value.wstr = tk_wstrdup(value);
+  v->free_handle = TRUE;
+
+  return v;
+}
+
 const char* value_str(const value_t* v) {
   return_value_if_fail(v != NULL, NULL);
   return_value_if_fail(v->type == VALUE_TYPE_STRING, NULL);
@@ -507,6 +532,66 @@ ret_t value_deep_copy(value_t* dst, const value_t* src) {
   }
 
   return RET_OK;
+}
+
+static bool_t value_mem_equal(const value_t* v, const value_t* other) {
+  return_value_if_fail(v != NULL && other != NULL, FALSE);
+
+  if (v == other) {
+    return TRUE;
+  }
+
+  if (v->type != other->type) {
+    return FALSE;
+  }
+
+  switch (v->type) {
+    case VALUE_TYPE_SIZED_STRING:
+      return v->value.sized_str.str == other->value.sized_str.str;
+    case VALUE_TYPE_BINARY:
+    case VALUE_TYPE_UBJSON:
+    case VALUE_TYPE_GRADIENT:
+      return v->value.binary_data.data == other->value.binary_data.data;
+    case VALUE_TYPE_STRING:
+      return v->value.str == other->value.str;
+    case VALUE_TYPE_WSTRING:
+      return v->value.wstr == other->value.wstr;
+    case VALUE_TYPE_OBJECT:
+      return v->value.object == other->value.object;
+    case VALUE_TYPE_ID:
+      return v->value.id.id == other->value.id.id;
+    case VALUE_TYPE_FUNC:
+      return v->value.func.func == other->value.func.func;
+    case VALUE_TYPE_POINTER_REF:
+      return v->value.ptr_ref == other->value.ptr_ref;
+    default:
+      return FALSE;
+  }
+}
+
+ret_t value_replace(value_t* dst, const value_t* src, bool_t deep_copy) {
+  return_value_if_fail(dst != NULL && src != NULL, RET_BAD_PARAMS);
+
+  if (value_mem_equal(dst, src)) {
+    if (dst->free_handle && !src->free_handle) {
+      if (deep_copy) {
+        value_copy(dst, src);
+        dst->free_handle = TRUE;
+        return RET_OK;
+      } else {
+        log_error(
+            "%s: dst(%p) and src(%p) have the same value pointer, "
+            "but dst has free handle while src doesn't, and deep copy isn't enabled."
+            "Replacing them would cause memory leak!\n",
+            __FUNCTION__, dst, src);
+        return RET_FAIL;
+      }
+    }
+  } else {
+    value_reset(dst);
+  }
+
+  return deep_copy ? value_deep_copy(dst, src) : value_copy(dst, src);
 }
 
 bool_t value_is_null(value_t* v) {
@@ -608,7 +693,7 @@ bool_t value_equal(const value_t* v, const value_t* other) {
       return v->value.u64 == other->value.u64;
     }
     case VALUE_TYPE_FLOAT: {
-      return tk_fequal(v->value.f, other->value.f32);
+      return tk_fequal(v->value.f, other->value.f);
     }
     case VALUE_TYPE_FLOAT32: {
       return tk_fequal(v->value.f32, other->value.f32);
@@ -870,6 +955,7 @@ const char* value_str_ex(const value_t* v, char* buff, uint32_t size) {
     }
   } else if (v->type == VALUE_TYPE_INVALID) {
     *buff = '\0';
+    return TK_VALUE_UNDEFINED;
   } else {
     tk_snprintf(buff, size, "%d", value_int(v));
   }
@@ -993,6 +1079,21 @@ value_t* value_set_bitmap(value_t* v, void* bitmap) {
 
   return value_init(v, VALUE_TYPE_BITMAP);
 }
+
+rect_t* value_rect(const value_t* v) {
+  return_value_if_fail(v != NULL && v->type == VALUE_TYPE_RECT, NULL);
+
+  return (rect_t*)(&(v->value.rect));
+}
+
+value_t* value_set_rect(value_t* v, rect_t r) {
+  return_value_if_fail(v != NULL, NULL);
+
+  v->value.rect = r;
+
+  return value_init(v, VALUE_TYPE_RECT);
+}
+
 /*operations*/
 
 ret_t value_lshift(value_t* v, value_t* result, uint32_t n) {
@@ -1034,7 +1135,7 @@ ret_t value_lshift(value_t* v, value_t* result, uint32_t n) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1081,7 +1182,7 @@ ret_t value_rshift(value_t* v, value_t* result, uint32_t n) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1144,7 +1245,7 @@ ret_t value_lshift_r(value_t* v, value_t* result, uint32_t n) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1207,7 +1308,7 @@ ret_t value_rshift_r(value_t* v, value_t* result, uint32_t n) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1270,7 +1371,7 @@ ret_t value_get_bit(value_t* v, value_t* result, uint32_t n) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1340,7 +1441,7 @@ ret_t value_set_bit(value_t* v, value_t* result, uint32_t n, bool_t bit) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1403,7 +1504,7 @@ ret_t value_toggle_bit(value_t* v, value_t* result, uint32_t n) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1463,7 +1564,7 @@ ret_t value_bit_not(value_t* v, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1480,7 +1581,7 @@ ret_t value_bit_or(value_t* v, value_t* other, value_t* result) {
   type = tk_max_int((int)(v->type), (int)(other->type));
   switch (type) {
     case VALUE_TYPE_BOOL: {
-      bool_t vv = value_bool(v) | value_bool(other);
+      bool_t vv = value_bool(v) || value_bool(other);
       value_set_bool(result, vv);
       break;
     }
@@ -1526,7 +1627,7 @@ ret_t value_bit_or(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1543,7 +1644,7 @@ ret_t value_bit_and(value_t* v, value_t* other, value_t* result) {
   type = tk_max_int((int)(v->type), (int)(other->type));
   switch (type) {
     case VALUE_TYPE_BOOL: {
-      bool_t vv = value_bool(v) & value_bool(other);
+      bool_t vv = value_bool(v) && value_bool(other);
       value_set_bool(result, vv);
       break;
     }
@@ -1589,7 +1690,7 @@ ret_t value_bit_and(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1652,7 +1753,7 @@ ret_t value_bit_xor(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1727,7 +1828,7 @@ ret_t value_abs(value_t* v, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, v->type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(v->type));
       break;
     }
   }
@@ -1817,7 +1918,7 @@ ret_t value_add(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(type));
       break;
     }
   }
@@ -1907,7 +2008,7 @@ ret_t value_sub(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(type));
       break;
     }
   }
@@ -1997,7 +2098,7 @@ ret_t value_mul(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(type));
       break;
     }
   }
@@ -2071,7 +2172,7 @@ ret_t value_div(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(type));
       break;
     }
   }
@@ -2134,7 +2235,7 @@ ret_t value_mod(value_t* v, value_t* other, value_t* result) {
     }
     default: {
       ret = RET_BAD_PARAMS;
-      log_debug("%s not supported type:%d\n", __FUNCTION__, type);
+      log_debug("%s not supported type:\"%s\"\n", __FUNCTION__, value_type_name(type));
       break;
     }
   }
@@ -2185,4 +2286,136 @@ ret_t value_expt(value_t* v, value_t* other, value_t* result) {
   }
 
   return RET_OK;
+}
+
+ret_t value_min(value_t* arr, uint32_t size, value_t* result) {
+  uint32_t i = 0;
+  uint32_t r = 0;
+  uint32_t type = 0;
+  return_value_if_fail(arr != NULL && size > 0 && result != NULL, RET_BAD_PARAMS);
+
+  type = arr[0].type;
+
+  if (type >= VALUE_TYPE_INT8 && type < VALUE_TYPE_UINT64) {
+    for (i = 0; i < size; i++) {
+      if (value_int64(arr + i) < value_int64(arr + r)) {
+        r = i;
+      }
+    }
+
+    return value_copy(result, arr + r);
+  } else if (type == VALUE_TYPE_UINT64) {
+    for (i = 0; i < size; i++) {
+      if (value_uint64(arr + i) < value_uint64(arr + r)) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else if (type == VALUE_TYPE_STRING) {
+    for (i = 0; i < size; i++) {
+      if (tk_strcmp(value_str(arr + i), value_str(arr + r)) < 0) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else if (type == VALUE_TYPE_WSTRING) {
+    for (i = 0; i < size; i++) {
+      if (tk_wstrcmp(value_wstr(arr + i), value_wstr(arr + r)) < 0) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else if (type >= VALUE_TYPE_FLOAT && type <= VALUE_TYPE_DOUBLE) {
+    for (i = 0; i < size; i++) {
+      if (value_double(arr + i) < value_double(arr + r)) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else {
+    log_warn("not impl for this type");
+    return RET_NOT_IMPL;
+  }
+}
+
+ret_t value_max(value_t* arr, uint32_t size, value_t* result) {
+  uint32_t i = 0;
+  uint32_t r = 0;
+  uint32_t type = 0;
+  return_value_if_fail(arr != NULL && size > 0 && result != NULL, RET_BAD_PARAMS);
+
+  type = arr[0].type;
+
+  if (type >= VALUE_TYPE_INT8 && type < VALUE_TYPE_UINT64) {
+    for (i = 0; i < size; i++) {
+      if (value_int64(arr + i) > value_int64(arr + r)) {
+        r = i;
+      }
+    }
+
+    return value_copy(result, arr + r);
+  } else if (type == VALUE_TYPE_UINT64) {
+    for (i = 0; i < size; i++) {
+      if (value_uint64(arr + i) > value_uint64(arr + r)) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else if (type == VALUE_TYPE_STRING) {
+    for (i = 0; i < size; i++) {
+      if (tk_strcmp(value_str(arr + i), value_str(arr + r)) > 0) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else if (type == VALUE_TYPE_WSTRING) {
+    for (i = 0; i < size; i++) {
+      if (tk_wstrcmp(value_wstr(arr + i), value_wstr(arr + r)) > 0) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else if (type >= VALUE_TYPE_FLOAT && type <= VALUE_TYPE_DOUBLE) {
+    for (i = 0; i < size; i++) {
+      if (value_double(arr + i) > value_double(arr + r)) {
+        r = i;
+      }
+    }
+    return value_copy(result, arr + r);
+  } else {
+    log_warn("not impl for this type");
+    return RET_NOT_IMPL;
+  }
+}
+
+static const char* s_type_names[] = {[VALUE_TYPE_BOOL] = "bool",
+                                     [VALUE_TYPE_INT8] = "int8",
+                                     [VALUE_TYPE_INT16] = "int16",
+                                     [VALUE_TYPE_INT32] = "int32",
+                                     [VALUE_TYPE_INT64] = "int64",
+                                     [VALUE_TYPE_UINT8] = "uint8",
+                                     [VALUE_TYPE_UINT16] = "uint16",
+                                     [VALUE_TYPE_UINT32] = "uint32",
+                                     [VALUE_TYPE_UINT64] = "uint64",
+                                     [VALUE_TYPE_FLOAT] = "float",
+                                     [VALUE_TYPE_FLOAT32] = "float32",
+                                     [VALUE_TYPE_DOUBLE] = "double",
+                                     [VALUE_TYPE_STRING] = "char*",
+                                     [VALUE_TYPE_WSTRING] = "wchar_t*",
+                                     [VALUE_TYPE_POINTER] = "pointer",
+                                     [VALUE_TYPE_OBJECT] = "object",
+                                     [VALUE_TYPE_BINARY] = "binary",
+                                     [VALUE_TYPE_UBJSON] = "ubjson",
+                                     [VALUE_TYPE_ID] = "id",
+                                     [VALUE_TYPE_TOKEN] = "token",
+                                     [VALUE_TYPE_RECT] = "rect",
+                                     [VALUE_TYPE_FUNC] = "func",
+                                     [VALUE_TYPE_GRADIENT] = "gradient",
+                                     [VALUE_TYPE_FUNC_DEF] = "func_def",
+                                     [VALUE_TYPE_BITMAP] = "bitmap",
+                                     [VALUE_TYPE_SIZED_STRING] = "char(with size)*",
+                                     [VALUE_TYPE_POINTER_REF] = "pointer ref"};
+
+const char* value_type_name(value_type_t type) {
+  return s_type_names[type];
 }

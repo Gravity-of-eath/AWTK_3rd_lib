@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  scroll_view
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,6 +28,7 @@
 #include "base/widget_vtable.h"
 #include "base/image_manager.h"
 #include "widget_animators/widget_animator_scroll.h"
+#include "stdio.h"
 
 #define SCROLL_VIEW_DEFAULT_XSPEED_SCALE 2.0f
 #define SCROLL_VIEW_DEFAULT_YSPEED_SCALE 2.0f
@@ -79,8 +80,8 @@ static ret_t scroll_view_update_virtual_size(widget_t* widget) {
   scroll_view_t* scroll_view = SCROLL_VIEW(widget);
   return_value_if_fail(scroll_view != NULL && widget != NULL, RET_BAD_PARAMS);
 
-  virtual_w = tk_max(scroll_view->virtual_w, widget->w);
-  virtual_h = tk_max(scroll_view->virtual_h, widget->h);
+  virtual_w = widget->w;
+  virtual_h = widget->h;
 
   WIDGET_FOR_EACH_CHILD_BEGIN(widget, iter, i)
   int32_t r = 0;
@@ -399,7 +400,7 @@ static int32_t scroll_view_calc_bight_offset(scroll_view_t* scroll_view, int32_t
     virtual_size = scroll_view->virtual_w;
   }
 
-  r = max_d * M_SQRT2 / (M_SQRT2 - 1.0);
+  r = (float_t)(max_d * M_SQRT2 / (M_SQRT2 - 1.0f));
   translate = r - max_d;
 
   /* Calculation formula: (offset - translate)^2 + (ret + translate)^2 = r^2 */
@@ -517,11 +518,78 @@ static ret_t scroll_view_on_event(widget_t* widget, event_t* e) {
       ret = scroll_view->dragged ? RET_STOP : RET_OK;
       break;
     }
+
     default:
       break;
   }
 
   return ret;
+}
+
+static ret_t scroll_view_on_event_before_children(widget_t* widget, event_t* e) {
+  ret_t ret = RET_OK;
+  uint16_t type = e->type;
+  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
+  return_value_if_fail(scroll_view != NULL, RET_BAD_PARAMS);
+
+  switch (type) {
+    case EVT_TOUCH_DOWN: {
+      touch_event_t* evt = (touch_event_t*)e;
+      scroll_view->touched = TRUE;
+      scroll_view->touch_down.x = evt->x;
+      scroll_view->touch_down.y = evt->y;
+      scroll_view->moved = FALSE;
+      scroll_view->scroll_speed = 0;
+      printf("scroll_view_on_event_before_children EVT_TOUCH_DOWN (%.1f-%.1f)\n", evt->x, evt->y);
+    } break;
+    case EVT_TOUCH_MOVE: {
+      touch_event_t* evt = (touch_event_t*)e;
+      xy_t offset_x = scroll_view->touch_down.x - evt->x;
+      xy_t offset_y = scroll_view->touch_down.y - evt->y;
+      if (!scroll_view->moved && scroll_view->touched && tk_abs(offset_x) > tk_abs(offset_y)) {
+        scroll_view->touched = FALSE;
+        return RET_OK;
+      }
+      if (scroll_view->touched && (scroll_view->moved || tk_abs(offset_y) > 5)) {
+        scroll_view->moved = TRUE;
+        scroll_view->scroll_speed = offset_y;
+        // scroll_view_scroll_delta_to(scroll_view, 0, offset_y, 0);
+        wh_t dest = scroll_view->yoffset + offset_y;
+        if (dest < 0) {
+          dest = 0;
+        }
+        if (dest > scroll_view->virtual_h) {
+          dest = scroll_view->virtual_h;
+        }
+        scroll_view_scroll_delta_to(scroll_view, 0, scroll_view->scroll_speed * 20, 200);
+        // scroll_view_scroll_to(scroll_view, scroll_view->xoffset, dest* 20,200);
+        widget_invalidate_force(scroll_view,NULL);
+        scroll_view->touch_down.x = evt->x;
+        scroll_view->touch_down.y = evt->y;
+        printf("scroll_view_on_event_before_children stop EVT_TOUCH_MOVE speed=%d (%.1f-%.1f)\n",
+               offset_y, evt->x, evt->y);
+        return RET_STOP;
+      } else {
+        printf("scroll_view_on_event_before_children pass EVT_TOUCH_MOVE (%.1f-%.1f)\n", evt->x,
+               evt->y);
+      }
+    } break;
+    case EVT_TOUCH_UP: {
+      if (scroll_view->moved) {
+        scroll_view->moved = FALSE;
+        scroll_view_scroll_delta_to(scroll_view, 0, scroll_view->scroll_speed * 20, 200);
+        printf("scroll_view_on_event_before_children stop EVT_TOUCH_UP  \n");
+        return RET_STOP;
+      } else {
+        printf("scroll_view_on_event_before_children pass EVT_TOUCH_UP  \n");
+      }
+      scroll_view->touched = FALSE;
+    } break;
+    default:
+      return RET_OK;
+      break;
+  }
+  return RET_OK;
 }
 
 static ret_t scroll_view_on_paint_children(widget_t* widget, canvas_t* c) {
@@ -628,10 +696,10 @@ static ret_t scroll_view_get_prop(widget_t* widget, const char* name, value_t* v
   scroll_view_t* scroll_view = SCROLL_VIEW(widget);
   return_value_if_fail(scroll_view != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
 
-  if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_W)) {
+  if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_W) || tk_str_eq(name, WIDGET_PROP_LAYOUT_W)) {
     value_set_int(v, tk_max(widget->w, scroll_view->virtual_w));
     return RET_OK;
-  } else if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_H)) {
+  } else if (tk_str_eq(name, WIDGET_PROP_VIRTUAL_H) || tk_str_eq(name, WIDGET_PROP_LAYOUT_H)) {
     value_set_int(v, tk_max(widget->h, scroll_view->virtual_h));
     return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_XOFFSET)) {
@@ -762,6 +830,18 @@ static ret_t scroll_view_get_only_active_children(widget_t* widget, darray_t* al
   return RET_SKIP;
 }
 
+static ret_t scroll_view_init(widget_t* widget) {
+  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
+  return_value_if_fail(scroll_view != NULL, RET_BAD_PARAMS);
+
+  scroll_view->snap_to_page = FALSE;
+  scroll_view->xspeed_scale = SCROLL_VIEW_DEFAULT_XSPEED_SCALE;
+  scroll_view->yspeed_scale = SCROLL_VIEW_DEFAULT_YSPEED_SCALE;
+  scroll_view->fix_end_offset = scroll_view_fix_end_offset_default;
+  scroll_view->slide_limit_ratio = 1.0;
+  return RET_OK;
+}
+
 static const char* s_scroll_view_clone_properties[] = {
     WIDGET_PROP_VIRTUAL_W,     WIDGET_PROP_VIRTUAL_H,     WIDGET_PROP_XSLIDABLE,
     WIDGET_PROP_YSLIDABLE,     WIDGET_PROP_XOFFSET,       WIDGET_PROP_YOFFSET,
@@ -774,6 +854,7 @@ TK_DECL_VTABLE(scroll_view) = {.size = sizeof(scroll_view_t),
                                .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                .create = scroll_view_create,
                                .on_event = scroll_view_on_event,
+                               .on_event_before_children = scroll_view_on_event_before_children,
                                .on_layout_children = scroll_view_on_layout_children,
                                .on_paint_children = scroll_view_on_paint_children,
                                .on_add_child = scroll_view_on_add_child,
@@ -785,15 +866,7 @@ TK_DECL_VTABLE(scroll_view) = {.size = sizeof(scroll_view_t),
 
 widget_t* scroll_view_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(scroll_view), x, y, w, h);
-  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
-  return_value_if_fail(scroll_view != NULL, NULL);
-
-  scroll_view->snap_to_page = FALSE;
-  scroll_view->xspeed_scale = SCROLL_VIEW_DEFAULT_XSPEED_SCALE;
-  scroll_view->yspeed_scale = SCROLL_VIEW_DEFAULT_YSPEED_SCALE;
-  scroll_view->fix_end_offset = scroll_view_fix_end_offset_default;
-  scroll_view->slide_limit_ratio = 1.0;
-
+  return_value_if_fail(scroll_view_init(widget) == RET_OK, NULL);
   return widget;
 }
 
@@ -813,6 +886,28 @@ ret_t scroll_view_set_virtual_h(widget_t* widget, wh_t h) {
   scroll_view->virtual_h = h;
 
   return RET_OK;
+}
+
+ret_t scroll_view_fix_offset(widget_t* widget) {
+  int32_t xoffset = 0, yoffset = 0;
+  scroll_view_t* scroll_view = SCROLL_VIEW(widget);
+  return_value_if_fail(scroll_view != NULL, RET_BAD_PARAMS);
+
+  if (scroll_view->xoffset + widget->w > scroll_view->virtual_w) {
+    xoffset = scroll_view->virtual_w - widget->w;
+  } else {
+    xoffset = scroll_view->xoffset;
+  }
+  xoffset = tk_max(0, xoffset);
+
+  if (scroll_view->yoffset + widget->h > scroll_view->virtual_h) {
+    yoffset = scroll_view->virtual_h - widget->h;
+  } else {
+    yoffset = scroll_view->yoffset;
+  }
+  yoffset = tk_max(0, yoffset);
+
+  return scroll_view_set_offset(widget, xoffset, yoffset);
 }
 
 ret_t scroll_view_set_speed_scale(widget_t* widget, float_t xspeed_scale, float_t yspeed_scale) {

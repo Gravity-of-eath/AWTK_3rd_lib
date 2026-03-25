@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  file_browser
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -96,42 +96,51 @@ file_browser_t* file_browser_create(fs_t* fs) {
   return fb;
 }
 
-ret_t file_browser_set_cwd(file_browser_t* fb, const char* cwd) {
-  char path[MAX_PATH + 1];
-  return_value_if_fail(fb != NULL && cwd != NULL, RET_BAD_PARAMS);
-  assert(strlen(cwd) <= MAX_PATH);
+static ret_t file_browser_normlize_path(const char* in, char* out, uint32_t out_size) {
+  char path[MAX_PATH + 1] = {0};
+  return_value_if_fail(in != NULL && out != NULL, RET_BAD_PARAMS);
 
-  if (path_is_abs(cwd)) {
-    path_normalize(cwd, fb->cwd, MAX_PATH);
-  } else {
-    memset(path, 0x00, sizeof(path));
-    return_value_if_fail(path_abs(cwd, path, MAX_PATH) == RET_OK, RET_BAD_PARAMS);
-    path_normalize(path, fb->cwd, MAX_PATH);
+  memset(path, 0x00, sizeof(path));
+  path_expand_vars(in, path, sizeof(path) - 1);
+
+  if (file_exist(path)) {
+    char* p = path + strlen(path);
+    while (p > path && *p != '/' && *p != '\\') {
+      p--;
+    }
+    *p = '\0';
   }
-  path_remove_last_slash(fb->cwd);
 
+  in = path;
+  if (path_is_abs(in)) {
+    path_normalize(in, out, out_size);
+  } else {
+    char abs_path[MAX_PATH + 1];
+    memset(abs_path, 0x00, sizeof(path));
+    return_value_if_fail(path_abs(in, abs_path, MAX_PATH) == RET_OK, RET_BAD_PARAMS);
+    path_normalize(abs_path, out, out_size);
+  }
+
+  path_remove_last_slash(out);
+
+  return RET_OK;
+}
+
+ret_t file_browser_set_cwd(file_browser_t* fb, const char* cwd) {
+  return_value_if_fail(fb != NULL && cwd != NULL, RET_BAD_PARAMS);
+
+  file_browser_normlize_path(cwd, fb->cwd, MAX_PATH);
   file_browser_refresh(fb);
 
   return RET_OK;
 }
 
 ret_t file_browser_set_top_dir(file_browser_t* fb, const char* top_dir) {
-  char path[MAX_PATH + 1];
+  char path[MAX_PATH + 1] = {0};
   return_value_if_fail(fb != NULL && top_dir != NULL, RET_BAD_PARAMS);
-  assert(strlen(top_dir) <= MAX_PATH);
 
-  memset(path, 0x00, sizeof(path));
-  if (path_is_abs(top_dir)) {
-    path_normalize(top_dir, path, MAX_PATH);
-  } else {
-    char abs_path[MAX_PATH + 1];
-    memset(abs_path, 0x00, sizeof(path));
-    return_value_if_fail(path_abs(top_dir, abs_path, MAX_PATH) == RET_OK, RET_BAD_PARAMS);
-    path_normalize(abs_path, path, MAX_PATH);
-  }
-
+  file_browser_normlize_path(top_dir, path, MAX_PATH);
   fb->top_dir = tk_str_copy(fb->top_dir, path);
-  path_remove_last_slash(fb->top_dir);
 
   return RET_OK;
 }

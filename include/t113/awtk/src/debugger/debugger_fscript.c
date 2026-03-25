@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger
  *
- * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,6 +21,7 @@
 
 #include "tkc/async.h"
 #include "tkc/object_default.h"
+#include "conf_io/conf_ubjson.h"
 #include "debugger/debugger_server.h"
 #include "debugger/debugger_message.h"
 #include "debugger/debugger_fscript.h"
@@ -80,7 +81,6 @@ static ret_t debugger_fscript_enter_func(debugger_t* debugger, const char* name,
     call_stack_frame_destroy(frame);
     return RET_OOM;
   } else {
-    log_debug("enter %s\n", name);
     return RET_OK;
   }
 }
@@ -92,8 +92,6 @@ static ret_t debugger_fscript_leave_func(debugger_t* debugger) {
 
   frame = (call_stack_frame_t*)darray_pop(&(d->call_stack_frames));
   return_value_if_fail(frame != NULL, RET_BAD_PARAMS);
-
-  log_debug("leave %s\n", frame->name);
 
   return call_stack_frame_destroy(frame);
 }
@@ -152,13 +150,13 @@ static ret_t debugger_fscript_pause(debugger_t* debugger) {
   return_value_if_fail(d != NULL, RET_BAD_PARAMS);
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
-    if (d->fscript != NULL && d->paused == FALSE) {
+    if (d->fscript != NULL && debugger_is_running(debugger)) {
       ret = RET_OK;
       /*停止到下一行要执行的代码*/
       d->next_stop_executed_line = d->executed_lines + 1;
       d->break_type = DEBUGGER_FSCRIPT_BREAK_STEP_IN;
     }
-    ret = d->paused == TRUE ? RET_OK : RET_FAIL;
+    ret = debugger_is_paused(debugger) ? RET_OK : RET_FAIL;
     debugger_fscript_unlock(debugger);
   }
 
@@ -170,19 +168,6 @@ static bool_t debugger_fscript_match(debugger_t* debugger, const char* code_id) 
   return_value_if_fail(d != NULL, FALSE);
 
   return tk_str_eq(d->code_id, code_id);
-}
-
-static bool_t debugger_fscript_is_paused(debugger_t* debugger) {
-  bool_t ret = FALSE;
-  debugger_fscript_t* d = DEBUGGER_FSCRIPT(debugger);
-  return_value_if_fail(d != NULL, FALSE);
-
-  if (debugger_fscript_lock(debugger) == RET_OK) {
-    ret = d->paused;
-    debugger_fscript_unlock(debugger);
-  }
-
-  return ret;
 }
 
 static ret_t debugger_fscript_clear_step_stops(debugger_fscript_t* d) {
@@ -200,12 +185,11 @@ static ret_t debugger_fscript_step_in(debugger_t* debugger) {
   return_value_if_fail(d != NULL, RET_BAD_PARAMS);
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
-    if (d->fscript != NULL && d->paused) {
+    if (d->fscript != NULL && debugger_is_paused(debugger)) {
       ret = RET_OK;
       debugger_fscript_clear_step_stops(d);
       d->next_stop_executed_line = d->executed_lines + 1;
       d->break_type = DEBUGGER_FSCRIPT_BREAK_STEP_IN;
-      log_debug("step_in: %d %d\n", d->executed_lines, d->next_stop_executed_line);
     }
     debugger_fscript_unlock(debugger);
 
@@ -217,20 +201,18 @@ static ret_t debugger_fscript_step_in(debugger_t* debugger) {
   return ret;
 }
 
-static ret_t debugger_fscript_next(debugger_t* debugger) {
+static ret_t debugger_fscript_step_over(debugger_t* debugger) {
   ret_t ret = RET_FAIL;
   debugger_fscript_t* d = DEBUGGER_FSCRIPT(debugger);
   return_value_if_fail(d != NULL, RET_BAD_PARAMS);
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
-    if (d->fscript != NULL && d->paused) {
+    if (d->fscript != NULL && debugger_is_paused(debugger)) {
       ret = RET_OK;
       debugger_fscript_clear_step_stops(d);
       d->next_stop_executed_line = d->executed_lines + 1;
       d->next_stop_call_frame_index = d->call_stack_frames.size;
-      d->break_type = DEBUGGER_FSCRIPT_BREAK_NEXT;
-      log_debug("next:executed_lines=%d prev_executed_line=%d\n", d->executed_lines,
-                d->prev_executed_line);
+      d->break_type = DEBUGGER_FSCRIPT_BREAK_STEP_OVER;
     }
     debugger_fscript_unlock(debugger);
 
@@ -249,11 +231,10 @@ static ret_t debugger_fscript_step_out(debugger_t* debugger) {
   return_value_if_fail(d->call_stack_frames.size > 0, RET_BAD_PARAMS);
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
-    if (d->fscript != NULL && d->paused) {
+    if (d->fscript != NULL && debugger_is_paused(debugger)) {
       ret = RET_OK;
       debugger_fscript_clear_step_stops(d);
       d->next_stop_call_frame_index = d->call_stack_frames.size - 1;
-      log_debug("step out:%d\n", d->next_stop_call_frame_index);
       d->break_type = DEBUGGER_FSCRIPT_BREAK_STEP_OUT;
     }
     debugger_fscript_unlock(debugger);
@@ -266,18 +247,17 @@ static ret_t debugger_fscript_step_out(debugger_t* debugger) {
   return ret;
 }
 
-static ret_t debugger_fscript_step_over(debugger_t* debugger) {
+static ret_t debugger_fscript_step_loop_over(debugger_t* debugger) {
   ret_t ret = RET_FAIL;
   debugger_fscript_t* d = DEBUGGER_FSCRIPT(debugger);
   return_value_if_fail(d != NULL, RET_BAD_PARAMS);
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
-    if (d->fscript != NULL && d->paused) {
+    if (d->fscript != NULL && debugger_is_paused(debugger)) {
       ret = RET_OK;
       debugger_fscript_clear_step_stops(d);
       d->next_stop_line = d->prev_executed_line + 1;
-      d->break_type = DEBUGGER_FSCRIPT_BREAK_STEP_OVER;
-      log_debug("step over: %d %d\n", d->next_stop_line, d->prev_executed_line);
+      d->break_type = DEBUGGER_FSCRIPT_BREAK_STEP_LOOP_OVER;
     }
     debugger_fscript_unlock(debugger);
 
@@ -295,7 +275,7 @@ static ret_t debugger_fscript_continue(debugger_t* debugger) {
   return_value_if_fail(d != NULL, RET_BAD_PARAMS);
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
-    if (d->fscript != NULL && d->paused) {
+    if (d->fscript != NULL && debugger_is_paused(debugger)) {
       ret = RET_OK;
       debugger_fscript_clear_step_stops(d);
     }
@@ -355,21 +335,25 @@ tk_object_t* debugger_fscript_get_global(debugger_t* debugger) {
   return TK_OBJECT_REF(fscript_get_global_object());
 }
 
-static ret_t debugger_fscript_get_callstack(debugger_t* debugger, binary_data_t* callstack) {
-  uint32_t i = 0;
+static tk_object_t* debugger_fscript_get_callstack(debugger_t* debugger) {
+  int32_t i = 0;
+  int32_t n = 0;
+  tk_object_t* ret_obj = NULL;
   debugger_fscript_t* d = DEBUGGER_FSCRIPT(debugger);
-  return_value_if_fail(d != NULL && d->fscript != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(d != NULL && d->fscript != NULL, NULL);
+
+  ret_obj = conf_ubjson_create();
 
   str_clear(&(d->temp_str));
-  for (i = 0; i < d->call_stack_frames.size; i++) {
-    call_stack_frame_t* iter = (call_stack_frame_t*)darray_get(&(d->call_stack_frames), i);
-    str_append_more(&(d->temp_str), iter->name, "\n", NULL);
+  n = d->call_stack_frames.size;
+  for (i = 0; i < n; i++) {
+    char path[MAX_PATH + 1] = {0};
+    call_stack_frame_t* iter = (call_stack_frame_t*)darray_get(&(d->call_stack_frames), n - i - 1);
+    tk_snprintf(path, sizeof(path), "%s.[%d].name", DEBUGER_CALLSTACK_NODE_NAME, i);
+    tk_object_set_prop_str(ret_obj, path, iter->name);
   }
 
-  callstack->data = d->temp_str.str;
-  callstack->size = d->temp_str.size + 1;
-
-  return RET_OK;
+  return ret_obj;
 }
 
 static ret_t debugger_fscript_get_break_points(debugger_t* debugger, binary_data_t* break_points) {
@@ -400,7 +384,7 @@ static ret_t debugger_fscript_clear_break_points(debugger_t* debugger) {
     debugger_fscript_clear_step_stops(d);
     ret = darray_clear(&(d->break_points));
 
-    paused = d->paused;
+    paused = debugger_is_paused(debugger);
     debugger_fscript_unlock(debugger);
   }
 
@@ -486,7 +470,7 @@ static ret_t debugger_fscript_exec_async(void* ctx) {
   value_set_int(&v, 0);
   fscript_exec(fscript, &v);
   value_reset(&v);
-  OBJECT_UNREF(fscript->obj);
+  TK_OBJECT_UNREF(fscript->obj);
   fscript_destroy(fscript);
 
   return RET_OK;
@@ -539,11 +523,10 @@ static const debugger_vtable_t s_debugger_fscript_vtable = {
     .restart = debugger_fscript_restart,
     .pause = debugger_fscript_pause,
     .match = debugger_fscript_match,
-    .is_paused = debugger_fscript_is_paused,
-    .next = debugger_fscript_next,
     .step_in = debugger_fscript_step_in,
     .step_out = debugger_fscript_step_out,
     .step_over = debugger_fscript_step_over,
+    .step_loop_over = debugger_fscript_step_loop_over,
     .continve = debugger_fscript_continue,
     .get_local = debugger_fscript_get_local,
     .get_self = debugger_fscript_get_self,
@@ -631,27 +614,43 @@ debugger_t* debugger_fscript_create(void) {
   return (debugger_t*)debugger;
 }
 
-ret_t debugger_fscript_print_func(fscript_t* fscript, fscript_args_t* args, value_t* result) {
-  str_t str;
-  char buff[32];
-  uint32_t i = 0;
-  debugger_log_event_t event;
+static ret_t debugger_fscript_log_ex(void* ctx, const char* msg, bool_t native) {
   debugger_t* debugger = NULL;
+  fscript_t* fscript = (fscript_t*)ctx;
   return_value_if_fail(fscript != NULL, RET_BAD_PARAMS);
 
   debugger = debugger_server_find_debugger(fscript->code_id);
   if (debugger != NULL) {
-    uint32_t line = fscript->curr->row;
-    value_set_bool(result, TRUE);
-    str_init(&str, 100);
-    for (i = 0; i < args->size; i++) {
-      str_append(&str, value_str_ex(args->args + i, buff, sizeof(buff) - 1));
-    }
+    debugger_log_event_t event;
+    uint32_t line = native ? -1 : fscript->curr->row;
 
-    debugger_log_event_init(&event, line, str.str);
+    debugger_log_event_init(&event, line, msg);
     emitter_dispatch(EMITTER(debugger), (event_t*)&event);
-    str_reset(&str);
   }
+
+  return RET_OK;
+}
+
+static ret_t debugger_fscript_log(void* ctx, tk_log_level_t level, const char* format, va_list ap) {
+  char msg[1024] = {0};
+  tk_vsnprintf(msg, sizeof(msg) - 1, format, ap);
+
+  return debugger_fscript_log_ex(ctx, msg, TRUE);
+}
+
+ret_t debugger_fscript_print_func(fscript_t* fscript, fscript_args_t* args, value_t* result) {
+  str_t str;
+  char buff[64];
+  uint32_t i = 0;
+  return_value_if_fail(fscript != NULL, RET_BAD_PARAMS);
+
+  str_init(&str, 100);
+  value_set_bool(result, TRUE);
+  for (i = 0; i < args->size; i++) {
+    str_append(&str, value_str_ex(args->args + i, buff, sizeof(buff) - 1));
+  }
+  debugger_fscript_log_ex(fscript, str.str, FALSE);
+  str_reset(&str);
 
   return RET_OK;
 }
@@ -683,6 +682,7 @@ ret_t debugger_fscript_set_fscript(debugger_t* debugger, fscript_t* fscript) {
     debugger_fscript_clear_step_stops(d);
 
     fscript_set_print_func(fscript, debugger_fscript_print_func);
+    log_set_hook(debugger_fscript_log, fscript);
     fscript_set_on_error(fscript, debugger_fscript_on_error, d);
 
     fscript_ensure_locals(fscript);
@@ -696,6 +696,7 @@ ret_t debugger_fscript_set_fscript(debugger_t* debugger, fscript_t* fscript) {
   } else {
     debugger_fscript_leave_func(debugger);
     fscript_set_print_func(d->fscript, NULL);
+    log_set_hook(NULL, NULL);
     fscript_set_on_error(d->fscript, NULL, NULL);
     if (!d->fscript->rerun) {
       emitter_dispatch_simple_event(EMITTER(debugger), DEBUGGER_RESP_MSG_COMPLETED);
@@ -710,7 +711,6 @@ static bool_t debugger_fscript_should_pause(debugger_fscript_t* d, int32_t line)
   bool_t paused = darray_find_index(&(d->break_points), tk_pointer_from_int(line)) >= 0;
 
   if (paused) {
-    log_debug("break at line:%d\n", line);
     return paused;
   }
 
@@ -721,7 +721,7 @@ static bool_t debugger_fscript_should_pause(debugger_fscript_t* d, int32_t line)
       }
       break;
     }
-    case DEBUGGER_FSCRIPT_BREAK_NEXT: {
+    case DEBUGGER_FSCRIPT_BREAK_STEP_OVER: {
       if ((d->executed_lines + 1) >= d->next_stop_executed_line) {
         if (d->next_stop_call_frame_index >= d->call_stack_frames.size) {
           paused = TRUE;
@@ -729,7 +729,7 @@ static bool_t debugger_fscript_should_pause(debugger_fscript_t* d, int32_t line)
       }
       break;
     }
-    case DEBUGGER_FSCRIPT_BREAK_STEP_OVER: {
+    case DEBUGGER_FSCRIPT_BREAK_STEP_LOOP_OVER: {
       if (line >= d->next_stop_line) {
         paused = TRUE;
       }
@@ -747,20 +747,19 @@ static bool_t debugger_fscript_emit_breaked(debugger_t* debugger, int32_t line) 
   debugger_fscript_t* d = DEBUGGER_FSCRIPT(debugger);
 
   if (d->prev_breaked_line == line) {
-    d->paused = FALSE;
+    debugger_set_state(debugger, DEBUGGER_PROGRAM_STATE_RUNNING);
   } else {
-    d->paused = TRUE;
+    debugger_set_state(debugger, DEBUGGER_PROGRAM_STATE_PAUSED);
     d->prev_breaked_line = line;
   }
 
   d->prev_breaked_line = line;
-  if (d->paused) {
+  if (debugger_is_paused(debugger)) {
     debugger_breaked_event_init(&event, line);
     emitter_dispatch(EMITTER(debugger), (event_t*)&event);
-    log_debug("stop at %d\n", line);
   }
 
-  return d->paused;
+  return debugger_is_paused(debugger);
 }
 
 static ret_t debugger_fscript_before_exec_func(debugger_t* debugger, int32_t line) {
@@ -788,8 +787,6 @@ static ret_t debugger_fscript_after_exec_func(debugger_t* debugger, int32_t line
 
   if (debugger_fscript_lock(debugger) == RET_OK) {
     bool_t paused = FALSE;
-    log_debug("after exec: prev_executed_line=%d line=%d executed_lines=%d \n",
-              d->prev_executed_line, line, d->executed_lines);
     if (d->prev_executed_line != line) {
       d->executed_lines++;
     }
@@ -807,7 +804,6 @@ static ret_t debugger_fscript_after_exec_func(debugger_t* debugger, int32_t line
     debugger_fscript_unlock(debugger);
 
     if (paused && d->cond_var != NULL) {
-      log_debug("step for next\n");
       tk_cond_var_wait(d->cond_var, 0xffffff);
     }
   }
@@ -841,16 +837,10 @@ ret_t debugger_fscript_exec_func(fscript_t* fscript, const char* name, fscript_f
         debugger_fscript_unlock(debugger);
       }
     } else {
-      if (fscript->first == iter) {
-        log_debug("program exec begin\n");
-      }
-
       debugger_fscript_before_exec_func(debugger, line);
       ret = fscript_exec_func_default(fscript, iter, result);
 
-      if (fscript->first == iter) {
-        log_debug("program exec end\n");
-      } else {
+      if (fscript->first != iter) {
         debugger_fscript_after_exec_func(debugger, line);
       }
     }

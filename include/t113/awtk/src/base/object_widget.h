@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  wrap widget to an object.
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -58,10 +58,21 @@ typedef struct _object_widget_t {
  */
 tk_object_t* object_widget_create(widget_t* widget);
 
+/**
+ * @method object_widget_cast
+ * 类型转换。
+ *
+ * @param {tk_object_t*} obj object对象。
+ *
+ * @return {object_widget_t*} 返回object_widget对象。
+ */
 object_widget_t* object_widget_cast(tk_object_t* obj);
+
 #define OBJECT_WIDGET(obj) object_widget_cast(obj)
 
 #define OBJECT_WIDGET_PROP_NATIVE_WIDGET "$widget"
+
+#define OBJECT_WIDGET_TYPE "object_widget"
 
 END_C_DECLS
 

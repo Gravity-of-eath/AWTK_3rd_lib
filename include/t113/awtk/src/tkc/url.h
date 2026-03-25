@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  URL parser 
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -182,6 +182,30 @@ ret_t url_set_param(url_t* url, const char* name, const char* value);
  * @return {const char*} 返回指定参数名的参数值。
  */
 const char* url_get_param(url_t* url, const char* name);
+
+/**
+ * @method url_get_param_int32
+ * 获取参数。
+ *
+ * @param {url_t*} url url对象。
+ * @param {const char*} name 参数名。
+ * @param {int32_t} defvalue 默认值。
+ *
+ * @return {int32_t} 返回指定参数名的参数值。
+ */
+int32_t url_get_param_int32(url_t* url, const char* name, int32_t defvalue);
+
+/**
+ * @method url_get_param_bool
+ * 获取参数。
+ *
+ * @param {url_t*} url url对象。
+ * @param {const char*} name 参数名。
+ * @param {bool_t} defvalue 默认值。
+ *
+ * @return {bool_t} 返回指定参数名的参数值。
+ */
+bool_t url_get_param_bool(url_t* url, const char* name, bool_t defvalue);
 
 /**
  * @method url_to_string

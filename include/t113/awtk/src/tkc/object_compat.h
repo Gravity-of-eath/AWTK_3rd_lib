@@ -12,6 +12,7 @@
 #define object_create_ex tk_object_create_ex
 #define object_eval tk_object_eval
 #define object_exec tk_object_exec
+#define object_exec_ex tk_object_exec_ex
 #define object_exec_by_path tk_object_exec_by_path
 #define object_exec_t tk_object_exec_t
 #define object_foreach_prop tk_object_foreach_prop
@@ -79,6 +80,8 @@
 #define object_set_prop_uint64 tk_object_set_prop_uint64
 #define object_set_prop_uint8 tk_object_set_prop_uint8
 #define object_unref tk_object_unref
+#define object_clear_props tk_object_clear_props
+
 #define OBJECT TK_OBJECT
 #define OBJECT_REF TK_OBJECT_REF
 #define OBJECT_UNREF TK_OBJECT_UNREF
@@ -94,4 +97,5 @@
 #define OBJECT_CMD_EDIT TK_OBJECT_CMD_EDIT
 #define OBJECT_PROP_SIZE TK_OBJECT_PROP_SIZE
 #define OBJECT_PROP_CHECKED TK_OBJECT_PROP_CHECKED
+#define OBJECT_PROP_SELECTED_INDEX TK_OBJECT_PROP_SELECTED_INDEX
 #endif /*USE_TK_PREFIX*/

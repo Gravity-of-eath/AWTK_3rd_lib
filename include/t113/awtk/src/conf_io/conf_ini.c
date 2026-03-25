@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ini 
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,7 +22,12 @@
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include "conf_io/conf_ini.h"
+#include "tkc/data_reader_mem.h"
+#include "tkc/data_writer_wbuffer.h"
+#include "tkc/data_reader_factory.h"
 #include "tkc/data_writer_factory.h"
+
+#define INI_COMMENT_CHAR '#'
 
 typedef enum _parser_state_t {
   STATE_NONE = 0,
@@ -173,48 +178,6 @@ conf_doc_t* conf_doc_load_ini(const char* data) {
   return doc;
 }
 
-static ret_t conf_doc_save_value(const value_t* v, str_t* str) {
-  char buff[32];
-
-  switch (v->type) {
-    case VALUE_TYPE_STRING: {
-      const char* p = value_str(v);
-      while (*p) {
-        if (*p == '#' || *p == '\\' || *p == '\n') {
-          return_value_if_fail(str_append_char(str, '\\') == RET_OK, RET_OOM);
-        }
-        return_value_if_fail(str_append_char(str, *p) == RET_OK, RET_OOM);
-        p++;
-      }
-      return RET_OK;
-    }
-
-    case VALUE_TYPE_FLOAT32: {
-      tk_snprintf(buff, sizeof(buff) - 1, "%f", value_float32(v));
-      break;
-    }
-    case VALUE_TYPE_FLOAT:
-    case VALUE_TYPE_DOUBLE: {
-      tk_snprintf(buff, sizeof(buff) - 1, "%lf", value_double(v));
-      break;
-    }
-    case VALUE_TYPE_INT64: {
-      tk_snprintf(buff, sizeof(buff) - 1, "%lld", value_int64(v));
-      break;
-    }
-    case VALUE_TYPE_UINT64: {
-      tk_snprintf(buff, sizeof(buff) - 1, "%llu", value_uint64(v));
-      break;
-    }
-    default: {
-      tk_snprintf(buff, sizeof(buff) - 1, "%d", value_int(v));
-      break;
-    }
-  }
-
-  return str_append(str, buff);
-}
-
 static ret_t conf_doc_save_leaf_node(conf_node_t* node, str_t* str) {
   value_t v;
   const char* key = conf_node_get_name(node);
@@ -222,7 +185,7 @@ static ret_t conf_doc_save_leaf_node(conf_node_t* node, str_t* str) {
   conf_node_get_value(node, &v);
 
   return_value_if_fail(str_append_more(str, "  ", key, " = ", NULL) == RET_OK, RET_OOM);
-  return_value_if_fail(conf_doc_save_value(&v, str) == RET_OK, RET_OOM);
+  return_value_if_fail(conf_node_save_value(str, &v, INI_COMMENT_CHAR) == RET_OK, RET_OOM);
   return_value_if_fail(str_append(str, "\n") == RET_OK, RET_OOM);
 
   return RET_OK;
@@ -311,4 +274,22 @@ ret_t conf_ini_save_as(tk_object_t* obj, const char* url) {
 
 tk_object_t* conf_ini_create(void) {
   return conf_ini_load(NULL, TRUE);
+}
+
+tk_object_t* conf_ini_load_from_buff(const void* buff, uint32_t size, bool_t create_if_not_exist) {
+  char url[MAX_PATH + 1] = {0};
+  return_value_if_fail(buff != NULL, NULL);
+  data_reader_mem_build_url(buff, size, url);
+
+  return conf_ini_load(url, create_if_not_exist);
+}
+
+ret_t conf_ini_save_to_buff(tk_object_t* obj, wbuffer_t* wb) {
+  char url[MAX_PATH + 1] = {0};
+  return_value_if_fail(obj != NULL && wb != NULL, RET_BAD_PARAMS);
+
+  wbuffer_init_extendable(wb);
+  data_writer_wbuffer_build_url(wb, url);
+
+  return conf_ini_save_as(obj, url);
 }

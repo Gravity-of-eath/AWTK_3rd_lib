@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  generic value type
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,6 +20,7 @@
  */
 
 #include "tkc/types_def.h"
+#include "tkc/rect.h"
 
 #ifndef TK_VALUE_H
 #define TK_VALUE_H
@@ -28,6 +29,7 @@ BEGIN_C_DECLS
 
 /**
  * @enum value_type_t
+ * @prefix VALUE_TYPE_
  * @annotation ["scriptable"]
  * 类型常量定义。
  */
@@ -167,6 +169,11 @@ typedef enum _value_type_t {
    * 位图类型。
    */
   VALUE_TYPE_BITMAP,
+  /**
+   * @const VALUE_TYPE_RECT
+   * 矩形类型。
+   */
+  VALUE_TYPE_RECT,
 } value_type_t;
 
 typedef struct _binary_data_t {
@@ -180,8 +187,8 @@ typedef struct _sized_str_t {
 } sized_str_t;
 
 typedef struct _id_info_t {
-  int32_t suboffset : 16;
-  int32_t index : 16;
+  int16_t suboffset;
+  int16_t index;
   char* id;
 } id_info_t;
 
@@ -213,10 +220,10 @@ typedef struct _pointer_ref_t {
  *
  */
 struct _value_t {
-  uint32_t type : 8;
+  value_type_t type;
   /*sub_type用细分类型。目前不做定义，请根据上下文使用。*/
-  uint32_t sub_type : 8;
-  uint32_t free_handle : 1;
+  uint8_t sub_type;
+  bool_t free_handle;
   union {
     int8_t i8;
     uint8_t u8;
@@ -241,6 +248,7 @@ struct _value_t {
     pointer_ref_t* ptr_ref;
     func_info_t func;
     void* bitmap;
+    rect_t rect;
   } value;
 };
 
@@ -259,7 +267,7 @@ value_t* value_set_bool(value_t* v, bool_t value);
  * @method value_bool
  * 获取类型为bool的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {bool_t} 值。
  */
@@ -280,7 +288,7 @@ value_t* value_set_int8(value_t* v, int8_t value);
  * @method value_int8
  * 获取类型为int8的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {int8_t} 值。
  */
@@ -301,9 +309,9 @@ value_t* value_set_uint8(value_t* v, uint8_t value);
  * @method value_uint8
  * 获取类型为uint8的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
- * @return {int8_t} 值。
+ * @return {uint8_t} 值。
  */
 uint8_t value_uint8(const value_t* v);
 
@@ -322,7 +330,7 @@ value_t* value_set_int16(value_t* v, int16_t value);
  * @method value_int16
  * 获取类型为int16的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {int16_t} 值。
  */
@@ -343,7 +351,7 @@ value_t* value_set_uint16(value_t* v, uint16_t value);
  * @method value_uint16
  * 获取类型为uint16的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {uint16_t} 值。
  */
@@ -364,7 +372,7 @@ value_t* value_set_int32(value_t* v, int32_t value);
  * @method value_int32
  * 获取类型为int32的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {int32_t} 值。
  */
@@ -384,7 +392,7 @@ value_t* value_set_uint32(value_t* v, uint32_t value);
 /**
  * @method value_uint32
  * 获取类型为uint32的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {uint32_t} 值。
  */
@@ -405,7 +413,7 @@ value_t* value_set_int64(value_t* v, int64_t value);
  * @method value_int64
  * 获取类型为int64的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {int64_t} 值。
  */
@@ -426,7 +434,7 @@ value_t* value_set_uint64(value_t* v, uint64_t value);
  * @method value_uint64
  * 获取类型为uint64的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {uint64_t} 值。
  */
@@ -456,7 +464,7 @@ value_t* value_set_pointer_ex(value_t* v, void* value, tk_destroy_t destroy);
 /**
  * @method value_pointer
  * 获取类型为pointer的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {void*} 值。
  */
@@ -476,7 +484,7 @@ value_t* value_set_float(value_t* v, float_t value);
 /**
  * @method value_float
  * 获取类型为float\_t的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {float_t} 值。
  */
@@ -496,7 +504,7 @@ value_t* value_set_float32(value_t* v, float value);
  * @method value_float32
  * 获取类型为float的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {float} 值。
  */
@@ -519,7 +527,7 @@ value_t* value_set_double(value_t* v, double value);
  * 获取类型为double的值。
  * @annotation ["scriptable"]
  * @alias value_float64
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {double} 值。
  */
@@ -571,10 +579,22 @@ value_t* value_dup_str_with_len(value_t* v, const char* value, uint32_t len);
 value_t* value_set_wstr(value_t* v, const wchar_t* value);
 
 /**
+ * @method value_dup_wstr
+ * 设置类型为宽字符串的值(并拷贝宽字符串)。
+ *
+ * @alias value_dup_wstr
+ * @param {value_t*} v     value对象。
+ * @param {const wchar_t*}   value 待设置的值。
+ *
+ * @return {value_t*} value对象本身。
+ */
+value_t* value_dup_wstr(value_t* v, const wchar_t* value);
+
+/**
  * @method value_str
  * 获取类型为字符串的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {const char*} 值。
  */
@@ -584,7 +604,7 @@ const char* value_str(const value_t* v);
  * @method value_str_ex
  * 获取类型为字符串的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  * @param {char*} buff 用于格式转换的缓冲区（如果 v 对象为 string 类型的话，不会把字符串数据拷贝到 buff 中）。
  * @param {uint32_t} size 缓冲区大小。
  *
@@ -595,7 +615,7 @@ const char* value_str_ex(const value_t* v, char* buff, uint32_t size);
 /**
  * @method value_wstr
  * 获取类型为宽字符串的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {const wchar_t*} 值。
  */
@@ -614,8 +634,9 @@ bool_t value_is_null(value_t* value);
 /**
  * @method value_equal
  * 判断两个value是否相同。
- * @param {value_t*} value value对象。
- * @param {value_t*} other value对象。
+ * @annotation ["scriptable"]
+ * @param {const value_t*} value value对象。
+ * @param {const value_t*} other value对象。
  *
  * @return {bool_t} 为空值返回TRUE，否则返回FALSE。
  */
@@ -624,7 +645,7 @@ bool_t value_equal(const value_t* value, const value_t* other);
 /**
  * @method value_int
  * 转换为int的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {int} 值。
  */
@@ -656,7 +677,7 @@ value_t* value_set_object(value_t* v, tk_object_t* value);
  * @method value_object
  * 转换为object的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {tk_object_t*} 值。
  */
@@ -677,7 +698,7 @@ value_t* value_set_token(value_t* v, uint32_t value);
  * @method value_token
  * 获取token的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {uint32_t} 值。
  */
@@ -697,7 +718,7 @@ value_t* value_set_sized_str(value_t* v, char* str, uint32_t size);
 /**
  * @method value_sized_str
  * 获取为sized_str的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {sized_str_t*} 值。
  */
@@ -706,9 +727,9 @@ sized_str_t* value_sized_str(const value_t* v);
 /**
  * @method value_set_binary_data
  * 设置类型为binary_data的值。
- * @param {value_t*} v  value对象。
- * @param {void*}  value 待设置的值。
- * @param {uint32_t}  size 长度。
+ * @param {value_t*} v value对象。
+ * @param {void*} data 待设置的值。
+ * @param {uint32_t} size 长度。
  *
  * @return {value_t*} value对象本身。
  */
@@ -717,9 +738,9 @@ value_t* value_set_binary_data(value_t* v, void* data, uint32_t size);
 /**
  * @method value_dup_binary_data
  * 设置类型为binary_data的值(复制数据)。
- * @param {value_t*} v  value对象。
- * @param {const void*}  value 待设置的值。
- * @param {uint32_t}  size 长度。
+ * @param {value_t*} v value对象。
+ * @param {const void*} data 待设置的值。
+ * @param {uint32_t} size 长度。
  *
  * @return {value_t*} value对象本身。
  */
@@ -728,7 +749,7 @@ value_t* value_dup_binary_data(value_t* v, const void* data, uint32_t size);
 /**
  * @method value_binary_data
  * 获取为binary_data的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {binary_data_t*} 值。
  */
@@ -737,9 +758,9 @@ binary_data_t* value_binary_data(const value_t* v);
 /**
  * @method value_set_ubjson
  * 设置类型为ubjson的值。
- * @param {value_t*} v  value对象。
- * @param {void*}  value 待设置的值。
- * @param {uint32_t}  size 长度。
+ * @param {value_t*} v value对象。
+ * @param {void*} data 待设置的值。
+ * @param {uint32_t} size 长度。
  *
  * @return {value_t*} value对象本身。
  */
@@ -748,7 +769,7 @@ value_t* value_set_ubjson(value_t* v, void* data, uint32_t size);
 /**
  * @method value_ubjson
  * 获取为ubjson的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {binary_data_t*} 值。
  */
@@ -757,9 +778,9 @@ binary_data_t* value_ubjson(const value_t* v);
 /**
  * @method value_set_gradient
  * 设置类型为gradient的值。
- * @param {value_t*} v  value对象。
- * @param {void*}  value 待设置的值。
- * @param {uint32_t}  size 长度。
+ * @param {value_t*} v value对象。
+ * @param {void*} data 待设置的值。
+ * @param {uint32_t} size 长度。
  *
  * @return {value_t*} value对象本身。
  */
@@ -768,7 +789,7 @@ value_t* value_set_gradient(value_t* v, void* data, uint32_t size);
 /**
  * @method value_gradient
  * 获取为gradient的值。
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {binary_data_t*} 值。
  */
@@ -778,7 +799,7 @@ binary_data_t* value_gradient(const value_t* v);
  * @method value_copy
  * 拷贝value的值。
  * @param {value_t*} dst 目的value对象。
- * @param {value_t*} src 源value对象。
+ * @param {const value_t*} src 源value对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
@@ -787,12 +808,24 @@ ret_t value_copy(value_t* dst, const value_t* src);
 /**
  * @method value_deep_copy
  * 深拷贝value的值。
+ * dst使用完成后，要调用value_reset，确保不会发生内存泄漏。  
  * @param {value_t*} dst 目的value对象。
- * @param {value_t*} src 源value对象。
+ * @param {const value_t*} src 源value对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t value_deep_copy(value_t* dst, const value_t* src);
+
+/**
+ * @method value_replace
+ * 替换value的值。
+ * @param {value_t*} dst 目的value对象。
+ * @param {const value_t*} src 源value对象。
+ * @param {bool_t} deep_copy 是否深拷贝。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t value_replace(value_t* dst, const value_t* src, bool_t deep_copy);
 
 /**
  * @method value_create
@@ -846,10 +879,20 @@ value_t* value_cast(value_t* value);
 uint32_t value_type_size(value_type_t type);
 
 /**
+ * @method value_type_name
+ * 获取指定类型数据的名称。
+ * @annotation ["static"]
+ * @param {value_type_t} type 类型。
+ *
+ * @return {const char*} 返回对应数据类型的名称。
+ */
+const char* value_type_name(value_type_t type);
+
+/**
  * @method value_id
  * 获取类型为ID的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {const char*} 值。
  */
@@ -870,7 +913,7 @@ value_t* value_set_id(value_t* v, const char* value, uint32_t len);
  * @method value_func
  * 获取类型为func的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {void*} 值。
  */
@@ -890,7 +933,7 @@ value_t* value_set_func(value_t* v, void* value);
  * @method value_func_def
  * 获取类型为func_def的值。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
  * @return {void*} 值。
  */
@@ -910,9 +953,9 @@ value_t* value_set_func_def(value_t* v, void* value);
  * @method value_bitmap
  * 获取类型为位图对象。
  * @annotation ["scriptable"]
- * @param {value_t*} v value对象。
+ * @param {const value_t*} v value对象。
  *
- * @return {bitmap_t*} 位图对象。
+ * @return {void*} 位图对象。
  */
 void* value_bitmap(const value_t* v);
 
@@ -920,11 +963,31 @@ void* value_bitmap(const value_t* v);
  * @method value_set_bitmap
  * 设置类型为位图对象。
  * @param {value_t*} v value对象。
- * @param {bitmap_t*} bitmap 待设置的值。
+ * @param {void*} bitmap 待设置的值。
  *
  * @return {value_t*} value对象本身。
  */
 value_t* value_set_bitmap(value_t* v, void* bitmap);
+
+/**
+ * @method value_rect
+ * 获取类型为矩形区域数据。
+ * @annotation ["scriptable"]
+ * @param {const value_t*} v value对象。
+ *
+ * @return {rect_t*} 返回矩形区域数据。
+ */
+rect_t* value_rect(const value_t* v);
+
+/**
+ * @method value_set_rect
+ * 设置类型为矩形区域数据。
+ * @param {value_t*} v value对象。
+ * @param {rect_t} r 待设置的值。
+ *
+ * @return {value_t*} value对象本身。
+ */
+value_t* value_set_rect(value_t* v, rect_t r);
 
 /**
  * @method value_lshift
@@ -1122,6 +1185,28 @@ ret_t value_expt(value_t* v, value_t* other, value_t* result);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t value_mod(value_t* v, value_t* other, value_t* result);
+
+/**
+ * @method value_min
+ * 从数组中选择最小值，并放入result对象。 
+ * @param {value_t*} arr 数组。
+ * @param {uint32_t} size 数组元素个数
+ * @param {value_t*} result 返回结果的value对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t value_min(value_t* arr, uint32_t size, value_t* result);
+
+/**
+ * @method value_max
+ * 从数组中选择最大值，并放入result对象。 
+ * @param {value_t*} arr 数组。
+ * @param {uint32_t} size 数组元素个数
+ * @param {value_t*} result 返回结果的value对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t value_max(value_t* arr, uint32_t size, value_t* result);
 
 END_C_DECLS
 

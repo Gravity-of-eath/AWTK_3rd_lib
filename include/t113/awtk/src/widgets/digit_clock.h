@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  digit_clock
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -77,7 +77,7 @@ typedef struct _digit_clock_t {
    * * M 代表月(1-12)
    * * D 代表日(1-31)
    * * h 代表时(0-23)
-   * * H 代表时(0-11)
+   * * H 代表时(1-12)
    * * m 代表分(0-59)
    * * s 代表秒(0-59)
    * * w 代表星期(0-6)
@@ -87,7 +87,7 @@ typedef struct _digit_clock_t {
    * * MM 代表月(01-12)
    * * DD 代表日(01-31)
    * * hh 代表时(00-23)
-   * * HH 代表时(00-11)
+   * * HH 代表时(01-12)
    * * mm 代表分(00-59)
    * * ss 代表秒(00-59)
    * * MMM 代表月的英文缩写(支持翻译)

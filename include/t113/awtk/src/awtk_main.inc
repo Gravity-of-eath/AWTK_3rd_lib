@@ -49,6 +49,10 @@ END_C_DECLS
 #define GLOBAL_EXIT()
 #endif /*GLOBAL_EXIT*/
 
+#ifndef FINAL_EXIT
+#define FINAL_EXIT()
+#endif /*FINAL_EXIT*/
+
 #ifndef APP_NAME
 #define APP_NAME "awtk"
 #endif /*APP_NAME*/
@@ -60,6 +64,10 @@ END_C_DECLS
 #ifndef APP_ENABLE_CONSOLE
 #define APP_ENABLE_CONSOLE TRUE
 #endif /*APP_ENABLE_CONSOLE*/
+
+#ifndef APP_USE_STD_FONT_SIZE
+#define APP_USE_STD_FONT_SIZE FALSE
+#endif /*APP_USE_STD_FONT_SIZE*/
 
 #include "base/custom_keys.inc"
 #include "base/asset_loader_zip.h"
@@ -81,7 +89,6 @@ int SDL_main(int argc, char* argv[]) {
 
 #elif defined(WIN32) && !defined(MINGW)
 #include <windows.h>
-#include <combaseapi.h>
 #ifndef MAX_ARGV
 #define MAX_ARGV 7
 #endif
@@ -133,7 +140,6 @@ int WINAPI wWinMain(HINSTANCE hinstance, HINSTANCE hprevinstance, LPWSTR lpcmdli
   str_from_wstr(&str, lpcmdline);
   command_line_to_argv(str.str, argv, &argc);
 
-  CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
   tk_pre_init();
 #ifdef ON_CMD_LINE
@@ -157,12 +163,13 @@ int WINAPI wWinMain(HINSTANCE hinstance, HINSTANCE hprevinstance, LPWSTR lpcmdli
   tk_init(lcd_w, lcd_h, APP_TYPE, APP_NAME, APP_RES_ROOT);
 #else
 int main(int argc, char* argv[]) {
-  bool_t enable_console = TRUE;
+  bool_t enable_console = APP_ENABLE_CONSOLE;
   int32_t lcd_w = LCD_WIDTH;
   int32_t lcd_h = LCD_HEIGHT;
 
   tk_pre_init();
 #ifdef ON_CMD_LINE
+  (void)enable_console;
   ON_CMD_LINE(argc, argv);
 #else
   if (argc >= 2) {
@@ -191,6 +198,8 @@ int main(int argc, char* argv[]) {
   assets_manager_set_res_root(assets_manager(), "");
   log_debug("Load assets from zip: %s\n", ASSETS_ZIP);
   assets_manager_set_loader(assets_manager(), asset_loader_zip_create(ASSETS_ZIP));
+#elif defined(ASSETS_CUSTOM_INIT)
+  ASSETS_CUSTOM_INIT();
 #endif /*ASSETS_ZIP*/
 
 #if defined(WITH_LCD_PORTRAIT)
@@ -205,15 +214,16 @@ int main(int argc, char* argv[]) {
   }
 #endif /*WITH_LCD_PORTRAIT*/
 
+#ifndef TK_IS_PC
 #ifdef APP_LCD_ORIENTATION
-  if (system_info()->app_type != APP_SIMULATOR) {
 #if defined(APP_ENABLE_FAST_LCD_PORTRAIT)
-    tk_enable_fast_lcd_portrait(TRUE);
+  tk_enable_fast_lcd_portrait(TRUE);
 #endif
-    tk_set_lcd_orientation(APP_LCD_ORIENTATION);
-  }
+  tk_set_lcd_orientation(APP_LCD_ORIENTATION);
 #endif
+#endif/*TK_IS_PC*/
 
+  font_manager_set_standard_font_size(font_manager(), APP_USE_STD_FONT_SIZE);
   system_info_set_default_font(system_info(), APP_DEFAULT_FONT);
   assets_init();
 #ifndef WITH_FS_RES
@@ -235,6 +245,12 @@ int main(int argc, char* argv[]) {
   window_manager_set_cursor(window_manager(), "cursor");
 #endif /*ENABLE_CURSOR*/
 
+#ifdef WIN32
+  setvbuf(stdout, NULL, _IONBF, 0);
+#elif defined(HAS_STDIO)
+  setlinebuf(stdout);
+#endif /*WIN32*/
+
   GLOBAL_INIT();
 #if defined(APP_DEFAULT_LANGUAGE) && defined(APP_DEFAULT_COUNTRY)
   locale_info_change(locale_info(), APP_DEFAULT_LANGUAGE, APP_DEFAULT_COUNTRY);
@@ -248,6 +264,7 @@ int main(int argc, char* argv[]) {
   GLOBAL_EXIT();
   tk_exit();
 
+  FINAL_EXIT();
 #ifdef HAS_STDIO
   fflush(stdout);
 #endif /*HAS_STDIO*/

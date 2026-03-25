@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  multiple dirty rects
  *
- * Copyright (c) 2021 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2021 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,7 +57,7 @@ typedef struct _dirty_rects_t {
   rect_t max;
 
   /**
-   * @property {rect_t} rects
+   * @property {rect_t*} rects
    * @annotation ["readable"]
    * 脏矩形。
    */
@@ -166,7 +166,7 @@ static inline ret_t dirty_rects_fix(dirty_rects_t* dirty_rects) {
  * @export none
  * 增加脏矩形。
  * @param {dirty_rects_t*} dirty_rects dirty_rects对象。
- * @param {rect_t*} r 脏矩形。
+ * @param {const rect_t*} r 脏矩形。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

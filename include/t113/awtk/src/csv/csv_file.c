@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  csv file
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,6 +21,8 @@
 
 #include "tkc/mem.h"
 #include "tkc/utils.h"
+#include "tkc/data_writer.h"
+#include "tkc/data_writer_factory.h"
 
 #include "csv_file.h"
 #include "streams/mem/istream_mem.h"
@@ -404,7 +406,6 @@ static csv_file_t* csv_file_load_input(csv_file_t* csv, tk_istream_t* input) {
 
     index++;
   }
-  str_reset(&str);
 
   r = csv_file_get_row(csv, 0);
   if (r != NULL) {
@@ -422,10 +423,9 @@ static csv_file_t* csv_file_load_input(csv_file_t* csv, tk_istream_t* input) {
       csv->cols = csv_row_count_cols(r);
     }
   }
+
   str_reset(&str);
-
   return csv;
-
 error:
   str_reset(&str);
   return NULL;
@@ -554,11 +554,55 @@ ret_t csv_file_set(csv_file_t* csv, uint32_t row, uint32_t col, const char* valu
   return csv_row_set(r, col, value);
 }
 
+ret_t csv_file_uncheck_all(csv_file_t* csv) {
+  uint32_t i = 0;
+  return_value_if_fail(csv != NULL, RET_BAD_PARAMS);
+  for (i = 0; i < csv->rows.size; i++) {
+    csv_row_t* r = csv->rows.rows + i;
+    r->checked = FALSE;
+  }
+
+  return RET_OK;
+}
+
+int32_t csv_file_get_first_checked(csv_file_t* csv) {
+  uint32_t i = 0;
+  return_value_if_fail(csv != NULL, RET_BAD_PARAMS);
+  for (i = 0; i < csv->rows.size; i++) {
+    csv_row_t* r = csv->rows.rows + i;
+    if (r->checked) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
 ret_t csv_file_set_row_checked(csv_file_t* csv, uint32_t row, bool_t checked) {
   csv_row_t* r = csv_file_get_row(csv, row);
   return_value_if_fail(r != NULL, RET_BAD_PARAMS);
 
+  if (csv->single_select) {
+    csv_file_uncheck_all(csv);
+  }
+
   r->checked = checked;
+
+  return RET_OK;
+}
+
+ret_t csv_file_set_max_rows(csv_file_t* csv, uint32_t max_rows) {
+  return_value_if_fail(csv != NULL, RET_BAD_PARAMS);
+
+  csv->max_rows = max_rows;
+
+  return RET_OK;
+}
+
+ret_t csv_file_set_single_select(csv_file_t* csv, bool_t single_select) {
+  return_value_if_fail(csv != NULL, RET_BAD_PARAMS);
+
+  csv->single_select = single_select;
 
   return RET_OK;
 }
@@ -612,6 +656,10 @@ ret_t csv_file_append_row(csv_file_t* csv, const char* data) {
   csv_row_t* r = NULL;
   return_value_if_fail(csv != NULL && data != NULL, RET_BAD_PARAMS);
 
+  if (csv->max_rows > 0 && csv->rows.size >= csv->max_rows) {
+    csv_file_remove_row(csv, 0);
+  }
+
   r = csv_rows_append(&(csv->rows));
   return_value_if_fail(r != NULL, RET_OOM);
 
@@ -622,6 +670,24 @@ ret_t csv_file_remove_row(csv_file_t* csv, uint32_t row) {
   return_value_if_fail(csv != NULL, RET_BAD_PARAMS);
 
   return csv_rows_remove(&(csv->rows), row);
+}
+
+ret_t csv_file_save_to_buff(csv_file_t* csv, wbuffer_t* buff) {
+  str_t str;
+  uint32_t i = 0;
+  csv_row_t* r = NULL;
+  return_value_if_fail(csv != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(buff != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(str_init(&str, 512) != NULL, RET_OOM);
+
+  for (i = 0; i < csv->rows.size; i++) {
+    r = csv->rows.rows + i;
+    csv_row_to_str(r, &str, csv->sep);
+    ENSURE(wbuffer_write_binary(buff, str.str, str.size) == RET_OK);
+  }
+  str_reset(&str);
+
+  return RET_OK;
 }
 
 ret_t csv_file_save(csv_file_t* csv, const char* filename) {
@@ -651,8 +717,7 @@ ret_t csv_file_save(csv_file_t* csv, const char* filename) {
     }
   }
   str_reset(&str);
-
-  return RET_NOT_IMPL;
+  return RET_OK;
 }
 
 const char* csv_file_get_title(csv_file_t* csv) {
@@ -712,4 +777,19 @@ ret_t csv_file_load_file(csv_file_t* csv, const char* filename) {
   csv->filename = tk_str_copy(csv->filename, filename);
 
   return (csv_file_load(csv) != NULL) ? RET_OK : RET_FAIL;
+}
+
+csv_row_t* csv_file_find_first(csv_file_t* csv, tk_compare_t compare, void* ctx) {
+  uint32_t i = 0;
+  csv_row_t* r = NULL;
+  return_value_if_fail(csv != NULL && compare != NULL, NULL);
+
+  for (i = 0; i < csv->rows.size; i++) {
+    r = csv->rows.rows + i;
+    if (compare(ctx, r) == 0) {
+      return r;
+    }
+  }
+
+  return NULL;
 }

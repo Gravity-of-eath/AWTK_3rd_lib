@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event source fd
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -58,6 +58,18 @@ struct _event_source_fd_t {
  *
  */
 event_source_t* event_source_fd_create(int fd, event_source_on_event_t on_event, void* ctx);
+
+/**
+ * @method event_source_fd_set_fd
+ *
+ * 修改事件源的 fd。
+ * 
+ * @param {event_source_t*} source 事件源对象。
+ * @param {int} fd 可以用select等待的文件描述符。
+ * 
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t event_source_fd_set_fd(event_source_t* source, int fd);
 
 #define EVENT_SOURCE_FD(obj) ((event_source_fd_t*)(obj))
 

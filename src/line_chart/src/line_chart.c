@@ -585,17 +585,17 @@ static void draw_chart_spline_curve(line_chart_t *line_chart, vgcanvas_t *wvgc)
       }
     }
 
-    vgcanvas_stroke(vgc);
-
-    // 绘制数据点的白色小圆点（半径为2）
-    vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
-    for (int32_t i = 0; i < queue_size; i++)
-    {
-      vgcanvas_begin_path(vgc);
-      vgcanvas_arc(vgc, x_coords[i], y_coords[i], 2, 0, M_PI * 2, FALSE);
-      vgcanvas_fill(vgc);
+    if (line_chart->DEBUG) {
+      // 绘制数据点的白色小圆点（半径为2）
+      vgcanvas_stroke(vgc);
+      vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
+      for (int32_t i = 0; i < queue_size; i++)
+      {
+        vgcanvas_begin_path(vgc);
+        vgcanvas_arc(vgc, x_coords[i], y_coords[i], 2, 0, M_PI * 2, FALSE);
+        vgcanvas_fill(vgc);
+      }
     }
-
     free(x_coords);
     free(y_coords);
   }
@@ -841,16 +841,18 @@ static void draw_chart_spline_curve_with_values_limit(line_chart_t *line_chart, 
       }
     }
 
-    vgcanvas_stroke(vgc);
+    if (line_chart->DEBUG) {
+      //绘制数据点的白色小圆点（半径为2）
+      vgcanvas_stroke(vgc);
+      vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
+      for (int32_t i = 0; i < queue_size; i++)
+      {
+        vgcanvas_begin_path(vgc);
+        vgcanvas_arc(vgc, x_coords[i], y_coords[i], 2, 0, M_PI * 2, FALSE);
+        vgcanvas_fill(vgc);
+      }
+    }
 
-    // 绘制数据点的白色小圆点（半径为2）
-    // vgcanvas_set_fill_color_str(vgc, "#FFFFFFFF");
-    // for (int32_t i = 0; i < queue_size; i++)
-    // {
-    //   vgcanvas_begin_path(vgc);
-    //   vgcanvas_arc(vgc, x_coords[i], y_coords[i], 2, 0, M_PI * 2, FALSE);
-    //   vgcanvas_fill(vgc);
-    // }
 
     free(x_coords);
     free(y_coords);

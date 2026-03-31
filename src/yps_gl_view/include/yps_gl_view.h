@@ -28,57 +28,24 @@
 #include "base/image_manager.h"
 #include "base/system_info.h"
 #include "base/asset_loader.h"
-#include "horde3d/horde3d.h"
-#include "horde3d/egInit.h"
+#include "base/vgcanvas.h"
 
 BEGIN_C_DECLS
 
-/**
- * @class yps_gl_view_t
- * @parent widget_t
- * @annotation ["scriptable","design:widget","widget"]
- * @order -10
- * @alternative_name yps.gl_view
- * @brief 3D OpenGL view控件。
- *
- * 该控件用于渲染3D场景，基于Horde3D引擎实现。
- *
- * 示例：
- *
- * ```xml
- * <!-- 用XML创建 -->
- * <yps_gl_view x="0" y="0" w="100%" h="100%" scene_file="model.scene.xml" 
- *              pipeline_file="pipeline.xml"/>
- * ```
- *
- * ```c
- * // 用C创建
- * widget_t* yps_gl_view = yps_gl_view_create(parent, 0, 0, 0, 0);
- * yps_gl_view_set_scene_file(yps_gl_view, "model.scene.xml");
- * yps_gl_view_set_pipeline_file(yps_gl_view, "pipeline.xml");
- * ```
- */
-
-/**
- * @property {char*} scene_file
- * @annotation ["set_prop","get_prop","scriptable"]
- * 场景文件。
- */
-
-/**
- * @property {char*} pipeline_file
- * @annotation ["set_prop","get_prop","scriptable"]
- * 渲染管线文件。
- */
-
 typedef struct _yps_gl_view_t {
   widget_t widget;
-  
+
   /* private */
-  char* scene_file;           /* 场景文件路径 */
-  char* pipeline_file;        /* 渲染管线文件路径 */
-  EGLWindowData* window_data; /* 窗口数据 */
-  H3DNode _cam;
+  char* scene_file;           /* 场景文件路径 */ 
+  char** mode_lists;           /* 模型文件路径列表（当有scene_file时忽略优先加载scene_file） */ 
+  int32_t mode_count;           /* 模型文件个数 */ 
+  char* content_dir;          /* 内容资源目录路径 */ 
+  //uint32_t target_fps; //无须手动控制FPS，AWTK应用会设置FPS，并在每一帧回调控件的on_paint
+
+  /* FBO & Texture integration */
+  bitmap_t* bitmap;           /* AWTK wrapper for GPU texture */
+  framebuffer_object_t fbo;   /* AWTK-managed FBO info */
+  bool_t use_readback;        /* TRUE: glReadPixels, FALSE: zero-copy */
 } yps_gl_view_t;
 
 /**
@@ -105,19 +72,89 @@ widget_t* yps_gl_view_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h);
  */
 ret_t yps_gl_view_set_scene_file(widget_t* widget, const char* scene_file);
 
+
+
 /**
- * @method yps_gl_view_set_pipeline_file
+ * @method yps_gl_view_set_content_dir
  * @annotation ["scriptable"]
- * 设置渲染管线文件。
+ * 设置内容资源目录。
  * @param {widget_t*} widget 控件对象。
- * @param {const char*} pipeline_file 渲染管线文件路径。
+ * @param {const char*} content_dir 内容资源目录路径。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
-ret_t yps_gl_view_set_pipeline_file(widget_t* widget, const char* pipeline_file);
+ret_t yps_gl_view_set_content_dir(widget_t* widget, const char* content_dir);
 
+/**
+ * @method yps_gl_view_get_content_dir
+ * @annotation ["scriptable"]
+ * 获取内容资源目录。
+ * @param {widget_t*} widget 控件对象。
+ *
+ * @return {const char*} 返回内容资源目录路径。
+ */
+const char* yps_gl_view_get_content_dir(widget_t* widget);
+
+/**
+ * @method yps_gl_view_switch_scene
+ * @annotation ["scriptable"]
+ * 动态切换场景文件。
+ * @param {widget_t*} widget 控件对象。
+ * @param {const char*} scene_file 场景文件路径。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t yps_gl_view_switch_scene(widget_t* widget, const char* scene_file);
+
+/**
+ * @method yps_gl_view_reload_scene
+ * @annotation ["scriptable"]
+ * 重新加载当前场景。
+ * @param {widget_t*} widget 控件对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t yps_gl_view_reload_scene(widget_t* widget);
+
+/**
+ * @method yps_gl_view_unload_scene
+ * @annotation ["scriptable"]
+ * 卸载当前场景。
+ * @param {widget_t*} widget 控件对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t yps_gl_view_unload_scene(widget_t* widget);
+
+
+
+/**
+ * @method yps_gl_view_set_target_fps
+ * @annotation ["scriptable"]
+ * 设置目标帧率。
+ * @param {widget_t*} widget 控件对象。
+ * @param {uint32_t} fps 目标帧率。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t yps_gl_view_set_target_fps(widget_t* widget, uint32_t fps);
+
+/**
+ * @method yps_gl_view_set_readback
+ * @annotation ["scriptable"]
+ * 设置是否使用回读模式。
+ * @param {widget_t*} widget 控件对象。
+ * @param {bool_t} use_readback TRUE表示使用回读。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t yps_gl_view_set_readback(widget_t* widget, bool_t use_readback);
+
+#define WIDGET_TYPE_YPS_GL_VIEW "yps_gl_view"
 #define YPS_GL_VIEW_PROP_SCENE_FILE "scene_file"
 #define YPS_GL_VIEW_PROP_PIPELINE_FILE "pipeline_file"
+#define YPS_GL_VIEW_PROP_CONTENT_DIR "content_dir"
+
 
 #define YPS_GL_VIEW(widget) ((yps_gl_view_t*)(widget))
 

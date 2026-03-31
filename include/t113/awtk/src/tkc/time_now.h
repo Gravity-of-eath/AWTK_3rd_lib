@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  time
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,7 +30,7 @@ BEGIN_C_DECLS
  * @class time_now_t
  * @annotation ["scriptable", "fake"]
  * 获取当前时间的函数。
- * 这里的当前时间是相对的，在嵌入式系统一般相对于开机时间。
+ * 这里的当前时间是相对的，在嵌入式系统一般相对于开机时间(毫秒)。
  * 它本身并没有任何意义，一般用来计算时间间隔，如实现定时器和动画等等。
  */
 

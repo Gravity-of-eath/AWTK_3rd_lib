@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  fscript module
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY { without even the implied warranty of
@@ -31,6 +31,9 @@ static ret_t fscript_module_on_destroy(tk_object_t* obj) {
   fscript_t* fscript = o->fscript;
   return_value_if_fail(o != NULL && o->fscript != NULL, RET_BAD_PARAMS);
 
+  /*fix loop ref count*/
+  obj->ref_count = 2;
+
   o->fscript = NULL;
   fscript_destroy(fscript);
 
@@ -39,9 +42,13 @@ static ret_t fscript_module_on_destroy(tk_object_t* obj) {
 
 static ret_t fscript_module_get_prop(tk_object_t* obj, const char* name, value_t* v) {
   fscript_module_t* o = FSCRIPT_MODULE(obj);
-  return_value_if_fail(o != NULL && o->fscript != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(o != NULL, RET_BAD_PARAMS);
 
-  return tk_object_get_prop(o->fscript->funcs_def, name, v);
+  if (o->fscript != NULL && o->fscript->funcs_def != NULL) {
+    return tk_object_get_prop(o->fscript->funcs_def, name, v);
+  }
+
+  return RET_NOT_FOUND;
 }
 
 static ret_t fscript_module_foreach_prop(tk_object_t* obj, tk_visit_t on_prop, void* ctx) {
@@ -74,6 +81,9 @@ tk_object_t* fscript_module_create_with_data(const char* data) {
   value_set_int(&v, 0);
   fscript_exec(fscript, &v);
   value_reset(&v);
+
+  /*fix loop ref count*/
+  o->ref_count = 1;
 
   return o;
 error:

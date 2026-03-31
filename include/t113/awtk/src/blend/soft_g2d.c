@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  software implemented image operations
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -185,8 +185,10 @@ ret_t soft_fill_rect(bitmap_t* dst, const rect_t* dst_r, color_t c) {
       return fill_abgr8888_rect(dst, dst_r, c);
     }
 #endif /*LCD_BGR565_LITE*/
-    default:
+    default: {
+      log_debug("not support format: w=%u h=%u format=%u\n", dst->w, dst->h, dst->format);
       break;
+    }
   }
 
   assert(!"not supported format");
@@ -219,8 +221,10 @@ ret_t soft_rotate_image(bitmap_t* dst, bitmap_t* src, const rect_t* src_r, lcd_o
       return rotate_bgra8888_image(dst, src, src_r, o);
     }
 #endif /*LCD_BGR565_LITE*/
-    default:
+    default: {
+      log_debug("not support format: w=%u h=%u format=%u\n", dst->w, dst->h, dst->format);
       break;
+    }
   }
 
   assert(!"not supported format");
@@ -454,7 +458,7 @@ ret_t soft_blend_image_rotate(bitmap_t* dst, bitmap_t* src, const rectf_t* dst_r
             return soft_copy_image(dst, src, (const rect_t*)(&tmp_src), (xy_t)(dst_r->x),
                                    (xy_t)(dst_r->y));
 
-          } else if (alpha > 0xf8) {
+          } else if (dst_r->w == src_r->w && dst_r->h == src_r->h && alpha > 0xf8) {
             rect_t tmp_src = rect_from_rectf(src_r);
             rect_t tmp_dst = soft_blend_image_rotate_get_dst_point(dst, dst_r, o);
             return soft_rotate_image_ex(dst, src, (const rect_t*)(&tmp_src), tmp_dst.x, tmp_dst.y,
@@ -488,7 +492,7 @@ ret_t soft_blend_image_rotate(bitmap_t* dst, bitmap_t* src, const rectf_t* dst_r
             rect_t tmp_src = rect_from_rectf(src_r);
             return soft_copy_image(dst, src, (const rect_t*)(&tmp_src), (xy_t)(dst_r->x),
                                    (xy_t)(dst_r->y));
-          } else if (alpha > 0xf8) {
+          } else if (dst_r->w == src_r->w && dst_r->h == src_r->h && alpha > 0xf8) {
             rect_t tmp_src = rect_from_rectf(src_r);
             rect_t tmp_dst = soft_blend_image_rotate_get_dst_point(dst, dst_r, o);
             return soft_rotate_image_ex(dst, src, (const rect_t*)(&tmp_src), tmp_dst.x, tmp_dst.y,
@@ -525,7 +529,7 @@ ret_t soft_blend_image_rotate(bitmap_t* dst, bitmap_t* src, const rectf_t* dst_r
             rect_t tmp_src = rect_from_rectf(src_r);
             return soft_copy_image(dst, src, (const rect_t*)(&tmp_src), (xy_t)(dst_r->x),
                                    (xy_t)(dst_r->y));
-          } else if (alpha > 0xf8) {
+          } else if (dst_r->w == src_r->w && dst_r->h == src_r->h && alpha > 0xf8) {
             rect_t tmp_src = rect_from_rectf(src_r);
             rect_t tmp_dst = soft_blend_image_rotate_get_dst_point(dst, dst_r, o);
             return soft_rotate_image_ex(dst, src, (const rect_t*)(&tmp_src), tmp_dst.x, tmp_dst.y,
@@ -559,7 +563,7 @@ ret_t soft_blend_image_rotate(bitmap_t* dst, bitmap_t* src, const rectf_t* dst_r
             rect_t tmp_src = rect_from_rectf(src_r);
             return soft_copy_image(dst, src, (const rect_t*)(&tmp_src), (xy_t)(dst_r->x),
                                    (xy_t)(dst_r->y));
-          } else if (alpha > 0xf8) {
+          } else if (dst_r->w == src_r->w && dst_r->h == src_r->h && alpha > 0xf8) {
             rect_t tmp_src = rect_from_rectf(src_r);
             rect_t tmp_dst = soft_blend_image_rotate_get_dst_point(dst, dst_r, o);
             return soft_rotate_image_ex(dst, src, (const rect_t*)(&tmp_src), tmp_dst.x, tmp_dst.y,

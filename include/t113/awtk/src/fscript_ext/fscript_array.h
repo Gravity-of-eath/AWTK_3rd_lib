@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  array functions for fscript
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  */
 
@@ -50,8 +50,11 @@ typedef struct _fscript_array_vtable_t {
   fscript_func_t array_size;
 } fscript_array_vtable_t;
 
-#define FSCRIPT_ARRAY_PROP_VTABEL_NAME "_vtable_"
-#define FSCRIPT_ARRAY_PROP_VTABEL_TYPE_STRING "_fscript_array_type_"
+#define FSCRIPT_ARRAY_PROP_VTABLE_NAME "_vtable_"
+#define FSCRIPT_ARRAY_PROP_VTABLE_TYPE_STRING "_fscript_array_type_"
+
+#define FSCRIPT_ARRAY_PROP_VTABEL_NAME FSCRIPT_ARRAY_PROP_VTABLE_NAME
+#define FSCRIPT_ARRAY_PROP_VTABEL_TYPE_STRING FSCRIPT_ARRAY_PROP_VTABLE_TYPE_STRING
 
 /**
  * @method fscript_array_register
@@ -64,8 +67,9 @@ ret_t fscript_array_register(void);
 /**
  * @method fscript_array_get_fscript_array_vt
  * 获取 fscript array 的虚表。
+ * @param {tk_object_t*} obj obj对象。
  *
- * @return {ret_t} 成功返回虚表指针，失败返回 NULL。
+ * @return {const fscript_array_vtable_t*} 成功返回虚表指针，失败返回 NULL。
  */
 const fscript_array_vtable_t* fscript_array_get_fscript_array_vt(tk_object_t* obj);
 

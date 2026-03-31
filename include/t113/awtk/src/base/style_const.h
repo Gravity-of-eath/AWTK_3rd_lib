@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  const style(can not be changed)
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -52,5 +52,8 @@ typedef struct _style_const_t {
 style_t* style_const_create(void);
 
 END_C_DECLS
+/* private */
+const void* widget_get_const_style_data_for_state(widget_t* widget, const char* style_name,
+                                                  const char* state);
 
 #endif /*TK_STYLE_CONST_H*/

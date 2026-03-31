@@ -1,4 +1,4 @@
-﻿/**
+/**
  * File:   blur_view.h
  * Author:
  * Brief:
@@ -23,6 +23,7 @@
 #define TK_BLUR_VIEW_H
 
 #include "base/widget.h"
+#include "base/vgcanvas.h"
 
 BEGIN_C_DECLS
 /**
@@ -57,14 +58,38 @@ typedef struct _blur_view_t
   bitmap_t* blur_bitmap;
 
   bool_t DEBUG;
-  
+
   bool_t abort;
+
+  /**
+   * 正在截图标志，防止 widget_take_snapshot_rect 触发自身 on_paint 导致死递归
+   */
+  bool_t is_capturing;
+
+  /**
+   * 上次更新的时间戳(ms)，用于节流控制刷新频率
+   */
+  uint64_t last_update_ms;
+
+  /**
+   * 最小更新间隔(ms)，默认33ms约30fps，可通过属性调节
+   */
+  uint32_t update_interval_ms;
+
+  /**
+   * 降采样因子，默认2表示1/2分辨率截图+模糊，越大越快但越模糊
+   */
+  uint32_t downscale;
+
+  framebuffer_object_t fbo_a;
+  int32_t fbo_w;
+  int32_t fbo_h;
+  bool_t fbo_inited;
 
 } blur_view_t;
 
 /**
  * @method blur_view_create
- * @annotation ["constructor", "scriptable"]
  * 创建blur_view对象
  * @param {widget_t*} parent 父控件
  * @param {xy_t} x x坐标
@@ -90,6 +115,7 @@ ret_t blur_view_set_radius(widget_t *widget, float_t radius);
 
 #define BLUR_VIEW_PROP_RADIUS "radius"
 #define BLUR_VIEW_PROP_DEBUG "debug"
+#define BLUR_VIEW_PROP_UPDATE_INTERVAL "update_interval"
 
 #define WIDGET_TYPE_BLUR_VIEW "blur_view"
 

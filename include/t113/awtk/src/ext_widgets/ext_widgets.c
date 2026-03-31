@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  ext widgets
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -34,6 +34,9 @@
 #define WITH_WIDGET_SERIAL 1
 #endif /*WITH_WIDGET_SERIAL*/
 
+#ifndef WITH_WIDGET_EDIT_EX
+#define WITH_WIDGET_EDIT_EX 1
+#endif /*WITH_WIDGET_EDIT_EX*/
 #endif /*WITH_SDL*/
 
 #include "ext_widgets.h"
@@ -64,6 +67,7 @@
 #include "scroll_view/scroll_bar.h"
 #include "scroll_view/scroll_view.h"
 #include "scroll_view/list_view_h.h"
+#include "edit_ex/edit_ex.h"
 #include "combo_box_ex/combo_box_ex.h"
 #include "color_picker/color_picker.h"
 #include "scroll_label/hscroll_label.h"
@@ -149,6 +153,10 @@ ret_t tk_ext_widgets_init(void) {
 #ifdef TK_FILE_BROWSER_VIEW_H
   FACTORY_TABLE_ENTRY(WIDGET_TYPE_FILE_BROWSER_VIEW, file_browser_view_create)
 #endif /*TK_FILE_BROWSER_VIEW_H*/
+
+#ifdef WITH_WIDGET_EDIT_EX
+  FACTORY_TABLE_ENTRY(WIDGET_TYPE_EDIT_EX, edit_ex_create)
+#endif /*WITH_WIDGET_EDIT_EX*/
   FACTORY_TABLE_END()
 
   children_layouter_register_ext_builtins();

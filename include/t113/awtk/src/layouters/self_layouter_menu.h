@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  self layouter menu
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,8 +32,8 @@ BEGIN_C_DECLS
  *
  * menu的控件自身布局算法实现(一般用于popup或dialog窗口)。
  *
- *> 用法请参考：[缺省控件自身布局算法](
- *https://github.com/zlgopen/awtk/blob/master/docs/self_layouter_menu.md)
+ * > 用法请参考：[menu 自身布局器](
+ * https://github.com/zlgopen/awtk/blob/master/docs/self_layouter_menu.md)
  *
  */
 typedef struct _self_layouter_menu_t {

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window manager
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,6 +23,7 @@
 #include "base/canvas.h"
 #include "base/dialog.h"
 #include "base/window.h"
+#include "base/layout.h"
 #include "base/dialog_highlighter.h"
 #include "base/input_device_status.h"
 #include "base/window_manager.h"
@@ -93,12 +94,19 @@ static ret_t window_manager_back_to_win_sync(widget_t* widget, widget_t* target)
     }
   } else {
     if (!widget_is_system_bar(iter)) {
+      if (widget_is_dialog(iter) && DIALOG(iter)->quited) {
+        continue;
+      }
       darray_push(&wins, iter);
     }
   }
   WIDGET_FOR_EACH_CHILD_END()
 
   top = wins.size > 0 ? WIDGET(darray_pop(&wins)) : NULL;
+  if (widget_is_dialog(top) && dialog_is_modal(top)) {
+    dialog_quit(top, DIALOG_QUIT_NONE);
+    top = NULL;
+  }
   for (k = 0; k < wins.size; k++) {
     widget_t* iter = WIDGET(wins.elms[k]);
     if (widget_is_dialog(iter) && dialog_is_modal(iter)) {
@@ -178,6 +186,9 @@ static widget_t* window_manager_default_impl_get_top_window(widget_t* widget) {
   return_value_if_fail(widget != NULL, NULL);
 
   WIDGET_FOR_EACH_CHILD_BEGIN_R(widget, iter, i)
+  if (widget_is_dialog(iter) && DIALOG(iter)->quited) {
+    continue;
+  }
   if (iter->visible) {
     return iter;
   }
@@ -211,6 +222,19 @@ widget_t* window_manager_get_top_window(widget_t* widget) {
   } else {
     return window_manager_default_impl_get_top_window(widget);
   }
+}
+
+widget_t* window_manager_get_foreground_window(widget_t* widget) {
+  window_manager_t* wm = WINDOW_MANAGER(widget);
+  return_value_if_fail(wm != NULL && wm->vt != NULL, NULL);
+
+  WIDGET_FOR_EACH_CHILD_BEGIN_R(widget, iter, i)
+  int32_t stage = widget_get_prop_int(iter, WIDGET_PROP_STAGE, WINDOW_STAGE_NONE);
+  if (stage == WINDOW_STAGE_OPENED) {
+    return iter;
+  }
+  WIDGET_FOR_EACH_CHILD_END();
+  return NULL;
 }
 
 widget_t* window_manager_get_prev_window(widget_t* widget) {
@@ -287,6 +311,7 @@ ret_t window_manager_dispatch_input_event(widget_t* widget, event_t* e) {
   }
 
   target = e->target;
+  e->target = wm->global_emitter;
   if (emitter_dispatch(wm->global_emitter, e) == RET_STOP) {
     return RET_STOP;
   }
@@ -305,6 +330,13 @@ ret_t window_manager_set_show_fps(widget_t* widget, bool_t show_fps) {
   } else {
     return RET_OK;
   }
+}
+
+ret_t window_manager_set_show_fps_position(widget_t* widget, xy_t x, xy_t y) {
+  window_manager_t* wm = WINDOW_MANAGER(widget);
+  return_value_if_fail(wm != NULL, RET_BAD_PARAMS);
+  wm->fps_position = point_init(x, y);
+  return RET_OK;
 }
 
 ret_t window_manager_set_max_fps(widget_t* widget, uint32_t max_fps) {
@@ -381,6 +413,14 @@ ret_t window_manager_switch_to(widget_t* widget, widget_t* curr_win, widget_t* t
     return RET_OK;
   }
 
+  WIDGET_FOR_EACH_CHILD_BEGIN_R(widget, iter, i)
+  if (widget_is_dialog(iter) && !DIALOG(iter)->quited) {
+    return RET_FAIL;
+  } else if (iter == target_win) {
+    break;
+  }
+  WIDGET_FOR_EACH_CHILD_END();
+
   if (wm->vt->switch_to != NULL) {
     return wm->vt->switch_to(widget, curr_win, target_win, close);
   } else {
@@ -408,7 +448,7 @@ xy_t window_manager_get_pointer_x(widget_t* widget) {
   return_value_if_fail(wm != NULL && wm->vt != NULL, 0);
   return_value_if_fail(wm->vt->get_pointer != NULL, 0);
 
-  wm->vt->get_pointer(widget, &x, &y, &pressed);
+  wm->vt->get_pointer(widget, &x, &y, &pressed, NULL);
 
   return x;
 }
@@ -422,7 +462,7 @@ xy_t window_manager_get_pointer_y(widget_t* widget) {
   return_value_if_fail(wm != NULL && wm->vt != NULL, 0);
   return_value_if_fail(wm->vt->get_pointer != NULL, 0);
 
-  wm->vt->get_pointer(widget, &x, &y, &pressed);
+  wm->vt->get_pointer(widget, &x, &y, &pressed, NULL);
 
   return y;
 }
@@ -431,12 +471,16 @@ bool_t window_manager_get_pointer_pressed(widget_t* widget) {
   xy_t x = 0;
   xy_t y = 0;
   bool_t pressed = TRUE;
+  bool_t in_pointer_up = TRUE;
 
   window_manager_t* wm = WINDOW_MANAGER(widget);
   return_value_if_fail(wm != NULL && wm->vt != NULL, 0);
   return_value_if_fail(wm->vt->get_pointer != NULL, 0);
 
-  wm->vt->get_pointer(widget, &x, &y, &pressed);
+  wm->vt->get_pointer(widget, &x, &y, &pressed, &in_pointer_up);
+  if (in_pointer_up) {
+    pressed = FALSE;
+  }
 
   return pressed;
 }
@@ -459,14 +503,12 @@ bool_t window_manager_is_animating(widget_t* widget) {
 
 static ret_t wm_on_locale_changed(void* ctx, event_t* e) {
   widget_t* widget = WIDGET(ctx);
-  font_manager_t* fm = widget_get_font_manager(widget);
-  image_manager_t* imm = widget_get_image_manager(widget);
-
   return_value_if_fail(widget != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(fm != NULL && imm != NULL, RET_BAD_PARAMS);
 
-  font_manager_unload_all(fm);
-  image_manager_unload_all(imm);
+  font_managers_unload_all();
+  image_managers_unload_all();
+  assets_managers_clear_cache(ASSET_TYPE_FONT);
+  assets_managers_clear_cache(ASSET_TYPE_IMAGE);
 
   if (widget_count_children(widget) > 0) {
     widget_reset_canvas(widget_get_child(widget, 0));
@@ -476,6 +518,7 @@ static ret_t wm_on_locale_changed(void* ctx, event_t* e) {
   widget_re_translate_text(iter);
   widget_dispatch(iter, e);
   WIDGET_FOR_EACH_CHILD_END();
+  widget_layout_children(widget);
   widget_invalidate(widget, NULL);
 
   return RET_OK;
@@ -520,6 +563,7 @@ widget_t* window_manager_init(window_manager_t* wm, const widget_vtable_t* wvt,
   wm->global_emitter = emitter_create();
   wm->curr_expected_sleep_time = 0xFFFFFFFF;
   widget_on(widget, EVT_DESTROY, window_manager_on_destroy, widget);
+  input_device_status_init(&(wm->input_device_status));
 
   return widget;
 }
@@ -648,6 +692,17 @@ ret_t window_manager_resize(widget_t* widget, wh_t w, wh_t h) {
   return RET_NOT_IMPL;
 }
 
+ret_t window_manager_set_fullscreen(widget_t* widget, bool_t fullscreen) {
+  window_manager_t* wm = WINDOW_MANAGER(widget);
+  return_value_if_fail(wm != NULL && wm->vt != NULL, RET_BAD_PARAMS);
+
+  if (wm->vt->set_fullscreen != NULL) {
+    return wm->vt->set_fullscreen(widget, fullscreen);
+  }
+
+  return RET_NOT_IMPL;
+}
+
 ret_t window_manager_dispatch_top_window_changed(widget_t* widget) {
   window_event_t e;
 
@@ -672,7 +727,9 @@ ret_t window_manager_dispatch_window_event(widget_t* window, event_type_t type) 
     window_manager_dispatch_top_window_changed(window->parent);
   } else if (type == EVT_WINDOW_TO_FOREGROUND) {
     window->parent->target = window;
-    window->parent->key_target = window;
+    if (window->sensitive) {
+      window->parent->key_target = window;
+    }
   }
 
   return widget_dispatch(window->parent, (event_t*)&(evt));
@@ -751,5 +808,24 @@ ret_t window_manager_destroy(widget_t* widget) {
     log_warn("window manager will be forcibly destroyed!!!\n");
   }
 
+  input_device_status_deinit(&(wm->input_device_status));
+
   return widget_destroy_sync(widget);
+}
+
+input_device_status_t* window_manager_get_input_device_status(widget_t* widget) {
+  window_manager_t* wm = WINDOW_MANAGER(widget);
+  return_value_if_fail(wm != NULL, NULL);
+
+  return &(wm->input_device_status);
+}
+
+native_window_t* window_manager_create_native_window(window_manager_t* wm, widget_t* widget) {
+  return_value_if_fail(wm != NULL && widget != NULL, NULL);
+
+  if (wm->create_native_window != NULL) {
+    return wm->create_native_window(widget);
+  } else {
+    return native_window_create(widget);
+  }
 }

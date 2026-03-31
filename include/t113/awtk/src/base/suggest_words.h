@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  suggest_words
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -56,7 +56,7 @@ struct _suggest_words_t {
  * @method suggest_words_create
  * @annotation ["constructor"]
  * 创建联想字对象。
- * @param {asset_info_t*} res 数据资源。
+ * @param {const asset_info_t*} res 数据资源。
  *
  * @return {suggest_words_t*} 返回联想字对象。
  */

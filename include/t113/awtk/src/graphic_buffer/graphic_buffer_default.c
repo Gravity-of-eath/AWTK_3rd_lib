@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  graphic_buffer default
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -94,6 +94,27 @@ static ret_t graphic_buffer_default_destroy(graphic_buffer_t* buffer) {
   return RET_OK;
 }
 
+static ret_t graphic_buffer_default_set_physical_width(graphic_buffer_t* buffer, uint32_t width) {
+  graphic_buffer_default_t* b = GRAPHIC_BUFFER_DEFAULT(buffer);
+  return_value_if_fail(b != NULL, RET_BAD_PARAMS);
+  b->w = width;
+  return RET_OK;
+}
+
+static ret_t graphic_buffer_default_set_physical_height(graphic_buffer_t* buffer, uint32_t height) {
+  graphic_buffer_default_t* b = GRAPHIC_BUFFER_DEFAULT(buffer);
+  return_value_if_fail(b != NULL, RET_BAD_PARAMS);
+  b->h = height;
+  return RET_OK;
+}
+
+static ret_t graphic_buffer_default_set_physical_line_length(graphic_buffer_t* buffer, uint32_t line_length) {
+  graphic_buffer_default_t* b = GRAPHIC_BUFFER_DEFAULT(buffer);
+  return_value_if_fail(b != NULL, RET_BAD_PARAMS);
+  b->line_length = line_length;
+  return RET_OK;
+}
+
 static uint32_t graphic_buffer_default_get_physical_width(graphic_buffer_t* buffer) {
   graphic_buffer_default_t* b = GRAPHIC_BUFFER_DEFAULT(buffer);
   return_value_if_fail(b != NULL, 0);
@@ -121,6 +142,9 @@ static const graphic_buffer_vtable_t s_graphic_buffer_default_vtable = {
     .unlock = graphic_buffer_default_unlock,
     .attach = graphic_buffer_default_attach,
     .is_valid_for = graphic_buffer_default_is_valid_for,
+    .set_width = graphic_buffer_default_set_physical_width,
+    .set_height = graphic_buffer_default_set_physical_height,
+    .set_line_length = graphic_buffer_default_set_physical_line_length,
     .get_width = graphic_buffer_default_get_physical_width,
     .get_height = graphic_buffer_default_get_physical_height,
     .get_line_length = graphic_buffer_default_get_physical_line_length,
@@ -178,15 +202,34 @@ graphic_buffer_t* graphic_buffer_create_with_data(const uint8_t* data, uint32_t 
   return GRAPHIC_BUFFER(buffer);
 }
 
+graphic_buffer_t* graphic_buffer_create_with_data_ex(const uint8_t* virtual_data,
+                                                     const uint8_t* physical_data, uint32_t w,
+                                                     uint32_t h, uint32_t line_length,
+                                                     bitmap_format_t format) {
+  graphic_buffer_default_t* buffer = (graphic_buffer_default_t*)graphic_buffer_create_with_data(virtual_data, w, h, format);
+  if (buffer != NULL && line_length != 0) {
+    buffer->line_length = line_length;
+  }
+  return GRAPHIC_BUFFER(buffer);
+}
+
 ret_t graphic_buffer_create_for_bitmap(bitmap_t* bitmap) {
+  graphic_buffer_default_t* buffer = NULL;
   uint32_t line_length = bitmap_get_line_length(bitmap);
   return_value_if_fail(bitmap != NULL && bitmap->buffer == NULL, RET_BAD_PARAMS);
 
-  bitmap->buffer = graphic_buffer_default_create(bitmap->w, bitmap->h,
-                                                 (bitmap_format_t)(bitmap->format), line_length);
-  bitmap->should_free_data = bitmap->buffer != NULL;
-
-  return bitmap->buffer != NULL ? RET_OK : RET_OOM;
+  buffer = (graphic_buffer_default_t*)graphic_buffer_default_create(bitmap->w, bitmap->h,
+                                                                    (bitmap_format_t)(bitmap->format), line_length);
+  if (buffer != NULL) {
+    bitmap->buffer = GRAPHIC_BUFFER(buffer);
+    bitmap->should_free_data = TRUE;
+    bitmap->line_length = buffer->line_length;
+    return RET_OK;
+  } else {
+    bitmap->buffer = NULL;
+    bitmap->should_free_data = FALSE; 
+    return RET_OOM;
+  }
 }
 
 static graphic_buffer_default_t* graphic_buffer_default_cast(graphic_buffer_t* buffer) {

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  text_selector
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,6 +27,7 @@
 #include "base/layout.h"
 #include "widgets/popup.h"
 #include "base/window.h"
+#include "base/enums.h"
 #include "tkc/tokenizer.h"
 #include "text_selector/text_selector.h"
 #include "base/widget_animator_manager.h"
@@ -43,6 +44,7 @@ static ret_t text_selector_sync_yoffset_with_selected_index(text_selector_t* tex
 const char* s_text_selector_properties[] = {WIDGET_PROP_TEXT,
                                             WIDGET_PROP_VALUE,
                                             WIDGET_PROP_OPTIONS,
+                                            WIDGET_PROP_ELLIPSES,
                                             TEXT_SELECTOR_PROP_VISIBLE_NR,
                                             WIDGET_PROP_SELECTED_INDEX,
                                             WIDGET_PROP_LOCALIZE_OPTIONS,
@@ -62,6 +64,7 @@ static ret_t text_selector_paint_mask(widget_t* widget, canvas_t* c) {
   color_t mask_color = style_get_color(style, STYLE_ID_MASK_COLOR, trans);
 
   text_selector_t* text_selector = TEXT_SELECTOR(widget);
+  ENSURE(text_selector);
   int32_t visible_nr = text_selector->visible_nr;
   int32_t item_height = text_selector->draw_widget_h / visible_nr;
   easing_func_t easing = easing_get(text_selector->mask_easing);
@@ -161,7 +164,11 @@ static ret_t text_selector_prepare_highlight_style(widget_t* widget, canvas_t* c
 static ret_t text_selector_paint_text(widget_t* widget, canvas_t* c, rect_t* r,
                                       text_selector_option_t* iter, int32_t empty_item_height,
                                       int32_t item_height) {
+  text_selector_t* text_selector = NULL;
   uint32_t d = tk_abs(r->y - empty_item_height);
+
+  text_selector = TEXT_SELECTOR(widget);
+  ENSURE(text_selector);
 
   if (d < item_height) {
     text_selector_prepare_highlight_style(widget, c, (item_height - d) / (float_t)item_height,
@@ -169,13 +176,13 @@ static ret_t text_selector_paint_text(widget_t* widget, canvas_t* c, rect_t* r,
   } else {
     widget_prepare_text_style(widget, c);
   }
-  return canvas_draw_text_in_rect(c, iter->text.str, iter->text.size, r);
+  return widget_draw_text_in_rect(widget, c, iter->text.str, iter->text.size, r,
+                                  text_selector->ellipses);
 }
 
 static ret_t text_selector_paint_self(widget_t* widget, canvas_t* c) {
   rect_t r;
   uint32_t y = 0;
-  uint32_t i = 0;
   text_selector_option_t* iter = NULL;
   int32_t max_yoffset, tolal_height;
   int32_t yoffset, visible_nr, item_height;
@@ -226,7 +233,6 @@ static ret_t text_selector_paint_self(widget_t* widget, canvas_t* c) {
       text_selector_paint_text(widget, c, &r, iter, empty_item_height, item_height);
     }
 
-    i++;
     iter = iter->next;
     y += item_height;
   }
@@ -335,7 +341,7 @@ ret_t text_selector_set_range_options_ex(widget_t* widget, int32_t start, uint32
                                          const char* format) {
   char text[64];
   uint32_t i = 0;
-  return_value_if_fail(widget != NULL && nr < 300 && format != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(widget != NULL && format != NULL, RET_BAD_PARAMS);
 
   for (i = 0; i < nr; i++) {
     int32_t value = start + i * step;
@@ -414,6 +420,9 @@ static ret_t text_selector_get_prop(widget_t* widget, const char* name, value_t*
   } else if (tk_str_eq(name, WIDGET_PROP_OPTIONS)) {
     value_set_str(v, text_selector->options);
     return RET_OK;
+  } else if (tk_str_eq(name, WIDGET_PROP_ELLIPSES)) {
+    value_set_bool(v, text_selector->ellipses);
+    return RET_OK;
   } else if (tk_str_eq(name, WIDGET_PROP_LOCALIZE_OPTIONS)) {
     value_set_bool(v, text_selector->localize_options);
     return RET_OK;
@@ -450,6 +459,8 @@ static ret_t text_selector_set_prop(widget_t* widget, const char* name, const va
   } else if (tk_str_eq(name, WIDGET_PROP_TEXT)) {
     text_selector_set_text(widget, value_str(v));
     return RET_OK;
+  } else if (tk_str_eq(name, WIDGET_PROP_ELLIPSES)) {
+    return text_selector_set_ellipses(widget, value_bool(v));
   } else if (tk_str_eq(name, TEXT_SELECTOR_PROP_VISIBLE_NR)) {
     text_selector_set_visible_nr(widget, value_int(v));
     return RET_OK;
@@ -475,7 +486,11 @@ static ret_t text_selector_set_prop(widget_t* widget, const char* name, const va
   } else if (tk_str_eq(name, TEXT_SELECTOR_PROP_ENABLE_VALUE_ANIMATOR)) {
     return text_selector_set_enable_value_animator(widget, value_bool(v));
   } else if (tk_str_eq(name, TEXT_SELECTOR_PROP_MASH_EASING)) {
-    return text_selector_set_mask_easing(widget, (easing_type_t)value_int(v));
+    const key_type_value_t* kv = easing_type_find(value_str(v));
+
+    if (kv != NULL) {
+      return text_selector_set_mask_easing(widget, (easing_type_t)kv->value);
+    }
   } else if (tk_str_eq(name, TEXT_SELECTOR_PROP_MASH_AREA_SCALE)) {
     return text_selector_set_mask_area_scale(widget, value_float(v));
   }
@@ -646,6 +661,9 @@ static ret_t text_selector_scroll_to(widget_t* widget, int32_t yoffset_end) {
 
   yoffset = text_selector->yoffset;
   if (yoffset == yoffset_end) {
+    if (item_height > 0) {
+      text_selector_on_scroll_done(widget, NULL);
+    }
     return RET_OK;
   }
 
@@ -676,16 +694,16 @@ static ret_t text_selector_on_pointer_up(text_selector_t* text_selector, pointer
 
   if (e->y == text_selector->ydown) {
     /*click*/
-    int32_t index = 0;
-    int32_t mid_index = text_selector->selected_index;
+    int32_t mid_index = 0;
+    int32_t pointer_index = 0;
     point_t p = {e->x, e->y};
+    mid_index = text_selector->visible_nr / 2;
     widget_to_local(widget, &p);
-    index = p.y / item_height;
-    if (index == mid_index) {
+    pointer_index = (p.y - text_selector->yoffset) / item_height;
+    if (pointer_index == mid_index) {
       return RET_OK;
     } else {
-      yoffset_end =
-          text_selector->yoffset + item_height * (index - mid_index) * text_selector->yspeed_scale;
+      yoffset_end = text_selector->yoffset + item_height * (pointer_index - mid_index);
     }
   }
 
@@ -787,24 +805,9 @@ static ret_t text_selector_on_locale_changed(void* ctx, event_t* e) {
   return RET_OK;
 }
 
-TK_DECL_VTABLE(text_selector) = {.size = sizeof(text_selector_t),
-                                 .inputable = TRUE,
-                                 .type = WIDGET_TYPE_TEXT_SELECTOR,
-                                 .clone_properties = s_text_selector_properties,
-                                 .persistent_properties = s_text_selector_properties,
-                                 .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
-                                 .create = text_selector_create,
-                                 .on_paint_self = text_selector_on_paint_self,
-                                 .on_layout_children = text_selector_on_layout_children,
-                                 .set_prop = text_selector_set_prop,
-                                 .get_prop = text_selector_get_prop,
-                                 .on_destroy = text_selector_on_destroy,
-                                 .on_event = text_selector_on_event};
-
-widget_t* text_selector_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
-  widget_t* widget = widget_create(parent, TK_REF_VTABLE(text_selector), x, y, w, h);
+static ret_t text_selector_init(widget_t* widget) {
   text_selector_t* text_selector = TEXT_SELECTOR(widget);
-  return_value_if_fail(text_selector != NULL, NULL);
+  return_value_if_fail(text_selector != NULL, RET_BAD_PARAMS);
 
   text_selector->visible_nr = 5;
   text_selector->pressed = FALSE;
@@ -817,6 +820,28 @@ widget_t* text_selector_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h)
   text_selector->mask_easing = EASING_CUBIC_IN;
   text_selector->mask_area_scale = 1;
 
+  str_init(&(text_selector->text), 0);
+  return RET_OK;
+}
+
+TK_DECL_VTABLE(text_selector) = {.size = sizeof(text_selector_t),
+                                 .inputable = TRUE,
+                                 .type = WIDGET_TYPE_TEXT_SELECTOR,
+                                 .clone_properties = s_text_selector_properties,
+                                 .persistent_properties = s_text_selector_properties,
+                                 .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
+                                 .create = text_selector_create,
+                                 .init = text_selector_init,
+                                 .on_paint_self = text_selector_on_paint_self,
+                                 .on_layout_children = text_selector_on_layout_children,
+                                 .set_prop = text_selector_set_prop,
+                                 .get_prop = text_selector_get_prop,
+                                 .on_destroy = text_selector_on_destroy,
+                                 .on_event = text_selector_on_event};
+
+widget_t* text_selector_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
+  widget_t* widget = widget_create(parent, TK_REF_VTABLE(text_selector), x, y, w, h);
+  return_value_if_fail(text_selector_init(widget) == RET_OK, NULL);
   return widget;
 }
 
@@ -1137,4 +1162,13 @@ widget_t* text_selector_cast(widget_t* widget) {
   return_value_if_fail(WIDGET_IS_INSTANCE_OF(widget, text_selector), NULL);
 
   return widget;
+}
+
+ret_t text_selector_set_ellipses(widget_t* widget, bool_t ellipses) {
+  text_selector_t* text_selector = TEXT_SELECTOR(widget);
+  return_value_if_fail(text_selector != NULL, RET_BAD_PARAMS);
+
+  text_selector->ellipses = ellipses;
+
+  return widget_invalidate(widget, NULL);
 }

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event manager manager
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -42,6 +42,8 @@ struct _event_source_manager_t {
 
   event_source_manager_dispatch_t dispatch;
   event_source_manager_destroy_t destroy;
+
+  uint32_t min_sleep_time;
 };
 
 /**
@@ -71,14 +73,14 @@ ret_t event_source_manager_deinit(event_source_manager_t* manager);
 /**
  * @method event_source_manager_get_wakeup_time
  *
- * 获取wakeup时间(ms)
+ * 获取wakeup时间(微秒)
  *
  * @param {event_source_manager_t*} manager event_source_manager对象。
  *
- * @return {uint32_t} 返回wakeup时间(ms)。
+ * @return {uint64_t} 返回wakeup时间(微秒)。
  *
  */
-uint32_t event_source_manager_get_wakeup_time(event_source_manager_t* manager);
+uint64_t event_source_manager_get_wakeup_time(event_source_manager_t* manager);
 
 /**
  * @method event_source_manager_dispatch
@@ -130,6 +132,33 @@ ret_t event_source_manager_remove(event_source_manager_t* manager, event_source_
  *
  */
 ret_t event_source_manager_remove_by_tag(event_source_manager_t* manager, void* tag);
+
+/**
+ * @method event_source_manager_set_min_sleep_time
+ *
+ * 设置默认最小睡眠时间(毫秒)。
+ *
+ * @param {event_source_manager_t*} manager event_source_manager对象。
+ * @param {uint32_t} sleep_time 默认最小睡眠时间(毫秒)。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ *
+ */
+ret_t event_source_manager_set_min_sleep_time(event_source_manager_t* manager, uint32_t sleep_time);
+
+/**
+ * @method event_source_manager_set_min_sleep_time_us
+ *
+ * 设置默认最小睡眠时间(微秒)。
+ *
+ * @param {event_source_manager_t*} manager event_source_manager对象。
+ * @param {uint32_t} sleep_time 默认最小睡眠时间(微秒)。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ *
+ */
+ret_t event_source_manager_set_min_sleep_time_us(event_source_manager_t* manager,
+                                                 uint32_t sleep_time);
 
 /**
  * @method event_source_manager_destroy

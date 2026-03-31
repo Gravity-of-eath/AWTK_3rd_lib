@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  file manager/browser/choosor
  *
- * Copyright (c) 2020 - 2021 Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -138,6 +138,26 @@ ret_t file_browser_view_set_sort_by(widget_t* widget, const char* sort_by) {
   return RET_OK;
 }
 
+ret_t file_browser_view_set_odd_item_style(widget_t* widget, const char* odd_item_style) {
+  file_browser_view_t* file_browser_view = FILE_BROWSER_VIEW(widget);
+  return_value_if_fail(file_browser_view != NULL, RET_BAD_PARAMS);
+
+  file_browser_view->odd_item_style =
+      tk_str_copy(file_browser_view->odd_item_style, odd_item_style);
+
+  return RET_OK;
+}
+
+ret_t file_browser_view_set_even_item_style(widget_t* widget, const char* even_item_style) {
+  file_browser_view_t* file_browser_view = FILE_BROWSER_VIEW(widget);
+  return_value_if_fail(file_browser_view != NULL, RET_BAD_PARAMS);
+
+  file_browser_view->even_item_style =
+      tk_str_copy(file_browser_view->even_item_style, even_item_style);
+
+  return RET_OK;
+}
+
 static ret_t file_browser_view_get_prop(widget_t* widget, const char* name, value_t* v) {
   file_browser_view_t* file_browser_view = FILE_BROWSER_VIEW(widget);
   return_value_if_fail(file_browser_view != NULL && name != NULL && v != NULL, RET_BAD_PARAMS);
@@ -159,6 +179,12 @@ static ret_t file_browser_view_get_prop(widget_t* widget, const char* name, valu
     return RET_OK;
   } else if (tk_str_eq(FILE_BROWSER_VIEW_PROP_SORT_BY, name)) {
     value_set_str(v, file_browser_view->sort_by);
+    return RET_OK;
+  } else if (tk_str_eq(FILE_BROWSER_VIEW_PROP_ODD_ITEM_STYLE, name)) {
+    value_set_str(v, file_browser_view->odd_item_style);
+    return RET_OK;
+  } else if (tk_str_eq(FILE_BROWSER_VIEW_PROP_EVEN_ITEM_STYLE, name)) {
+    value_set_str(v, file_browser_view->even_item_style);
     return RET_OK;
   }
 
@@ -186,6 +212,12 @@ static ret_t file_browser_view_set_prop(widget_t* widget, const char* name, cons
   } else if (tk_str_eq(FILE_BROWSER_VIEW_PROP_SORT_BY, name)) {
     file_browser_view_set_sort_by(widget, value_str(v));
     return RET_OK;
+  } else if (tk_str_eq(FILE_BROWSER_VIEW_PROP_ODD_ITEM_STYLE, name)) {
+    file_browser_view_set_odd_item_style(widget, value_str(v));
+    return RET_OK;
+  } else if (tk_str_eq(FILE_BROWSER_VIEW_PROP_EVEN_ITEM_STYLE, name)) {
+    file_browser_view_set_even_item_style(widget, value_str(v));
+    return RET_OK;
   }
 
   return RET_NOT_FOUND;
@@ -199,6 +231,8 @@ static ret_t file_browser_view_on_destroy(widget_t* widget) {
   TKMEM_FREE(file_browser_view->sort_by);
   TKMEM_FREE(file_browser_view->init_dir);
   TKMEM_FREE(file_browser_view->top_dir);
+  TKMEM_FREE(file_browser_view->odd_item_style);
+  TKMEM_FREE(file_browser_view->even_item_style);
   file_browser_destroy(file_browser_view->fb);
 
   widget_destroy(file_browser_view->file_template);
@@ -326,6 +360,24 @@ static widget_t* file_browser_view_create_folder_item(widget_t* widget) {
   return item;
 }
 
+static ret_t file_browser_view_item_set_style(file_browser_view_t* file_browser_view,
+                                              widget_t* item, bool_t odd) {
+  ret_t ret = RET_OK;
+  return_value_if_fail(file_browser_view != NULL && item != NULL, RET_BAD_PARAMS);
+
+  if (odd) {
+    if (file_browser_view->odd_item_style != NULL) {
+      ret = widget_use_style(item, file_browser_view->odd_item_style);
+    }
+  } else {
+    if (file_browser_view->even_item_style != NULL) {
+      ret = widget_use_style(item, file_browser_view->even_item_style);
+    }
+  }
+
+  return ret;
+}
+
 ret_t file_browser_view_reload(widget_t* widget) {
   uint32_t i = 0;
   uint32_t nr = 0;
@@ -395,6 +447,10 @@ ret_t file_browser_view_reload(widget_t* widget) {
     }
   }
 
+  WIDGET_FOR_EACH_CHILD_BEGIN(container, item, item_index)
+  file_browser_view_item_set_style(file_browser_view, item, item_index % 2);
+  WIDGET_FOR_EACH_CHILD_END()
+
   widget_layout(widget);
 
   return RET_OK;
@@ -446,6 +502,20 @@ static ret_t file_browser_view_on_event(widget_t* widget, event_t* e) {
   return RET_OK;
 }
 
+static ret_t file_browser_view_init(widget_t* widget) {
+  file_browser_view_t* file_browser_view = FILE_BROWSER_VIEW(widget);
+  return_value_if_fail(file_browser_view != NULL, RET_BAD_PARAMS);
+
+  file_browser_view->sort_ascending = TRUE;
+  file_browser_view->show_check_button = FALSE;
+  file_browser_view->ignore_hidden_files = TRUE;
+  file_browser_view->fb = file_browser_create(os_fs());
+  darray_init(&(file_browser_view->selected_items), 10, NULL, NULL);
+  darray_init(&(file_browser_view->file_items_cache), 10, (tk_destroy_t)widget_unref, NULL);
+  darray_init(&(file_browser_view->folder_items_cache), 10, (tk_destroy_t)widget_unref, NULL);
+  return RET_OK;
+}
+
 const char* s_file_browser_view_properties[] = {
     FILE_BROWSER_VIEW_PROP_SORT_BY, FILE_BROWSER_VIEW_PROP_INIT_DIR,
     FILE_BROWSER_VIEW_PROP_SORT_ASCENDING, FILE_BROWSER_VIEW_PROP_IGNORE_HIDDEN_FILES, NULL};
@@ -456,6 +526,7 @@ TK_DECL_VTABLE(file_browser_view) = {.size = sizeof(file_browser_view_t),
                                      .persistent_properties = s_file_browser_view_properties,
                                      .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
                                      .create = file_browser_view_create,
+                                     .init = file_browser_view_init,
                                      .on_paint_self = file_browser_view_on_paint_self,
                                      .set_prop = file_browser_view_set_prop,
                                      .get_prop = file_browser_view_get_prop,
@@ -464,16 +535,7 @@ TK_DECL_VTABLE(file_browser_view) = {.size = sizeof(file_browser_view_t),
 
 widget_t* file_browser_view_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(file_browser_view), x, y, w, h);
-  file_browser_view_t* file_browser_view = FILE_BROWSER_VIEW(widget);
-  return_value_if_fail(file_browser_view != NULL, NULL);
-
-  file_browser_view->sort_ascending = TRUE;
-  file_browser_view->show_check_button = FALSE;
-  file_browser_view->ignore_hidden_files = TRUE;
-  file_browser_view->fb = file_browser_create(os_fs());
-  darray_init(&(file_browser_view->selected_items), 10, NULL, NULL);
-  darray_init(&(file_browser_view->file_items_cache), 10, (tk_destroy_t)widget_unref, NULL);
-  darray_init(&(file_browser_view->folder_items_cache), 10, (tk_destroy_t)widget_unref, NULL);
+  return_value_if_fail(file_browser_view_init(widget) == RET_OK, NULL);
 
   return widget;
 }

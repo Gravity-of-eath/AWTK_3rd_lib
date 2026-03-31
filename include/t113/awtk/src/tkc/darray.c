@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  dynamic darray.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -22,9 +22,6 @@
 #include "tkc/darray.h"
 #include "tkc/utils.h"
 #include "tkc/mem.h"
-
-static int32_t darray_bsearch_index_impl(darray_t* darray, tk_compare_t cmp, void* ctx,
-                                         int32_t* ret_low);
 
 darray_t* darray_create(uint32_t capacity, tk_destroy_t destroy, tk_compare_t compare) {
   darray_t* darray = TKMEM_ZALLOC(darray_t);
@@ -177,7 +174,9 @@ ret_t darray_remove_all(darray_t* darray, tk_compare_t cmp, void* ctx) {
   for (i = 0, k = 0; i < size; i++) {
     void* iter = elms[i];
     if (cmp(iter, ctx) == 0) {
-      darray->destroy(iter);
+      if (iter != NULL) {
+        darray->destroy(iter);
+      }
       elms[i] = NULL;
     } else {
       if (k != i) {
@@ -281,7 +280,7 @@ ret_t darray_sorted_insert(darray_t* darray, void* data, tk_compare_t cmp,
     return darray_push(darray, data);
   }
 
-  index = darray_bsearch_index_impl(darray, cmp, data, &low);
+  index = darray_bsearch_index_ex(darray, cmp, data, &low);
   if (index >= 0) {
     if (replace_if_exist) {
       return darray_replace(darray, index, data);
@@ -414,8 +413,7 @@ ret_t darray_destroy(darray_t* darray) {
   return RET_OK;
 }
 
-static int32_t darray_bsearch_index_impl(darray_t* darray, tk_compare_t cmp, void* ctx,
-                                         int32_t* ret_low) {
+int32_t darray_bsearch_index_ex(darray_t* darray, tk_compare_t cmp, void* ctx, int32_t* ret_low) {
   int32_t low = 0;
   int32_t mid = 0;
   int32_t high = 0;
@@ -454,7 +452,7 @@ static int32_t darray_bsearch_index_impl(darray_t* darray, tk_compare_t cmp, voi
 }
 
 int32_t darray_bsearch_index(darray_t* darray, tk_compare_t cmp, void* ctx) {
-  return darray_bsearch_index_impl(darray, cmp, ctx, NULL);
+  return darray_bsearch_index_ex(darray, cmp, ctx, NULL);
 }
 
 void* darray_bsearch(darray_t* darray, tk_compare_t cmp, void* ctx) {

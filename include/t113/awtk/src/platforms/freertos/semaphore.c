@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  semaphore base on freertos
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,13 +19,12 @@
  *
  */
 
-#include "FreeRTOS.h"
-#include "semphr.h"
-
 #include "tkc/mem.h"
 #include "tkc/time_now.h"
 #include "tkc/platform.h"
 #include "tkc/semaphore.h"
+
+#include "freertos_headers.h"
 
 struct _tk_semaphore_t {
   SemaphoreHandle_t sem;

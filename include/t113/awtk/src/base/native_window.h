@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  native window
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,6 +57,8 @@ typedef ret_t (*native_window_maximize_t)(native_window_t* win);
 typedef ret_t (*native_window_restore_t)(native_window_t* win);
 typedef ret_t (*native_window_center_t)(native_window_t* win);
 typedef ret_t (*native_window_show_border_t)(native_window_t* win, bool_t show);
+typedef ret_t (*native_window_set_window_hit_test_t)(native_window_t* win, xy_t x, xy_t y, wh_t w,
+                                                     wh_t h);
 typedef ret_t (*native_window_set_fullscreen_t)(native_window_t* win, bool_t fullscreen);
 typedef ret_t (*native_window_set_cursor_t)(native_window_t* win, const char* name, bitmap_t* img);
 
@@ -74,6 +76,7 @@ typedef struct _native_window_vtable_t {
   native_window_minimize_t minimize;
   native_window_maximize_t maximize;
   native_window_show_border_t show_border;
+  native_window_set_window_hit_test_t set_window_hit_test;
   native_window_set_fullscreen_t set_fullscreen;
   native_window_set_cursor_t set_cursor;
   native_window_set_orientation_t set_orientation;
@@ -199,6 +202,22 @@ ret_t native_window_center(native_window_t* win);
 ret_t native_window_show_border(native_window_t* win, bool_t show);
 
 /**
+ * @method native_window_set_window_hit_test
+ * 设置hitTest。 
+ *
+ * @annotation ["scriptable"]
+ * @param {native_window_t*} win win对象。
+ * @param {xy_t} x x坐标。
+ * @param {xy_t} y y坐标。
+ * @param {wh_t} w w宽度。
+ * @param {wh_t} h h高度。
+ *
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t native_window_set_window_hit_test(native_window_t* win, xy_t x, xy_t y, wh_t w, wh_t h);
+
+/**
  * @method native_window_set_fullscreen
  * 是否全屏。
  *
@@ -242,18 +261,20 @@ ret_t native_window_set_title(native_window_t* win, const char* app_name);
  *
  * @param {native_window_t*} win win对象。
  *
- * @return {canvas_t} 返回canvas对象。
+ * @return {canvas_t*} 返回canvas对象。
  */
 canvas_t* native_window_get_canvas(native_window_t* win);
 
 /**
  * @method native_window_create
  * 创建win对象。
- * @param {const char*} params 参数。
+ * @param {widget_t*} widget widget对象。
  *
  * @return {native_window_t*} 返回win对象。
  */
 native_window_t* native_window_create(widget_t* widget);
+
+typedef native_window_t* (*native_window_create_t)(widget_t* widget);
 
 /**
  * @method native_window_invalidate
@@ -265,9 +286,42 @@ native_window_t* native_window_create(widget_t* widget);
  */
 ret_t native_window_invalidate(native_window_t* win, const rect_t* r);
 
+/**
+ * @method native_window_swap_buffer
+ * 交换缓冲区。
+ * @param {native_window_t*} win win对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
 ret_t native_window_swap_buffer(native_window_t* win);
+
+/**
+ * @method native_window_gl_make_current
+ * 设置当前的opengl上下文。
+ * @param {native_window_t*} win win对象。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
 ret_t native_window_gl_make_current(native_window_t* win);
+
+/**
+ * @method native_window_preprocess_event
+ * 预处理事件。
+ * @param {native_window_t*} win win对象。
+ * @param {event_t*} e 事件。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
 ret_t native_window_preprocess_event(native_window_t* win, event_t* e);
+
+/**
+ * @method native_window_get_info
+ * 获取窗口信息。
+ * @param {native_window_t*} win win对象。
+ * @param {native_window_info_t*} info 窗口信息。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
 ret_t native_window_get_info(native_window_t* win, native_window_info_t* info);
 
 /*public for window manager only*/
@@ -286,7 +340,11 @@ ret_t native_window_update_last_dirty_rect(native_window_t* win);
 
 typedef enum _native_window_event_type_t {
   EVT_NATIVE_WINDOW_RESIZED = 0xff,
-  EVT_NATIVE_WINDOW_DESTROY
+  EVT_NATIVE_WINDOW_DESTROY,
+  EVT_NATIVE_WINDOW_ENTER,
+  EVT_NATIVE_WINDOW_LEAVE,
+  EVT_NATIVE_WINDOW_FOCUS_GAINED,
+  EVT_NATIVE_WINDOW_FOCUS_LOST,
 } native_window_event_type_t;
 
 END_C_DECLS

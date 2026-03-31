@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  window animator common used functions.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -130,7 +130,6 @@ ret_t window_animator_to_right_draw_curr(window_animator_t* wa) {
 #endif /*WITHOUT_WINDOW_ANIMATOR_CACHE*/
 }
 
-static ret_t window_animator_paint_system_bar(window_animator_t* wa);
 static ret_t window_animator_update_percent(window_animator_t* wa);
 static ret_t window_animator_draw_prev_window(window_animator_t* wa);
 static ret_t window_animator_draw_curr_window(window_animator_t* wa);
@@ -186,26 +185,6 @@ ret_t window_animator_destroy(window_animator_t* wa) {
 }
 
 /******************helper******************/
-
-static ret_t window_animator_paint_system_bar(window_animator_t* wa) {
-  widget_t* wm = wa->curr_win->parent;
-  widget_t* system_bar = widget_lookup_by_type(wm, WIDGET_TYPE_SYSTEM_BAR, TRUE);
-  if (system_bar == NULL) {
-    system_bar = widget_lookup_by_type(wm, WIDGET_TYPE_SYSTEM_BAR_BOTTOM, TRUE);
-  }
-
-  if (system_bar != NULL) {
-#ifdef AWTK_WEB
-    rect_t src = rect_init(system_bar->x, system_bar->y, system_bar->w, system_bar->h);
-    rect_t dst = rect_init(system_bar->x, system_bar->y, system_bar->w, system_bar->h);
-    canvas_draw_image(wa->canvas, &(wa->prev_img), rect_scale(&src, wa->ratio), &dst);
-#else
-    window_manager_paint_system_bar(wm, wa->canvas);
-#endif /*AWTK_WEB*/
-  }
-
-  return RET_OK;
-}
 
 #ifndef WITHOUT_WINDOW_ANIMATORS
 static ret_t window_animator_init(window_animator_t* wa) {
@@ -281,7 +260,7 @@ static ret_t window_animator_update_percent(window_animator_t* wa) {
     ret = window_animator_update_percent_default(wa);
   }
   if (wa->percent >= 1) {
-    wa->percent = 0.999f;
+    wa->percent = 1.0f;
   } else if (wa->percent < 0) {
     wa->percent = 0.0f;
   }
@@ -292,7 +271,17 @@ static ret_t window_animator_draw_prev_window(window_animator_t* wa) {
   return_value_if_fail(wa != NULL && wa->vt != NULL && wa->vt->draw_prev_window, RET_BAD_PARAMS);
 
   if (wa->dialog_highlighter != NULL) {
-    return dialog_highlighter_draw(wa->dialog_highlighter, wa->percent);
+    ret_t ret;
+    float_t percent = wa->percent;
+    /*always < 1 to tell highlighter that it is animating.*/
+    if (percent >= 1) {
+      percent = 0.999;
+    }
+    ret = dialog_highlighter_draw(wa->dialog_highlighter, percent);
+    if (ret == RET_OK && wa->vt->draw_prev_window_on_highlighter != NULL) {
+      ret = wa->vt->draw_prev_window_on_highlighter(wa);
+    }
+    return ret;
   } else {
     return wa->vt->draw_prev_window(wa);
   }
@@ -305,25 +294,54 @@ static ret_t window_animator_draw_curr_window(window_animator_t* wa) {
 }
 
 ret_t window_animator_overlap_default_draw_prev(window_animator_t* wa) {
+  bool_t start = FALSE;
   canvas_t* c = wa->canvas;
-  widget_t* win = wa->prev_win;
-
+  widget_t* wm = window_manager();
 #ifndef WITHOUT_WINDOW_ANIMATOR_CACHE
+  widget_t* win = wa->prev_win;
   rectf_t src = rectf_init(win->x, win->y, win->w, win->h);
   rectf_t dst = rectf_init(win->x, win->y, win->w, win->h);
-  return lcd_draw_image(c->lcd, &(wa->prev_img), rectf_scale(&src, wa->ratio), &dst);
+  lcd_draw_image(c->lcd, &(wa->prev_img), rectf_scale(&src, wa->ratio), &dst);
+  WIDGET_FOR_EACH_CHILD_BEGIN(wm, iter, i)
+  if (iter == wa->curr_win) {
+    break;
+  }
+  if (iter == wa->prev_win) {
+    start = TRUE;
+  }
+  if (start) {
+    /* 非普通窗口应该需要重绘，因为可能会叠在 system_bar 上面 */
+    src = rectf_init(iter->x, iter->y, iter->w, iter->h);
+    dst = rectf_init(iter->x, iter->y, iter->w, iter->h);
+    lcd_draw_image(c->lcd, &(wa->prev_img), rectf_scale(&src, wa->ratio), &dst);
+  }
+  WIDGET_FOR_EACH_CHILD_END()
 #else
-  widget_paint(win, c);
-  return RET_OK;
+  WIDGET_FOR_EACH_CHILD_BEGIN(wm, iter, i)
+  if (iter == wa->curr_win) {
+    break;
+  }
+  if (iter == wa->prev_win) {
+    start = TRUE;
+  }
+  if (start) {
+    widget_paint(iter, c);
+  }
+  WIDGET_FOR_EACH_CHILD_END()
 #endif /*WITHOUT_WINDOW_ANIMATOR_CACHE*/
+  return RET_OK;
 }
 
 ret_t window_animator_begin_frame(window_animator_t* wa) {
   return_value_if_fail(wa != NULL && wa->vt != NULL, RET_OK);
 
   ENSURE(canvas_begin_frame(wa->canvas, NULL, LCD_DRAW_ANIMATION) == RET_OK);
-  if (!tk_str_eq(wa->vt->type, WINDOW_ANIMATOR_VTRANSLATE)) {
-    window_animator_paint_system_bar(wa);
+  /* 把 system_bar 绘制到底部，然后再被截图覆盖在上面，应该截图中的对话框等窗口有可能叠在 system_bar 上面 */
+  if (wa->is_paint_system_bar_top) {
+    window_manager_paint_system_bar_top(wa->curr_win->parent, wa->canvas);
+  }
+  if (wa->is_paint_system_bar_bottom) {
+    window_manager_paint_system_bar_bottom(wa->curr_win->parent, wa->canvas);
   }
 
   return RET_OK;
@@ -331,10 +349,5 @@ ret_t window_animator_begin_frame(window_animator_t* wa) {
 
 ret_t window_animator_end_frame(window_animator_t* wa) {
   return_value_if_fail(wa != NULL && wa->vt != NULL, RET_OK);
-
-  if (tk_str_eq(wa->vt->type, WINDOW_ANIMATOR_VTRANSLATE)) {
-    window_animator_paint_system_bar(wa);
-  }
-
   return canvas_end_frame(wa->canvas);
 }

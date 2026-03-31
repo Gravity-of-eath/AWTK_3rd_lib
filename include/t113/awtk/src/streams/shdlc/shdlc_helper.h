@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  iostream for shdlc
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,7 +45,7 @@ typedef union _shdlc_header_t {
 } shdlc_header_t;
 #pragma pack(pop)
 
-/**
+/*
  * normal:
  * | SHDLC_FLAG(1B) | SHDLC_DATA(1B) | ...data... | fcs16(2B) | SHDLC_FLAG(1B) |
  * ack:

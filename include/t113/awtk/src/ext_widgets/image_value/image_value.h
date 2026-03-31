@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  image_value
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -168,7 +168,7 @@ ret_t image_value_set_format(widget_t* widget, const char* format);
  * 设置点击时加上的增量。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget image_value对象。
- * @param {double} delta 增量。
+ * @param {double} click_add_delta 增量。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

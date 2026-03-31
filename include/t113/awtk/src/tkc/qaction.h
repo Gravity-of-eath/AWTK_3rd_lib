@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  qaction
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -52,11 +52,11 @@ struct _qaction_t {
   qaction_on_event_t on_event;
 
   /**
-   * @property {uint32_t*} args
+   * @property {uint64_t*} args
    * @annotation ["readable"]
    * exec的参数(视具体的action而不同)。
    */
-  uint32_t args[1];
+  uint64_t args[1];
 };
 
 /**
@@ -99,7 +99,7 @@ ret_t qaction_exec(qaction_t* action);
  * 事件通知。
  *
  * @param {qaction_t*} action action对象。
- * @param {event_t**} event event对象。
+ * @param {event_t*} event event对象。
  *
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  gauge_pointer
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -173,6 +173,7 @@ TK_EXTERN_VTABLE(gauge_pointer);
 
 /*public for test*/
 ret_t gauge_pointer_set_anchor_for_str(widget_t* widget, const char* anchor, bool_t is_x);
+rect_t gauge_pointer_get_dirty_rect(widget_t* widget);
 
 #define GUAGE_POINTER GAUGE_POINTER
 #define guage_pointer_set_angle gauge_pointer_set_angle

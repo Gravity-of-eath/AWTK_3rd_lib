@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  event manager manager implement with default
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,12 +37,9 @@ BEGIN_C_DECLS
 
 /**
  * @method event_source_manager_default_create
- *
  * 创建事件源管理器。
  *
- * @param {event_source_manager_t*} manager event_source_manager对象。
- *
- * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ * @return {event_source_manager_t*} 返回事件源管理器对象。
  *
  */
 event_source_manager_t* event_source_manager_default_create(void);

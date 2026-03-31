@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  xml builder interface
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,7 +38,7 @@ typedef void (*XmlBuilderOnErrorFunc)(XmlBuilder* builder, int line, int col, co
 typedef void (*XmlBuilderDestroyFunc)(XmlBuilder* builder);
 
 /**
- * @class xml_builder_t
+ * @class XmlBuilder
  * xml builder interface
  *
  */

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  typed_array functions for fscript
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  */
 
@@ -30,6 +30,8 @@ static ret_t func_typed_array_create(fscript_t* fscript, fscript_args_t* args, v
     type = VALUE_TYPE_INT8;
   } else if (tk_str_eq(stype, "i16")) {
     type = VALUE_TYPE_INT16;
+  } else if (tk_str_eq(stype, "bool")) {
+    type = VALUE_TYPE_BOOL;
   } else if (tk_str_eq(stype, "i32")) {
     type = VALUE_TYPE_INT32;
   } else if (tk_str_eq(stype, "i64")) {

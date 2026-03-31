@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  debugger constant
  *
- * Copyright (c) 2022 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2022 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,6 +26,7 @@
 
 #define STR_DEBUGGER_EVENT_PROP_LINE "line"
 #define STR_DEBUGGER_EVENT_PROP_MESSAGE "message"
+#define STR_DEBUGGER_EVENT_PROP_FILE_PATH "file_path"
 
 #define DEBUGGER_IO_READ_TIMEOUT 1000000
 #define DEBUGGER_IO_WRITE_TIMEOUT 500000

@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  switch
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -193,6 +193,7 @@ static ret_t switch_on_event(widget_t* widget, event_t* e) {
 ret_t switch_fill_rect_color(widget_t* widget, canvas_t* c, rect_t* r, bool_t bg) {
   style_t* style = widget->astyle;
   switch_t* aswitch = SWITCH(widget);
+  ENSURE(aswitch);
   color_t trans = color_init(0, 0, 0, 0);
   uint32_t radius = style_get_int(style, STYLE_ID_ROUND_RADIUS, 0);
   const char* color_key = bg ? (aswitch->value ? STYLE_ID_SELECTED_BG_COLOR : STYLE_ID_BG_COLOR)
@@ -423,6 +424,16 @@ static ret_t switch_set_prop(widget_t* widget, const char* name, const value_t* 
   return RET_NOT_FOUND;
 }
 
+static ret_t switch_init(widget_t* widget) {
+  switch_t* aswitch = SWITCH(widget);
+  return_value_if_fail(aswitch != NULL, RET_BAD_PARAMS);
+
+  aswitch->value = TRUE;
+  aswitch->pressed = FALSE;
+  aswitch->max_xoffset_ratio = 1.0f / 3.0f;
+  return RET_OK;
+}
+
 static const char* s_switch_properties[] = {WIDGET_PROP_VALUE, WIDGET_PROP_XOFFSET,
                                             SWITCH_PROP_MAX_XOFFSET_RATIO, NULL};
 
@@ -436,6 +447,7 @@ TK_DECL_VTABLE(switch) = {
     .persistent_properties = s_switch_properties,
     .get_parent_vt = TK_GET_PARENT_VTABLE(widget),
     .create = switch_create,
+    .init = switch_init,
     .on_event = switch_on_event,
     .on_paint_background = switch_on_paint_background,
     .on_paint_self = switch_on_paint_self,
@@ -445,13 +457,7 @@ TK_DECL_VTABLE(switch) = {
 
 widget_t* switch_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) {
   widget_t* widget = widget_create(parent, TK_REF_VTABLE(switch), x, y, w, h);
-  switch_t* aswitch = SWITCH(widget);
-  return_value_if_fail(aswitch != NULL, NULL);
-
-  aswitch->value = TRUE;
-  aswitch->pressed = FALSE;
-  aswitch->max_xoffset_ratio = 1.0f / 3.0f;
-
+  return_value_if_fail(switch_init(widget) == RET_OK, NULL);
   return widget;
 }
 

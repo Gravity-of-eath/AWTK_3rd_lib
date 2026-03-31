@@ -2,12 +2,37 @@
 #include "base/types_def.h"
 #include "base/vgcanvas_asset_manager.h"
 
+typedef struct _vgcanvas_nanovg_gl_texture_t {
+  int32_t image_id;
+  framebuffer_object_t* fbo;
+} vgcanvas_nanovg_gl_texture_t;
+
 static int vgcanvas_nanovg_bitmap_flag_to_NVGimageFlags(bitmap_flag_t flags) {
 
   if(flags & BITMAP_FLAG_PREMULTI_ALPHA) {
     return NVG_IMAGE_PREMULTIPLIED;
   }
   return 0;
+}
+
+static inline uint8_t* vgcanvas_nanovg_ensure_buffer(uint8_t* img_data, uint32_t img_w, uint32_t img_h, uint32_t bpp, uint32_t img_line_length) {
+  int32_t j = 0;
+  uint32_t size = 0;
+  uint8_t* data = NULL;
+
+  if (bpp * img_w == img_line_length) {
+    data = (uint8_t*)(img_data);
+  } else {
+    size = bpp * img_w * img_h;
+    size = TK_ROUND_TO(size, BITMAP_ALIGN_SIZE) + BITMAP_ALIGN_SIZE;
+    data = (uint8_t*)TKMEM_ALLOC(size);
+    return_value_if_fail(data != NULL, NULL);
+    memset(data, 0x00, size);
+    for (j = 0; j < img_h; j++) {
+      memcpy(data + j * img_w * bpp, img_data + j * img_line_length, img_w * bpp);
+    }
+  }
+  return data;
 }
 
 static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img) {
@@ -18,9 +43,12 @@ static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img
   uint32_t bpp = bitmap_get_bpp(img);
   vgcanvas_nanovg_gl_texture_t* texture = NULL;
   uint8_t* img_data = bitmap_lock_buffer_for_read(img);
+  uint32_t img_w = bitmap_get_physical_width(img);
+  uint32_t img_h = bitmap_get_physical_height(img);
+  uint32_t img_line_length = bitmap_get_physical_line_length(img);
 
   if (img->flags & BITMAP_FLAG_TEXTURE) {
-    ret_t reuslt = RET_FAIL;
+    ret_t result = RET_FAIL;
     const void* specific = NULL;
     if (img->flags & BITMAP_FLAG_GPU_FBO_TEXTURE) {
       img->flags &= ~BITMAP_FLAG_GPU_FBO_TEXTURE;
@@ -28,42 +56,44 @@ static int vgcanvas_nanovg_ensure_image(vgcanvas_nanovg_t* canvas, bitmap_t* img
       fbo = (framebuffer_object_t*)img->specific_ctx;
       goto create_texture_info;
     } else {
-      specific = vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager(), (vgcanvas_t*)canvas, img, &reuslt);
+      specific = vgcanvas_asset_manager_get_image_specific(vgcanvas_asset_manager(), (vgcanvas_t*)canvas, img, &result);
     }
-    if (reuslt == RET_OK) {
+    if (result == RET_OK) {
       i = ((vgcanvas_nanovg_gl_texture_t*)specific)->image_id;
 
-      if (img->flags & BITMAP_FLAG_CHANGED) {
-        img->flags &= (~(BITMAP_FLAG_CHANGED));
-        nvgUpdateImage(canvas->vg, i, img_data);
+      if (bitmap_is_dirty(img)) {
+        bitmap_set_dirty(img, FALSE);
+        image_manager_update_specific(img->image_manager, img);
+        data = vgcanvas_nanovg_ensure_buffer(img_data, img_w, img_h, bpp, img_line_length);
+        if (data != NULL) {
+          nvgUpdateImage(canvas->vg, i, data);
+          if (data != img_data) {
+            TKMEM_FREE(data);
+          }
+        } else {
+          assert(!"data is NULL");
+        }
       }
       bitmap_unlock_buffer(img);
 
       return i;
     }
   }
-  assert(img->orientation == LCD_ORIENTATION_0);
 
   flag = (int)vgcanvas_nanovg_bitmap_flag_to_NVGimageFlags((bitmap_flag_t)(img->flags));
 
-  if (bpp * img->w == img->line_length) {
-    data = (uint8_t*)(img_data);
-  } else {
-    uint32_t size = 0;
-    size = bpp * img->w * img->h;
-    size = TK_ROUND_TO(size, BITMAP_ALIGN_SIZE) + BITMAP_ALIGN_SIZE;
-    data = (uint8_t*)TKMEM_ALLOC(size);
-    memset(data, 0x00, size);
-    int j;
-    for (j = 0; j < img->h; j++) {
-      memcpy(data + j * img->w * bpp, img_data + j * img->line_length, img->w * bpp);
+  data = vgcanvas_nanovg_ensure_buffer(img_data, img_w, img_h, bpp, img_line_length);
+  if (data != NULL) {
+    i = nvgCreateImageRGBA(canvas->vg, img_w, img_h, flag, data);
+    if (data != img_data) {
+      TKMEM_FREE(data);
     }
+  } else {
+    assert(!"data is NULL");
   }
 
-  i = nvgCreateImageRGBA(canvas->vg, img->w, img->h, flag, data);
-
-  if (data != img_data) {
-    TKMEM_FREE(data);
+  if (bitmap_is_dirty(img)) {
+    bitmap_set_dirty(img, FALSE);
   }
 
 create_texture_info:

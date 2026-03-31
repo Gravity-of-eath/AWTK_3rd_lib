@@ -82,7 +82,6 @@ static ret_t load_pre_rotated_bitmaps(yps_cirle_gauge_t *yps_cirle_gauge)
         {
             printf("load_pre_rotated_bitmaps start : %s  yps_cirle_gauge->count_of_line=%d\n", yps_cirle_gauge->pointer_image, yps_cirle_gauge->count_of_line);
             // yps_cirle_gauge->pre_bitmap.format = BITMAP_FMT_RGBA8888;
-            yps_cirle_gauge->pre_rotated_bitmaps_loaded = FALSE;
             bitmap_destroy(&(yps_cirle_gauge->pre_bitmap));
             ret_t re = widget_load_image(WIDGET(yps_cirle_gauge), yps_cirle_gauge->pointer_image, &(yps_cirle_gauge->pre_bitmap));
             printf("load_pre_rotated_bitmaps re : %d \n", re);
@@ -260,6 +259,7 @@ ret_t yps_cirle_gauge_set_pointer_image(widget_t *widget, const char *pointer_im
     // 如果预旋转位图已经加载，重新加载它们
     if (yps_cirle_gauge->pre_rotated_bitmaps_loaded)
     {
+        yps_cirle_gauge->pre_rotated_bitmaps_loaded = FALSE;
         load_pre_rotated_bitmaps(yps_cirle_gauge);
     }
 

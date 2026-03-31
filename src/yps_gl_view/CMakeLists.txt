@@ -1,27 +1,54 @@
-# Copyright (c) 2025 - 2025
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# License file for more details.
+cmake_minimum_required (VERSION 3.10)
+include_directories(${AWTK_INCLUDE})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE") 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Bullet") 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Bites") 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/MeshLodGenerator")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RTShaderSystem")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Paging")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Plugins")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Property")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Overlay")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GL")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GL3Plus")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/glad")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GLES2")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GLES2/GLES2")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GLES2/GLES3")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GLES2/GLSLES")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GLES2/KHR")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/GLES2")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/RenderSystems/KHR")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Terrain")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Volume")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include/OGRE/Plugins/DotScene")
 
-# 检查是否启用YPS_GL_VIEW控件
-if(NOT DEFINED WITH_YPS_GL_VIEW)
-  set(WITH_YPS_GL_VIEW ON)
-endif()
+set(LIBRARY_NAME yps_gl_view)
 
-if(${WITH_YPS_GL_VIEW})
-  project(yps_gl_view)
-  cmake_minimum_required(VERSION 3.10)
+file(GLOB SOURCES 
+    ./*.c
+    src/*.c
+    src/*.cpp
+)
+link_directories(./libs)
 
-  # 搜索源文件
-  aux_source_directory(./src SRC_FILES)
-  aux_source_directory(./include INC_FILES)
+add_library(${LIBRARY_NAME} ${SOURCES})
+target_link_libraries(${LIBRARY_NAME}
+    ${AWTK_SO}
+    OgreMain
+    OgreRTShaderSystem
+)
 
-  # 添加到父项目
-  if(NOT ${MATERIAL_DESIGN})
-    list(APPEND ${ROOT_PROJECT}_PRIVATE_SRC ${SRC_FILES})
-    list(APPEND ${ROOT_PROJECT}_PRIVATE_INC ./include)
-  endif()
+install(
+    TARGETS ${LIBRARY_NAME}
+    LIBRARY DESTINATION ${LIBRARY_NAME}  # 动态库 (.so)\
+)
 
-endif()
+# 安装头文件
+install(
+    DIRECTORY include
+    DESTINATION ${LIBRARY_NAME}
+)

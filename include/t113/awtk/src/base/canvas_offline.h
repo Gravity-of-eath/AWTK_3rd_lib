@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  offline canvas.
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -44,6 +44,13 @@ typedef struct _canvas_offline_t {
    */
   bitmap_t* bitmap;
 
+  /**
+   * @property {lcd_orientation_t} canvas_orientation
+   * @annotation ["readable"]
+   * 快速的旋转角度（对应 WITH_FAST_LCD_PORTRAIT 宏的使用）
+   */
+  lcd_orientation_t canvas_orientation;
+
   /* private */
   /* 保存在线的 canvas 的裁减区 */
   rect_t canvas_clip_rect;
@@ -51,6 +58,9 @@ typedef struct _canvas_offline_t {
   int32_t begin_draw;
   uint32_t lcd_w;
   uint32_t lcd_h;
+  uint32_t physical_width;
+  uint32_t physical_height;
+  lcd_orientation_t system_lcd_orientation;
 } canvas_offline_t;
 
 /**
@@ -67,6 +77,29 @@ typedef struct _canvas_offline_t {
  * @return {canvas_t*} 成功返回 canvas ，失败返回 NULL。
  */
 canvas_t* canvas_offline_create(uint32_t w, uint32_t h, bitmap_format_t format);
+
+/**
+ * @method canvas_offline_create_by_widget
+ * 创建一个和控件大小一样的离线的 canvas
+ * 
+ * @param {widget_t*} widget 控件。
+ * @param {bitmap_format_t} format 离线 canvas 的格式。
+ *
+ * @return {canvas_t*} 成功返回 canvas ，失败返回 NULL。
+ */
+canvas_t* canvas_offline_create_by_widget(widget_t* widget, bitmap_format_t format);
+
+/**
+ * @method canvas_offline_set_canvas_orientation
+ * 设置离线画布旋转角度。
+ * 备注：对应 WITH_FAST_LCD_PORTRAIT 宏的使用
+ *
+ * @param {canvas_t*} canvas 离线 canvas 对象。
+ * @param {lcd_orientation_t} canvas_orientation 旋转角度。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t canvas_offline_set_canvas_orientation(canvas_t* canvas, lcd_orientation_t canvas_orientation);
 
 /**
  * @method canvas_offline_clear_canvas
@@ -143,12 +176,16 @@ ret_t canvas_offline_flush_bitmap(canvas_t* canvas);
  */
 ret_t canvas_offline_destroy(canvas_t* canvas);
 
-/*
- * WITH_CANVAS_OFFLINE_CUSTION 宏提供给用户在外部自定义离线 canvas 的机会，
- * 主要是用于给用户在外部定义一些特殊的离线 canvas 使用的，而这些特殊的离线 canvas 很大概率和平台相关的，
- * 所以可以通过 WITH_CANVAS_OFFLINE_CUSTION 宏来外部实现自定义离线 canvas 的效果。
- */
 #ifdef WITH_CANVAS_OFFLINE_CUSTION
+#error Do not define WITH_CANVAS_OFFLINE_CUSTION, please define WITH_CANVAS_OFFLINE_CUSTOM !
+#endif
+
+/*
+ * WITH_CANVAS_OFFLINE_CUSTOM 宏提供给用户在外部自定义离线 canvas 的机会，
+ * 主要是用于给用户在外部定义一些特殊的离线 canvas 使用的，而这些特殊的离线 canvas 很大概率和平台相关的，
+ * 所以可以通过 WITH_CANVAS_OFFLINE_CUSTOM 宏来外部实现自定义离线 canvas 的效果。
+ */
+#ifdef WITH_CANVAS_OFFLINE_CUSTOM
 /**
  * @method canvas_offline_custom_create
  * @export none
@@ -212,8 +249,9 @@ bitmap_t* canvas_offline_custom_get_bitmap(canvas_t* canvas);
  * 用户自定义 canvas_offline_custom_bitmap_move_to_new_bitmap
  *
  * @param {canvas_t*} canvas 离线 canvas 对象。
+ * @param {bitmap_t*} bitmap 新的 bitmap 对象。
  *
- * @return {bitmap_t*} 返回 bitmap_t 对象表示成功，返回 NULL 表示失败。
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t canvas_offline_custom_bitmap_move_to_new_bitmap(canvas_t* canvas, bitmap_t* bitmap);
 

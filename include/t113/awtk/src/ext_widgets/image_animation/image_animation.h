@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  image_animation
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -196,7 +196,7 @@ ret_t image_animation_set_image(widget_t* widget, const char* image);
 
 /**
  * @method image_animation_set_interval
- * 设置播放间隔时间。
+ * 设置播放间隔时间(毫秒)。
  * @annotation ["scriptable"]
  * @param {widget_t*} widget image_animation对象。
  * @param {uint32_t} interval 间隔时间(毫秒)。

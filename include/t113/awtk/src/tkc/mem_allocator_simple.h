@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  mem_allocator_simple
  *
- * Copyright (c) 2020 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2020 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -161,7 +161,9 @@ static void tk_free_impl(mem_allocator_t* allocator, void* ptr) {
   free_node_t* free_iter = NULL;
   mem_info_t* info = &(MEM_ALLOCATOR_SIMPLE(allocator)->info);
 
-  return_if_fail(ptr != NULL);
+  if (ptr == NULL) {
+    return;
+  }
 
   free_iter = (free_node_t*)((char*)ptr - sizeof(uint32_t));
 

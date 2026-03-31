@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  input stream base on socket
  *
- * Copyright (c) 2019 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2019 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -96,4 +96,36 @@ tk_iostream_t* tk_iostream_tcp_create(int sock) {
   TK_IOSTREAM(obj)->get_ostream = tk_iostream_tcp_get_ostream;
 
   return TK_IOSTREAM(obj);
+}
+
+tk_iostream_t* tk_iostream_tcp_create_client(const char* host, int port) {
+  int sock = 0;
+  tk_iostream_t* stream = NULL;
+  return_value_if_fail(host != NULL, NULL);
+  sock = tk_tcp_connect(host, port);
+  return_value_if_fail(sock >= 0, NULL);
+
+  stream = tk_iostream_tcp_create(sock);
+  if (stream == NULL) {
+    tk_socket_close(sock);
+  }
+
+  return stream;
+}
+
+tk_iostream_t* tk_iostream_tcp_create_client_ex(const char* host, int port, int timeout,
+                                                void* opts) {
+  int sock = 0;
+  tk_iostream_t* stream = NULL;
+  return_value_if_fail(host != NULL, NULL);
+  return_value_if_fail(opts == NULL, NULL);
+  sock = tk_tcp_connect_ex(host, port, timeout, opts);
+  return_value_if_fail(sock >= 0, NULL);
+
+  stream = tk_iostream_tcp_create(sock);
+  if (stream == NULL) {
+    tk_socket_close(sock);
+  }
+
+  return stream;
 }

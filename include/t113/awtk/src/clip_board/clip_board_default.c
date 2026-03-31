@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  clip_board default
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -86,6 +86,7 @@ clip_board_t* clip_board_default_create(void) {
   return_value_if_fail(cl != NULL, NULL);
 
   cl->clip_board.vt = &s_clip_board_default_vtable;
+  str_init(&(cl->str), 0);
 
   return (clip_board_t*)cl;
 }

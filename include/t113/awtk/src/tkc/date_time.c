@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  date time
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,6 +20,7 @@
  */
 
 #include "tkc/mem.h"
+#include "tkc/utils.h"
 #include "tkc/date_time.h"
 
 static date_time_get_now_t s_date_time_get_now;
@@ -57,7 +58,7 @@ date_time_t* date_time_create(void) {
   return date_time_init(dt);
 }
 
-ret_t date_time_from_time(date_time_t* dt, uint64_t time) {
+ret_t date_time_from_time(date_time_t* dt, int64_t time) {
   return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
   return_value_if_fail(s_date_time_from_time != NULL, RET_BAD_PARAMS);
 
@@ -154,14 +155,14 @@ const char* date_time_get_wday_name(uint32_t wday) {
 }
 
 ret_t date_time_add_delta(date_time_t* dt, int64_t delta) {
-  uint64_t t = 0;
+  int64_t t = 0;
   return_value_if_fail(dt != NULL && s_date_time_to_time != NULL, RET_BAD_PARAMS);
   t = s_date_time_to_time(dt) + delta;
 
   return s_date_time_from_time(dt, t);
 }
 
-uint64_t date_time_to_time(date_time_t* dt) {
+int64_t date_time_to_time(date_time_t* dt) {
   return_value_if_fail(dt != NULL && s_date_time_to_time != NULL, RET_BAD_PARAMS);
 
   return s_date_time_to_time(dt);
@@ -178,7 +179,7 @@ ret_t date_time_set_year(date_time_t* dt, uint32_t year) {
 
 ret_t date_time_set_month(date_time_t* dt, uint32_t month) {
   return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
-  return_value_if_fail(month > 0 && month <= 31, RET_BAD_PARAMS);
+  return_value_if_fail(month > 0 && month <= 12, RET_BAD_PARAMS);
 
   dt->month = month;
   dt->wday = date_time_get_wday(dt->year, dt->month, dt->day);
@@ -188,6 +189,7 @@ ret_t date_time_set_month(date_time_t* dt, uint32_t month) {
 
 ret_t date_time_set_day(date_time_t* dt, uint32_t day) {
   return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
+  return_value_if_fail(day > 0 && day <= 31, RET_BAD_PARAMS);
 
   dt->day = day;
   dt->wday = date_time_get_wday(dt->year, dt->month, dt->day);
@@ -220,4 +222,75 @@ ret_t date_time_set_second(date_time_t* dt, uint32_t second) {
   dt->second = second;
 
   return RET_OK;
+}
+
+ret_t date_time_parse_time(date_time_t* dt, const char* str) {
+  int32_t hour = 0;
+  int32_t minute = 0;
+  int32_t second = 0;
+  int32_t n = 0;
+  return_value_if_fail(dt != NULL && str != NULL, RET_BAD_PARAMS);
+
+  n = tk_sscanf(str, "%d:%d:%d", &hour, &minute, &second);
+  if (n >= 2) {
+    date_time_set_hour(dt, hour);
+    date_time_set_minute(dt, minute);
+    date_time_set_second(dt, second);
+
+    return RET_OK;
+  } else {
+    return RET_BAD_PARAMS;
+  }
+}
+
+ret_t date_time_parse_date(date_time_t* dt, const char* str) {
+  int32_t year = 0;
+  int32_t month = 0;
+  int32_t day = 0;
+  int32_t n = 0;
+  return_value_if_fail(dt != NULL && str != NULL, RET_BAD_PARAMS);
+
+  if (strchr(str, '/') != NULL) {
+    n = tk_sscanf(str, "%d/%d/%d", &year, &month, &day);
+  } else {
+    n = tk_sscanf(str, "%d-%d-%d", &year, &month, &day);
+  }
+  if (n == 3) {
+    date_time_set_year(dt, year);
+    date_time_set_month(dt, month);
+    date_time_set_day(dt, day);
+
+    return RET_OK;
+  } else {
+    return RET_BAD_PARAMS;
+  }
+}
+
+ret_t date_time_parse_date_time(date_time_t* dt, const char* str) {
+  int32_t year = 0;
+  int32_t month = 0;
+  int32_t day = 0;
+  int32_t hour = 0;
+  int32_t minute = 0;
+  int32_t second = 0;
+  int32_t n = 0;
+  return_value_if_fail(dt != NULL && str != NULL, RET_BAD_PARAMS);
+
+  if (strchr(str, '/') != NULL) {
+    n = tk_sscanf(str, "%d/%d/%d %d:%d:%d", &year, &month, &day, &hour, &minute, &second);
+  } else {
+    n = tk_sscanf(str, "%d-%d-%d %d:%d:%d", &year, &month, &day, &hour, &minute, &second);
+  }
+  if (n >= 5) {
+    date_time_set_year(dt, year);
+    date_time_set_month(dt, month);
+    date_time_set_day(dt, day);
+    date_time_set_hour(dt, hour);
+    date_time_set_minute(dt, minute);
+    date_time_set_second(dt, second);
+
+    return RET_OK;
+  } else {
+    return RET_BAD_PARAMS;
+  }
 }

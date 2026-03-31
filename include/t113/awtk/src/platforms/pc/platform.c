@@ -3,7 +3,7 @@
  * Author: AWTK Develop Team
  * Brief:  default platform
  *
- * Copyright (c) 2018 - 2022  Guangzhou ZHIYUAN Electronics Co.,Ltd.
+ * Copyright (c) 2018 - 2025 Guangzhou ZHIYUAN Electronics Co.,Ltd.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,6 +28,28 @@
 #ifdef WIN32
 #include <windows.h>
 #pragma comment(lib, "Ws2_32.lib")
+
+static int32_t get_local_timezone() {
+  int32_t timezone = 0;
+  struct tm tlocal;
+  struct tm tgmt;
+  time_t tutc = 0;
+
+  time(&tutc);
+  memset(&tlocal, 0x00, sizeof(tlocal));
+  localtime_s(&tlocal, &tutc);
+  memset(&tgmt, 0x00, sizeof(tgmt));
+  gmtime_s(&tgmt, &tutc);
+
+  timezone = tlocal.tm_hour - tgmt.tm_hour;
+  if (timezone < -11) {
+    timezone += 24;
+  } else if (timezone > 12) {
+    timezone -= 24;
+  }
+
+  return timezone;
+}
 
 int gettimeofday(struct timeval* tp, void* tzp) {
   time_t clock;
@@ -83,6 +105,32 @@ static ret_t date_time_set_now_impl(date_time_t* dt) {
   }
 }
 
+static uint64_t date_time_to_time_impl(date_time_t* dt) {
+  struct tm t;
+  time_t tvalue = 0;
+  int32_t timezone = get_local_timezone();
+  return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
+
+  memset(&t, 0x00, sizeof(t));
+  t.tm_sec = dt->second;
+  t.tm_min = dt->minute;
+  t.tm_hour = dt->hour;
+  t.tm_mday = dt->day;
+  t.tm_mon = dt->month - 1;
+  t.tm_year = dt->year - 1900;
+  t.tm_wday = dt->wday;
+  t.tm_isdst = -1;
+
+  if (t.tm_hour < timezone) {
+    int32_t temp = timezone;
+    timezone = t.tm_hour;
+    t.tm_hour = temp;
+  }
+  tvalue = mktime(&t) + timezone * 60 * 60;
+
+  return tvalue;
+}
+
 #else
 #include <sys/time.h>
 #include <unistd.h>
@@ -114,6 +162,7 @@ static ret_t date_time_set_now_impl(date_time_t* dt) {
   tms.tm_sec = dt->second;
 
   t = mktime(&tms);
+  (void)t;
 #ifdef LINUX
   {
     struct timeval tv;
@@ -129,11 +178,30 @@ static ret_t date_time_set_now_impl(date_time_t* dt) {
   return RET_OK;
 }
 
+static uint64_t date_time_to_time_impl(date_time_t* dt) {
+  struct tm t;
+  time_t tvalue = 0;
+  return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
+
+  memset(&t, 0x00, sizeof(t));
+  t.tm_sec = dt->second;
+  t.tm_min = dt->minute;
+  t.tm_hour = dt->hour;
+  t.tm_mday = dt->day;
+  t.tm_mon = dt->month - 1;
+  t.tm_year = dt->year - 1900;
+  t.tm_wday = dt->wday;
+
+  tvalue = timegm(&t);
+
+  return tvalue;
+}
+
 #endif
 
 static ret_t date_time_from_time_impl(date_time_t* dt, uint64_t timeval) {
   time_t tm = timeval;
-  struct tm* t = localtime(&tm);
+  struct tm* t = gmtime(&tm);
   return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
 
   memset(dt, 0x00, sizeof(date_time_t));
@@ -147,22 +215,6 @@ static ret_t date_time_from_time_impl(date_time_t* dt, uint64_t timeval) {
   dt->wday = t->tm_wday;
 
   return RET_OK;
-}
-
-static uint64_t date_time_to_time_impl(date_time_t* dt) {
-  time_t tm = 0;
-  struct tm* t = localtime(&tm);
-  return_value_if_fail(dt != NULL, RET_BAD_PARAMS);
-
-  t->tm_sec = dt->second;
-  t->tm_min = dt->minute;
-  t->tm_hour = dt->hour;
-  t->tm_mday = dt->day;
-  t->tm_mon = dt->month - 1;
-  t->tm_year = dt->year - 1900;
-  t->tm_wday = dt->wday;
-
-  return (uint64_t)mktime(t);
 }
 
 uint64_t stm_now_ms();
@@ -192,6 +244,14 @@ void sleep_ms(uint32_t ms) {
 #endif
 }
 
+void sleep_us(uint32_t us) {
+#ifdef WIN32
+  Sleep(us / 1000);
+#else
+  usleep(us);
+#endif
+}
+
 ret_t platform_prepare(void) {
   static bool_t inited = FALSE;
   if (inited) {
@@ -200,6 +260,19 @@ ret_t platform_prepare(void) {
   inited = TRUE;
 
   stm_time_init();
+
+#ifdef WIN32
+  /*let console output support utf8 text*/
+  if (!IsValidCodePage(CP_UTF8)) {
+    log_debug("Not support UTF-8 output\n");
+  }
+  if (!SetConsoleCP(CP_UTF8)) {
+    log_debug("Not support UTF-8 output\n");
+  }
+  if (!SetConsoleOutputCP(CP_UTF8)) {
+    log_debug("Not support UTF-8 output\n");
+  }
+#endif /*WIN32*/
 
 #ifndef HAS_STD_MALLOC
 #ifndef TK_HEAP_MEM_SIZE

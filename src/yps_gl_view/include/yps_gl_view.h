@@ -28,22 +28,24 @@
 #include "base/image_manager.h"
 #include "base/system_info.h"
 #include "base/asset_loader.h"
+#include "base/vgcanvas.h"
 
 BEGIN_C_DECLS
-
-  
 
 typedef struct _yps_gl_view_t {
   widget_t widget;
 
   /* private */
   char* scene_file;           /* 场景文件路径 */ 
+  char** mode_lists;           /* 模型文件路径列表（当有scene_file时忽略优先加载scene_file） */ 
+  int32_t mode_count;           /* 模型文件个数 */ 
+  char* content_dir;          /* 内容资源目录路径 */ 
+  //uint32_t target_fps; //无须手动控制FPS，AWTK应用会设置FPS，并在每一帧回调控件的on_paint
 
-  /* 新增字段 - 资源管理 */
-  char* content_dir;          /* 内容资源目录路径（替代硬编码） */ 
-  char** model_list;          /* 要加载的模型列表 */ 
-  uint32_t target_fps;
-  
+  /* FBO & Texture integration */
+  bitmap_t* bitmap;           /* AWTK wrapper for GPU texture */
+  framebuffer_object_t fbo;   /* AWTK-managed FBO info */
+  bool_t use_readback;        /* TRUE: glReadPixels, FALSE: zero-copy */
 } yps_gl_view_t;
 
 /**
@@ -136,6 +138,17 @@ ret_t yps_gl_view_unload_scene(widget_t* widget);
  * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
  */
 ret_t yps_gl_view_set_target_fps(widget_t* widget, uint32_t fps);
+
+/**
+ * @method yps_gl_view_set_readback
+ * @annotation ["scriptable"]
+ * 设置是否使用回读模式。
+ * @param {widget_t*} widget 控件对象。
+ * @param {bool_t} use_readback TRUE表示使用回读。
+ *
+ * @return {ret_t} 返回RET_OK表示成功，否则表示失败。
+ */
+ret_t yps_gl_view_set_readback(widget_t* widget, bool_t use_readback);
 
 #define WIDGET_TYPE_YPS_GL_VIEW "yps_gl_view"
 #define YPS_GL_VIEW_PROP_SCENE_FILE "scene_file"

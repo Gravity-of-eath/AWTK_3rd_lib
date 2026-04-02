@@ -18,4 +18,6 @@ add_subdirectory(yps_gauge)
 add_subdirectory(auto_scale_view)
 add_subdirectory(yps_gl_view)
 add_subdirectory(breath_ellipse)
+add_subdirectory(jump_label)
+
 

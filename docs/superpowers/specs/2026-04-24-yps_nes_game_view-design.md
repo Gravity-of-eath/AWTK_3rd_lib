@@ -97,7 +97,7 @@ typedef struct _yps_nes_game_view_t {
   bool_t sound_enable;   // 默认 true；false 时走 wall-clock 限帧
   uint32_t sample_rate;  // 默认 22050
   uint8_t volume;        // 0~100，默认 80
-  float_t fps;           // 只读；由 emulator 更新
+  // 注：fps 不在 widget 缓存，get_fps 直接从 rt->fps 原子读
 
   nes_runtime_t* rt;
   bitmap_t* front_bmp;   // 包 front_buffer 以便 canvas_draw_image
@@ -163,12 +163,13 @@ struct nes_runtime_t {
 ```
 UI 线程:
   widget_create → 解析属性 → 分配 front/back buffer（RGB565）
-  → 解析 rom 路径:
-      asset://... → data_reader_read 读到 runtime 内部缓冲
-      /abs/path   → fopen 读
+  → 解析 rom 属性并物化为本地文件路径（InfoNES_ReadRom 只接受 filesystem 路径）:
+      /abs/path      → 直接用
+      asset://xxx    → data_reader_read → 写入 sram_dir/_extracted_<basename>.nes → 用这个临时路径
+                       (避免改 InfoNES_ReadRom 的签名；临时文件在 stop() 时删)
   → nes_runtime_start(rt):
       ├ 填 NesPalette[64]（RGB565，from NesPaletteRGB）
-      ├ InfoNES_Load(rom_path) 解析 ROM header/ROM/VROM
+      ├ InfoNES_Load(rom_path) 解析 ROM header/ROM/VROM  // rom_path 是物化后的 filesystem 路径
       ├ LoadSRAM()（若 ROM 声明需要 SRAM）
       ├ nes_audio_open(sample_rate)  -- sound_enable=true 才开
       ├ pthread_create(thread_main)
@@ -214,7 +215,7 @@ on_paint_self(canvas):
 |-----|------|------|
 | `start()` | state=STOPPED/PAUSED → 启/唤线程；RUNNING 时 no-op | 是 |
 | `pause()` | state=RUNNING → PAUSED；emulator 在 `InfoNES_HSync` 检查 state，PAUSED 时 cond_wait | 是 |
-| `stop()` | state=* → STOPPING；`InfoNES_HSync` 返回 -1 让 Cycle 退出；SaveSRAM；pthread_join；free ROM | 是 |
+| `stop()` | state=* → STOPPING；`InfoNES_HSync` 返回 -1 让 Cycle 退出；emulator 线程在返回前自己调 SaveSRAM；UI 线程 pthread_join；再 free ROM / 删临时 ROM 文件 | 是 |
 | `set_rom(path)` | stop → 改 rom_path → start；state_lock 串行化 | 串行 |
 | `on_destroy` | stop() + 释放 buffer + free runtime | — |
 
@@ -228,7 +229,7 @@ on_paint_self(canvas):
 | ALSA open 失败 | 日志 warning；fallback 到 silent + wall-clock 限帧 |
 | malloc 失败 | 返回 `RET_OOM`，清理已分配资源 |
 | SRAM 写失败 | 日志 warning，不影响运行 |
-| widget 销毁时线程还在跑 | `on_destroy` 必须 stop + join；stop 带 2s 超时保护 |
+| widget 销毁时线程还在跑 | `on_destroy` 必须 stop + join；stop 用 `pthread_timedjoin_np` 做 2s 超时；超时后仅打 error 日志并 detach 线程（避免阻塞 UI 永久；接受线程泄漏换稳定性） |
 
 ## 7. 多实例约束（硬约束）
 

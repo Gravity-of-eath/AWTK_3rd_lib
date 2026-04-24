@@ -28,4 +28,9 @@ if(PLATFORM STREQUAL "x86")
       tests/test_nes_letterbox.c
       src/nes_letterbox.c)
   install(TARGETS test_nes_letterbox RUNTIME DESTINATION ${LIBRARY_NAME})
+
+  add_executable(test_nes_srampath
+      tests/test_nes_srampath.c
+      src/nes_srampath.c)
+  install(TARGETS test_nes_srampath RUNTIME DESTINATION ${LIBRARY_NAME})
 endif()

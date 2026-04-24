@@ -29,7 +29,19 @@ else()
     set(NES_AUDIO_LIBS "")
 endif()
 
-add_library(${LIBRARY_NAME} ${WIDGET_SRCS})
+# InfoNES 3rd-party sources (compiled into this .so)
+set(INFONES_DIR ${CMAKE_SOURCE_DIR}/../InfoNES/src)
+set(INFONES_SRCS
+    ${INFONES_DIR}/InfoNES.cpp
+    ${INFONES_DIR}/InfoNES_Mapper.cpp
+    ${INFONES_DIR}/InfoNES_pAPU.cpp
+    ${INFONES_DIR}/K6502.cpp
+)
+include_directories(${INFONES_DIR})
+
+set(GLUE_SRCS src/infones_glue/InfoNES_System_awtk.cpp)
+
+add_library(${LIBRARY_NAME} ${WIDGET_SRCS} ${INFONES_SRCS} ${GLUE_SRCS})
 target_link_libraries(${LIBRARY_NAME} ${AWTK_SO} ${NES_AUDIO_LIBS} pthread)
 
 install(TARGETS ${LIBRARY_NAME} LIBRARY DESTINATION ${LIBRARY_NAME})

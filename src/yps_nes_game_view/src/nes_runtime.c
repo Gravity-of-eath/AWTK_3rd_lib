@@ -103,6 +103,10 @@ void nes_runtime_release_singleton(nes_runtime_t* rt) {
   atomic_compare_exchange_strong(&g_active_runtime, &expected, NULL);
 }
 
+static __thread nes_runtime_t* tls_current = NULL;
+nes_runtime_t* nes_runtime_current(void) { return tls_current; }
+void nes_runtime_set_current(nes_runtime_t* rt) { tls_current = rt; }
+
 /* Stubs — real impl in Task 9. */
 int nes_runtime_start(nes_runtime_t* rt)  { (void)rt; return -1; }
 int nes_runtime_pause(nes_runtime_t* rt)  { (void)rt; return -1; }

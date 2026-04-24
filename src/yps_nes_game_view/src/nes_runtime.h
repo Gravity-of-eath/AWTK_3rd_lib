@@ -2,12 +2,22 @@
 #define YPS_NES_RUNTIME_H
 #include <stdint.h>
 #include <stdbool.h>
-#include <stdatomic.h>
 #include <pthread.h>
 #include <limits.h>
 #include "nes_audio.h"
+
+/* C11 <stdatomic.h> and the _Atomic qualifier aren't available in GCC's C++
+ * mode (pre-C++23). From C++ we present the fields as plain layout-compatible
+ * types; C++ code must access them via GCC atomic builtins (see glue). */
 #ifdef __cplusplus
+/* Strip C11 atomics to layout-compatible plain types. C++ code uses GCC
+ * atomic builtins on the underlying fields — see InfoNES_System_awtk.cpp. */
+#define _Atomic
+typedef unsigned long atomic_ulong;
+typedef int           atomic_int;
 extern "C" {
+#else
+#include <stdatomic.h>
 #endif
 
 #define NES_FB_W 256
@@ -82,6 +92,11 @@ float nes_runtime_fps(nes_runtime_t* rt);
  * this runtime successfully claimed the singleton; false if another is active. */
 bool nes_runtime_claim_singleton(nes_runtime_t* rt);
 void nes_runtime_release_singleton(nes_runtime_t* rt);
+
+/* Internal: the runtime active for the calling thread (used by InfoNES glue).
+ * Set by runtime thread_main just before calling InfoNES_Main. */
+nes_runtime_t* nes_runtime_current(void);
+void nes_runtime_set_current(nes_runtime_t* rt);
 
 #ifdef __cplusplus
 }

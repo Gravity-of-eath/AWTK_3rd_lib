@@ -1,24 +1,30 @@
 # yps_nes_game_view 集成任务清单
 日期: 2026-04-24
+状态: Brainstorm + Planning 已完成，等待用户选择执行方式
 
-## Brainstorm 阶段（进行中）
-- [x] 1. 澄清用途 & 范围（B 类：正经模拟器 UI，ALSA 声音可选，ROM 由属性/XML 指定，资源在 /assets/default/raw/data）
-- [x] 2. 澄清主循环集成策略（方案 B：独立 pthread + 双 frame buffer）
-- [x] 3. 澄清渲染 & 像素格式（RGB565 + fit letterbox + nearest，不做 integer-scale）
-- [x] 4. 澄清输入/状态/SRAM（key_map 属性可覆盖，API=start/pause/stop/set_rom，sram_dir 属性默认 /tmp）
-- [x] 5. 澄清 ALSA 音频方案（方案 i：blocking write 在 emulator 线程内；find_package 自动降级到 silent + wall-clock 限帧）
-- [x] 6. 提出备选方案并选型（已在每节完成）
-- [x] 7. 呈现设计（§1 架构、§2 目录、§3 数据结构 + FPS/volume、§4 数据流/生命周期/错误处理、§5 构建/测试；全部 OK）
-- [x] 8. 写 design doc：docs/superpowers/specs/2026-04-24-yps_nes_game_view-design.md
-- [ ] 9. Spec 自检（placeholder/一致性/范围/歧义）
-- [ ] 10. 用户 review spec
-- [ ] 11. 进入 writing-plans skill，产出实现计划
+## Brainstorm 阶段（已完成）
+- [x] 1. 澄清用途 & 范围（B 类 / ROM 由属性配置）
+- [x] 2. 澄清主循环集成策略（方案 B：独立 pthread + 双 buffer）
+- [x] 3. 澄清渲染 & 像素格式（RGB565 + fit + nearest）
+- [x] 4. 澄清输入/状态/SRAM（key_map 可覆盖、API=start/pause/stop/set_rom、sram_dir 默认 /tmp）
+- [x] 5. 澄清 ALSA 音频方案（blocking write 在 emulator 线程）
+- [x] 6. 提出备选方案并选型
+- [x] 7. 呈现设计（5 节全部 OK）
+- [x] 8. 写 design doc 并提交
+- [x] 9. Spec 自检（已修复 4 处）
+- [x] 10. 用户 review spec（OK）
+- [x] 11. 进入 writing-plans skill，实施计划已写完并提交
 
-## 后续实现阶段（未开始，待 writing-plans 产出计划）
-- [ ] 实现 runtime（nes_runtime.h/.c）
-- [ ] 实现 InfoNES glue（InfoNES_System_awtk.cpp）
-- [ ] 实现 nes_audio_alsa.c + nes_audio_null.c
-- [ ] 实现 widget（yps_nes_game_view.c + _register.c）
-- [ ] CMakeLists + 集成到 src/CMakeLists.txt
-- [ ] 单元测试 tests/
-- [ ] x86 平台集成手测
+## 实施阶段（未开始，等用户选择执行模式）
+- [ ] Task 1: Widget 脚手架 + 顶层 CMake 集成
+- [ ] Task 2: nes_keymap parser + 单元测试
+- [ ] Task 3: nes_letterbox 数学 + 单元测试
+- [ ] Task 4: nes_srampath 构造 + 单元测试
+- [ ] Task 5: nes_audio 接口 + null 实现 + 测试
+- [ ] Task 6: nes_audio_alsa 实现
+- [ ] Task 7: nes_runtime 类型 + create/destroy
+- [ ] Task 8: InfoNES_System_awtk glue 所有回调
+- [ ] Task 9: Runtime start/pause/resume/stop 线程生命周期
+- [ ] Task 10: Widget 属性/事件/paint/auto_play 串联
+- [ ] Task 11: InfoNES_HSync 协作停止 patch（#ifdef INFONES_AWTK_GLUE）
+- [ ] Task 12: 集成手测清单

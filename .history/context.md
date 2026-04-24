@@ -1,7 +1,7 @@
 # 当前上下文：yps_nes_game_view 集成
 日期: 2026-04-24
-状态: Task 9 完成 — Runtime start/pause/resume/stop + pthread 生命周期
-下一步: Task 10: Widget 属性/事件/paint/auto_play 串联
+状态: Task 10 完成 — Widget 属性/事件/paint/auto_play 全部串通，.so 导出 14 个 yps_nes_game_view_* API
+下一步: Task 11: InfoNES_HSync 协作停止 patch（#ifdef INFONES_AWTK_GLUE）
 
 ## 已完成交付物
 - 设计文档: docs/superpowers/specs/2026-04-24-yps_nes_game_view-design.md
@@ -27,8 +27,8 @@
 - Task 7: nes_runtime 类型与 create/destroy ✅ (commit 6a6bab6)
 - Task 8: InfoNES_System_awtk 所有回调实现 ✅
 - Task 9: Runtime start/pause/resume/stop 生命周期 ✅
-- Task 10: Widget 属性/事件/paint/auto_play 串联 ⬅ 下一步
-- Task 11: InfoNES_HSync 协作停止（#ifdef INFONES_AWTK_GLUE）
+- Task 10: Widget 属性/事件/paint/auto_play 串联 ✅
+- Task 11: InfoNES_HSync 协作停止（#ifdef INFONES_AWTK_GLUE） ⬅ 下一步
 - Task 12: 集成手测清单
 
 ## Task 8 实现要点
@@ -60,16 +60,26 @@
 - [x] Task 6 完成（commit 3cd6c05）
 - [x] Task 7 完成（commit 6a6bab6）
 - [x] Task 8 完成（commit 03411b1）
-- [x] Task 9 完成（pending commit）
+- [x] Task 9 完成（commit d7a7542）
+- [x] Task 10 完成（pending commit）
 - InfoNES submodule 登记 @ cb69777（commit 50331a2）
 
 ## 下一步
-进入 Task 10: Widget 属性/事件/paint/auto_play 串联
-- 在 yps_nes_game_view.c 中把 runtime 实例接到 widget
-- 绑定 rom/sram_dir/volume/key_map/auto_play 等属性
-- 键盘事件映射到 pad1 位
-- on_paint_self 用 front_buffer + letterbox 绘制
-- auto_play=true 时在 on_load/on_attach_parent 自动 start
+进入 Task 11: InfoNES_HSync 协作停止
+- InfoNES 核心主循环一帧含 ~262 次 InfoNES_HSync 调用；
+  当前 stop 依赖 InfoNES_Menu（每帧末）生效，极端情况下长帧会让 join 超时 2s
+- 加 `#ifdef INFONES_AWTK_GLUE` 补丁让 HSync 末尾也检查 STOPPING → 主动 break
+- 保持对上游 InfoNES 源码的非侵入性（fork 里维护 patch 或 submodule 单 commit）
+
+## Task 10 实现要点
+- 键位：默认 UP/DOWN/LEFT/RIGHT + x/z/s/a（A/B/START/SELECT）
+- Slot→pad_bit 表遵循 InfoNES SDL 端口惯例（4/5/6/7 方向；0/1/3/2 按键）
+- on_paint_self: lock_buffer_for_write → memcpy(front_buffer) → unlock → canvas_draw_image 走 letterbox 目标矩形
+- on_event EVT_KEY_DOWN/UP → keymap_slot_for_code → nes_runtime_pad_set_bit
+- on_frame_thread（emulator 线程回调）用 idle_queue 把 widget_invalidate_force 派到 UI 线程，避免跨线程画布访问
+- on_destroy 顺序：stop runtime → destroy runtime → destroy bitmap → free 字符串属性
+- auto_play 用 idle_queue 延迟一拍：等 XML loader 把 rom/sram_dir 等属性回填后再 start
+- widget_set_focusable(TRUE) 让 widget 能接收键盘事件
 
 ## Task 9 实现要点
 - 在 InfoNES_System_awtk.cpp 新增两个 extern "C" 包装器：

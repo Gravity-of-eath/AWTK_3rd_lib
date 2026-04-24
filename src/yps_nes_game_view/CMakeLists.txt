@@ -23,4 +23,9 @@ if(PLATFORM STREQUAL "x86")
       src/nes_keymap.c)
   target_include_directories(test_nes_keymap PRIVATE ${AWTK_INCLUDE})
   install(TARGETS test_nes_keymap RUNTIME DESTINATION ${LIBRARY_NAME})
+
+  add_executable(test_nes_letterbox
+      tests/test_nes_letterbox.c
+      src/nes_letterbox.c)
+  install(TARGETS test_nes_letterbox RUNTIME DESTINATION ${LIBRARY_NAME})
 endif()

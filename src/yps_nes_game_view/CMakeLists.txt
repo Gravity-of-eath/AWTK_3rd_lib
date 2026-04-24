@@ -12,6 +12,7 @@ set(WIDGET_SRCS
     src/nes_keymap.c
     src/nes_letterbox.c
     src/nes_srampath.c
+    src/nes_runtime.c
 )
 
 # Audio backend selection

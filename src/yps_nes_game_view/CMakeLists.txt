@@ -16,3 +16,11 @@ target_link_libraries(${LIBRARY_NAME} ${AWTK_SO})
 
 install(TARGETS ${LIBRARY_NAME} LIBRARY DESTINATION ${LIBRARY_NAME})
 install(DIRECTORY include DESTINATION ${LIBRARY_NAME})
+
+if(PLATFORM STREQUAL "x86")
+  add_executable(test_nes_keymap
+      tests/test_nes_keymap.c
+      src/nes_keymap.c)
+  target_include_directories(test_nes_keymap PRIVATE ${AWTK_INCLUDE})
+  install(TARGETS test_nes_keymap RUNTIME DESTINATION ${LIBRARY_NAME})
+endif()

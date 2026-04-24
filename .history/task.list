@@ -26,5 +26,5 @@
 - [x] Task 8: InfoNES_System_awtk glue 所有回调 (2026-04-24)
 - [x] Task 9: Runtime start/pause/resume/stop 线程生命周期 (2026-04-24)
 - [x] Task 10: Widget 属性/事件/paint/auto_play 串联 (2026-04-24)
-- [ ] Task 11: InfoNES_HSync 协作停止 patch（#ifdef INFONES_AWTK_GLUE）
+- [x] Task 11: InfoNES_HSync 协作停止 patch（#ifdef INFONES_AWTK_GLUE）(2026-04-24)
 - [ ] Task 12: 集成手测清单

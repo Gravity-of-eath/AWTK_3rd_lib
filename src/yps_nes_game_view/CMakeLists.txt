@@ -37,6 +37,8 @@ set(INFONES_SRCS
     ${INFONES_DIR}/InfoNES_pAPU.cpp
     ${INFONES_DIR}/K6502.cpp
 )
+set_source_files_properties(${INFONES_SRCS} PROPERTIES
+    COMPILE_DEFINITIONS "INFONES_AWTK_GLUE=1")
 include_directories(${INFONES_DIR})
 
 set(GLUE_SRCS src/infones_glue/InfoNES_System_awtk.cpp)

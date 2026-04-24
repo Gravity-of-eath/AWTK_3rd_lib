@@ -100,6 +100,17 @@ extern "C" void infones_glue_main(void) {
   InfoNES_Main();
 }
 
+/* Called from the patched InfoNES_HSync (guarded by INFONES_AWTK_GLUE).
+ * Returns non-zero if the emulator thread should break out of Cycle(). */
+extern "C" int infones_glue_should_stop(void) {
+  nes_runtime_t* rt = nes_runtime_current();
+  if (!rt) return 1;
+  pthread_mutex_lock(&rt->state_lock);
+  int stop = (rt->state == NES_STATE_STOPPING) ? 1 : 0;
+  pthread_mutex_unlock(&rt->state_lock);
+  return stop;
+}
+
 static uint64_t now_us(void) {
   struct timeval tv;
   gettimeofday(&tv, NULL);

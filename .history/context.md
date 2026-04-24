@@ -1,7 +1,7 @@
 # 当前上下文：yps_nes_game_view 集成
 日期: 2026-04-24
-状态: Task 10 完成 — Widget 属性/事件/paint/auto_play 全部串通，.so 导出 14 个 yps_nes_game_view_* API
-下一步: Task 11: InfoNES_HSync 协作停止 patch（#ifdef INFONES_AWTK_GLUE）
+状态: Task 11 完成 — InfoNES_HSync 加入协作停止钩子，stop 可 mid-frame 退出 Cycle()
+下一步: Task 12: 集成手测清单（integration_test_README.md）
 
 ## 已完成交付物
 - 设计文档: docs/superpowers/specs/2026-04-24-yps_nes_game_view-design.md
@@ -28,8 +28,8 @@
 - Task 8: InfoNES_System_awtk 所有回调实现 ✅
 - Task 9: Runtime start/pause/resume/stop 生命周期 ✅
 - Task 10: Widget 属性/事件/paint/auto_play 串联 ✅
-- Task 11: InfoNES_HSync 协作停止（#ifdef INFONES_AWTK_GLUE） ⬅ 下一步
-- Task 12: 集成手测清单
+- Task 11: InfoNES_HSync 协作停止（#ifdef INFONES_AWTK_GLUE） ✅
+- Task 12: 集成手测清单 ⬅ 下一步
 
 ## Task 8 实现要点
 - nes_runtime.h 在 C++ 编译路径下：`#define _Atomic` 为空、提供 `atomic_ulong`/`atomic_int` 的 typedef，
@@ -61,15 +61,23 @@
 - [x] Task 7 完成（commit 6a6bab6）
 - [x] Task 8 完成（commit 03411b1）
 - [x] Task 9 完成（commit d7a7542）
-- [x] Task 10 完成（pending commit）
+- [x] Task 10 完成（commit 331055c）
+- [x] Task 11 完成（pending commit；submodule @ f44003a 本地 fork，不 push 上游）
 - InfoNES submodule 登记 @ cb69777（commit 50331a2）
 
 ## 下一步
-进入 Task 11: InfoNES_HSync 协作停止
-- InfoNES 核心主循环一帧含 ~262 次 InfoNES_HSync 调用；
-  当前 stop 依赖 InfoNES_Menu（每帧末）生效，极端情况下长帧会让 join 超时 2s
-- 加 `#ifdef INFONES_AWTK_GLUE` 补丁让 HSync 末尾也检查 STOPPING → 主动 break
-- 保持对上游 InfoNES 源码的非侵入性（fork 里维护 patch 或 submodule 单 commit）
+进入 Task 12: 集成手测清单
+- 写 src/yps_nes_game_view/tests/integration_test_README.md
+- 列 4 个手测：widget 编译 / .so ldd / runtime 无 UI smoke / 完整 AWTK 窗口手玩
+- 收尾：所有单元测试 pass + build 通过 = Definition of Done
+
+## Task 11 实现要点
+- InfoNES/src/InfoNES.cpp 在 InfoNES_HSync 体顶部插入 `#ifdef INFONES_AWTK_GLUE` 块
+- `extern "C" int infones_glue_should_stop(void)` 必须声明在文件作用域（extern "C" 不能在函数体里）
+- glue 里实现 should_stop：取 rt->state 是否 STOPPING
+- CMakeLists.txt 用 set_source_files_properties(${INFONES_SRCS} ... COMPILE_DEFINITIONS "INFONES_AWTK_GLUE=1")
+  只给 InfoNES 4 个 cpp 开宏，不污染 glue/runtime/widget
+- 改动落在 submodule commit f44003a（本地 fork，不 push），父仓 gitlink 会一起更新
 
 ## Task 10 实现要点
 - 键位：默认 UP/DOWN/LEFT/RIGHT + x/z/s/a（A/B/START/SELECT）

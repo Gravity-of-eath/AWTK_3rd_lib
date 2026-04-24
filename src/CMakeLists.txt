@@ -9,12 +9,25 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -DCMAKE_EXPORT_COMPIL
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
 
 message("AWTK_INCLUDE== ${AWTK_INCLUDE}")
+
+# 没有GPU的平台不编译需要GL支持的控件
+set(NO_GPU_PLATFORMS "t113" "cv181")
+if(PLATFORM IN_LIST NO_GPU_PLATFORMS)
+  set(HAS_GPU OFF)
+else()
+  set(HAS_GPU ON)
+endif()
+
 add_subdirectory(line_chart)
 add_subdirectory(banner_menu)
-add_subdirectory(blur_view)
 add_subdirectory(conner_gradient)
 add_subdirectory(shadow_label)
 add_subdirectory(yps_gauge)
 add_subdirectory(auto_scale_view)
-add_subdirectory(yps_gl_view)
-add_subdirectory(breath_ellipse)
+add_subdirectory(jump_label)
+
+if(HAS_GPU)
+  add_subdirectory(blur_view)
+  add_subdirectory(yps_gl_view)
+  add_subdirectory(breath_ellipse)
+endif()

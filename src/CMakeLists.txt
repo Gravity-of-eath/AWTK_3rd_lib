@@ -25,6 +25,7 @@ add_subdirectory(shadow_label)
 add_subdirectory(yps_gauge)
 add_subdirectory(auto_scale_view)
 add_subdirectory(jump_label)
+add_subdirectory(yps_nes_game_view)
 
 if(HAS_GPU)
   add_subdirectory(blur_view)

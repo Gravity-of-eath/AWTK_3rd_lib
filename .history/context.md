@@ -1,7 +1,7 @@
 # 当前上下文：yps_nes_game_view 集成
 日期: 2026-04-24
-状态: Task 8 完成 — InfoNES_System_awtk glue 实现并与 InfoNES 源码一起链接进 libyps_nes_game_view.so
-下一步: Task 9: Runtime start/pause/resume/stop 线程生命周期
+状态: Task 9 完成 — Runtime start/pause/resume/stop + pthread 生命周期
+下一步: Task 10: Widget 属性/事件/paint/auto_play 串联
 
 ## 已完成交付物
 - 设计文档: docs/superpowers/specs/2026-04-24-yps_nes_game_view-design.md
@@ -26,8 +26,8 @@
 - Task 5-6: nes_audio null + ALSA 实现 ✅
 - Task 7: nes_runtime 类型与 create/destroy ✅ (commit 6a6bab6)
 - Task 8: InfoNES_System_awtk 所有回调实现 ✅
-- Task 9: Runtime start/pause/resume/stop 生命周期 ⬅ 下一步
-- Task 10: Widget 属性/事件/paint/auto_play 串联
+- Task 9: Runtime start/pause/resume/stop 生命周期 ✅
+- Task 10: Widget 属性/事件/paint/auto_play 串联 ⬅ 下一步
 - Task 11: InfoNES_HSync 协作停止（#ifdef INFONES_AWTK_GLUE）
 - Task 12: 集成手测清单
 
@@ -59,11 +59,25 @@
 - [x] Task 5 完成（commit 69d000d）
 - [x] Task 6 完成（commit 3cd6c05）
 - [x] Task 7 完成（commit 6a6bab6）
-- [x] Task 8 完成（pending commit）
+- [x] Task 8 完成（commit 03411b1）
+- [x] Task 9 完成（pending commit）
+- InfoNES submodule 登记 @ cb69777（commit 50331a2）
 
 ## 下一步
-进入 Task 9: Runtime start/pause/resume/stop 生命周期实现
-- 在 nes_runtime.c 中替换掉 Task 7 留下的 stub（`-1` 返回）
-- 新开 pthread 跑 thread_main：claim singleton → set_current → init_palette → InfoNES_Main
-- pause/resume 通过 state+cond 驱动 InfoNES_Wait 里的 wait 循环
-- stop 设置 STOPPING 让 InfoNES_Menu 返回 -1 跳出主循环，并 join 线程
+进入 Task 10: Widget 属性/事件/paint/auto_play 串联
+- 在 yps_nes_game_view.c 中把 runtime 实例接到 widget
+- 绑定 rom/sram_dir/volume/key_map/auto_play 等属性
+- 键盘事件映射到 pad1 位
+- on_paint_self 用 front_buffer + letterbox 绘制
+- auto_play=true 时在 on_load/on_attach_parent 自动 start
+
+## Task 9 实现要点
+- 在 InfoNES_System_awtk.cpp 新增两个 extern "C" 包装器：
+  `infones_glue_load(const char*)`/`infones_glue_main(void)`。
+  原因：InfoNES.h 没 extern "C"，核心函数 C++ 名字被 mangle，从 C 文件
+  直接声明 `InfoNES_Load` 会 undefined reference。
+- nes_runtime.c 的 thread_main：set_current → init_palette →
+  infones_glue_load → infones_glue_main（阻塞） → state=STOPPED。
+- start：claim_singleton → pthread_create；状态 PAUSED 时只 broadcast。
+- stop：置 STOPPING + broadcast；pthread_timedjoin_np 2s 超时则 detach。
+- pause/resume：修改 state + broadcast cond，InfoNES_Wait 里的 while 循环会响应。

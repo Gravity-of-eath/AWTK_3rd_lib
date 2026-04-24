@@ -91,6 +91,15 @@ extern "C" void infones_glue_init_palette(void) {
   }
 }
 
+/* C-callable wrappers. InfoNES.h lacks extern "C", so the core functions are
+ * C++-mangled; the runtime (C) uses these wrappers instead. */
+extern "C" int infones_glue_load(const char* rom_path) {
+  return InfoNES_Load(rom_path);
+}
+extern "C" void infones_glue_main(void) {
+  InfoNES_Main();
+}
+
 static uint64_t now_us(void) {
   struct timeval tv;
   gettimeofday(&tv, NULL);

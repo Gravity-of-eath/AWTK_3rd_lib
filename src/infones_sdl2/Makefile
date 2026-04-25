@@ -1,14 +1,15 @@
 # Standalone SDL2 InfoNES smoke build (x86).
 #
-# Uses the locally-built SDL2 in ../../SDL2-2.30.8/install via sdl2-config.
-# Compiles InfoNES core .cpp files WITHOUT INFONES_AWTK_GLUE so the widget's
-# cooperative-stop hook stays inactive in this binary.
+# Uses the system SDL2 (apt install libsdl2-dev) by default — its X11 video
+# driver is needed to actually render to an X11 desktop. The locally-built
+# SDL2-2.30.8/install/ ships without X11 (dummy/offscreen only) so a binary
+# linked against it can't show a window.
+# Override SDL2_CONFIG to point at a different install if needed.
 #
 # Output: ../../build/infones_sdl2/infones_sdl2
 
 REPO_ROOT   := $(abspath ../..)
-SDL2_PREFIX := $(REPO_ROOT)/SDL2-2.30.8/install
-SDL2_CONFIG := $(SDL2_PREFIX)/bin/sdl2-config
+SDL2_CONFIG ?= sdl2-config
 INFONES_DIR := $(REPO_ROOT)/InfoNES/src
 BUILD_DIR   := $(REPO_ROOT)/build/infones_sdl2
 TARGET      := $(BUILD_DIR)/infones_sdl2

@@ -113,6 +113,13 @@ int InfoNES_Menu(void) {
   return g_quit ? -1 : 0;
 }
 
+/* Cooperative-stop hook used by InfoNES_HSync when compiled with
+ * -DINFONES_AWTK_GLUE. Lets SIGTERM / SDL_QUIT / Esc break out of the
+ * Cycle() loop within a scanline rather than waiting for InfoNES_Menu. */
+extern "C" int infones_glue_should_stop(void) {
+  return g_quit ? 1 : 0;
+}
+
 int InfoNES_ReadRom(const char* pszFileName) {
   FILE* fp = fopen(pszFileName, "rb");
   if (!fp) return -1;

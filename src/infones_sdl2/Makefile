@@ -17,7 +17,7 @@ SDL2_CFLAGS := $(shell $(SDL2_CONFIG) --cflags)
 SDL2_LIBS   := $(shell $(SDL2_CONFIG) --libs)
 
 CXX      ?= g++
-CXXFLAGS := -O2 -Wall -Wno-write-strings $(SDL2_CFLAGS) -I$(INFONES_DIR)
+CXXFLAGS := -O2 -Wall -Wno-write-strings $(SDL2_CFLAGS) -I$(INFONES_DIR) -DINFONES_AWTK_GLUE=1
 LDLIBS   := $(SDL2_LIBS) -lm
 
 CORE_SRCS := \
@@ -50,7 +50,7 @@ $(BUILD_DIR)/InfoNES_Mapper.o: $(INFONES_DIR)/InfoNES_Mapper.cpp | $(BUILD_DIR)
 
 # pAPU has known issues at -O3 in older gcc; keep at -O0 to be safe.
 $(BUILD_DIR)/InfoNES_pAPU.o: $(INFONES_DIR)/InfoNES_pAPU.cpp | $(BUILD_DIR)
-	$(CXX) -O0 -Wall -Wno-write-strings $(SDL2_CFLAGS) -I$(INFONES_DIR) -c $< -o $@
+	$(CXX) $(CXXFLAGS:-O2=-O0) -c $< -o $@
 
 $(BUILD_DIR)/K6502.o: $(INFONES_DIR)/K6502.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@

@@ -62,8 +62,12 @@
 - [x] Task 8 完成（commit 03411b1）
 - [x] Task 9 完成（commit d7a7542）
 - [x] Task 10 完成（commit 331055c）
-- [x] Task 11 完成（pending commit；submodule @ f44003a 本地 fork，不 push 上游）
+- [x] Task 11 完成（commit 09543a6；submodule @ f44003a 本地 fork，不 push 上游）
 - InfoNES submodule 登记 @ cb69777（commit 50331a2）
+- [+] 旁路：基于 SDL2-2.30.8 的独立 InfoNES 模拟器（src/infones_sdl2/，pending commit）
+  - 用本地 SDL2-2.30.8/install 编译；Makefile + 200 行 system 层
+  - 视频 RGB565 streaming texture + 键盘（X=A Z=B Space=Sel Enter=Start ESC=quit）
+  - 音频静默；目的是验证 InfoNES 核心在 x86 上能跑，作为 widget 集成的对照
 
 ## 下一步
 进入 Task 12: 集成手测清单

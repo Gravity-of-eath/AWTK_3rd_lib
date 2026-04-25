@@ -1,7 +1,7 @@
 # 当前上下文：yps_nes_game_view 集成
 日期: 2026-04-24
-状态: Task 11 完成 — InfoNES_HSync 加入协作停止钩子，stop 可 mid-frame 退出 Cycle()
-下一步: Task 12: 集成手测清单（integration_test_README.md）
+状态: 全部 12 个任务完成 — yps_nes_game_view widget + 独立 SDL2 模拟器全部就绪
+下一步: 项目可交付。剩下的是 follow-up（asset:// URI、SaveSRAM、错误占位画面，见 deferred 列表）
 
 ## 已完成交付物
 - 设计文档: docs/superpowers/specs/2026-04-24-yps_nes_game_view-design.md
@@ -29,7 +29,7 @@
 - Task 9: Runtime start/pause/resume/stop 生命周期 ✅
 - Task 10: Widget 属性/事件/paint/auto_play 串联 ✅
 - Task 11: InfoNES_HSync 协作停止（#ifdef INFONES_AWTK_GLUE） ✅
-- Task 12: 集成手测清单 ⬅ 下一步
+- Task 12: 集成手测清单 ✅
 
 ## Task 8 实现要点
 - nes_runtime.h 在 C++ 编译路径下：`#define _Atomic` 为空、提供 `atomic_ulong`/`atomic_int` 的 typedef，
@@ -64,10 +64,11 @@
 - [x] Task 10 完成（commit 331055c）
 - [x] Task 11 完成（commit 09543a6；submodule @ f44003a 本地 fork，不 push 上游）
 - InfoNES submodule 登记 @ cb69777（commit 50331a2）
-- [+] 旁路：基于 SDL2-2.30.8 的独立 InfoNES 模拟器（src/infones_sdl2/，pending commit）
-  - 用本地 SDL2-2.30.8/install 编译；Makefile + 200 行 system 层
+- [+] 旁路：基于 SDL2 的独立 InfoNES 模拟器（src/infones_sdl2/）
+  - commit ca162d1（初版）/ b954404（SIGTERM 钩子）/ 3a3bbe5（切系统 SDL2）
   - 视频 RGB565 streaming texture + 键盘（X=A Z=B Space=Sel Enter=Start ESC=quit）
-  - 音频静默；目的是验证 InfoNES 核心在 x86 上能跑，作为 widget 集成的对照
+  - 已用 Contra (U)/(J) + Probotector + Mario Alt Levels 多 mapper 验证显示
+  - 注意：必须用系统 SDL2（apt install libsdl2-dev），本地 SDL2-2.30.8 build 没编 X11 driver
 
 ## 下一步
 进入 Task 12: 集成手测清单

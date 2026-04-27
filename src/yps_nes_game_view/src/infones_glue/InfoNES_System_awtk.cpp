@@ -44,9 +44,9 @@ static inline void glue_atomic_store_float(float* p, float v) {
   __atomic_store_n(reinterpret_cast<uint32_t*>(p), u, __ATOMIC_SEQ_CST);
 }
 
-#include "../../../../InfoNES/src/InfoNES.h"
-#include "../../../../InfoNES/src/InfoNES_System.h"
-#include "../../../../InfoNES/src/InfoNES_pAPU.h"
+#include "InfoNES.h"
+#include "InfoNES_System.h"
+#include "InfoNES_pAPU.h"
 
 /* -------------------------------------------------------------------
  *  Global state required by InfoNES core (definitions).

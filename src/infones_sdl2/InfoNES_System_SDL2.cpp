@@ -19,9 +19,9 @@
 #include <cstring>
 #include <cstdarg>
 
-#include "../../InfoNES/src/InfoNES.h"
-#include "../../InfoNES/src/InfoNES_System.h"
-#include "../../InfoNES/src/InfoNES_pAPU.h"
+#include "InfoNES.h"
+#include "InfoNES_System.h"
+#include "InfoNES_pAPU.h"
 
 /*-------------------------------------------------------------------*/
 /*  Global palette (declared extern in InfoNES_System.h).            */

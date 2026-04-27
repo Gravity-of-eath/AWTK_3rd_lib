@@ -29,22 +29,22 @@ else()
     set(NES_AUDIO_LIBS "")
 endif()
 
-# InfoNES 3rd-party sources (compiled into this .so)
-set(INFONES_DIR ${CMAKE_SOURCE_DIR}/../InfoNES/src)
-set(INFONES_SRCS
-    ${INFONES_DIR}/InfoNES.cpp
-    ${INFONES_DIR}/InfoNES_Mapper.cpp
-    ${INFONES_DIR}/InfoNES_pAPU.cpp
-    ${INFONES_DIR}/K6502.cpp
-)
-set_source_files_properties(${INFONES_SRCS} PROPERTIES
-    COMPILE_DEFINITIONS "INFONES_AWTK_GLUE=1")
-include_directories(${INFONES_DIR})
+# InfoNES core ships as a prebuilt static archive under libs/.
+# To regenerate (only when InfoNES upstream changes), run libs/build_libinfones.sh
+# from a checkout that has depends/InfoNES present. After regeneration, commit
+# the resulting libs/libinfones.a + libs/InfoNES/*.h so the widget builds
+# without depends/.
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/InfoNES)
 
 set(GLUE_SRCS src/infones_glue/InfoNES_System_awtk.cpp)
 
-add_library(${LIBRARY_NAME} ${WIDGET_SRCS} ${INFONES_SRCS} ${GLUE_SRCS})
-target_link_libraries(${LIBRARY_NAME} ${AWTK_SO} ${NES_AUDIO_LIBS} pthread)
+add_library(${LIBRARY_NAME} ${WIDGET_SRCS} ${GLUE_SRCS})
+target_link_libraries(${LIBRARY_NAME}
+    ${AWTK_SO}
+    ${NES_AUDIO_LIBS}
+    pthread
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libinfones.a
+)
 
 install(TARGETS ${LIBRARY_NAME} LIBRARY DESTINATION ${LIBRARY_NAME})
 install(DIRECTORY include DESTINATION ${LIBRARY_NAME})

@@ -15,8 +15,9 @@
 
 REPO_ROOT   := $(abspath ../..)
 SDL2_CONFIG ?= sdl2-config
+PLATFORM    ?= x86
 INFONES_PREBUILT_DIR := $(REPO_ROOT)/src/yps_nes_game_view/libs
-INFONES_LIB := $(INFONES_PREBUILT_DIR)/libinfones.a
+INFONES_LIB := $(INFONES_PREBUILT_DIR)/$(PLATFORM)/libinfones.a
 INFONES_INC := $(INFONES_PREBUILT_DIR)/InfoNES
 BUILD_DIR   := $(REPO_ROOT)/build/infones_sdl2
 TARGET      := $(BUILD_DIR)/infones_sdl2

@@ -43,7 +43,7 @@ target_link_libraries(${LIBRARY_NAME}
     ${AWTK_SO}
     ${NES_AUDIO_LIBS}
     pthread
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/libinfones.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/${PLATFORM}/libinfones.a
 )
 
 install(TARGETS ${LIBRARY_NAME} LIBRARY DESTINATION ${LIBRARY_NAME})

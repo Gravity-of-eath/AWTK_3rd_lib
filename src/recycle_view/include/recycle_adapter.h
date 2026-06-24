@@ -15,7 +15,9 @@ struct _recycle_adapter_t {
   /* 必填：数据条数 */
   int32_t (*get_item_count)(recycle_adapter_t* adapter);
 
-  /* 可选：第 index 条的 view_type；为 NULL 时所有项视为类型 0 */
+  /* 可选：第 index 条的 view_type；为 NULL 时所有项视为类型 0。
+   * 约定：同一 index 的 view_type 应保持稳定；notify_data_changed 会复用已可见项的壳重新绑定，
+   * 若 view_type 随数据变化而改变，请改用整体重建（重新 set_adapter）而非 notify_data_changed。 */
   int32_t (*get_item_type)(recycle_adapter_t* adapter, int32_t index);
 
   /* 必填：为某 view_type 创建一个"空壳"item 控件（不填数据）。parent 即 recycle_view */

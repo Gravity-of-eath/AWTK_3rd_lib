@@ -374,7 +374,12 @@ ret_t recycle_view_scroll_to_index(widget_t* widget, int32_t index, bool_t anima
   rect_t r;
   int32_t target = 0;
   return_value_if_fail(rv != NULL && rv->layout_manager != NULL, RET_BAD_PARAMS);
+  /* 空数据：直接回到起点 */
+  if (rv->item_count <= 0) {
+    return recycle_view_scroll_to_offset(widget, 0, animate);
+  }
   if (index < 0) index = 0;
+  if (index >= rv->item_count) index = rv->item_count - 1; /* 夹到末项，避免越界几何/溢出 */
   rv->layout_manager->get_item_rect(rv->layout_manager, widget, index, &r);
   target = rv->layout_manager->is_horizontal ? r.x : r.y; /* 把该 item 对齐到视口起点 */
   return recycle_view_scroll_to_offset(widget, target, animate);
@@ -448,6 +453,11 @@ static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
         timer_remove(rv->fling_timer_id);
         rv->fling_timer_id = 0;
         rv->fling_v = 0.0f;
+      }
+      /* 停止正在进行的 scroll_to 动画，避免与手指拖动打架 */
+      if (rv->scroll_timer_id != 0) {
+        timer_remove(rv->scroll_timer_id);
+        rv->scroll_timer_id = 0;
       }
       rv->dragging = FALSE;
       rv->down_x = evt->x;
@@ -527,7 +537,6 @@ widget_t* recycle_view_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) 
   rv->fling_v = 0.0f;
   rv->fling_timer_id = 0;
   rv->dragging = FALSE;
-  rv->scroll_animator_id = 0;
   rv->scroll_target = 0;
   rv->scroll_timer_id = 0;
   velocity_reset(&(rv->velocity));

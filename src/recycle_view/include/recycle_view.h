@@ -49,7 +49,6 @@ typedef struct _recycle_view_t {
   xy_t down_y;
   int32_t down_offset;
 
-  uint32_t scroll_animator_id;
   int32_t scroll_target;   /* 动画目标 offset */
   uint32_t scroll_timer_id;
 } recycle_view_t;

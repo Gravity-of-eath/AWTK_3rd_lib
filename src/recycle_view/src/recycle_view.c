@@ -2,6 +2,7 @@
 
 #include "tkc/mem.h"
 #include "tkc/utils.h"
+#include "tkc/log.h"
 #include "base/timer.h"
 #include "base/widget_vtable.h"
 #include "recycle_view_math.h"
@@ -51,6 +52,14 @@ static recycle_pool_t* recycle_view_get_pool(recycle_view_t* rv, int32_t view_ty
   return pool;
 }
 
+static ret_t visible_item_destroy(void* data) {
+  /* 仅释放裸结构；widget 的归属由回收/子控件树管理，不在此销毁 */
+  if (data != NULL) {
+    TKMEM_FREE(data);
+  }
+  return RET_OK;
+}
+
 static ret_t recycle_pool_destroy(void* data) {
   recycle_pool_t* pool = (recycle_pool_t*)data;
   if (pool != NULL) {
@@ -94,9 +103,148 @@ ret_t recycle_view_set_layout_manager(widget_t* widget, recycle_layout_manager_t
   return RET_OK;
 }
 
-/* ---- relayout 占位（后续任务替换实现） ---- */
+static visible_item_t* recycle_view_find_visible(recycle_view_t* rv, int32_t index) {
+  uint32_t i = 0;
+  for (i = 0; i < rv->visible_items->size; i++) {
+    visible_item_t* vi = (visible_item_t*)darray_get(rv->visible_items, i);
+    if (vi != NULL && vi->index == index) {
+      return vi;
+    }
+  }
+  return NULL;
+}
+
+/* 取得某 view_type 的一个空壳：优先复用池，池空则新建 */
+static widget_t* recycle_view_obtain_item(recycle_view_t* rv, int32_t view_type) {
+  recycle_pool_t* pool = recycle_view_get_pool(rv, view_type, FALSE);
+  if (pool != NULL && pool->free_widgets->size > 0) {
+    widget_t* w = (widget_t*)darray_get(pool->free_widgets, pool->free_widgets->size - 1);
+    darray_remove_index(pool->free_widgets, pool->free_widgets->size - 1);
+    return w;
+  }
+  return rv->adapter->create_item_view(rv->adapter, (widget_t*)rv, view_type);
+}
+
+static int32_t recycle_view_main_offset(recycle_view_t* rv) {
+  return rv->layout_manager->is_horizontal ? rv->xoffset : rv->yoffset;
+}
+
+static void recycle_view_set_main_offset(recycle_view_t* rv, int32_t offset) {
+  if (rv->layout_manager->is_horizontal) {
+    rv->xoffset = offset;
+    rv->yoffset = 0;
+  } else {
+    rv->yoffset = offset;
+    rv->xoffset = 0;
+  }
+}
+
 static ret_t recycle_view_relayout(widget_t* widget) {
-  (void)widget;
+  recycle_view_t* rv = RECYCLE_VIEW(widget);
+  recycle_layout_manager_t* lm = NULL;
+  recycle_adapter_t* adapter = NULL;
+  int32_t first = 0, last = -1, i = 0, offset = 0, content_size = 0, viewport_main = 0;
+  return_value_if_fail(rv != NULL, RET_BAD_PARAMS);
+
+  lm = rv->layout_manager;
+  adapter = rv->adapter;
+  if (lm == NULL || adapter == NULL) {
+    return RET_OK; /* 未就绪：空白，不崩 */
+  }
+
+  rv->item_count = adapter->get_item_count != NULL ? adapter->get_item_count(adapter) : 0;
+
+  /* clamp offset 到合法范围 */
+  content_size = lm->get_content_size(lm, widget, rv->item_count);
+  viewport_main = lm->is_horizontal ? widget->w : widget->h;
+  offset = recycle_clamp_offset(recycle_view_main_offset(rv), content_size, viewport_main);
+  recycle_view_set_main_offset(rv, offset);
+
+  /* 计算可见区间并加预取冗余 */
+  if (rv->item_count > 0) {
+    lm->get_visible_range(lm, widget, offset, rv->item_count, &first, &last);
+    first -= RECYCLE_VIEW_PREFETCH;
+    last += RECYCLE_VIEW_PREFETCH;
+    if (first < 0) first = 0;
+    if (last > rv->item_count - 1) last = rv->item_count - 1;
+  } else {
+    first = 0;
+    last = -1;
+  }
+
+  /* 回收：可见表中落在区间外的项 */
+  {
+    uint32_t k = 0;
+    while (k < rv->visible_items->size) {
+      visible_item_t* vi = (visible_item_t*)darray_get(rv->visible_items, k);
+      if (vi != NULL && (vi->index < first || vi->index > last)) {
+        recycle_pool_t* pool = NULL;
+        widget_remove_child(widget, vi->widget);
+        if (adapter->on_item_recycled != NULL) {
+          adapter->on_item_recycled(adapter, vi->widget, vi->view_type);
+        }
+        pool = recycle_view_get_pool(rv, vi->view_type, TRUE);
+        if (pool != NULL) {
+          darray_push(pool->free_widgets, vi->widget);
+        } else {
+          widget_destroy(vi->widget);
+        }
+        darray_remove_index(rv->visible_items, k); /* visible_item_destroy 释放裸结构 */
+      } else {
+        k++;
+      }
+    }
+  }
+
+  /* 填充：区间内尚未挂载的 index */
+  for (i = first; i <= last; i++) {
+    rect_t r;
+    int32_t view_type = 0;
+    widget_t* item = NULL;
+    visible_item_t* vi = NULL;
+    if (recycle_view_find_visible(rv, i) != NULL) {
+      continue;
+    }
+    view_type = (adapter->get_item_type != NULL) ? adapter->get_item_type(adapter, i) : 0;
+    item = recycle_view_obtain_item(rv, view_type);
+    if (item == NULL) {
+      log_debug("recycle_view: create_item_view 返回 NULL，跳过 index=%d\n", i);
+      continue;
+    }
+    adapter->bind_item_view(adapter, item, i);
+    widget_add_child(widget, item);
+    lm->get_item_rect(lm, widget, i, &r);
+    if (lm->is_horizontal) {
+      widget_move_resize(item, r.x - offset, r.y, r.w, r.h);
+    } else {
+      widget_move_resize(item, r.x, r.y - offset, r.w, r.h);
+    }
+    vi = TKMEM_ZALLOC(visible_item_t);
+    if (vi != NULL) {
+      vi->index = i;
+      vi->view_type = view_type;
+      vi->widget = item;
+      darray_push(rv->visible_items, vi);
+    }
+  }
+
+  /* 已挂载项随 offset 重新定位（滑动时需要） */
+  {
+    uint32_t k = 0;
+    for (k = 0; k < rv->visible_items->size; k++) {
+      rect_t r;
+      visible_item_t* vi = (visible_item_t*)darray_get(rv->visible_items, k);
+      if (vi == NULL) continue;
+      lm->get_item_rect(lm, widget, vi->index, &r);
+      if (lm->is_horizontal) {
+        widget_move_resize(vi->widget, r.x - offset, r.y, r.w, r.h);
+      } else {
+        widget_move_resize(vi->widget, r.x, r.y - offset, r.w, r.h);
+      }
+    }
+  }
+
+  widget_invalidate_force(widget, NULL);
   return RET_OK;
 }
 
@@ -173,7 +321,7 @@ widget_t* recycle_view_create(widget_t* parent, xy_t x, xy_t y, wh_t w, wh_t h) 
   rv->xoffset = 0;
   rv->yoffset = 0;
   rv->item_count = 0;
-  rv->visible_items = darray_create(16, NULL, NULL);
+  rv->visible_items = darray_create(16, visible_item_destroy, NULL);
   rv->recycle_pools = darray_create(4, recycle_pool_destroy, NULL);
   rv->fling_v = 0.0f;
   rv->fling_timer_id = 0;

@@ -1396,9 +1396,12 @@ static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
       widget_ungrab(widget->parent, widget);
       if (rv->dragging) {
         velocity_update(&(rv->velocity), e->time, evt->x, evt->y);
-        /* velocity 是 px/ms，乘帧间隔得到 px/frame；拖动方向与 offset 相反 */
+        /* velocity 单位是 px/秒（AWTK velocity.c 内部已把 dt 换算成秒）；fling 逐帧按
+         * friction 衰减，几何级数总位移 = fling_v/(1-friction)，取 v*(1-friction) 使总
+         * 滑动距离≈速度像素值（与 AWTK scroll_view 直接用 v->yv 作像素距离的手感一致）。
+         * 负号：拖动方向与 offset 方向相反 */
         v = -(rv->layout_manager->is_horizontal ? rv->velocity.xv : rv->velocity.yv) *
-            RECYCLE_VIEW_FRAME_INTERVAL_MS;
+            (1.0f - RECYCLE_VIEW_FLING_FRICTION);
         rv->dragging = FALSE;
         recycle_view_start_fling(widget, v);
       }

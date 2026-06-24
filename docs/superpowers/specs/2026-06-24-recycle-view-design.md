@@ -184,7 +184,7 @@ relayout():
 |---|---|
 | **拖动** | `POINTER_DOWN` 记起点 + 启动 velocity 追踪；`POINTER_MOVE` 累加位移到 offset → relayout；`POINTER_UP` 取末速度启动 fling |
 | **fling** | 定时器（FPS≈30/60）按摩擦系数衰减 `fling_v`，每帧 offset += v → relayout；\|v\| < 阈值 或 offset 触边 时停 |
-| **scroll_to_offset / index** | index 经 `get_item_rect` 换算成目标 offset；`animate=TRUE` 用 widget_animator 插值改 offset 每帧 relayout，否则直接设 offset + relayout |
+| **scroll_to_offset / index** | index 经 `get_item_rect` 换算成目标 offset；`animate=TRUE` 时用一个帧定时器按剩余距离的 1/4（最小步长 1）逐帧逼近目标，每帧 relayout，到达目标或触边即停；否则直接设 offset + relayout（实现采用自管定时器而非 widget_animator，便于与 fling/拖动共享同一 offset 模型并即时让出） |
 | **notify_data_changed** | 重读 `item_count`；对仍可见的 index 重新 `bind`（数据变了但壳还在），新增/减少的进/出走标准回收填充；clamp offset |
 | **resize / 设置 adapter·lm** | 直接全量 relayout（视口变了 item 尺寸 / 可见数都变） |
 

@@ -20,6 +20,14 @@ add_executable(recycle_view_math_test
 target_include_directories(recycle_view_math_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(recycle_view_math_test m)
 
+# GUI 演示/集成测试（仅 x86 平台编译）
+if(PLATFORM STREQUAL "x86")
+  add_executable(recycle_view_test tests/recycle_view_test.c)
+  target_include_directories(recycle_view_test PRIVATE ${AWTK_INCLUDE}/ext_widgets)
+  target_link_libraries(recycle_view_test ${LIBRARY_NAME} ${AWTK_SO} m dl pthread)
+  install(TARGETS recycle_view_test RUNTIME DESTINATION ${LIBRARY_NAME})
+endif()
+
 install(
     TARGETS ${LIBRARY_NAME}
     LIBRARY DESTINATION ${LIBRARY_NAME}

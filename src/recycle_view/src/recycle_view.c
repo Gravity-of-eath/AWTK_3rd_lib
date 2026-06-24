@@ -381,6 +381,22 @@ ret_t recycle_view_scroll_to_index(widget_t* widget, int32_t index, bool_t anima
 }
 
 ret_t recycle_view_notify_data_changed(widget_t* widget) {
+  recycle_view_t* rv = RECYCLE_VIEW(widget);
+  uint32_t k = 0;
+  return_value_if_fail(rv != NULL, RET_BAD_PARAMS);
+  if (rv->adapter == NULL) {
+    return RET_OK;
+  }
+  /* 先重算总数 */
+  rv->item_count = rv->adapter->get_item_count != NULL ? rv->adapter->get_item_count(rv->adapter) : 0;
+  /* 对仍可见且仍在数据范围内的项重新绑定（数据变了但壳还在） */
+  for (k = 0; k < rv->visible_items->size; k++) {
+    visible_item_t* vi = (visible_item_t*)darray_get(rv->visible_items, k);
+    if (vi != NULL && vi->index < rv->item_count) {
+      rv->adapter->bind_item_view(rv->adapter, vi->widget, vi->index);
+    }
+  }
+  /* 再走标准回收/填充（越界项回收、新进入项填充、offset 夹紧） */
   return recycle_view_relayout(widget);
 }
 

@@ -79,11 +79,32 @@ static ret_t recycle_pool_destroy(void* data) {
 
 /* ---- ownership setters ---- */
 
+/* 清空所有可见项与回收池中的控件（用于切换 adapter/lm 时彻底重建） */
+static ret_t recycle_view_clear_all_items(recycle_view_t* rv) {
+  uint32_t k = 0;
+  return_value_if_fail(rv != NULL, RET_BAD_PARAMS);
+  /* 可见项：detach + 销毁控件，再清空跟踪结构 */
+  for (k = 0; k < rv->visible_items->size; k++) {
+    visible_item_t* vi = (visible_item_t*)darray_get(rv->visible_items, k);
+    if (vi != NULL && vi->widget != NULL) {
+      widget_remove_child((widget_t*)rv, vi->widget);
+      widget_destroy(vi->widget);
+    }
+  }
+  darray_clear(rv->visible_items); /* 触发 visible_item_destroy 释放裸结构 */
+  /* 回收池：recycle_pool_destroy 会销毁池内 detach 的控件 */
+  darray_clear(rv->recycle_pools);
+  return RET_OK;
+}
+
 ret_t recycle_view_set_adapter(widget_t* widget, recycle_adapter_t* adapter) {
   recycle_view_t* rv = RECYCLE_VIEW(widget);
   return_value_if_fail(rv != NULL && adapter != NULL, RET_BAD_PARAMS);
-  if (rv->adapter != NULL && rv->adapter->on_destroy != NULL) {
-    rv->adapter->on_destroy(rv->adapter);
+  if (rv->adapter != NULL) {
+    recycle_view_clear_all_items(rv); /* 用旧 adapter 上下文清空旧控件 */
+    if (rv->adapter->on_destroy != NULL) {
+      rv->adapter->on_destroy(rv->adapter);
+    }
   }
   rv->adapter = adapter;
   rv->yoffset = 0;
@@ -212,6 +233,12 @@ static ret_t recycle_view_relayout(widget_t* widget) {
       continue;
     }
     adapter->bind_item_view(adapter, item, i);
+    vi = TKMEM_ZALLOC(visible_item_t);
+    if (vi == NULL) {
+      /* 跟踪结构分配失败：销毁这个壳，避免遗留未跟踪子控件 */
+      widget_destroy(item);
+      continue;
+    }
     widget_add_child(widget, item);
     lm->get_item_rect(lm, widget, i, &r);
     if (lm->is_horizontal) {
@@ -219,13 +246,10 @@ static ret_t recycle_view_relayout(widget_t* widget) {
     } else {
       widget_move_resize(item, r.x, r.y - offset, r.w, r.h);
     }
-    vi = TKMEM_ZALLOC(visible_item_t);
-    if (vi != NULL) {
-      vi->index = i;
-      vi->view_type = view_type;
-      vi->widget = item;
-      darray_push(rv->visible_items, vi);
-    }
+    vi->index = i;
+    vi->view_type = view_type;
+    vi->widget = item;
+    darray_push(rv->visible_items, vi);
   }
 
   /* 已挂载项随 offset 重新定位（滑动时需要） */

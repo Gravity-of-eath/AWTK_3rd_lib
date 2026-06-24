@@ -362,9 +362,6 @@ static ret_t recycle_view_on_destroy(widget_t* widget) {
   return RET_OK;
 }
 
-/* Task 8 实现 fling 启动；此处前向声明 */
-static ret_t recycle_view_start_fling(widget_t* widget, float_t v);
-
 static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
   recycle_view_t* rv = RECYCLE_VIEW(widget);
   return_value_if_fail(rv != NULL && e != NULL, RET_BAD_PARAMS);
@@ -408,9 +405,11 @@ static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
       widget_ungrab(widget->parent, widget);
       if (rv->dragging) {
         velocity_update(&(rv->velocity), e->time, evt->x, evt->y);
-        /* velocity 是 px/ms，乘帧间隔得到 px/frame；拖动方向与 offset 相反 */
+        /* velocity 单位是 px/秒；fling 逐帧按 friction 衰减，
+         * 取 v*(1-friction) 使总滑动距离≈速度像素值（与 AWTK scroll_view 手感一致）。
+         * 负号：拖动方向与 offset 方向相反 */
         v = -(rv->layout_manager->is_horizontal ? rv->velocity.xv : rv->velocity.yv) *
-            RECYCLE_VIEW_FRAME_INTERVAL_MS;
+            (1.0f - RECYCLE_VIEW_FLING_FRICTION);
         rv->dragging = FALSE;
         recycle_view_start_fling(widget, v);
       }
@@ -419,6 +418,12 @@ static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
     case EVT_RESIZE: {
       /* 视口尺寸变化：item 尺寸/可见数随之改变，需全量重排 */
       recycle_view_relayout(widget);
+      break;
+    }
+    case EVT_POINTER_DOWN_ABORT: {
+      /* 系统级取消（本版 AWTK 无 EVT_POINTER_CANCEL）：松开 grab 并结束拖动，不触发 fling */
+      rv->dragging = FALSE;
+      widget_ungrab(widget->parent, widget);
       break;
     }
     default:

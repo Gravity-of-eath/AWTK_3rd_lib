@@ -320,10 +320,69 @@ static ret_t recycle_view_on_destroy(widget_t* widget) {
   return RET_OK;
 }
 
+/* Task 8 实现 fling 启动；此处前向声明 */
+static ret_t recycle_view_start_fling(widget_t* widget, float_t v);
+
 static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
-  (void)widget;
-  (void)e;
-  return RET_OK; /* 后续任务填充拖动与 fling */
+  recycle_view_t* rv = RECYCLE_VIEW(widget);
+  return_value_if_fail(rv != NULL && e != NULL, RET_BAD_PARAMS);
+  if (rv->layout_manager == NULL) {
+    return RET_OK;
+  }
+
+  switch (e->type) {
+    case EVT_POINTER_DOWN: {
+      pointer_event_t* evt = (pointer_event_t*)e;
+      /* 停止正在进行的 fling */
+      if (rv->fling_timer_id != 0) {
+        timer_remove(rv->fling_timer_id);
+        rv->fling_timer_id = 0;
+        rv->fling_v = 0.0f;
+      }
+      rv->dragging = FALSE;
+      rv->down_x = evt->x;
+      rv->down_y = evt->y;
+      rv->down_offset = recycle_view_main_offset(rv);
+      velocity_reset(&(rv->velocity));
+      velocity_update(&(rv->velocity), e->time, evt->x, evt->y);
+      widget_grab(widget->parent, widget);
+      break;
+    }
+    case EVT_POINTER_MOVE: {
+      pointer_event_t* evt = (pointer_event_t*)e;
+      int32_t delta = rv->layout_manager->is_horizontal ? (evt->x - rv->down_x) : (evt->y - rv->down_y);
+      if (!rv->dragging && tk_abs(delta) < RECYCLE_VIEW_DRAG_THRESHOLD) {
+        break;
+      }
+      rv->dragging = TRUE;
+      velocity_update(&(rv->velocity), e->time, evt->x, evt->y);
+      recycle_view_set_main_offset(rv, rv->down_offset - delta);
+      recycle_view_relayout(widget);
+      break;
+    }
+    case EVT_POINTER_UP: {
+      pointer_event_t* evt = (pointer_event_t*)e;
+      float_t v = 0.0f;
+      widget_ungrab(widget->parent, widget);
+      if (rv->dragging) {
+        velocity_update(&(rv->velocity), e->time, evt->x, evt->y);
+        /* velocity 是 px/ms，乘帧间隔得到 px/frame；拖动方向与 offset 相反 */
+        v = -(rv->layout_manager->is_horizontal ? rv->velocity.xv : rv->velocity.yv) *
+            RECYCLE_VIEW_FRAME_INTERVAL_MS;
+        rv->dragging = FALSE;
+        recycle_view_start_fling(widget, v);
+      }
+      break;
+    }
+    case EVT_RESIZE: {
+      /* 视口尺寸变化：item 尺寸/可见数随之改变，需全量重排 */
+      recycle_view_relayout(widget);
+      break;
+    }
+    default:
+      break;
+  }
+  return RET_OK;
 }
 
 TK_DECL_VTABLE(recycle_view) = {.size = sizeof(recycle_view_t),

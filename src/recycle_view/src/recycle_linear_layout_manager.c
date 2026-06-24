@@ -7,19 +7,6 @@ typedef struct _linear_lm_ctx_t {
   int32_t item_extent;
 } linear_lm_ctx_t;
 
-static ret_t linear_get_item_size(recycle_layout_manager_t* lm, widget_t* rv, wh_t* w, wh_t* h) {
-  linear_lm_ctx_t* ctx = (linear_lm_ctx_t*)(lm->ctx);
-  return_value_if_fail(lm != NULL && rv != NULL && w != NULL && h != NULL, RET_BAD_PARAMS);
-  if (lm->is_horizontal) {
-    *w = ctx->item_extent;
-    *h = rv->h; /* 交叉轴填满 */
-  } else {
-    *w = rv->w; /* 交叉轴填满 */
-    *h = ctx->item_extent;
-  }
-  return RET_OK;
-}
-
 static int32_t linear_get_content_size(recycle_layout_manager_t* lm, widget_t* rv, int32_t item_count) {
   linear_lm_ctx_t* ctx = (linear_lm_ctx_t*)(lm->ctx);
   return_value_if_fail(lm != NULL, 0);
@@ -80,7 +67,6 @@ recycle_layout_manager_t* recycle_linear_layout_manager_create(bool_t horizontal
 
   lm->is_horizontal = horizontal;
   lm->ctx = ctx;
-  lm->get_item_size = linear_get_item_size;
   lm->get_content_size = linear_get_content_size;
   lm->get_visible_range = linear_get_visible_range;
   lm->get_item_rect = linear_get_item_rect;

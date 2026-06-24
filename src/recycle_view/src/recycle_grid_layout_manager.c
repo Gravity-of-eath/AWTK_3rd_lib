@@ -16,21 +16,6 @@ static int32_t grid_cross_size(recycle_layout_manager_t* lm, widget_t* rv) {
   return cell > 0 ? cell : 1;
 }
 
-static ret_t grid_get_item_size(recycle_layout_manager_t* lm, widget_t* rv, wh_t* w, wh_t* h) {
-  grid_lm_ctx_t* ctx = (grid_lm_ctx_t*)(lm->ctx);
-  int32_t cross = 0;
-  return_value_if_fail(lm != NULL && rv != NULL && w != NULL && h != NULL, RET_BAD_PARAMS);
-  cross = grid_cross_size(lm, rv);
-  if (lm->is_horizontal) {
-    *w = ctx->item_extent;
-    *h = cross;
-  } else {
-    *w = cross;
-    *h = ctx->item_extent;
-  }
-  return RET_OK;
-}
-
 static int32_t grid_get_content_size(recycle_layout_manager_t* lm, widget_t* rv, int32_t item_count) {
   grid_lm_ctx_t* ctx = (grid_lm_ctx_t*)(lm->ctx);
   return_value_if_fail(lm != NULL, 0);
@@ -97,7 +82,6 @@ recycle_layout_manager_t* recycle_grid_layout_manager_create(bool_t horizontal, 
 
   lm->is_horizontal = horizontal;
   lm->ctx = ctx;
-  lm->get_item_size = grid_get_item_size;
   lm->get_content_size = grid_get_content_size;
   lm->get_visible_range = grid_get_visible_range;
   lm->get_item_rect = grid_get_item_rect;

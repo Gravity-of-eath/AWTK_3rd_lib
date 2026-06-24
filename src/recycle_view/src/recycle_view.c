@@ -220,7 +220,6 @@ static ret_t recycle_view_relayout(widget_t* widget) {
 
   /* 填充：区间内尚未挂载的 index */
   for (i = first; i <= last; i++) {
-    rect_t r;
     int32_t view_type = 0;
     widget_t* item = NULL;
     visible_item_t* vi = NULL;
@@ -241,12 +240,6 @@ static ret_t recycle_view_relayout(widget_t* widget) {
       continue;
     }
     widget_add_child(widget, item);
-    lm->get_item_rect(lm, widget, i, &r);
-    if (lm->is_horizontal) {
-      widget_move_resize(item, r.x - offset, r.y, r.w, r.h);
-    } else {
-      widget_move_resize(item, r.x, r.y - offset, r.w, r.h);
-    }
     vi->index = i;
     vi->view_type = view_type;
     vi->widget = item;
@@ -478,7 +471,7 @@ static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
       velocity_update(&(rv->velocity), e->time, evt->x, evt->y);
       recycle_view_set_main_offset(rv, rv->down_offset - delta);
       recycle_view_relayout(widget);
-      break;
+      return RET_STOP; /* 拖动中消费事件，防止父控件/子控件同时响应 */
     }
     case EVT_POINTER_UP: {
       pointer_event_t* evt = (pointer_event_t*)e;
@@ -493,6 +486,7 @@ static ret_t recycle_view_on_event(widget_t* widget, event_t* e) {
             (1.0f - RECYCLE_VIEW_FLING_FRICTION);
         rv->dragging = FALSE;
         recycle_view_start_fling(widget, v);
+        return RET_STOP; /* 拖动结束的抬起事件被消费，避免误触发子控件点击 */
       }
       break;
     }

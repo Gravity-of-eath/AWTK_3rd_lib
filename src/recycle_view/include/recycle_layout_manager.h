@@ -14,9 +14,6 @@ typedef struct _recycle_layout_manager_t recycle_layout_manager_t;
 struct _recycle_layout_manager_t {
   bool_t is_horizontal; /* 滚动轴：TRUE=横向滚动, FALSE=纵向滚动 */
 
-  /* 单个 item 尺寸（等尺寸）。实现可读 rv->w/h 决定填充交叉轴 */
-  ret_t (*get_item_size)(recycle_layout_manager_t* lm, widget_t* rv, wh_t* w, wh_t* h);
-
   /* 沿滚动轴的内容总尺寸，用于 clamp offset / 滚动条 */
   int32_t (*get_content_size)(recycle_layout_manager_t* lm, widget_t* rv, int32_t item_count);
 

@@ -1,5 +1,6 @@
 #include "recycle_view.h"
 
+#include <math.h>
 #include "tkc/mem.h"
 #include "tkc/utils.h"
 #include "tkc/log.h"
@@ -269,6 +270,47 @@ static ret_t recycle_view_relayout(widget_t* widget) {
   }
 
   widget_invalidate_force(widget, NULL);
+  return RET_OK;
+}
+
+/* ---- 惯性 fling ---- */
+
+static ret_t recycle_view_on_fling_timer(const timer_info_t* timer) {
+  widget_t* widget = WIDGET(timer->ctx);
+  recycle_view_t* rv = RECYCLE_VIEW(widget);
+  int32_t before = 0, after = 0;
+  if (rv == NULL || rv->layout_manager == NULL) {
+    return RET_REMOVE;
+  }
+
+  before = recycle_view_main_offset(rv);
+  recycle_view_set_main_offset(rv, before + (int32_t)rv->fling_v);
+  recycle_view_relayout(widget); /* relayout 内部会 clamp offset */
+  after = recycle_view_main_offset(rv);
+
+  rv->fling_v = recycle_fling_next_v(rv->fling_v, RECYCLE_VIEW_FLING_FRICTION);
+
+  /* offset 未变化（已触边）或速度过小 → 停止 */
+  if (after == before || fabsf(rv->fling_v) < RECYCLE_VIEW_FLING_MIN_V) {
+    rv->fling_timer_id = 0;
+    rv->fling_v = 0.0f;
+    return RET_REMOVE;
+  }
+  return RET_REPEAT;
+}
+
+static ret_t recycle_view_start_fling(widget_t* widget, float_t v) {
+  recycle_view_t* rv = RECYCLE_VIEW(widget);
+  return_value_if_fail(rv != NULL, RET_BAD_PARAMS);
+  rv->fling_v = v;
+  if (fabsf(v) < RECYCLE_VIEW_FLING_MIN_V) {
+    rv->fling_v = 0.0f;
+    return RET_OK;
+  }
+  if (rv->fling_timer_id == 0) {
+    rv->fling_timer_id =
+        widget_add_timer(widget, recycle_view_on_fling_timer, RECYCLE_VIEW_FRAME_INTERVAL_MS);
+  }
   return RET_OK;
 }
 

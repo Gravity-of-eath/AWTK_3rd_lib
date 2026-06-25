@@ -26,6 +26,11 @@ if(PLATFORM STREQUAL "x86")
   target_include_directories(recycle_view_test PRIVATE ${AWTK_INCLUDE}/ext_widgets)
   target_link_libraries(recycle_view_test ${LIBRARY_NAME} ${AWTK_SO} m dl pthread)
   install(TARGETS recycle_view_test RUNTIME DESTINATION ${LIBRARY_NAME})
+
+  add_executable(recycle_view_coverflow_test tests/recycle_view_coverflow_test.c)
+  target_include_directories(recycle_view_coverflow_test PRIVATE ${AWTK_INCLUDE}/ext_widgets)
+  target_link_libraries(recycle_view_coverflow_test ${LIBRARY_NAME} ${AWTK_SO} m dl pthread)
+  install(TARGETS recycle_view_coverflow_test RUNTIME DESTINATION ${LIBRARY_NAME})
 endif()
 
 install(

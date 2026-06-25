@@ -9,6 +9,12 @@
 
 BEGIN_C_DECLS
 
+/* 传给 layout_children 的可见项（核心已完成回收/填充后） */
+typedef struct _recycle_item_t {
+  int32_t   index;
+  widget_t* widget;
+} recycle_item_t;
+
 typedef struct _recycle_layout_manager_t recycle_layout_manager_t;
 
 struct _recycle_layout_manager_t {
@@ -25,6 +31,11 @@ struct _recycle_layout_manager_t {
   ret_t (*get_item_rect)(recycle_layout_manager_t* lm, widget_t* rv, int32_t index, rect_t* r);
 
   ret_t (*on_destroy)(recycle_layout_manager_t* lm);
+
+  /* 可选：若非 NULL，核心在回收/填充后把当前 offset + 可见项数组交给它全权摆位
+   * （位置/尺寸/缩放/z 序）。为 NULL 时核心走 get_item_rect-offset 默认摆位。 */
+  ret_t (*layout_children)(recycle_layout_manager_t* lm, widget_t* rv, int32_t offset,
+                           recycle_item_t* items, uint32_t nr);
 
   void* ctx; /* 实现私有数据（如 item_extent / span） */
 };

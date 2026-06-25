@@ -246,8 +246,26 @@ static ret_t recycle_view_relayout(widget_t* widget) {
     darray_push(rv->visible_items, vi);
   }
 
-  /* 已挂载项随 offset 重新定位（滑动时需要） */
-  {
+  /* 步骤5：摆位。LM 提供 layout_children 则全权下放（位置/尺寸/缩放/z序），
+   * 否则走默认线性平移（get_item_rect - offset）。向后兼容：linear/grid 不设此回调。 */
+  if (lm->layout_children != NULL) {
+    uint32_t n = rv->visible_items->size;
+    recycle_item_t* arr = (n > 0) ? TKMEM_ZALLOCN(recycle_item_t, n) : NULL;
+    if (n == 0) {
+      lm->layout_children(lm, widget, offset, NULL, 0);
+    } else if (arr != NULL) {
+      uint32_t k = 0;
+      for (k = 0; k < n; k++) {
+        visible_item_t* vi = (visible_item_t*)darray_get(rv->visible_items, k);
+        if (vi != NULL) {
+          arr[k].index = vi->index;
+          arr[k].widget = vi->widget;
+        }
+      }
+      lm->layout_children(lm, widget, offset, arr, n);
+      TKMEM_FREE(arr);
+    }
+  } else {
     uint32_t k = 0;
     for (k = 0; k < rv->visible_items->size; k++) {
       rect_t r;

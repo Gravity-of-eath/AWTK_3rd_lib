@@ -42,6 +42,16 @@ recycle_scale_t* recycle_scale_capture(widget_t* root) {
   return s;
 }
 
+/* 统计子树的 DFS 节点数，用于校验与基线结构一致 */
+static uint32_t scale_count_nodes(widget_t* w) {
+  int32_t i = 0, cnt = widget_count_children(w);
+  uint32_t total = 1;
+  for (i = 0; i < cnt; i++) {
+    total += scale_count_nodes(widget_get_child(w, i));
+  }
+  return total;
+}
+
 static void scale_apply_dfs(recycle_scale_t* s, widget_t* w, float_t ratio, uint32_t* k) {
   int32_t i = 0, cnt = 0;
   if (*k < s->nr) {
@@ -62,6 +72,9 @@ static void scale_apply_dfs(recycle_scale_t* s, widget_t* w, float_t ratio, uint
 ret_t recycle_scale_apply(recycle_scale_t* s, widget_t* root, float_t ratio) {
   uint32_t k = 0;
   return_value_if_fail(s != NULL && root != NULL, RET_BAD_PARAMS);
+  /* 基线按 DFS 位置索引复用，要求目标子树与基线结构同构。
+   * 节点数不一致说明结构不同（如多 view_type），拒绝施加以免静默错乱。 */
+  return_value_if_fail(scale_count_nodes(root) == s->nr, RET_FAIL);
   scale_apply_dfs(s, root, ratio, &k);
   return RET_OK;
 }

@@ -1,0 +1,8 @@
+build/SDL_render_gl.lo: \
+ /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/SDL2-2.30.8/src/render/opengl/SDL_render_gl.c \
+ /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/SDL2-2.30.8/src/render/opengl/../../SDL_internal.h \
+ /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/SDL2-2.30.8/src/render/opengl/../../dynapi/SDL_dynapi.h \
+ /mnt/a57a7843-7ae2-415a-9125-4c61fa4163d9/3rdLibrary/SDL2-2.30.8/src/render/opengl/../../dynapi/SDL_dynapi_overrides.h \
+ include/SDL_config.h include/SDL_platform.h include/begin_code.h \
+ include/close_code.h include/SDL_assert.h include/SDL_stdinc.h \
+ include/SDL_config.h include/SDL_log.h

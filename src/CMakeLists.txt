@@ -33,3 +33,7 @@ if(HAS_GPU)
   add_subdirectory(yps_gl_view)
   add_subdirectory(breath_ellipse)
 endif()
+
+add_subdirectory(jump_label)
+
+

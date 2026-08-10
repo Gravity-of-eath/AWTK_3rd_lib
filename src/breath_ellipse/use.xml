@@ -1,0 +1,2 @@
+<breath_ellipse_view name="view_breath" x="10" y="418" w="1014" h="300" frequency_bpm="30" min_scale="0.8" max_scale="1.2" duration_ms="0"
+   frame_interval_ms="8" running="true" center_color="#00B511,#00C9FF,#FF6A00,#FF0000,#00FF00,#0000FF" disg:custom="container"/>

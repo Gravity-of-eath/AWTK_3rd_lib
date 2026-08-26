@@ -34,6 +34,3 @@ if(HAS_GPU)
   add_subdirectory(breath_ellipse)
 endif()
 
-add_subdirectory(jump_label)
-
-

@@ -15,14 +15,24 @@ typedef struct _color_point_t {
   color_t color;   /* 颜色 */
 } color_point_t;
 
-/* 极坐标查询表 */
+/* 一整圈对应的定点角单位数。角度以 2PI/65536 为单位存放在 uint16 里，
+ * 分辨率 0.0055 度，远细于 360 级色表的一个色阶。 */
+#define ARC_ANGLE_UNITS 65536
+
+/* 极坐标查询表
+ *
+ * angle_table 存放的是"已经调整过的"定点角：建表时就把 atan2 结果归一化到
+ * [0,2PI) 并减去 90 度（AWTK 的 Y 轴向下），绘制时不再需要任何浮点归一化。
+ *
+ * 距离表已移除：绘制改为逐行解析求 x 区间（整数判定 x*x+y*y <= R*R），
+ * 不再需要逐像素的距离查询。相比 float 双表，内存降到 1/4。
+ */
 typedef struct _polar_lut_t {
-  int32_t width;          // 表宽度
-  int32_t height;         // 表高度  
-  int32_t center_x;       // 中心点X（相对坐标）
-  int32_t center_y;       // 中心点Y（相对坐标）
-  float* angle_table;     // 角度查询表 [y][x]
-  float* distance_table;  // 距离查询表 [y][x]
+  int32_t width;           // 表宽度
+  int32_t height;          // 表高度
+  int32_t center_x;        // 中心点X（相对坐标）
+  int32_t center_y;        // 中心点Y（相对坐标）
+  uint16_t* angle_table;   // 定点角查询表 [y][x]，单位 2PI/ARC_ANGLE_UNITS
 } polar_lut_t;
 
 
@@ -48,6 +58,13 @@ typedef struct  _conner_gradient_view_t
     color_t stop_color;
     float_t full_ratio;//占满率，1时绘制整个扇形区域，0.5则绘制弧环（在扇形基础上去掉半径*0.5的圆心部分）
 
+    /* 帧间缓存：渲染结果直接写进 RGBA8888 位图，参数没变时下一帧只贴图。
+     * 直写像素同时省掉了每段游程一次的 canvas_fill_rect 调用——那个固定开销
+     * 才是实测中的主要瓶颈。另外 AWTK 里任何与本控件重叠的脏矩形都会触发
+     * 重绘，而仪表盘场景下绝大多数重绘的参数其实没有变化。 */
+    bitmap_t* cache_bitmap;  // RGBA8888 缓存位图，尺寸与控件一致
+    bool_t cache_dirty;      // 参数变更后置位，下次绘制时重新渲染
+    bool_t cache_enable;     // 关掉则每帧直接画到 canvas（省内存，但更慢）
 
 }conner_gradient_view_t;
 
@@ -116,6 +133,8 @@ ret_t conner_gradient_view_set_current(widget_t* widget, int32_t current);
 #define CONNER_GRADIENT_VIEW_PROP_ANT_CLOCK "ant_clock"
 #define CONNER_GRADIENT_VIEW_PROP_START_COLOR "start_color"
 #define CONNER_GRADIENT_VIEW_PROP_STOP_COLOR "stop_color"
+/* 是否启用帧间缓存，默认开。关掉可省一张 w*h*4 的位图，但每帧都要重画。 */
+#define CONNER_GRADIENT_VIEW_PROP_CACHE "cache"
 #define CONNER_GRADIENT_VIEW_PROP_MAX "max"
 #define CONNER_GRADIENT_VIEW_PROP_CURRENT "current"
 

@@ -11,8 +11,10 @@ set(CMAKE_C_COMPILER "${TOOLCHAIN_DIR}/bin/aarch64-linux-gnu-gcc")
 set(CMAKE_CXX_COMPILER "${TOOLCHAIN_DIR}/bin/aarch64-linux-gnu-g++")
 
 # 编译标志
-#set(CMAKE_C_FLAGS "-mcpu=cortex-a53 -mfloat-abi=hard")
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+# T507 为 aarch64 Cortex-A53(lib/t507/libawtk.so 为 ELF 64-bit ARM aarch64)。
+# aarch64 只有一种浮点 ABI，指定 -mcpu 不影响 ABI。
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=cortex-a53")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcpu=cortex-a53")
 set(BUILD_SHARED_LIBS ON)
 
 # 库搜索路径

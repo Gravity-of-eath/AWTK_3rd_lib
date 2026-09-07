@@ -1,12 +1,20 @@
 cmake_minimum_required(VERSION 3.10)
 project(Awtk_3rdLibrary)
 set(AWTK_SO "${CMAKE_CURRENT_SOURCE_DIR}/../lib/${PLATFORM}/libawtk.so")
-# 保留调试符号
-set(CMAKE_BUILD_TYPE Debug)
+# 默认使用 RelWithDebInfo：开 -O2 的同时保留 -g 调试符号。
+# 之前是 Debug(-O0)，像素级绘制的控件(conner_gradient 等)性能损失非常大。
+# 需要纯调试构建时用: cmake -DCMAKE_BUILD_TYPE=Debug ...
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "build type" FORCE)
+endif()
+message(STATUS "CMAKE_BUILD_TYPE == ${CMAKE_BUILD_TYPE}")
 
-# 或者对于 Release 模式也保留调试符号
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
+# 导出 compile_commands.json 供 clangd/IDE 使用（原来误写成了 -D 宏定义）
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Release 也保留调试符号
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -g")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g")
 
 message("AWTK_INCLUDE== ${AWTK_INCLUDE}")
 

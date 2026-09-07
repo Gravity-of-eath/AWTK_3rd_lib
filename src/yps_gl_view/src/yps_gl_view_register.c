@@ -20,8 +20,11 @@
  */
 
 #include "yps_gl_view.h"
+#include "yps_gl_view_register.h"
+#include "base/widget_factory.h"
 #include "tkc/mem.h"
 
 ret_t yps_gl_view_register(void) {
-  return widget_register(WIDGET_TYPE_YPS_GL_VIEW, yps_gl_view_create);
+  return widget_factory_register(widget_factory(), WIDGET_TYPE_YPS_GL_VIEW,
+                                yps_gl_view_create);
 }
